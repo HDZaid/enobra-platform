@@ -1,0 +1,2664 @@
+openapi: 3.0.3
+info:
+  title: EnObra API
+  version: 1.0.0
+  description: 'Contrato HTTP del backend de EnObra (constructora y bienes raíces,
+    Quetzaltenango). Todas las rutas cuelgan de /api/v1/. Los endpoints de escritura
+    requieren `Authorization: Bearer <access_token>` con rol admin.'
+paths:
+  /api/v1/admin/media/:
+    post:
+      operationId: v1_admin_media_create
+      summary: Subir imagen (JPEG/PNG/WebP/GIF)
+      tags:
+      - Medios (admin)
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MediaUploadRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Media'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/v1/admin/media/{media_id}/:
+    get:
+      operationId: v1_admin_media_retrieve
+      summary: Metadatos de una imagen
+      parameters:
+      - in: path
+        name: media_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Medios (admin)
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Media'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+    delete:
+      operationId: v1_admin_media_destroy
+      summary: Eliminar imagen
+      parameters:
+      - in: path
+        name: media_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Medios (admin)
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/v1/auth/login/:
+    post:
+      operationId: v1_auth_login_create
+      summary: Iniciar sesión (panel de administración)
+      tags:
+      - Autenticación
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenPair'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/v1/auth/logout/:
+    post:
+      operationId: v1_auth_logout_create
+      summary: Cerrar sesión (revoca el refresh)
+      tags:
+      - Autenticación
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/v1/auth/me/:
+    get:
+      operationId: v1_auth_me_retrieve
+      summary: Usuario autenticado actual
+      tags:
+      - Autenticación
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/v1/auth/refresh/:
+    post:
+      operationId: v1_auth_refresh_create
+      summary: Renovar access token
+      tags:
+      - Autenticación
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessToken'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/v1/company/:
+    get:
+      operationId: v1_company_retrieve
+      summary: Datos de contacto y marca
+      tags:
+      - Empresa
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+          description: ''
+    put:
+      operationId: v1_company_update
+      summary: Actualizar contacto y marca (admin)
+      tags:
+      - Empresa
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CompanyRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/v1/health/:
+    get:
+      operationId: v1_health_retrieve
+      summary: Estado del servicio
+      tags:
+      - Sistema
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+          description: ''
+  /api/v1/inquiries/:
+    get:
+      operationId: inquiries_list
+      summary: Bandeja de solicitudes (admin)
+      parameters:
+      - in: query
+        name: kind
+        schema:
+          enum:
+          - contacto
+          - visita
+          type: string
+          minLength: 1
+        description: |-
+          * `contacto` - Contacto
+          * `visita` - Solicitud de visita
+      - in: query
+        name: page
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - in: query
+        name: page_size
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 12
+      - in: query
+        name: status
+        schema:
+          enum:
+          - nuevo
+          - atendido
+          - archivado
+          type: string
+          minLength: 1
+        description: |-
+          * `nuevo` - Nuevo
+          * `atendido` - Atendido
+          * `archivado` - Archivado
+      tags:
+      - Solicitudes (admin)
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedInquiryList'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/v1/inquiries/{inquiry_id}/:
+    get:
+      operationId: inquiries_retrieve
+      summary: Detalle de solicitud (admin)
+      parameters:
+      - in: path
+        name: inquiry_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Solicitudes (admin)
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Inquiry'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+    patch:
+      operationId: v1_inquiries_partial_update
+      summary: 'Cambiar estado: nuevo → atendido → archivado (admin)'
+      parameters:
+      - in: path
+        name: inquiry_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Solicitudes (admin)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedInquiryStatusUpdateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedInquiryStatusUpdateRequest'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Inquiry'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/v1/inquiries/contact/:
+    post:
+      operationId: v1_inquiries_contact_create
+      summary: Enviar formulario de contacto
+      tags:
+      - Solicitudes (público)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactInquiryCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ContactInquiryCreateRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InquiryReceipt'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/v1/inquiries/visits/:
+    post:
+      operationId: v1_inquiries_visits_create
+      summary: Solicitar visita a una propiedad
+      tags:
+      - Solicitudes (público)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VisitInquiryCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VisitInquiryCreateRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InquiryReceipt'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/v1/institution/:
+    get:
+      operationId: v1_institution_retrieve
+      summary: Textos de Nosotros
+      tags:
+      - Empresa
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Institution'
+          description: ''
+    put:
+      operationId: v1_institution_update
+      summary: Actualizar textos de Nosotros (admin)
+      tags:
+      - Empresa
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InstitutionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/InstitutionRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Institution'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/v1/news/:
+    get:
+      operationId: news_list
+      summary: Listar noticias y eventos
+      parameters:
+      - in: query
+        name: category
+        schema:
+          enum:
+          - Anuncios
+          - Eventos
+          - Proyectos
+          type: string
+          minLength: 1
+        description: |-
+          * `Anuncios` - Anuncios
+          * `Eventos` - Eventos
+          * `Proyectos` - Proyectos
+      - in: query
+        name: page
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - in: query
+        name: page_size
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 12
+      tags:
+      - Noticias
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNewsList'
+          description: ''
+    post:
+      operationId: v1_news_create
+      summary: Crear noticia (admin)
+      tags:
+      - Noticias
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewsWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NewsWriteRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/News'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/v1/news/{news_id}/:
+    get:
+      operationId: news_retrieve
+      summary: Publicación completa
+      parameters:
+      - in: path
+        name: news_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Noticias
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/News'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+    put:
+      operationId: v1_news_update
+      summary: Reemplazar noticia (admin)
+      parameters:
+      - in: path
+        name: news_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Noticias
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewsWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NewsWriteRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/News'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+    patch:
+      operationId: v1_news_partial_update
+      summary: Editar noticia parcialmente (admin)
+      parameters:
+      - in: path
+        name: news_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Noticias
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNewsWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNewsWriteRequest'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/News'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+    delete:
+      operationId: v1_news_destroy
+      summary: Eliminar noticia (admin)
+      parameters:
+      - in: path
+        name: news_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Noticias
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/v1/projects/:
+    get:
+      operationId: projects_list
+      description: 'Público: solo `published=true`. Con token admin se incluyen borradores.'
+      summary: Listar proyectos (filtro por año)
+      parameters:
+      - in: query
+        name: page
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - in: query
+        name: page_size
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 12
+      - in: query
+        name: year
+        schema:
+          type: integer
+        description: Filtra por año.
+      tags:
+      - Proyectos
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProjectList'
+          description: ''
+    post:
+      operationId: v1_projects_create
+      summary: Crear proyecto (admin)
+      tags:
+      - Proyectos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProjectWriteRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/v1/projects/{project_id}/:
+    get:
+      operationId: projects_retrieve
+      summary: Detalle de proyecto
+      parameters:
+      - in: path
+        name: project_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Proyectos
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+    put:
+      operationId: v1_projects_update
+      summary: Reemplazar proyecto (admin)
+      parameters:
+      - in: path
+        name: project_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Proyectos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProjectWriteRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+    patch:
+      operationId: v1_projects_partial_update
+      summary: Editar proyecto parcialmente (admin)
+      parameters:
+      - in: path
+        name: project_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Proyectos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProjectWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProjectWriteRequest'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+    delete:
+      operationId: v1_projects_destroy
+      summary: Eliminar proyecto (admin)
+      parameters:
+      - in: path
+        name: project_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Proyectos
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/v1/projects/years/:
+    get:
+      operationId: v1_projects_years_retrieve
+      summary: Años disponibles para el filtro
+      tags:
+      - Proyectos
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectYears'
+          description: ''
+  /api/v1/properties/:
+    get:
+      operationId: properties_list
+      description: 'Público: solo `published=true`. Con token admin se incluyen borradores.'
+      summary: Catálogo con filtros combinables, orden y paginación
+      parameters:
+      - in: query
+        name: ids
+        schema:
+          type: string
+          minLength: 1
+        description: 'Ids separados por coma (vista ''Favoritos''). Ej.: 1,4,5'
+      - in: query
+        name: max_price
+        schema:
+          type: integer
+          minimum: 0
+      - in: query
+        name: min_price
+        schema:
+          type: integer
+          minimum: 0
+      - in: query
+        name: operation
+        schema:
+          enum:
+          - Venta
+          - Alquiler
+          type: string
+          minLength: 1
+        description: |-
+          * `Venta` - Venta
+          * `Alquiler` - Alquiler
+      - in: query
+        name: page
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - in: query
+        name: page_size
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 12
+      - in: query
+        name: q
+        schema:
+          type: string
+          default: ''
+      - in: query
+        name: sort
+        schema:
+          enum:
+          - recent
+          - price_asc
+          - price_desc
+          type: string
+          default: recent
+          minLength: 1
+        description: |-
+          * `recent` - Más recientes
+          * `price_asc` - Precio ascendente
+          * `price_desc` - Precio descendente
+      - in: query
+        name: type
+        schema:
+          enum:
+          - Casa
+          - Apartamento
+          - Terreno
+          - Local
+          type: string
+          minLength: 1
+        description: |-
+          * `Casa` - Casa
+          * `Apartamento` - Apartamento
+          * `Terreno` - Terreno
+          * `Local` - Local
+      - in: query
+        name: zone
+        schema:
+          type: string
+          minLength: 1
+      tags:
+      - Bienes raíces
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPropertyList'
+          description: ''
+    post:
+      operationId: v1_properties_create
+      summary: Crear propiedad (admin)
+      tags:
+      - Bienes raíces
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PropertyWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PropertyWriteRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Property'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/v1/properties/{property_id}/:
+    get:
+      operationId: properties_retrieve
+      summary: Ficha de propiedad
+      parameters:
+      - in: path
+        name: property_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Bienes raíces
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Property'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+    put:
+      operationId: v1_properties_update
+      summary: Reemplazar propiedad (admin)
+      parameters:
+      - in: path
+        name: property_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Bienes raíces
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PropertyWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PropertyWriteRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Property'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+    patch:
+      operationId: v1_properties_partial_update
+      summary: Editar propiedad parcialmente (admin)
+      parameters:
+      - in: path
+        name: property_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Bienes raíces
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPropertyWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPropertyWriteRequest'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Property'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+    delete:
+      operationId: v1_properties_destroy
+      summary: Eliminar propiedad (admin)
+      parameters:
+      - in: path
+        name: property_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Bienes raíces
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/v1/properties/facets/:
+    get:
+      operationId: v1_properties_facets_retrieve
+      summary: Opciones para poblar los filtros
+      tags:
+      - Bienes raíces
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertyFacets'
+          description: ''
+  /api/v1/search/:
+    get:
+      operationId: v1_search_retrieve
+      description: 'El frontend arma los enlaces: services → /servicios#id, projects
+        → /proyecto?id=, properties → /propiedad?id=, news → /noticia?id=.'
+      summary: Buscador global
+      parameters:
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          maximum: 20
+          minimum: 1
+          default: 5
+        description: Máximo de resultados por grupo.
+      - in: query
+        name: q
+        schema:
+          type: string
+          minLength: 2
+          maxLength: 80
+        required: true
+      tags:
+      - Búsqueda
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/v1/services/:
+    get:
+      operationId: v1_services_list
+      summary: Listar servicios
+      tags:
+      - Servicios
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Service'
+          description: ''
+  /api/v1/services/{service_id}/:
+    get:
+      operationId: v1_services_retrieve
+      summary: Detalle de servicio
+      parameters:
+      - in: path
+        name: service_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Servicios
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+components:
+  schemas:
+    AccessToken:
+      type: object
+      properties:
+        access:
+          type: string
+        expires_in:
+          type: integer
+      required:
+      - access
+      - expires_in
+    Company:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 120
+        person:
+          type: string
+          description: Nombre del responsable (p. ej. Ing. Luis Bernardo Balcárcel
+            López).
+          maxLength: 160
+        address:
+          type: string
+          maxLength: 255
+        phones:
+          type: array
+          items:
+            type: string
+        whatsapp:
+          description: 'Formato internacional sin ''+'': 502XXXXXXXX.'
+          oneOf:
+          - type: string
+            pattern: ^$|^502\d{8}$
+          - type: string
+            maxLength: 0
+        email:
+          oneOf:
+          - type: string
+            format: email
+          - type: string
+            maxLength: 0
+        instagram:
+          oneOf:
+          - type: string
+            format: uri
+          - type: string
+            maxLength: 0
+        facebook:
+          oneOf:
+          - type: string
+            format: uri
+          - type: string
+            maxLength: 0
+        domain:
+          type: string
+          maxLength: 255
+        logo:
+          type: string
+          maxLength: 500
+      required:
+      - address
+      - domain
+      - email
+      - facebook
+      - instagram
+      - logo
+      - name
+      - person
+      - phones
+      - whatsapp
+    CompanyRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        person:
+          type: string
+          minLength: 1
+          description: Nombre del responsable (p. ej. Ing. Luis Bernardo Balcárcel
+            López).
+          maxLength: 160
+        address:
+          type: string
+          minLength: 1
+          maxLength: 255
+        phones:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        whatsapp:
+          description: 'Formato internacional sin ''+'': 502XXXXXXXX.'
+          oneOf:
+          - type: string
+            pattern: ^$|^502\d{8}$
+          - type: string
+            maxLength: 0
+        email:
+          oneOf:
+          - type: string
+            format: email
+          - type: string
+            maxLength: 0
+        instagram:
+          oneOf:
+          - type: string
+            format: uri
+          - type: string
+            maxLength: 0
+        facebook:
+          oneOf:
+          - type: string
+            format: uri
+          - type: string
+            maxLength: 0
+        domain:
+          type: string
+          maxLength: 255
+        logo:
+          type: string
+          maxLength: 500
+      required:
+      - address
+      - domain
+      - email
+      - facebook
+      - instagram
+      - logo
+      - name
+      - person
+      - phones
+      - whatsapp
+    ContactInquiryCreateRequest:
+      type: object
+      description: Formulario de Contacto / 'Solicitar información' de Servicios.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        email:
+          type: string
+          format: email
+          minLength: 1
+        phone:
+          type: string
+          minLength: 1
+        subject:
+          type: string
+          minLength: 1
+          description: Título de un servicio (Diseño, Construcción…), 'Bienes raíces'
+            u 'Otro'.
+          maxLength: 80
+        message:
+          type: string
+          minLength: 1
+          maxLength: 2000
+        website:
+          type: string
+          writeOnly: true
+          description: 'Honeypot anti-spam: debe enviarse vacío (campo oculto en el
+            formulario).'
+      required:
+      - email
+      - message
+      - name
+      - phone
+      - subject
+    Error:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorDetail'
+      required:
+      - error
+    ErrorDetail:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details: {}
+      required:
+      - code
+      - message
+    Health:
+      type: object
+      properties:
+        status:
+          type: string
+        version:
+          type: string
+      required:
+      - status
+      - version
+    Inquiry:
+      type: object
+      description: Vista del administrador.
+      properties:
+        id:
+          type: string
+        kind:
+          $ref: '#/components/schemas/InquiryKindEnum'
+        status:
+          $ref: '#/components/schemas/InquiryStatusEnum'
+        name:
+          type: string
+        email:
+          nullable: true
+          oneOf:
+          - type: string
+            format: email
+          - type: string
+            maxLength: 0
+        phone:
+          type: string
+        subject:
+          type: string
+          nullable: true
+        message:
+          type: string
+          nullable: true
+        property_id:
+          type: integer
+          nullable: true
+        property_title:
+          type: string
+          nullable: true
+        preferred_date:
+          type: string
+          format: date
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        updated_by:
+          type: string
+          nullable: true
+      required:
+      - created_at
+      - email
+      - id
+      - kind
+      - message
+      - name
+      - phone
+      - preferred_date
+      - property_id
+      - property_title
+      - status
+      - subject
+      - updated_at
+      - updated_by
+    InquiryKindEnum:
+      enum:
+      - contacto
+      - visita
+      type: string
+      description: |-
+        * `contacto` - Contacto
+        * `visita` - Solicitud de visita
+    InquiryReceipt:
+      type: object
+      description: Acuse que recibe el visitante público.
+      properties:
+        id:
+          type: string
+        status:
+          $ref: '#/components/schemas/InquiryStatusEnum'
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - created_at
+      - id
+      - status
+    InquiryStatusEnum:
+      enum:
+      - nuevo
+      - atendido
+      - archivado
+      type: string
+      description: |-
+        * `nuevo` - Nuevo
+        * `atendido` - Atendido
+        * `archivado` - Archivado
+    Institution:
+      type: object
+      properties:
+        presentation:
+          type: array
+          items:
+            type: string
+          description: Párrafos de la presentación.
+        signature:
+          type: string
+          maxLength: 160
+        role:
+          type: string
+          maxLength: 120
+        vision:
+          type: string
+          description: Texto con saltos de línea (\n\n separa párrafos).
+        mission:
+          type: string
+        principles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Principle'
+      required:
+      - mission
+      - presentation
+      - principles
+      - role
+      - signature
+      - vision
+    InstitutionRequest:
+      type: object
+      properties:
+        presentation:
+          type: array
+          items:
+            type: string
+            minLength: 1
+          description: Párrafos de la presentación.
+        signature:
+          type: string
+          minLength: 1
+          maxLength: 160
+        role:
+          type: string
+          minLength: 1
+          maxLength: 120
+        vision:
+          type: string
+          minLength: 1
+          description: Texto con saltos de línea (\n\n separa párrafos).
+        mission:
+          type: string
+          minLength: 1
+        principles:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrincipleRequest'
+      required:
+      - mission
+      - presentation
+      - principles
+      - role
+      - signature
+      - vision
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - email
+      - password
+    Media:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+          description: Úsala tal cual en `images`, `renders`, `image` o `logo`.
+        kind:
+          $ref: '#/components/schemas/MediaKindEnum'
+        content_type:
+          type: string
+        size:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - content_type
+      - created_at
+      - id
+      - kind
+      - size
+      - url
+    MediaKindEnum:
+      enum:
+      - photo
+      - render
+      - news
+      - logo
+      type: string
+      description: |-
+        * `photo` - Fotografía
+        * `render` - Render
+        * `news` - Imagen de noticia
+        * `logo` - Logo
+    MediaUploadRequest:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+        kind:
+          allOf:
+          - $ref: '#/components/schemas/MediaKindEnum'
+          default: photo
+      required:
+      - file
+    News:
+      type: object
+      description: Campos de auditoría de solo lectura (los rellena la capa de datos).
+      properties:
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_by:
+          type: string
+          readOnly: true
+          nullable: true
+        id:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        title:
+          type: string
+        category:
+          $ref: '#/components/schemas/NewsCategoryEnum'
+        date:
+          type: string
+          format: date
+        description:
+          type: string
+        image:
+          type: string
+        demo:
+          type: boolean
+        published:
+          type: boolean
+      required:
+      - category
+      - created_at
+      - date
+      - demo
+      - description
+      - id
+      - image
+      - published
+      - title
+      - updated_at
+      - updated_by
+    NewsCategoryEnum:
+      enum:
+      - Anuncios
+      - Eventos
+      - Proyectos
+      type: string
+      description: |-
+        * `Anuncios` - Anuncios
+        * `Eventos` - Eventos
+        * `Proyectos` - Proyectos
+    NewsWriteRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 160
+        category:
+          $ref: '#/components/schemas/NewsCategoryEnum'
+        date:
+          type: string
+          format: date
+        description:
+          type: string
+          minLength: 1
+        image:
+          type: string
+          minLength: 1
+          maxLength: 500
+        demo:
+          type: boolean
+          default: true
+        published:
+          type: boolean
+          default: true
+      required:
+      - category
+      - date
+      - description
+      - image
+      - title
+    OperationEnum:
+      enum:
+      - Venta
+      - Alquiler
+      type: string
+      description: |-
+        * `Venta` - Venta
+        * `Alquiler` - Alquiler
+    PaginatedInquiryList:
+      type: object
+      properties:
+        count:
+          type: integer
+        page:
+          type: integer
+        page_size:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Inquiry'
+      required:
+      - count
+      - page
+      - page_size
+      - results
+    PaginatedNewsList:
+      type: object
+      properties:
+        count:
+          type: integer
+        page:
+          type: integer
+        page_size:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/News'
+      required:
+      - count
+      - page
+      - page_size
+      - results
+    PaginatedProjectList:
+      type: object
+      properties:
+        count:
+          type: integer
+        page:
+          type: integer
+        page_size:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+      required:
+      - count
+      - page
+      - page_size
+      - results
+    PaginatedPropertyList:
+      type: object
+      properties:
+        count:
+          type: integer
+        page:
+          type: integer
+        page_size:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Property'
+      required:
+      - count
+      - page
+      - page_size
+      - results
+    PatchedInquiryStatusUpdateRequest:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/InquiryStatusEnum'
+    PatchedNewsWriteRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 160
+        category:
+          $ref: '#/components/schemas/NewsCategoryEnum'
+        date:
+          type: string
+          format: date
+        description:
+          type: string
+          minLength: 1
+        image:
+          type: string
+          minLength: 1
+          maxLength: 500
+        demo:
+          type: boolean
+          default: true
+        published:
+          type: boolean
+          default: true
+    PatchedProjectWriteRequest:
+      type: object
+      description: Entrada (POST/PUT/PATCH) de un proyecto.
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 160
+        category:
+          type: string
+          minLength: 1
+          maxLength: 80
+        country:
+          type: string
+          minLength: 1
+          default: Guatemala
+          maxLength: 80
+        year:
+          type: integer
+          minimum: 1900
+        description:
+          type: string
+          minLength: 1
+        images:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            maxLength: 500
+          maxItems: 40
+          minItems: 1
+        renders:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            maxLength: 500
+          maxItems: 40
+        video:
+          type: string
+          default: ''
+          maxLength: 500
+        demo:
+          type: boolean
+          default: true
+        published:
+          type: boolean
+          default: true
+    PatchedPropertyWriteRequest:
+      type: object
+      description: Entrada (POST/PUT/PATCH) de una propiedad.
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 160
+        operation:
+          $ref: '#/components/schemas/OperationEnum'
+        type:
+          $ref: '#/components/schemas/PropertyTypeEnum'
+        zone:
+          type: string
+          minLength: 1
+          maxLength: 60
+        location:
+          type: string
+          minLength: 1
+          maxLength: 120
+        price:
+          type: integer
+          minimum: 0
+        rooms:
+          type: integer
+          minimum: 0
+          default: 0
+        baths:
+          type: integer
+          minimum: 0
+          default: 0
+        parking:
+          type: integer
+          minimum: 0
+          default: 0
+        area:
+          type: integer
+          minimum: 1
+        date:
+          type: string
+          format: date
+        description:
+          type: string
+          minLength: 1
+        commercial:
+          type: string
+          minLength: 1
+        images:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            maxLength: 500
+          maxItems: 40
+          minItems: 1
+        renders:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            maxLength: 500
+          maxItems: 40
+        video:
+          type: string
+          default: ''
+          maxLength: 500
+        demo:
+          type: boolean
+          default: true
+        published:
+          type: boolean
+          default: true
+    Principle:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 120
+        description:
+          type: string
+          maxLength: 500
+      required:
+      - description
+      - title
+    PrincipleRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 120
+        description:
+          type: string
+          minLength: 1
+          maxLength: 500
+      required:
+      - description
+      - title
+    Project:
+      type: object
+      description: Salida (GET) de un proyecto.
+      properties:
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_by:
+          type: string
+          readOnly: true
+          nullable: true
+        id:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        title:
+          type: string
+        category:
+          type: string
+          description: 'Ej.: Vivienda unifamiliar, Proyecto comercial, Remodelación.'
+        country:
+          type: string
+        year:
+          type: integer
+        description:
+          type: string
+        images:
+          type: array
+          items:
+            type: string
+          description: Fotografías (la primera es la portada).
+        renders:
+          type: array
+          items:
+            type: string
+        video:
+          type: string
+        demo:
+          type: boolean
+          description: True mientras el contenido sea un ejemplo no verificado.
+        published:
+          type: boolean
+      required:
+      - category
+      - country
+      - created_at
+      - demo
+      - description
+      - id
+      - images
+      - published
+      - renders
+      - title
+      - updated_at
+      - updated_by
+      - video
+      - year
+    ProjectWriteRequest:
+      type: object
+      description: Entrada (POST/PUT/PATCH) de un proyecto.
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 160
+        category:
+          type: string
+          minLength: 1
+          maxLength: 80
+        country:
+          type: string
+          minLength: 1
+          default: Guatemala
+          maxLength: 80
+        year:
+          type: integer
+          minimum: 1900
+        description:
+          type: string
+          minLength: 1
+        images:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            maxLength: 500
+          maxItems: 40
+          minItems: 1
+        renders:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            maxLength: 500
+          maxItems: 40
+        video:
+          type: string
+          default: ''
+          maxLength: 500
+        demo:
+          type: boolean
+          default: true
+        published:
+          type: boolean
+          default: true
+      required:
+      - category
+      - description
+      - images
+      - title
+      - year
+    ProjectYears:
+      type: object
+      properties:
+        years:
+          type: array
+          items:
+            type: integer
+      required:
+      - years
+    Property:
+      type: object
+      description: Salida (GET) de una propiedad.
+      properties:
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_by:
+          type: string
+          readOnly: true
+          nullable: true
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+        operation:
+          $ref: '#/components/schemas/OperationEnum'
+        type:
+          $ref: '#/components/schemas/PropertyTypeEnum'
+        zone:
+          type: string
+          description: 'Ej.: Zona 9'
+        location:
+          type: string
+          description: 'Ej.: Quetzaltenango'
+        price:
+          type: integer
+          description: Quetzales. En Alquiler es el monto mensual.
+        rooms:
+          type: integer
+        baths:
+          type: integer
+        parking:
+          type: integer
+        area:
+          type: integer
+          description: m². En Terreno es la superficie del terreno.
+        date:
+          type: string
+          format: date
+          description: Fecha de publicación (ordena 'más recientes').
+        description:
+          type: string
+        commercial:
+          type: string
+          description: Especificaciones comerciales (precio, condiciones, documentación).
+        images:
+          type: array
+          items:
+            type: string
+        renders:
+          type: array
+          items:
+            type: string
+        video:
+          type: string
+        demo:
+          type: boolean
+        published:
+          type: boolean
+      required:
+      - area
+      - baths
+      - commercial
+      - created_at
+      - date
+      - demo
+      - description
+      - id
+      - images
+      - location
+      - operation
+      - parking
+      - price
+      - published
+      - renders
+      - rooms
+      - title
+      - type
+      - updated_at
+      - updated_by
+      - video
+      - zone
+    PropertyFacets:
+      type: object
+      properties:
+        operations:
+          type: array
+          items:
+            type: string
+        types:
+          type: array
+          items:
+            type: string
+        zones:
+          type: array
+          items:
+            type: string
+          description: Zonas con propiedades (llena el <select> de zona).
+        min_price:
+          type: integer
+          nullable: true
+        max_price:
+          type: integer
+          nullable: true
+      required:
+      - max_price
+      - min_price
+      - operations
+      - types
+      - zones
+    PropertyTypeEnum:
+      enum:
+      - Casa
+      - Apartamento
+      - Terreno
+      - Local
+      type: string
+      description: |-
+        * `Casa` - Casa
+        * `Apartamento` - Apartamento
+        * `Terreno` - Terreno
+        * `Local` - Local
+    PropertyWriteRequest:
+      type: object
+      description: Entrada (POST/PUT/PATCH) de una propiedad.
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 160
+        operation:
+          $ref: '#/components/schemas/OperationEnum'
+        type:
+          $ref: '#/components/schemas/PropertyTypeEnum'
+        zone:
+          type: string
+          minLength: 1
+          maxLength: 60
+        location:
+          type: string
+          minLength: 1
+          maxLength: 120
+        price:
+          type: integer
+          minimum: 0
+        rooms:
+          type: integer
+          minimum: 0
+          default: 0
+        baths:
+          type: integer
+          minimum: 0
+          default: 0
+        parking:
+          type: integer
+          minimum: 0
+          default: 0
+        area:
+          type: integer
+          minimum: 1
+        date:
+          type: string
+          format: date
+        description:
+          type: string
+          minLength: 1
+        commercial:
+          type: string
+          minLength: 1
+        images:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            maxLength: 500
+          maxItems: 40
+          minItems: 1
+        renders:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            maxLength: 500
+          maxItems: 40
+        video:
+          type: string
+          default: ''
+          maxLength: 500
+        demo:
+          type: boolean
+          default: true
+        published:
+          type: boolean
+          default: true
+      required:
+      - area
+      - commercial
+      - date
+      - description
+      - images
+      - location
+      - operation
+      - price
+      - title
+      - type
+      - zone
+    RefreshRequest:
+      type: object
+      properties:
+        refresh:
+          type: string
+          minLength: 1
+      required:
+      - refresh
+    RoleEnum:
+      enum:
+      - admin
+      type: string
+      description: '* `admin` - Administrador'
+    SearchHit:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        subtitle:
+          type: string
+      required:
+      - id
+      - title
+    SearchResponse:
+      type: object
+      properties:
+        query:
+          type: string
+        total:
+          type: integer
+        services:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchHit'
+        projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchHit'
+        properties:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchHit'
+        news:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchHit'
+      required:
+      - news
+      - projects
+      - properties
+      - query
+      - services
+      - total
+    Service:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 'Slug estable: diseno, administracion, preconstruccion, construccion.'
+          pattern: ^[-a-zA-Z0-9_]+$
+        title:
+          type: string
+        image:
+          type: string
+          description: URL de la imagen de portada.
+        short:
+          type: string
+          description: Resumen de una línea (tarjetas del Inicio).
+        description:
+          type: string
+        items:
+          type: array
+          items:
+            type: string
+          description: Alcances del servicio.
+        subject:
+          type: string
+          description: Valor de 'asunto' que se preselecciona en el formulario de
+            contacto.
+      required:
+      - description
+      - id
+      - image
+      - items
+      - short
+      - subject
+      - title
+    TokenPair:
+      type: object
+      properties:
+        access:
+          type: string
+        refresh:
+          type: string
+        expires_in:
+          type: integer
+          description: Segundos de vida del access token.
+        user:
+          $ref: '#/components/schemas/User'
+      required:
+      - access
+      - expires_in
+      - refresh
+      - user
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+      required:
+      - email
+      - id
+      - name
+      - role
+    VisitInquiryCreateRequest:
+      type: object
+      description: Modal 'Solicitar visita' de una propiedad.
+      properties:
+        property_id:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        phone:
+          type: string
+          minLength: 1
+        preferred_date:
+          type: string
+          format: date
+          description: Hoy o una fecha futura.
+      required:
+      - name
+      - phone
+      - preferred_date
+      - property_id
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
