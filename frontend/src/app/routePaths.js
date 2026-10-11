@@ -1,0 +1,14 @@
+export const routePaths = Object.freeze({
+  home: '/',
+  about: '/nosotros',
+  services: '/servicios',
+  projects: '/proyectos',
+  projectDetail: '/proyectos/:slug',
+  properties: '/bienes-raices',
+  propertyDetail: '/bienes-raices/:id',
+  news: '/noticias',
+  newsDetail: '/noticias/:slug',
+  contact: '/contacto',
+  admin: '/admin',
+  adminLogin: '/admin/login',
+});

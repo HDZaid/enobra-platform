@@ -1,0 +1,58 @@
+# EnObra — Frontend (base compartida)
+
+Proyecto React + Vite en JavaScript/JSX, preparado para conectarse a los contratos de Django REST Framework de este mismo repositorio.
+
+> **Alcance de este PR:** solo estructura, rutas y servicios HTTP. Las pantallas muestran marcadores temporales; **no son una versión del mockup aprobado**. Nadie debe considerar completada una vista hasta migrar sus elementos y comprobar fidelidad visual y funcional.
+
+## Requisitos
+
+Node.js >= 20.19 o >= 22.12 y npm. Desde la raíz del repositorio:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Abra `http://localhost:5173/`. Para compilar y ejecutar comprobaciones:
+
+```bash
+npm run test
+npm run lint
+npm run build
+```
+
+El repositorio no incorpora `node_modules` ni tokens. Al hacer `npm install` se generará `package-lock.json`, que debe incluirse en el primer PR que instale dependencias para permitir `npm ci` reproducible.
+
+## API
+
+- Prefijo predeterminado: `/api/v1`, configurable con `VITE_API_BASE_URL` en `.env.local`.
+- Vite redirige `/api` a Django en `http://127.0.0.1:8000` durante desarrollo.
+- La API responde con `{count,page,page_size,results}` en listados y `{error:{code,message,details}}` en errores.
+- Los contratos actuales siguen sin persistencia y pueden responder HTTP 501; este frontend **no simula operaciones exitosas**.
+- El cliente HTTP se encuentra en `src/services/apiClient.js` y los servicios particulares dentro de `src/features/*/services/`.
+- No subir secretos ni incluir contraseñas o tokens reales en el repositorio. Las peticiones protegidas reciben el token explícitamente; falta acordar sesión y renovación con el backend.
+
+## Reparto del trabajo
+
+| Persona | Módulo | Rutas públicas |
+| --- | --- | --- |
+| Leo | Inicio, Nosotros, Servicios, layout visual | `/`, `/nosotros`, `/servicios` |
+| Geo | Proyectos y Bienes raíces, detalles | `/proyectos`, `/bienes-raices` |
+| Jennifer | Noticias, Contacto, panel y auth del frontend | `/noticias`, `/contacto`, `/admin` |
+
+El panel será compartido: **cada persona implementará los formularios de administración de su propio módulo**. Los archivos de configuración (`src/app/`, `src/components/layout/`, `src/styles/`) requieren revisión cruzada antes de modificarse.
+
+## Rutas y mockup
+
+Las rutas de React se definen en `src/app/router.jsx` y `src/app/routePaths.js`. Se usan rutas limpias (`/noticias`) en lugar de archivos `.html`. Para migrar, conservar el contenido y aspecto del mockup original `MockUp---enObra`, sin copiar el `localStorage` como fuente permanente de contenido. El contenido administrable debe provenir de la API.
+
+Los archivos del mockup y sus recursos originales **no se incorporan a esta base**. Cada módulo migrará sus páginas y recursos al trabajar su fase visual. No se ha elegido el proveedor de Storage.
+
+## Siguiente fase
+
+1. Revisar y aceptar esta base entre los tres mediante Pull Request hacia `develop`.
+2. Cada integrante crea su rama desde el `develop` actualizado.
+3. Reemplazar los marcadores temporales por componentes fieles al mockup.
+4. Acordar endpoints faltantes para edición institucional y videos con el backend antes de desarrollar formularios definitivos.
+5. Integrar API y verificar permisos, validaciones, errores y cambios persistidos.
