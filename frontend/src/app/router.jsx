@@ -3,12 +3,15 @@ import { AdminLayout } from '../components/layout/AdminLayout.jsx';
 import { SiteLayout } from '../components/layout/SiteLayout.jsx';
 import { PendingPage } from '../features/shared/pages/PendingPage.jsx';
 import { routePaths } from './routePaths.js';
+import { HomePage } from '../features/home/pages/HomePage.jsx';
+import { AboutPage } from '../features/about/pages/AboutPage.jsx';
+import { ServicesPage } from '../features/services/pages/ServicesPage.jsx';
 
-// En esta fase son marcadores de ruta, no diseños definitivos.
+// Solo las rutas de Leo tienen diseño definitivo; se conservan los demás marcadores.
 const publicPages = [
-  { path: routePaths.home, title: 'Inicio', owner: 'Leo' },
-  { path: routePaths.about, title: 'Nosotros', owner: 'Leo' },
-  { path: routePaths.services, title: 'Servicios', owner: 'Leo' },
+  { path: routePaths.home, title: 'Inicio', owner: 'Leo', element: <HomePage /> },
+  { path: routePaths.about, title: 'Nosotros', owner: 'Leo', element: <AboutPage /> },
+  { path: routePaths.services, title: 'Servicios', owner: 'Leo', element: <ServicesPage /> },
   { path: routePaths.projects, title: 'Proyectos', owner: 'Geo' },
   { path: routePaths.projectDetail, title: 'Detalle del proyecto', owner: 'Geo' },
   { path: routePaths.properties, title: 'Bienes raíces', owner: 'Geo' },
@@ -22,9 +25,9 @@ export const router = createBrowserRouter([
   {
     element: <SiteLayout />,
     children: [
-      ...publicPages.map(({ path, title, owner }) => ({
+      ...publicPages.map(({ path, title, owner, element }) => ({
         path,
-        element: <PendingPage title={title} owner={owner} />,
+        element: element ?? <PendingPage title={title} owner={owner} />,
       })),
       { path: '*', element: <PendingPage title="Página no encontrada" /> },
     ],
