@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { ArrowLeft, ArrowRight, ImageIcon } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { loadNewsDetail } from '../services/publicNewsSource.js';
 import { newsImageUrl } from '../services/newsMapper.js';
+import { NewsImage } from '../components/NewsImage.jsx';
 import '../styles/news-fonts.css';
 
 export function NewsDetailPage() {
@@ -57,13 +58,12 @@ export function NewsDetailPage() {
             <h1 className="max-w-[950px] font-['Outfit',Arial,sans-serif] text-[clamp(36px,5vw,64px)] leading-[1.1] font-bold tracking-[-0.035em]">
               {state.item.title}
             </h1>
-            {image ? (
-              <img className="my-9 max-h-[550px] w-full object-cover" src={image} alt={state.item.title} />
-            ) : (
-              <div className="my-9 flex aspect-[2/1] max-h-[550px] items-center justify-center bg-[#f3f6fa]" aria-hidden="true">
-                <ImageIcon size={40} className="text-[#626b79]" strokeWidth={1.5} />
-              </div>
-            )}
+            <NewsImage
+              key={image || state.item.id}
+              src={image}
+              alt={state.item.title}
+              className="my-9 aspect-[2/1] max-h-[550px] w-full"
+            />
             <p className="max-w-[850px] leading-[1.9] whitespace-pre-line text-[#626b79]">{state.item.description}</p>
           </>
         )}

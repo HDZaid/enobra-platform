@@ -10,7 +10,7 @@ export function normalizeNews(item) {
     category: String(item.category || ''),
     date: String(item.date || ''),
     description: String(item.description || ''),
-    image: String(item.image || ''),
+    image: typeof item.image === 'string' ? item.image : '',
     demo: item.demo === true,
     published: item.published !== false,
   };
@@ -30,10 +30,43 @@ export function readNewsPage(payload) {
 }
 
 export function newsImageUrl(image) {
-  if (!image) return '';
-  // Imagen de la carpeta public del mockup y recursos remotos del Storage.
-  if (image.startsWith('assets/')) return `/${image}`;
-  if (image.startsWith('/')) return image.startsWith('//') ? '' : image;
-  if (/^https?:\/\//i.test(image)) return image;
-  return '';
+  if (typeof image !== 'string') return '';
+
+  const value = image.trim();
+  if (!value) return '';
+
+  const hasInvalidCharacter = [...value].some((character) => {
+    const code = character.charCodeAt(0);
+    return character === '\\' || code < 32 || code === 127;
+  });
+
+  if (hasInvalidCharacter) return '';
+
+  // Local mockup images are served from Vite's public/ directory.
+  if (value.startsWith('assets/')) return `/${value}`;
+
+  // Relative URLs such as /media/... work through the Vite proxy in development.
+  // Production must serve /media/ or return a full Storage URL from Django.
+  if (value.startsWith('/')) {
+    return value.startsWith('//') ? '' : value;
+  }
+
+  // Let Django choose the Storage provider; the frontend uses its public URL.
+  if (!/^https?:\/\//i.test(value)) return '';
+
+  try {
+    const url = new URL(value);
+
+    if (
+      !['http:', 'https:'].includes(url.protocol) ||
+      url.username ||
+      url.password
+    ) {
+      return '';
+    }
+
+    return url.href;
+  } catch {
+    return '';
+  }
 }

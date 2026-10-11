@@ -1,7 +1,8 @@
-import { ArrowRight, ImageIcon } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { routePaths } from '../../../app/routePaths.js';
 import { newsImageUrl } from '../services/newsMapper.js';
+import { NewsImage } from './NewsImage.jsx';
 
 export function NewsCard({ item }) {
   const href = routePaths.newsDetail.replace(':slug', encodeURIComponent(item.id));
@@ -15,13 +16,7 @@ export function NewsCard({ item }) {
       to={href}
       className="group block overflow-hidden border border-[#dfe5ec] bg-white text-[#12233f] transition-transform duration-300 hover:-translate-y-1 focus-visible:rounded-sm focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-[#ff6a1f]"
     >
-      {image ? (
-        <img className="aspect-[2/1] w-full object-cover" src={image} alt={item.title} loading="lazy" />
-      ) : (
-        <div className="flex aspect-[2/1] items-center justify-center bg-[#f3f6fa] text-[#626b79]" aria-hidden="true">
-          <ImageIcon className="h-9 w-9" strokeWidth={1.5} />
-        </div>
-      )}
+      <NewsImage key={image || item.id} src={image} alt={item.title} className="aspect-[2/1] w-full" />
       <div className="p-6 sm:p-8">
         <p className="mb-4 text-xs font-bold tracking-[0.19em] text-[#b94308] uppercase">
           {item.category}{item.demo ? ' · EJEMPLO' : ''}

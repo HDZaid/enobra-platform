@@ -26,3 +26,24 @@ test('normaliza rutas locales del mockup y URLs del Storage', () => {
   assert.equal(newsImageUrl('javascript:alert(1)'), '');
   assert.equal(newsImageUrl('//invalid.example.com'), '');
 });
+
+
+test('acepta rutas relativas del backend y no depende del proveedor de Storage', () => {
+  assert.equal(newsImageUrl('/media/noticias/obra.webp'), '/media/noticias/obra.webp');
+  assert.equal(newsImageUrl(' /media/noticias/obra.webp '), '/media/noticias/obra.webp');
+  assert.equal(newsImageUrl('http://127.0.0.1:8000/media/obra.jpg'), 'http://127.0.0.1:8000/media/obra.jpg');
+  assert.equal(newsImageUrl('https://cdn.example.com/photo.webp?token=abc'), 'https://cdn.example.com/photo.webp?token=abc');
+});
+
+test('evita formatos de URL inválidos para imágenes remotas', () => {
+  assert.equal(newsImageUrl(null), '');
+  assert.equal(newsImageUrl('data:image/svg+xml;base64,AAA'), '');
+  assert.equal(newsImageUrl('javascript:alert(1)'), '');
+  assert.equal(newsImageUrl('https://user:password@example.com/image.webp'), '');
+  assert.equal(newsImageUrl('https://'), '');
+  assert.equal(newsImageUrl('\\\\evil.test/path.jpg'), '');
+});
+
+test('una imagen no definida se normaliza sin convertirse en texto', () => {
+  assert.equal(normalizeNews({ id: 'prueba', title: 'Prueba', image: null }).image, '');
+});
