@@ -5,6 +5,7 @@ import { PendingPage } from '../features/shared/pages/PendingPage.jsx';
 import { routePaths } from './routePaths.js';
 import { NewsPage } from '../features/news/pages/NewsPage.jsx';
 import { NewsDetailPage } from '../features/news/pages/NewsDetailPage.jsx';
+import { ContactPage } from '../features/contact/pages/ContactPage.jsx';
 
 // En esta fase son marcadores de ruta, no diseños definitivos.
 const publicPages = [
@@ -15,7 +16,6 @@ const publicPages = [
   { path: routePaths.projectDetail, title: 'Detalle del proyecto', owner: 'Geo' },
   { path: routePaths.properties, title: 'Bienes raíces', owner: 'Geo' },
   { path: routePaths.propertyDetail, title: 'Detalle de propiedad', owner: 'Geo' },
-  { path: routePaths.contact, title: 'Contacto', owner: 'Jennifer' },
 ];
 
 export const router = createBrowserRouter([
@@ -24,6 +24,7 @@ export const router = createBrowserRouter([
     children: [
       { path: routePaths.news, element: <NewsPage /> },
       { path: routePaths.newsDetail, element: <NewsDetailPage /> },
+      { path: routePaths.contact, element: <ContactPage /> },
       ...publicPages.map(({ path, title, owner }) => ({
         path,
         element: <PendingPage title={title} owner={owner} />,
