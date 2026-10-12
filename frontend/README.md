@@ -10,7 +10,7 @@ Node.js >= 20.19 o >= 22.12 y npm. Desde la raíz del repositorio:
 
 ```bash
 cd frontend
-npm install
+npm ci
 npm run dev
 ```
 
@@ -22,10 +22,14 @@ npm run lint
 npm run build
 ```
 
-El repositorio no incorpora `node_modules` ni tokens. Al hacer `npm install` se generará `package-lock.json`, que debe incluirse en el primer PR que instale dependencias para permitir `npm ci` reproducible.
+El repositorio incluye `package-lock.json` para instalar dependencias con `npm ci`.
+No incorpora `node_modules` ni tokens. Usa `npm install` cuando agregues o actualices
+dependencias y versiona también los cambios del lockfile.
 
 ## API
 
+- El servidor Django está en [`../backend/`](../backend/README.md); se ejecuta en otra terminal.
+- El contrato compartido está en [`../docs/openapi.yaml`](../docs/openapi.yaml).
 - Prefijo predeterminado: `/api/v1`, configurable con `VITE_API_BASE_URL` en `.env.local`.
 - Vite redirige `/api` a Django en `http://127.0.0.1:8000` durante desarrollo.
 - La API responde con `{count,page,page_size,results}` en listados y `{error:{code,message,details}}` en errores.
