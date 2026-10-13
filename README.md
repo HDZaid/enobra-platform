@@ -40,6 +40,9 @@ enobra-platform/
 │   ├── vite.config.js
 │   └── README.md             # Desarrollo y reparto de módulos
 ├── docs/
+│   ├── README.md             # Índice de documentación
+│   ├── reglas-desarrollo.md  # Equipo, contratos y flujo de colaboración
+│   ├── infraestructura.md    # Propuesta de despliegue, sujeta a cambios
 │   └── openapi.yaml          # Contrato compartido entre backend y frontend
 ├── .gitignore
 └── README.md
@@ -118,3 +121,11 @@ migraciones en esta fase. El frontend contiene rutas, servicios HTTP y pantallas
 
 Consulta [la documentación del backend](backend/README.md),
 [la del frontend](frontend/README.md) y [el contrato OpenAPI](docs/openapi.yaml).
+
+## Trabajo en equipo
+
+Somos seis integrantes (tres de backend y tres de frontend), coordinados mediante
+contratos. Consulta las [reglas y responsables](docs/reglas-desarrollo.md) y la
+[propuesta de infraestructura](docs/infraestructura.md): Cloudflare Pages para el
+frontend con dominio `.gt`, Cloudflare R2 para imágenes y Render para Django.
+Las asignaciones no restringen las contribuciones y todos los acuerdos están sujetos a cambios.

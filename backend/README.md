@@ -1,5 +1,9 @@
 # EnObra · Backend (contratos de la API)
 
+El equipo se coordina mediante las [reglas de desarrollo](../docs/reglas-desarrollo.md).
+La [infraestructura propuesta](../docs/infraestructura.md) contempla Render para Django
+y Cloudflare R2 para imágenes; las decisiones y el reparto de responsables son revisables.
+
 Backend en **Django + Django REST Framework** para el sitio de **EnObra** (constructora y bienes raíces,
 Quetzaltenango, Guatemala). Está basado en el mockup `MockUp---enObra` (HTML/CSS/JS puro con datos locales)
 y define **únicamente los contratos**: endpoints, serializers (entrada/salida/validaciones), permisos,

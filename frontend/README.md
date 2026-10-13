@@ -41,17 +41,24 @@ dependencias y versiona también los cambios del lockfile.
 
 | Persona | Módulo | Rutas públicas |
 | --- | --- | --- |
-| Leo | Inicio, Nosotros, Servicios, layout visual | `/`, `/nosotros`, `/servicios` |
-| Geo | Proyectos y Bienes raíces, detalles | `/proyectos`, `/bienes-raices` |
-| Jennifer | Noticias, Contacto, panel y auth del frontend | `/noticias`, `/contacto`, `/admin` |
+| Leo (@Leonor-Rosales) | Inicio, Nosotros, Servicios, layout visual | `/`, `/nosotros`, `/servicios` |
+| Geo (@g4usSi) | Proyectos y Bienes raíces, detalles | `/proyectos`, `/bienes-raices` |
+| Jennifer (@Jeidy25Saquic) | Noticias, Contacto, panel y auth del frontend | `/noticias`, `/contacto`, `/admin` |
 
-El panel será compartido: **cada persona implementará los formularios de administración de su propio módulo**. Los archivos de configuración (`src/app/`, `src/components/layout/`, `src/styles/`) requieren revisión cruzada antes de modificarse.
+El panel será compartido: **cada persona implementará los formularios de administración de su propio módulo**. Los cambios en archivos compartidos (`src/app/`, `src/components/layout/`, `src/styles/`) se coordinan y revisan entre las personas afectadas. Las asignaciones son orientativas: cualquier integrante puede contribuir a otros módulos.
+
+El equipo completo tiene tres integrantes de frontend y tres de backend. Las
+[reglas compartidas](../docs/reglas-desarrollo.md) identifican responsables, contratos
+y flujo de ramas. Todo está sujeto a cambios por acuerdo del equipo.
 
 ## Rutas y mockup
 
 Las rutas de React se definen en `src/app/router.jsx` y `src/app/routePaths.js`. Se usan rutas limpias (`/noticias`) en lugar de archivos `.html`. Para migrar, conservar el contenido y aspecto del mockup original `MockUp---enObra`, sin copiar el `localStorage` como fuente permanente de contenido. El contenido administrable debe provenir de la API.
 
-Los archivos del mockup y sus recursos originales **no se incorporan a esta base**. Cada módulo migrará sus páginas y recursos al trabajar su fase visual. No se ha elegido el proveedor de Storage.
+La base inicial no incluía los archivos del mockup ni sus recursos. Las ramas de módulos
+pueden incorporarlos al migrar sus páginas, identificando los recursos de demostración.
+Cloudflare R2 es la [propuesta de almacenamiento](../docs/infraestructura.md), todavía
+sujeta a cambios y pendiente de implementación.
 
 ## Siguiente fase
 
