@@ -8,7 +8,7 @@ from apps.common.serializers import ErrorSerializer
 from .interfaces import CompanyRepository, InstitutionRepository
 from .serializers import CompanySerializer, InstitutionSerializer
 
-ERR = {401: ErrorSerializer, 403: ErrorSerializer}
+ERR = {400: ErrorSerializer, 401: ErrorSerializer, 403: ErrorSerializer}
 
 
 class CompanyView(APIView):

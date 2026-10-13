@@ -87,6 +87,6 @@ class ProjectDetailView(APIView):
 
     @extend_schema(responses={204: None, 404: ErrorSerializer}, tags=TAG, summary="Eliminar proyecto (admin)")
     def delete(self, request, project_id: str):
-        if not resolve(ProjectRepository).delete(project_id):
+        if not resolve(ProjectRepository).delete(project_id, deleted_by=request.user.id):
             raise NotFound("Proyecto no encontrado.")
         return Response(status=status.HTTP_204_NO_CONTENT)

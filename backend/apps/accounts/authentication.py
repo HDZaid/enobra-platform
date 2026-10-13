@@ -17,10 +17,14 @@ class BearerTokenAuthentication(BaseAuthentication):
             return None
         if parts[0].lower() != self.keyword or len(parts) != 2:
             raise AuthenticationFailed("Encabezado Authorization inválido. Usa: Bearer <token>.")
-        principal = resolve(AuthService).verify_access_token(parts[1].decode())
+        try:
+            token = parts[1].decode("ascii")
+        except UnicodeDecodeError:
+            raise AuthenticationFailed("Token inválido.") from None
+        principal = resolve(AuthService).verify_access_token(token)
         if principal is None:
             raise AuthenticationFailed("Token inválido o expirado.")
-        return principal, parts[1].decode()
+        return principal, token
 
     def authenticate_header(self, request):
         return "Bearer"

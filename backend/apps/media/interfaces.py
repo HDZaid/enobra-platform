@@ -9,7 +9,7 @@ class MediaStorage(ABC):
     Almacenamiento de imágenes subidas desde el panel (fotos, renders, portada de noticia, logo).
     Reemplaza las imágenes en base64 dentro de localStorage/data.js del mockup.
     Implementación esperada: disco local en desarrollo; S3/Cloud Storage/CDN en producción.
-    Videos: NO se suben; se referencian por URL HTTPS (MP4/WebM).
+    Videos: NO se suben; únicamente se referencian mediante enlaces de YouTube.
     """
 
     @abstractmethod
@@ -20,4 +20,4 @@ class MediaStorage(ABC):
     def get(self, media_id: str) -> Optional[dict]: ...
 
     @abstractmethod
-    def delete(self, media_id: str) -> bool: ...
+    def delete(self, media_id: str, *, deleted_by: str | None = None) -> bool: ...

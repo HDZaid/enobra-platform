@@ -1,10 +1,10 @@
 import re
+from urllib.parse import urlsplit, parse_qs
 
 from rest_framework import serializers
 
 _HTTPS = re.compile(r"^https://\S+$", re.I)
 _MEDIA_PATH = re.compile(r"^/media/[\w./-]+$")
-_VIDEO = re.compile(r"^(https://\S+|/media/[\w./-]+)\.(mp4|webm)(\?\S*)?$", re.I)
 
 
 class MediaReferenceField(serializers.CharField):
@@ -22,19 +22,36 @@ class MediaReferenceField(serializers.CharField):
 
 
 class VideoReferenceField(serializers.CharField):
-    """Video MP4/WebM por URL HTTPS o ruta /media/... Cadena vacía = sin video."""
+    """Enlace HTTPS de YouTube. Cadena vacía = sin video."""
 
     def __init__(self, **kwargs):
         kwargs.setdefault("allow_blank", True)
         kwargs.setdefault("required", False)
         kwargs.setdefault("default", "")
         kwargs.setdefault("max_length", 500)
+        kwargs.setdefault("help_text", "Enlace HTTPS de YouTube; cadena vacía para quitar el video.")
         super().__init__(**kwargs)
 
     def to_internal_value(self, data):
         value = super().to_internal_value(data)
-        if value and not _VIDEO.match(value):
-            raise serializers.ValidationError("El video debe ser MP4 o WebM (URL HTTPS o ruta /media/…).")
+        if not value:
+            return value
+        try:
+            url = urlsplit(value)
+            video_id = ""
+            if url.scheme == "https" and not url.username and not url.password and url.port in (None, 443):
+                if url.hostname in ("youtube.com", "www.youtube.com", "m.youtube.com"):
+                    if url.path == "/watch":
+                        video_id = parse_qs(url.query).get("v", [""])[0]
+                    elif url.path.startswith(("/embed/", "/shorts/")):
+                        video_id = url.path.split("/")[-1]
+                elif url.hostname == "youtu.be":
+                    video_id = url.path[1:]
+            valid = re.fullmatch(r"[A-Za-z0-9_-]{11}", video_id)
+        except ValueError:
+            valid = False
+        if not valid:
+            raise serializers.ValidationError("Usa un enlace HTTPS válido de YouTube.")
         return value
 
 

@@ -63,6 +63,6 @@ class NewsDetailView(APIView):
 
     @extend_schema(responses={204: None, 404: ErrorSerializer}, tags=TAG, summary="Eliminar noticia (admin)")
     def delete(self, request, news_id: str):
-        if not resolve(NewsRepository).delete(news_id):
+        if not resolve(NewsRepository).delete(news_id, deleted_by=request.user.id):
             raise NotFound("Publicación no encontrada.")
         return Response(status=status.HTTP_204_NO_CONTENT)

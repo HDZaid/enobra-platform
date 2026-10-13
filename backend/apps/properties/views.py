@@ -93,6 +93,6 @@ class PropertyDetailView(APIView):
 
     @extend_schema(responses={204: None, 404: ErrorSerializer}, tags=TAG, summary="Eliminar propiedad (admin)")
     def delete(self, request, property_id: int):
-        if not resolve(PropertyRepository).delete(property_id):
+        if not resolve(PropertyRepository).delete(property_id, deleted_by=request.user.id):
             raise NotFound("Propiedad no encontrada.")
         return Response(status=status.HTTP_204_NO_CONTENT)

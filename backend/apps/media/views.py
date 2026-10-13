@@ -49,6 +49,6 @@ class MediaDetailView(APIView):
 
     @extend_schema(responses={204: None, 404: ErrorSerializer, **ERR}, tags=TAG, summary="Eliminar imagen")
     def delete(self, request, media_id: str):
-        if not resolve(MediaStorage).delete(media_id):
+        if not resolve(MediaStorage).delete(media_id, deleted_by=request.user.id):
             raise NotFound("Archivo no encontrado.")
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -1,4 +1,9 @@
-# EnObra · Backend (contratos de la API)
+# EnObra · Backend
+
+El panel administrativo ya tiene implementaciones ORM de autenticación, proyectos,
+propiedades, noticias, empresa, textos institucionales, solicitudes e imágenes.
+Consulta [implementación, mapeo y pruebas](../docs/admin-backend.md) para el estado
+actual y los requisitos. Servicios y búsqueda siguen pendientes (`501`).
 
 El equipo se coordina mediante las [reglas de desarrollo](../docs/reglas-desarrollo.md).
 La [infraestructura](../docs/infraestructura.md) fija PostgreSQL en Supabase y contempla
@@ -6,15 +11,15 @@ Render para Django. El proveedor de fotos/renders está pendiente; R2 es solo un
 
 Backend en **Django + Django REST Framework** para el sitio de **EnObra** (constructora y bienes raíces,
 Quetzaltenango, Guatemala). Está basado en el mockup `MockUp---enObra` (HTML/CSS/JS puro con datos locales)
-y define **únicamente los contratos**: endpoints, serializers (entrada/salida/validaciones), permisos,
-errores e **interfaces de persistencia**.
+y conserva los contratos: endpoints, serializers (entrada/salida/validaciones), permisos,
+errores e interfaces, con implementaciones ORM del panel administrativo.
 
 > **Estado actual**
 > - ✅ Contratos HTTP (rutas, métodos, parámetros, validaciones, códigos de estado, permisos).
 > - ✅ Interfaces abstractas de datos (`interfaces.py` en cada app) donde se acoplará la base de datos.
 > - ✅ Esquema OpenAPI generado: [`docs/openapi.yaml`](../docs/openapi.yaml), compartido desde la raíz del repositorio.
 > - ✅ Conexión a PostgreSQL en Supabase configurable mediante `DATABASE_URL`.
-> - ❌ Aún no hay modelos ni repositorios concretos para las tablas existentes.
+> - ✅ Modelos no administrados y repositorios concretos del panel sobre las tablas existentes.
 > - ✅ **Frontend separado**: la base React está en [`../frontend/`](../frontend/README.md) y consume este contrato; sus pantallas todavía son provisionales.
 >
 > Mientras una interfaz no tenga implementación registrada, su endpoint responde `501 not_implemented`.
@@ -54,7 +59,7 @@ En los ejemplos posteriores, `python` se refiere al intérprete de este entorno.
 ## Arquitectura: contrato → interfaz → implementación
 
 ```
-Request ─► View (valida con Serializer) ─► resolve(Interface) ─► Implementación (BD, futura)
+Request ─► View (valida con Serializer) ─► resolve(Interface) ─► Implementación ORM
                                                   ▲
                                    config/bindings.py  (único punto de acople)
 ```
@@ -110,10 +115,8 @@ El contrato OpenAPI está en `../docs/openapi.yaml` y las reglas de Git en `../.
 - **IDs:** propiedades → entero; proyectos, noticias y servicios → *slug* de texto (como en el mockup).
 - **Imágenes:** URL HTTPS o ruta `/media/…` devuelta por `POST /admin/media/`. Se **rechazan** imágenes en base64
   (el mockup las guardaba así en `localStorage`; en producción se suben como archivo).
-- **Video:** únicamente enlace de YouTube; no se suben ni alojan archivos de video por la API.
-  **Pendiente de alineación:** `docs/openapi.yaml` y `apps/common/fields.py` aún aceptan
-  referencias más amplias (`/media/` y MP4/WebM); ambos deben ajustarse coordinadamente
-  en una fase posterior, sin cambiar la regla de YouTube únicamente.
+- **Video:** únicamente enlace HTTPS de YouTube; validado en Django y documentado
+  en OpenAPI. No se suben ni alojan archivos de video por la API.
 - **Límite de imagen:** `MEDIA_MAX_UPLOAD_BYTES` (10 MB por defecto; el mockup limitaba a 2 MB por el `localStorage`).
 - **Rate limit:** login `5/min`; formularios públicos `10/hora` por IP.
 
@@ -212,7 +215,7 @@ normaliza) · fecha de visita **hoy o futura** · campo honeypot `website` (debe
 
 | En el mockup | En el backend |
 | --- | --- |
-| `data.js` + `store.js` (`localStorage`) | Interfaces de repositorio + BD compartida (a acoplar). |
+| `data.js` + `store.js` (`localStorage`) | Repositorios ORM + BD compartida para el panel. |
 | Panel `admin.html` con "perfiles de demostración" (sin contraseña) | `/auth/*` con **dos cuentas reales** (Ing. Bernardo y la Arquitecta) y autorización en servidor. |
 | Alta/edición/baja de proyectos, propiedades y noticias | CRUD protegido por rol admin. |
 | Fotos en base64 dentro de `localStorage`/`data.js` | `POST /admin/media/` + URLs. |
@@ -224,13 +227,13 @@ normaliza) · fecha de visita **hoy o futura** · campo honeypot `website` (debe
 
 ---
 
-## Cómo acoplar las tablas existentes (siguiente fase)
+## Cómo acoplar las interfaces que siguen pendientes
 
 PostgreSQL en Supabase es la base definitiva. `config/settings.py` lee `DATABASE_URL`; si está
 vacía deja `DATABASES = {}`. El acceso oficial es Django ORM y React consume solo la API Django.
 
-1. Crear modelos en un paquete de persistencia (por ejemplo `persistence/models/`) con
-   `Meta.managed = False` y `db_table` explícito. No crear estas tablas mediante migraciones.
+1. Reutilizar los modelos de `persistence/models/`, con `Meta.managed = False` y
+   `db_table` explícito. No crear estas tablas mediante migraciones.
 2. Mapear relaciones mediante `ForeignKey(..., db_column=...)` de acuerdo con las claves
    existentes, sin alterar el esquema remoto.
 3. Implementar cada interfaz de `apps/*/interfaces.py`:
