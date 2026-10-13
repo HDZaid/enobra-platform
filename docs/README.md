@@ -5,8 +5,8 @@ las decisiones se revisan gradualmente y se actualizan junto con el código afec
 
 - [Reglas de desarrollo y responsables](reglas-desarrollo.md): equipo, contratos,
   ramas, revisiones y criterios de entrega.
-- [Propuesta de infraestructura](infraestructura.md): Cloudflare Pages, Cloudflare R2,
-  Render y decisiones todavía pendientes.
+- [Infraestructura](infraestructura.md): PostgreSQL en Supabase como decisión y propuestas
+  todavía pendientes para despliegue y almacenamiento de imágenes (entre ellas R2).
 - [Contrato OpenAPI](openapi.yaml): referencia HTTP para backend y frontend.
 - [Backend](../backend/README.md) y [frontend](../frontend/README.md): instalación y desarrollo.
 

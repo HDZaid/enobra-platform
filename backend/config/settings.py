@@ -1,13 +1,13 @@
 """
 Configuración de EnObra API.
 
-IMPORTANTE: este proyecto define SOLO contratos. No hay base de datos configurada,
-ni django.contrib.auth / sessions / admin (todos requieren BD). Cuando se acople la
-base de datos se añadirá DATABASES y la capa de persistencia (ver README).
+La conexión a PostgreSQL se activa mediante DATABASE_URL. La persistencia de las
+tablas existentes se incorporará detrás de las interfaces de repositorio.
 """
 import os
 from pathlib import Path
 
+import dj_database_url
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_spectacular",
     "corsheaders",
+    "persistence.apps.PersistenceConfig",
     # Apps de dominio (solo contratos)
     "apps.common.apps.CommonConfig",
     "apps.accounts",
@@ -58,8 +59,17 @@ TEMPLATES = [
     }
 ]
 
-# Sin base de datos todavía (se acopla después). Django usará el backend "dummy".
-DATABASES: dict = {}
+DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
+DATABASES = (
+    {
+        "default": dj_database_url.parse(
+            DATABASE_URL,
+            engine="django.db.backends.postgresql",
+        )
+    }
+    if DATABASE_URL
+    else {}
+)
 
 LANGUAGE_CODE = "es"
 TIME_ZONE = "America/Guatemala"

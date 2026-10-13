@@ -14,7 +14,7 @@ enobra-platform/
 │   │   ├── common/           # Utilidades compartidas del backend
 │   │   ├── company/          # Empresa e información institucional
 │   │   ├── inquiries/        # Solicitudes de contacto y visitas
-│   │   ├── media/            # Contratos de subida de archivos
+│   │   ├── media/            # Contratos de medios
 │   │   ├── news/             # Noticias
 │   │   ├── projects/         # Proyectos
 │   │   ├── properties/       # Bienes raíces
@@ -84,9 +84,12 @@ Vite ya redirige `/api` al backend durante desarrollo.
 
 - **Backend:** código Python, validaciones, permisos y futuras implementaciones de persistencia.
   Su archivo local `backend/.env` se carga automáticamente; las variables del sistema tienen prioridad.
+  Usa PostgreSQL alojado en Supabase mediante `DATABASE_URL` y accede a las tablas existentes
+  exclusivamente con Django ORM. No se crean esas tablas con migraciones de Django.
 - **Frontend:** componentes, rutas, estilos y peticiones HTTP. Para cambiar la URL de la API,
   copia `frontend/.env.example` a `frontend/.env.local` y ajusta `VITE_API_BASE_URL`.
-  Las variables `VITE_*` son públicas: no deben contener secretos.
+  Las variables `VITE_*` son públicas: no deben contener secretos. React nunca se conecta
+  directamente a Supabase/PostgreSQL: consume únicamente la API de Django.
 - **Documentación compartida:** contratos y acuerdos entre ambas aplicaciones en `docs/`.
 - **Despliegue:** ejecuta Django desde `backend/` usando `config.wsgi:application` o
   `config.asgi:application`. El resultado de compilar React está en `frontend/dist/`.
@@ -115,9 +118,11 @@ npm run build
 
 ## Estado actual
 
-La API define contratos e interfaces, pero todavía no tiene persistencia configurada.
-Los endpoints sin implementación responden `501 not_implemented`; no es necesario ejecutar
-migraciones en esta fase. El frontend contiene rutas, servicios HTTP y pantallas provisionales.
+La API define contratos e interfaces y ya admite configurar la conexión a PostgreSQL mediante
+`DATABASE_URL`; los modelos y repositorios todavía están pendientes. Los endpoints sin
+implementación responden `501 not_implemented`. Las tablas de negocio ya existen y deben
+mapearse sin `makemigrations`/`migrate`. El frontend contiene rutas, servicios HTTP y pantallas
+provisionales.
 
 Consulta [la documentación del backend](backend/README.md),
 [la del frontend](frontend/README.md) y [el contrato OpenAPI](docs/openapi.yaml).
@@ -127,5 +132,6 @@ Consulta [la documentación del backend](backend/README.md),
 Somos seis integrantes (tres de backend y tres de frontend), coordinados mediante
 contratos. Consulta las [reglas y responsables](docs/reglas-desarrollo.md) y la
 [propuesta de infraestructura](docs/infraestructura.md): Cloudflare Pages para el
-frontend con dominio `.gt`, Cloudflare R2 para imágenes y Render para Django.
+frontend con dominio `.gt` y Render para Django. El proveedor de fotos/renders sigue
+pendiente; Cloudflare R2 es solo una propuesta.
 Las asignaciones no restringen las contribuciones y todos los acuerdos están sujetos a cambios.

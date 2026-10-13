@@ -1,8 +1,8 @@
 # EnObra · Backend (contratos de la API)
 
 El equipo se coordina mediante las [reglas de desarrollo](../docs/reglas-desarrollo.md).
-La [infraestructura propuesta](../docs/infraestructura.md) contempla Render para Django
-y Cloudflare R2 para imágenes; las decisiones y el reparto de responsables son revisables.
+La [infraestructura](../docs/infraestructura.md) fija PostgreSQL en Supabase y contempla
+Render para Django. El proveedor de fotos/renders está pendiente; R2 es solo una propuesta.
 
 Backend en **Django + Django REST Framework** para el sitio de **EnObra** (constructora y bienes raíces,
 Quetzaltenango, Guatemala). Está basado en el mockup `MockUp---enObra` (HTML/CSS/JS puro con datos locales)
@@ -13,7 +13,8 @@ errores e **interfaces de persistencia**.
 > - ✅ Contratos HTTP (rutas, métodos, parámetros, validaciones, códigos de estado, permisos).
 > - ✅ Interfaces abstractas de datos (`interfaces.py` en cada app) donde se acoplará la base de datos.
 > - ✅ Esquema OpenAPI generado: [`docs/openapi.yaml`](../docs/openapi.yaml), compartido desde la raíz del repositorio.
-> - ❌ **Sin base de datos**: no hay modelos, migraciones ni `DATABASES`. La BD se acopla después.
+> - ✅ Conexión a PostgreSQL en Supabase configurable mediante `DATABASE_URL`.
+> - ❌ Aún no hay modelos ni repositorios concretos para las tablas existentes.
 > - ✅ **Frontend separado**: la base React está en [`../frontend/`](../frontend/README.md) y consume este contrato; sus pantallas todavía son provisionales.
 >
 > Mientras una interfaz no tenga implementación registrada, su endpoint responde `501 not_implemented`.
@@ -45,7 +46,8 @@ En los ejemplos posteriores, `python` se refiere al intérprete de este entorno.
 - Regenerar el archivo del contrato desde `backend/`: `python manage.py spectacular --file ../docs/openapi.yaml --validate`
 - Salud del servicio: `GET /api/v1/health/`
 
-> No se ejecutan `migrate` ni `createsuperuser`: no hay base de datos ni `django.contrib.auth`/admin.
+> No ejecutar `makemigrations`/`migrate` para crear las tablas de negocio: ya existen en Supabase
+> y se mapearán con modelos `managed=False`. Tampoco se usa `createsuperuser` en esta fase.
 
 ---
 
@@ -108,7 +110,10 @@ El contrato OpenAPI está en `../docs/openapi.yaml` y las reglas de Git en `../.
 - **IDs:** propiedades → entero; proyectos, noticias y servicios → *slug* de texto (como en el mockup).
 - **Imágenes:** URL HTTPS o ruta `/media/…` devuelta por `POST /admin/media/`. Se **rechazan** imágenes en base64
   (el mockup las guardaba así en `localStorage`; en producción se suben como archivo).
-- **Video:** solo referencia (URL HTTPS o `/media/…`) a `.mp4`/`.webm`; no se sube por la API.
+- **Video:** únicamente enlace de YouTube; no se suben ni alojan archivos de video por la API.
+  **Pendiente de alineación:** `docs/openapi.yaml` y `apps/common/fields.py` aún aceptan
+  referencias más amplias (`/media/` y MP4/WebM); ambos deben ajustarse coordinadamente
+  en una fase posterior, sin cambiar la regla de YouTube únicamente.
 - **Límite de imagen:** `MEDIA_MAX_UPLOAD_BYTES` (10 MB por defecto; el mockup limitaba a 2 MB por el `localStorage`).
 - **Rate limit:** login `5/min`; formularios públicos `10/hora` por IP.
 
@@ -130,7 +135,7 @@ Prefijo `/api/v1`. 🔓 = público · 🔒 = requiere token admin.
 ### Empresa
 | Método | Ruta | Acceso | Descripción |
 | --- | --- | --- | --- |
-| GET / PUT | `/company/` | 🔓 / 🔒 | Contacto y marca: nombre, responsable, dirección, teléfonos, WhatsApp, correo, redes, dominio, logo. |
+| GET / PUT | `/company/` | 🔓 / 🔒 | Contacto y marca; las redes se respaldan con filas de `red_social`. |
 | GET / PUT | `/institution/` | 🔓 / 🔒 | "Nosotros": presentación, firma, cargo, visión, misión, principios. |
 
 ### Servicios (solo lectura)
@@ -219,10 +224,15 @@ normaliza) · fecha de visita **hoy o futura** · campo honeypot `website` (debe
 
 ---
 
-## Cómo acoplar la base de datos (siguiente fase)
+## Cómo acoplar las tablas existentes (siguiente fase)
 
-1. Elegir motor (p. ej. PostgreSQL) y configurar `DATABASES` en `config/settings.py` (variable `DATABASE_URL`).
-2. Crear los modelos y migraciones en un paquete de persistencia (por ejemplo `persistence/`), **sin modificar** serializers ni vistas.
+PostgreSQL en Supabase es la base definitiva. `config/settings.py` lee `DATABASE_URL`; si está
+vacía deja `DATABASES = {}`. El acceso oficial es Django ORM y React consume solo la API Django.
+
+1. Crear modelos en un paquete de persistencia (por ejemplo `persistence/models/`) con
+   `Meta.managed = False` y `db_table` explícito. No crear estas tablas mediante migraciones.
+2. Mapear relaciones mediante `ForeignKey(..., db_column=...)` de acuerdo con las claves
+   existentes, sin alterar el esquema remoto.
 3. Implementar cada interfaz de `apps/*/interfaces.py`:
    `AuthService`, `CompanyRepository`, `InstitutionRepository`, `ServiceRepository`, `ProjectRepository`,
    `PropertyRepository`, `NewsRepository`, `InquiryRepository`, `SearchRepository`, `MediaStorage`.
@@ -235,6 +245,14 @@ normaliza) · fecha de visita **hoy o futura** · campo honeypot `website` (debe
    (contraseñas con Argon2/PBKDF2; JWT de acceso corto + refresh revocable).
 6. Si algo del contrato debe cambiar, hacerlo en serializers/interfaces y regenerar `../docs/openapi.yaml`.
 
+Las 20 tablas esperadas son: `rol`, `permiso`, `usuario`, `usuario_rol`, `rol_permiso`,
+`servicio`, `contenido_pagina`, `categoria_proyecto`, `proyecto`, `proyecto_video`,
+`tipo_propiedad`, `tipo_operacion`, `propiedad`, `propiedad_video`, `categoria_noticia`,
+`noticia`, `configuracion_sitio`, `red_social`, `mensaje_contacto` e `historial_actividad`.
+`red_social` evita columnas fijas; `historial_actividad` registra auditoría administrativa;
+un mensaje atendido permanece en `mensaje_contacto` y cambia de estado. Los favoritos siguen
+en `localStorage` del frontend.
+
 Responsabilidades que le tocan a la capa de datos: generar `id` (slug único para proyectos/noticias),
 rellenar `created_at`/`updated_at`/`updated_by`, aplicar el filtro `published` según `include_unpublished`,
 búsqueda sin tildes, y notificar a la empresa (correo/WhatsApp) cuando llegue una solicitud.
@@ -243,9 +261,10 @@ búsqueda sin tildes, y notificar a la empresa (correo/WhatsApp) cuando llegue u
 
 ## Pendientes del cliente (heredados del mockup)
 
-Logo oficial · correo institucional · URLs de Instagram/Facebook · dominio definitivo · nombre y correo de la
+Logo oficial · correo institucional · URLs de redes sociales · dominio definitivo · nombre y correo de la
 arquitecta (cuenta real) · confirmación de teléfonos/dirección · contenido real de proyectos, propiedades y noticias.
-Los campos correspondientes ya existen en el contrato y aceptan vacío (`email`, `instagram`, `facebook`, `domain`, `logo`).
+Los datos generales aceptan valores pendientes; las redes deben exponerse como una colección respaldada por
+`red_social`. El contrato OpenAPI todavía conserva campos fijos y debe corregirse en una fase coordinada.
 
 ## Seguridad (a respetar al implementar)
 

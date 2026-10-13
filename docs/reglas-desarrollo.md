@@ -33,12 +33,15 @@ obligatorias de una persona específica.
 ## Organización del repositorio
 
 - `backend/`: Django, configuración, contratos, validaciones, permisos y futuras
-  implementaciones de persistencia. Los comandos de Django se ejecutan desde aquí.
+  implementaciones de persistencia. Django ORM es el acceso oficial a PostgreSQL en
+  Supabase; los comandos de Django se ejecutan desde aquí.
 - `frontend/`: React, rutas, componentes, estilos, servicios HTTP y pruebas del cliente.
+  React consume la API de Django y nunca accede directamente a Supabase/PostgreSQL.
 - `docs/`: contratos y acuerdos compartidos; cada aplicación conserva su README técnico.
 - Entornos virtuales, `node_modules`, archivos `.env`, builds y credenciales son locales
   o del proveedor de despliegue y no se versionan. Se versionan los `.env.example`,
-  el lockfile de npm y las migraciones cuando se incorpore la base de datos.
+  el lockfile de npm. Las tablas de negocio actuales ya existen: se mapean con modelos
+  no administrados y no se usa `makemigrations`/`migrate` para crearlas.
 
 ## Trabajo mediante contratos
 
@@ -150,6 +153,15 @@ Comprobaciones antes de integrar cambios que afecten código:
 
 Un build correcto no sustituye la prueba funcional. No declarar persistencia, subidas,
 autenticación o despliegues completos si solamente existe el contrato o una demostración.
+
+## Acuerdos de datos vigentes
+
+- Los videos son únicamente enlaces de YouTube; no se almacenan archivos de video.
+- Las redes sociales se representan con filas de `red_social`, no con columnas fijas.
+- Los favoritos permanecen en el frontend (`localStorage`).
+- La auditoría administrativa se registra en `historial_actividad` y los mensajes atendidos
+  conservan su fila en `mensaje_contacto`, actualizando su estado.
+- El proveedor para fotos y renders está pendiente; Cloudflare R2 es una propuesta, no una decisión.
 
 ## Cambios en los acuerdos
 

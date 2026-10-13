@@ -6,16 +6,17 @@ Este documento no crea servicios, configura DNS ni activa despliegues.
 | Componente | Proveedor propuesto | Responsabilidad |
 | --- | --- | --- |
 | Frontend | Cloudflare Pages | Publicar el build de React/Vite y conectarlo al dominio `.gt` que se elija. |
-| Imágenes del catálogo | Cloudflare R2 | Almacenar los objetos de imágenes y servir sus URLs según la política acordada. |
+| Fotos y renders | Pendiente (R2 es una propuesta) | Almacenar imágenes y servir sus URLs según la política que se acuerde. |
 | Backend | Render | Ejecutar Django y exponer la API HTTPS. |
-| Base de datos | Pendiente | Persistir catálogo, usuarios y solicitudes; motor, proveedor, respaldos y acceso por decidir. |
+| Base de datos | PostgreSQL en Supabase | Persistir las 20 tablas existentes; Django ORM es el acceso oficial. |
 
 ## Flujo propuesto
 
 El navegador descarga React desde Pages, consulta la API de Django en Render y muestra
 las imágenes usando las URLs devueltas por la API. Django coordina la autorización,
-validación y persistencia de los datos y el almacenamiento de archivos en R2.
-R2 almacena archivos; no reemplaza la base de datos de la aplicación.
+validación y persistencia mediante su ORM. React nunca usa directamente Supabase/PostgreSQL.
+El proveedor de imágenes se integrará en Django cuando se elija; R2 sigue siendo una opción.
+Los videos se conservan únicamente como enlaces de YouTube.
 
 ## Frontend en Cloudflare Pages
 
@@ -47,22 +48,23 @@ y [comportamiento SPA](https://developers.cloudflare.com/pages/configuration/ser
 - Configurar secretos en el proveedor, `DJANGO_DEBUG=false`, hosts permitidos y
   `CORS_ALLOWED_ORIGINS` con los orígenes concretos del frontend. Acordar también
   cómo se autorizan los entornos de vista previa.
-- Usar `/api/v1/health/` para comprobar el servicio. Cuando exista persistencia,
-  definir migraciones, conexión a la base de datos y comprobaciones de disponibilidad.
+- Usar `/api/v1/health/` para comprobar el servicio y configurar `DATABASE_URL` con la
+  conexión de Supabase. Las tablas existentes se mapean con Django ORM y `managed=False`;
+  no ejecutar `makemigrations`/`migrate` para crearlas.
 - No usar el disco local del servicio como almacenamiento definitivo de las imágenes.
 
 Referencias oficiales: [monorepos en Render](https://render.com/docs/monorepo-support)
 y [despliegue de Django](https://render.com/docs/deploy-django).
 
-## Imágenes en Cloudflare R2
+## Propuesta de imágenes en Cloudflare R2
 
 - El contrato actual recibe archivos en `POST /api/v1/admin/media/`, protegido para
-  administración. La propuesta inicial es implementar `MediaStorage` en el backend
+  administración. Si se elige R2, se implementaría `MediaStorage` en el backend
   para guardar en R2 y devolver metadatos y una URL HTTPS utilizable por el frontend.
 - Mantener claves de R2 en el backend. La UI no debe recibir credenciales del proveedor
   ni subir directamente a un bucket sin un flujo de autorización acordado.
 - Validar contenido real, tamaño y permisos en el backend. Guardar identificadores y
-  metadatos en la futura base de datos, no el contenido binario ni imágenes en base64.
+  metadatos en PostgreSQL cuando corresponda, no el contenido binario ni imágenes en base64.
 - Para imágenes públicas de catálogo, evaluar un dominio personalizado de medios.
   Habilitarlo hace accesibles los objetos correspondientes: decidir por separado
   cómo proteger imágenes privadas o borradores. Un nombre de archivo difícil de adivinar
@@ -80,11 +82,13 @@ y [URLs firmadas](https://developers.cloudflare.com/r2/api/s3/presigned-urls/).
 
 - Dominio `.gt` definitivo y, si procede, subdominios de API e imágenes.
 - Cuentas del equipo, personas que administran cada servicio y acceso compartido.
-- Base de datos, entornos, respaldos y recuperación.
+- Entornos, respaldos y recuperación de PostgreSQL en Supabase.
+- Proveedor definitivo y política de almacenamiento para fotos y renders.
 - Planes, límites, costos y disponibilidad antes de elegir servicios definitivos.
 - Rama de producción y estrategia de previews. Se propone `main` para releases y
   `develop` para integración; no se configura despliegue automático con este documento.
-- Implementación de persistencia, autenticación, servidor de producción y adaptador R2.
+- Implementación de modelos/repositorios, autenticación, servidor de producción y adaptador
+  del proveedor de imágenes que se seleccione.
 
 Los responsables coordinan estas decisiones, pero cualquier integrante puede proponer
 alternativas. Actualizar este documento y los ejemplos de entorno al cambiar la propuesta.
