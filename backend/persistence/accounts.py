@@ -10,7 +10,8 @@ from django.db import transaction
 from django.utils import timezone
 
 from apps.accounts.interfaces import AuthService, Principal
-from .models.access import Usuario
+from apps.common.enums import Role
+from .models.access import Permiso, Usuario
 from .models.content import ContenidoPagina
 from .support import read_data, write_data, normalized
 
@@ -22,10 +23,30 @@ class DjangoAuthService(AuthService):
 
     def _principal(self, user_id):
         user = Usuario.objects.filter(pk=user_id, estado="ACTIVO").first()
-        if user is None or not any(normalized(name) in ("admin", "administrador")
-                for name in user.roles.filter(estado=True).values_list("nombre", flat=True)):
+        if user is None:
             return None
-        return Principal(id=str(user.pk), name=user.nombre, email=user.correo)
+        active_roles = user.roles.filter(estado=True).order_by("pk")
+        role_names = tuple(active_roles.values_list("nombre", flat=True))
+        if not role_names:
+            return None
+        permissions = set(
+            Permiso.objects.filter(roles__in=active_roles)
+            .values_list("nombre", flat=True)
+            .distinct()
+        )
+        # Conserva las cuentas del esquema anterior mientras se migren a los permisos nuevos.
+        legacy_admin = any(normalized(name) in ("admin", "administrador") for name in role_names)
+        if legacy_admin:
+            permissions.add("admin.all")
+        primary_role = Role.ADMIN if legacy_admin else role_names[0]
+        return Principal(
+            id=str(user.pk),
+            name=user.nombre,
+            email=user.correo,
+            role=primary_role,
+            roles=role_names,
+            permissions=frozenset(permissions),
+        )
 
     def _token(self, user_id, session_id, kind, seconds):
         now = timezone.now()

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Optional
 
 from apps.common.enums import Role
@@ -15,14 +15,23 @@ class Principal:
     name: str
     email: str
     role: str = Role.ADMIN
+    roles: tuple[str, ...] = ()
+    permissions: frozenset[str] = field(default_factory=frozenset)
 
     is_authenticated = True
+
+    def has_permission(self, permission: str) -> bool:
+        # Compatibilidad temporal con los principals administrativos previos al RBAC.
+        return (
+            self.role == Role.ADMIN
+            or "admin.all" in self.permissions
+            or permission in self.permissions
+        )
 
 
 class AuthService(ABC):
     """
-    Contrato de autenticación. Implementación esperada: JWT (access corto + refresh)
-    con las dos cuentas reales de administración (Ing. Bernardo y la Arquitecta).
+    Contrato de autenticación. JWT con permisos efectivos derivados de roles activos.
     Las contraseñas SIEMPRE con hash (Argon2/PBKDF2); nunca en texto plano.
     """
 
@@ -41,3 +50,22 @@ class AuthService(ABC):
     @abstractmethod
     def verify_access_token(self, token: str) -> Optional[Principal]:
         """-> Principal o None si el token es inválido o expiró."""
+
+
+class AccessControlRepository(ABC):
+    """Persistencia de roles y permisos sobre las tablas existentes."""
+
+    @abstractmethod
+    def list_permissions(self) -> list[dict]: ...
+
+    @abstractmethod
+    def list_roles(self) -> list[dict]: ...
+
+    @abstractmethod
+    def get_role(self, role_id: int) -> Optional[dict]: ...
+
+    @abstractmethod
+    def create_role(self, data: dict, *, actor_id: str) -> dict: ...
+
+    @abstractmethod
+    def update_role(self, role_id: int, data: dict, *, actor_id: str) -> Optional[dict]: ...

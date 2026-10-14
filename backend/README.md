@@ -124,7 +124,7 @@ El contrato OpenAPI está en `../docs/openapi.yaml` y las reglas de Git en `../.
 
 ## Endpoints
 
-Prefijo `/api/v1`. 🔓 = público · 🔒 = requiere token admin.
+Prefijo `/api/v1`. 🔓 = público · 🔒 = requiere token; el permiso requerido depende de la ruta.
 
 ### Sistema y autenticación
 | Método | Ruta | Acceso | Descripción |
@@ -133,7 +133,27 @@ Prefijo `/api/v1`. 🔓 = público · 🔒 = requiere token admin.
 | POST | `/auth/login/` | 🔓 | `{email, password}` → `{access, refresh, expires_in, user}`. |
 | POST | `/auth/refresh/` | 🔓 | `{refresh}` → `{access, expires_in}`. |
 | POST | `/auth/logout/` | 🔓 | `{refresh}` → `204` (revoca el refresh). |
-| GET | `/auth/me/` | 🔒 | Usuario autenticado. |
+| GET | `/auth/me/` | 🔒 | Usuario autenticado con roles y permisos efectivos. |
+
+### Roles y permisos
+| Método | Ruta | Acceso | Descripción |
+| --- | --- | --- | --- |
+| GET | `/admin/permissions/` | `roles.manage` | Catálogo de permisos disponibles. |
+| GET / POST | `/admin/roles/` | `roles.manage` | Listar roles o crear uno con permisos existentes. |
+| GET / PATCH | `/admin/roles/{id}/` | `roles.manage` | Consultar o actualizar un rol. |
+
+Los roles iniciales se cargan con `python manage.py seed_access_control`; el comando es
+repetible y no crea cuentas. La política inicial es:
+
+| Rol | Permisos efectivos |
+| --- | --- |
+| Ingeniero | Todos; incluye usuarios, roles, auditoría y borrado permanente. |
+| Arquitecta | Crear/editar cualquier propiedad, publicar, usar papelera y restaurar. |
+| Empleado | Crear borradores propios, editarlos y enviarlos a papelera. |
+
+La tabla `propiedad` solo tiene el indicador `publicado`; aún no contiene estado de revisión.
+Por eso la API puede guardar borradores del empleado, pero el flujo formal de "enviar a revisión"
+requiere acordar cómo representarlo en la base confirmada.
 
 ### Empresa
 | Método | Ruta | Acceso | Descripción |
@@ -165,7 +185,10 @@ Prefijo `/api/v1`. 🔓 = público · 🔒 = requiere token admin.
 | GET | `/properties/{id}/` | 🔓 | Ficha comercial completa. |
 | POST | `/properties/` | 🔒 | Crear. |
 | PUT / PATCH | `/properties/{id}/` | 🔒 | Reemplazar / editar parcialmente. |
-| DELETE | `/properties/{id}/` | 🔒 | Eliminar. |
+| DELETE | `/properties/{id}/` | Según permiso | Enviar a papelera (empleado: solo borrador propio). |
+| GET | `/admin/properties/trash/` | Papelera propia o permiso para ver toda | Listar publicaciones en papelera. |
+| POST | `/admin/properties/{id}/restore/` | `properties.restore` | Restaurar una publicación. |
+| DELETE | `/admin/properties/{id}/permanent/` | `properties.delete_permanently` | Eliminar permanentemente desde papelera. |
 
 Filtros de `GET /properties/` (equivalen a los del mockup):
 
@@ -216,8 +239,8 @@ normaliza) · fecha de visita **hoy o futura** · campo honeypot `website` (debe
 | En el mockup | En el backend |
 | --- | --- |
 | `data.js` + `store.js` (`localStorage`) | Repositorios ORM + BD compartida para el panel. |
-| Panel `admin.html` con "perfiles de demostración" (sin contraseña) | `/auth/*` con **dos cuentas reales** (Ing. Bernardo y la Arquitecta) y autorización en servidor. |
-| Alta/edición/baja de proyectos, propiedades y noticias | CRUD protegido por rol admin. |
+| Panel `admin.html` con "perfiles de demostración" (sin contraseña) | `/auth/*` con autorización en servidor y permisos derivados de roles activos. |
+| Alta/edición/baja de propiedades | Permisos diferenciados para Ingeniero, Arquitecta y Empleado. |
 | Fotos en base64 dentro de `localStorage`/`data.js` | `POST /admin/media/` + URLs. |
 | Exportar/importar respaldo JSON y `data.js` | Ya no aplica: la BD es la fuente de verdad (los respaldos son de base de datos). |
 | Formularios con "envío simulado" (`CONECTAR API REAL AQUÍ`) | `POST /inquiries/contact/` y `/inquiries/visits/`. |

@@ -27,6 +27,8 @@ class PropertySerializer(AuditFieldsMixin):
     video = serializers.CharField(allow_blank=True)
     demo = serializers.BooleanField()
     published = serializers.BooleanField()
+    trashed_at = serializers.DateTimeField(required=False)
+    trashed_by = serializers.CharField(required=False, allow_null=True)
 
 
 class PropertyWriteSerializer(serializers.Serializer):

@@ -17,9 +17,9 @@ from rest_framework.test import APIClient
 
 from apps.accounts.interfaces import AuthService
 from apps.common.registry import resolve
-from persistence.models import (Usuario, Rol, UsuarioRol, HistorialActividad, Proyecto,
-    Propiedad, Noticia, ContenidoPagina, MensajeContacto, ConfiguracionSitio, RedSocial,
-    CategoriaProyecto)
+from persistence.models import (Usuario, Rol, UsuarioRol, Permiso, RolPermiso,
+    HistorialActividad, Proyecto, Propiedad, Noticia, ContenidoPagina,
+    MensajeContacto, ConfiguracionSitio, RedSocial, CategoriaProyecto)
 
 API = "/api/v1/"
 IMAGE = "https://example.com/photo.jpg"
@@ -168,10 +168,18 @@ class AdminAPITests(TestCase):
                 self.assertEqual(response.json()["title"], "Reemplazado")
                 self.assertEqual(self.client.delete(url).status_code, 204)
                 self.assertEqual(self.client.get(url).status_code, 404)
-                self.assertEqual(model.objects.count(), 0)
-                self.assertFalse(ContenidoPagina.objects.filter(clave__startswith=f"admin.{kind}.").exists())
-                self.assertEqual(set(HistorialActividad.objects.filter(modulo=kind).values_list("accion", flat=True)),
-                                 {"CREAR", "EDITAR", "ELIMINAR"})
+                if kind == "properties":
+                    self.assertEqual(model.objects.count(), 1)
+                    self.assertTrue(ContenidoPagina.objects.filter(clave__startswith="admin.properties.").exists())
+                    expected_actions = {"CREAR", "EDITAR", "PAPELERA"}
+                else:
+                    self.assertEqual(model.objects.count(), 0)
+                    self.assertFalse(ContenidoPagina.objects.filter(clave__startswith=f"admin.{kind}.").exists())
+                    expected_actions = {"CREAR", "EDITAR", "ELIMINAR"}
+                self.assertEqual(
+                    set(HistorialActividad.objects.filter(modulo=kind).values_list("accion", flat=True)),
+                    expected_actions,
+                )
 
     def test_public_cannot_write_any_admin_resource(self):
         for kind in ("projects", "properties", "news"):
@@ -404,11 +412,192 @@ class AdminAPITests(TestCase):
                     self.client.post(API + "admin/media/", {"file": self.image_file()}, format="multipart")
             self.assertEqual(list(Path(directory).rglob("*.png")), [])
 
-    def test_deleting_property_keeps_received_inquiry(self):
+    def test_seed_access_control_is_idempotent_and_does_not_create_users(self):
+        output = io.StringIO()
+        call_command("seed_access_control", stdout=output)
+        call_command("seed_access_control", stdout=output)
+
+        self.assertEqual(Permiso.objects.count(), 12)
+        self.assertEqual(Rol.objects.count(), 4)  # tres roles iniciales y el fixture legado
+        self.assertEqual(RolPermiso.objects.count(), 20)
+        self.assertEqual(Usuario.objects.count(), 2)
+
+        roles = {
+            role["name"]: set(role["permissions"])
+            for role in self.client.get(API + "admin/roles/").json()
+        }
+        self.assertEqual(roles["Ingeniero"], set(Permiso.objects.values_list("nombre", flat=True)))
+        self.assertEqual(roles["Arquitecta"], {
+            "properties.create", "properties.edit.any", "properties.publish",
+            "properties.trash.any", "properties.restore",
+        })
+        self.assertEqual(roles["Empleado"], {
+            "properties.create", "properties.edit.own", "properties.trash.own",
+        })
+
+    def test_role_and_permission_endpoints_create_read_update_and_audit(self):
+        call_command("seed_access_control", stdout=io.StringIO())
+
+        permissions = self.client.get(API + "admin/permissions/")
+        self.assertEqual(permissions.status_code, 200)
+        self.assertIn("roles.manage", {item["name"] for item in permissions.json()})
+
+        created = self.client.post(API + "admin/roles/", {
+            "name": "Contratista",
+            "description": "Rol temporal de prueba.",
+            "permissions": ["properties.create", "properties.edit.own"],
+        }, format="json")
+        self.assertEqual(created.status_code, 201, created.content)
+        role_id = created.json()["id"]
+        self.assertEqual(set(created.json()["permissions"]), {
+            "properties.create", "properties.edit.own",
+        })
+
+        detail = self.client.get(API + f"admin/roles/{role_id}/")
+        self.assertEqual(detail.status_code, 200)
+        self.assertEqual(detail.json()["name"], "Contratista")
+
+        updated = self.client.patch(API + f"admin/roles/{role_id}/", {
+            "description": "Permisos retirados.",
+            "permissions": [],
+        }, format="json")
+        self.assertEqual(updated.status_code, 200, updated.content)
+        self.assertEqual(updated.json()["permissions"], [])
+        self.assertFalse(RolPermiso.objects.filter(rol_id=role_id).exists())
+        self.assertEqual(
+            HistorialActividad.objects.filter(
+                usuario=self.user, modulo="roles", id_registro=role_id,
+            ).count(),
+            2,
+        )
+
+        invalid = self.client.post(API + "admin/roles/", {
+            "name": "Rol inválido",
+            "permissions": ["permissions.not-real"],
+        }, format="json")
+        self.assertEqual(invalid.status_code, 400)
+
+        engineer = Rol.objects.get(nombre="Ingeniero")
+        cannot_disable_engineer = self.client.patch(
+            API + f"admin/roles/{engineer.pk}/", {"active": False}, format="json"
+        )
+        self.assertEqual(cannot_disable_engineer.status_code, 400)
+
+    def _user_with_role(self, name, email, role_name, password="test-password"):
+        user = Usuario.objects.create(
+            nombre=name,
+            correo=email,
+            password_hash=make_password(password),
+        )
+        UsuarioRol.objects.create(usuario=user, rol=Rol.objects.get(nombre=role_name))
+        return user, password
+
+    def _client_for_role_user(self, user, password):
+        client = APIClient()
+        login = client.post(API + "auth/login/", {
+            "email": user.correo,
+            "password": password,
+        }, format="json")
+        self.assertEqual(login.status_code, 200, login.content)
+        client.credentials(HTTP_AUTHORIZATION="Bearer " + login.json()["access"])
+        return client
+
+    def test_employee_can_manage_only_own_drafts_and_trash_them(self):
+        call_command("seed_access_control", stdout=io.StringIO())
+        employee, password = self._user_with_role(
+            "Empleado de prueba", "employee@example.com", "Empleado"
+        )
+        employee_client = self._client_for_role_user(employee, password)
+
+        self.assertEqual(employee_client.get(API + "admin/roles/").status_code, 403)
+
+        draft = employee_client.post(
+            API + "properties/", self.payload("properties", published=False), format="json"
+        )
+        self.assertEqual(draft.status_code, 201, draft.content)
+        property_id = draft.json()["id"]
+        self.assertFalse(draft.json()["published"])
+
+        publish_attempt = employee_client.post(
+            API + "properties/", self.payload("properties", published=True), format="json"
+        )
+        self.assertEqual(publish_attempt.status_code, 403)
+
+        self.assertEqual(employee_client.get(API + f"properties/{property_id}/").status_code, 200)
+        edit = employee_client.patch(
+            API + f"properties/{property_id}/", {"title": "Borrador actualizado"}, format="json"
+        )
+        self.assertEqual(edit.status_code, 200, edit.content)
+        self.assertEqual(edit.json()["title"], "Borrador actualizado")
+
+        another_draft = self.create("properties", published=False)
+        forbidden_edit = employee_client.patch(
+            API + f"properties/{another_draft['id']}/", {"title": "No autorizado"}, format="json"
+        )
+        self.assertEqual(forbidden_edit.status_code, 403)
+
+        self.assertEqual(employee_client.delete(API + f"properties/{property_id}/").status_code, 204)
+        self.assertTrue(Propiedad.objects.filter(pk=property_id).exists())
+        trash = employee_client.get(API + "admin/properties/trash/")
+        self.assertEqual(trash.status_code, 200, trash.content)
+        self.assertEqual([item["id"] for item in trash.json()["results"]], [property_id])
+        self.assertEqual(employee_client.get(API + f"properties/{property_id}/").status_code, 404)
+        self.assertEqual(
+            employee_client.post(API + f"admin/properties/{property_id}/restore/").status_code,
+            403,
+        )
+        self.assertEqual(
+            employee_client.delete(API + f"admin/properties/{property_id}/permanent/").status_code,
+            403,
+        )
+
+    def test_architect_can_restore_but_cannot_permanently_delete(self):
+        call_command("seed_access_control", stdout=io.StringIO())
+        architect, password = self._user_with_role(
+            "Arquitecta de prueba", "architect-role@example.com", "Arquitecta"
+        )
+        item = self.create("properties", published=False)
+        property_id = item["id"]
+        self.assertEqual(self.client.delete(API + f"properties/{property_id}/").status_code, 204)
+
+        architect_client = self._client_for_role_user(architect, password)
+        trash = architect_client.get(API + "admin/properties/trash/")
+        self.assertEqual(trash.status_code, 200, trash.content)
+        self.assertIn(property_id, [entry["id"] for entry in trash.json()["results"]])
+        self.assertEqual(
+            architect_client.post(API + f"admin/properties/{property_id}/restore/").status_code,
+            204,
+        )
+
+        self.assertEqual(self.client.delete(API + f"properties/{property_id}/").status_code, 204)
+        self.assertEqual(
+            architect_client.delete(API + f"admin/properties/{property_id}/permanent/").status_code,
+            403,
+        )
+
+        published = architect_client.post(
+            API + "properties/", self.payload("properties", published=True), format="json"
+        )
+        self.assertEqual(published.status_code, 201, published.content)
+        self.assertTrue(published.json()["published"])
+        self.assertEqual(
+            self.client.delete(API + f"admin/properties/{property_id}/permanent/").status_code,
+            204,
+        )
+        self.assertFalse(Propiedad.objects.filter(pk=property_id).exists())
+        published_id = published.json()["id"]
+        self.assertEqual(self.client.delete(API + f"properties/{published_id}/").status_code, 204)
+        self.assertEqual(
+            self.client.delete(API + f"admin/properties/{published_id}/permanent/").status_code,
+            204,
+        )
+
+    def test_deleting_property_keeps_received_inquiry_while_moving_to_trash(self):
         prop = self.create("properties")
         response = self.public.post(API + "inquiries/visits/", {"property_id": prop["id"], "name": "Cliente",
             "phone": "12345678", "preferred_date": timezone.localdate().isoformat()}, format="json")
         self.assertEqual(response.status_code, 201)
         self.assertEqual(self.client.delete(API + f"properties/{prop['id']}/").status_code, 204)
         message = MensajeContacto.objects.get(pk=response.json()["id"])
-        self.assertIsNone(message.propiedad_id)
+        self.assertEqual(message.propiedad_id, prop["id"])
+        self.assertTrue(Propiedad.objects.filter(pk=prop["id"], publicado=False).exists())

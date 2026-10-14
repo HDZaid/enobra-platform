@@ -7,6 +7,7 @@ el esquema en vivo y comprobaciones adicionales de permisos, borradores y limpie
 ## Archivos
 
 - [EnObra.postman_collection.json](EnObra.postman_collection.json): colección v2.1.
+- [EnObra-RBAC.postman_collection.json](EnObra-RBAC.postman_collection.json): colección enfocada en roles, permisos y reglas de propiedades por rol.
 - [EnObra-local.postman_environment.json](EnObra-local.postman_environment.json): entorno sin credenciales.
 - [fixtures/catalogo-prueba.png](fixtures/catalogo-prueba.png): PNG válido para probar subidas.
 - [Reporte de revisión](../reporte-revision-admin.md): problemas conocidos y reproducción.
@@ -62,6 +63,23 @@ copiarlos. Las peticiones públicas usan `No Auth` y las protegidas heredan Bear
 El refresh renueva el access token; al final se comprueba la revocación de ambos y
 se vacían las variables de tokens. Un login nuevo reinicia los IDs: termina la limpieza
 pendiente antes de iniciar otra corrida. Conserva los IDs si interrumpes una ejecución.
+
+## Colección enfocada en RBAC y roles de publicación
+
+Importa `EnObra-RBAC.postman_collection.json` desde **Import**. Define sus variables
+de colección `base_url`, `admin_email`, `admin_password`, `architect_email`,
+`architect_password`, `employee_email` y `employee_password`. Cada cuenta debe existir,
+estar activa y tener asignado su rol correspondiente. Esta colección no registra
+cuentas ni cambia contraseñas; si no hay cuentas Ingeniero, Arquitecta y Empleado en
+la base de pruebas, solo se pueden ejecutar las pruebas automatizadas de Django o las
+secciones cuyos usuarios estén configurados.
+
+Ejecuta las carpetas en orden. La colección valida login y `/auth/me`, lectura y
+administración de roles/permisos, y creación, edición, publicación, papelera,
+restauración y eliminación de propiedades según el rol. Genera un rol `Postman QA`
+único, lo deja inactivo y sin permisos al final porque la API no tiene un contrato para
+eliminar roles. Las propiedades de prueba se borran permanentemente durante la carpeta
+de limpieza. Úsala únicamente contra una base de desarrollo o pruebas.
 
 No compartas ni versiones exportaciones que contengan contraseñas, tokens o datos
 reales. El entorno entregado está vacío y la colección no contiene secretos.

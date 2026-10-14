@@ -110,8 +110,9 @@ SPECTACULAR_SETTINGS = {
     "TITLE": "EnObra API",
     "DESCRIPTION": (
         "Contrato HTTP del backend de EnObra (constructora y bienes raíces, Quetzaltenango). "
-        "Todas las rutas cuelgan de /api/v1/. Los endpoints de escritura requieren "
-        "`Authorization: Bearer <access_token>` con rol admin."
+        "Todas las rutas cuelgan de /api/v1/. Los endpoints protegidos requieren "
+        "`Authorization: Bearer <access_token>` y se autorizan por permisos efectivos "
+        "derivados de los roles activos del usuario."
     ),
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,

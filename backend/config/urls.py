@@ -6,6 +6,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 api_v1 = [
     path("", include("apps.common.urls")),
     path("auth/", include("apps.accounts.urls")),
+    path("admin/", include("apps.accounts.admin_urls")),
     path("", include("apps.company.urls")),
     path("", include("apps.services.urls")),
     path("", include("apps.projects.urls")),

@@ -21,6 +21,7 @@ class PropertyFilters:
     ids: Optional[list[int]] = None      # para "Favoritos" (el front guarda los ids en localStorage)
     sort: str = PropertySort.RECENT
     include_unpublished: bool = False
+    owner_id: Optional[int] = None
 
 
 class PropertyRepository(ABC):
@@ -45,3 +46,15 @@ class PropertyRepository(ABC):
 
     @abstractmethod
     def delete(self, property_id: int, *, deleted_by: str | None = None) -> bool: ...
+
+    @abstractmethod
+    def is_own_draft(self, property_id: int, user_id: str) -> bool: ...
+
+    @abstractmethod
+    def list_trash(self, *, page: int, page_size: int, owner_id: int | None = None) -> Page: ...
+
+    @abstractmethod
+    def restore(self, property_id: int, *, restored_by: str) -> bool: ...
+
+    @abstractmethod
+    def delete_permanently(self, property_id: int, *, deleted_by: str) -> bool: ...
