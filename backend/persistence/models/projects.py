@@ -42,6 +42,9 @@ class Proyecto(models.Model):
     fecha_publicacion = models.DateTimeField(null=True)
     fecha_creacion = models.DateTimeField(db_default=Now())
     fecha_actualizacion = models.DateTimeField(null=True)
+    fecha_ultima_actividad = models.DateTimeField(db_default=Now())
+    estado_limpieza = models.CharField(max_length=30, db_default="ACTIVO")
+    fecha_marcado_eliminacion = models.DateTimeField(null=True)
     creado_por = models.ForeignKey(
         Usuario,
         models.SET_NULL,
@@ -68,11 +71,22 @@ class Proyecto(models.Model):
                 condition=models.Q(anio__isnull=True) | models.Q(anio__gte=1900),
                 name="chk_proyecto_anio",
             ),
+            models.CheckConstraint(
+                condition=models.Q(
+                    estado_limpieza__in=("ACTIVO", "PENDIENTE_ELIMINACION")
+                ),
+                name="chk_proyecto_estado_limpieza",
+            ),
         ]
         indexes = [
             models.Index(fields=["categoria"], name="idx_proyecto_categoria"),
             models.Index(fields=["publicado"], name="idx_proyecto_publicado"),
             models.Index(fields=["destacado"], name="idx_proyecto_destacado"),
+            models.Index(
+                fields=["fecha_ultima_actividad"],
+                name="idx_proyecto_ultima_actividad",
+            ),
+            models.Index(fields=["estado_limpieza"], name="idx_proyecto_estado_limpieza"),
         ]
 
 
