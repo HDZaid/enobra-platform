@@ -1,0 +1,1764 @@
+{
+  "info": {
+    "_postman_id": "b88ce66d-0ec0-4faa-9b9a-efbf938a2e3a",
+    "name": "EnObra — RBAC y contratos de propiedades",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Colección para los contratos agregados: auth/me con roles/permisos, catálogo y CRUD de roles, propiedades por Ingeniero/Arquitecta/Empleado, papelera, restauración y borrado permanente. Ejecutar en orden. Requiere cuentas activas ya asignadas a esos roles; no registra usuarios. Crear rol QA deja un rol persistente, inactivo y sin permisos porque no existe DELETE de roles. Las propiedades temporales sí se eliminan al final. Usar una base de desarrollo/pruebas."
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000",
+      "type": "string"
+    },
+    {
+      "key": "admin_email",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "admin_password",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "employee_email",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "employee_password",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "architect_email",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "architect_password",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "employee_access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "architect_access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "revoked_access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "revoked_refresh_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "engineer_role_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "architect_role_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "employee_role_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "qa_role_name",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "qa_role_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "property_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "architect_property_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "deleted_property_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "deleted_architect_property_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "test_date",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.collectionVariables.set('test_date', new Date().toISOString().slice(0, 10));"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "00 — Autenticación Ingeniero",
+      "item": [
+        {
+          "name": "Login Ingeniero",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{admin_email}}\",\n  \"password\": \"{{admin_password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Completa admin_email y admin_password con una cuenta Ingeniero activa. La base actual no tiene cuentas creadas."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login responde 200', function () { pm.response.to.have.status(200); });",
+                  "const data = pm.response.json();",
+                  "pm.collectionVariables.set('access_token', data.access);",
+                  "pm.collectionVariables.set('refresh_token', data.refresh);",
+                  "pm.test('Devuelve roles y permisos', function () { pm.expect(data.user.roles).to.be.an('array'); pm.expect(data.user.permissions).to.be.an('array'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar usuario actual",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/me/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Usuario actual responde 200', function () { pm.response.to.have.status(200); });",
+                  "const data = pm.response.json();",
+                  "pm.test('Incluye permisos efectivos de administración', function () { pm.expect(data.permissions).to.include('admin.all'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Renovar access token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/refresh/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "refresh"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Refresh responde 200', function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set('access_token', pm.response.json().access);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET roles sin token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/roles/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "roles"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('La ruta protegida responde 401 sin token', function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "01 — Roles y permisos",
+      "item": [
+        {
+          "name": "Listar permisos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/permissions/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "permissions"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Permisos responden 200', function () { pm.response.to.have.status(200); });",
+                  "const names = pm.response.json().map(function (item) { return item.name; });",
+                  "pm.test('Catálogo contiene claves esperadas', function () { pm.expect(names).to.include.members(['roles.manage', 'properties.create', 'properties.publish', 'properties.delete_permanently']); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar roles y guardar IDs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/roles/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "roles"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Roles responden 200', function () { pm.response.to.have.status(200); });",
+                  "const roles = pm.response.json();",
+                  "const names = roles.map(function (item) { return item.name; });",
+                  "pm.test('Están los tres roles base', function () { pm.expect(names).to.include.members(['Ingeniero', 'Arquitecta', 'Empleado']); });",
+                  "roles.forEach(function (role) { if (role.name === 'Ingeniero') pm.collectionVariables.set('engineer_role_id', String(role.id)); if (role.name === 'Arquitecta') pm.collectionVariables.set('architect_role_id', String(role.id)); if (role.name === 'Empleado') pm.collectionVariables.set('employee_role_id', String(role.id)); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar Arquitecta",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/roles/{{architect_role_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "roles",
+                "{{architect_role_id}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Detalle responde 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Tiene publicación y restauración', function () { pm.expect(pm.response.json().permissions).to.include.members(['properties.publish', 'properties.restore']); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar Empleado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/roles/{{employee_role_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "roles",
+                "{{employee_role_id}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Detalle responde 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('No tiene publicación directa', function () { const permissions = pm.response.json().permissions; pm.expect(permissions).to.include('properties.edit.own'); pm.expect(permissions).not.to.include('properties.publish'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear rol QA único",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{qa_role_name}}\",\n  \"description\": \"Rol de prueba Postman; se desactiva al terminar.\",\n  \"permissions\": [\n    \"properties.create\",\n    \"properties.edit.own\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/roles/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "roles"
+              ]
+            },
+            "description": "Crea un rol persistente único. No existe DELETE de roles; se desactivará y quedará sin permisos al final."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('qa_role_name', 'Postman QA ' + Date.now() + '-' + Math.random().toString(36).slice(2, 7));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Crear responde 201', function () { pm.response.to.have.status(201); });",
+                  "pm.collectionVariables.set('qa_role_id', String(pm.response.json().id));",
+                  "pm.test('Guarda los permisos solicitados', function () { pm.expect(pm.response.json().permissions).to.include.members(['properties.create', 'properties.edit.own']); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar rol QA",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/roles/{{qa_role_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "roles",
+                "{{qa_role_id}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Detalle QA responde 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Devuelve el rol creado', function () { pm.expect(pm.response.json().name).to.eql(pm.collectionVariables.get('qa_role_name')); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Actualizar y desactivar rol QA",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"active\": false,\n  \"permissions\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/roles/{{qa_role_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "roles",
+                "{{qa_role_id}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Actualizar responde 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('El rol queda inactivo y sin permisos', function () { const role = pm.response.json(); pm.expect(role.active).to.eql(false); pm.expect(role.permissions).to.eql([]); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 — Propiedades como Empleado",
+      "item": [
+        {
+          "name": "Login Empleado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{employee_email}}\",\n  \"password\": \"{{employee_password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Requiere una cuenta activa vinculada al rol Empleado."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login responde 200', function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set('employee_access_token', pm.response.json().access);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Empleado no puede gestionar roles",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/roles/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "roles"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Gestión de roles responde 403', function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Empleado no puede publicar al crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"QA Postman — borrador {{test_date}}\",\n  \"operation\": \"Venta\",\n  \"type\": \"Casa\",\n  \"zone\": \"Zona Postman\",\n  \"location\": \"Quetzaltenango\",\n  \"price\": 175000,\n  \"rooms\": 2,\n  \"baths\": 1,\n  \"parking\": 1,\n  \"area\": 80,\n  \"date\": \"{{test_date}}\",\n  \"description\": \"Propiedad temporal para validar los permisos del panel.\",\n  \"commercial\": \"Registro de prueba que se eliminará al terminar.\",\n  \"images\": [\n    \"https://example.com/postman-property-test.jpg\"\n  ],\n  \"renders\": [],\n  \"video\": \"https://youtu.be/dQw4w9WgXcQ\",\n  \"demo\": false,\n  \"published\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/properties/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "properties"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Publicar responde 403', function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear borrador propio",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"QA Postman — borrador {{test_date}}\",\n  \"operation\": \"Venta\",\n  \"type\": \"Casa\",\n  \"zone\": \"Zona Postman\",\n  \"location\": \"Quetzaltenango\",\n  \"price\": 175000,\n  \"rooms\": 2,\n  \"baths\": 1,\n  \"parking\": 1,\n  \"area\": 80,\n  \"date\": \"{{test_date}}\",\n  \"description\": \"Propiedad temporal para validar los permisos del panel.\",\n  \"commercial\": \"Registro de prueba que se eliminará al terminar.\",\n  \"images\": [\n    \"https://example.com/postman-property-test.jpg\"\n  ],\n  \"renders\": [],\n  \"video\": \"https://youtu.be/dQw4w9WgXcQ\",\n  \"demo\": false,\n  \"published\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/properties/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "properties"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Crear borrador responde 201', function () { pm.response.to.have.status(201); });",
+                  "pm.collectionVariables.set('property_id', String(pm.response.json().id));",
+                  "pm.test('Se guarda sin publicar', function () { pm.expect(pm.response.json().published).to.eql(false); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar propiedades",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/properties/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "properties"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Listado responde 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Incluye el borrador propio', function () { const ids = pm.response.json().results.map(function (item) { return String(item.id); }); pm.expect(ids).to.include(pm.collectionVariables.get('property_id')); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar borrador",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/properties/{{property_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "properties",
+                "{{property_id}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Detalle responde 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Está en borrador', function () { pm.expect(pm.response.json().published).to.eql(false); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reemplazar borrador (PUT)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"QA Postman — reemplazo PUT\",\n  \"operation\": \"Venta\",\n  \"type\": \"Casa\",\n  \"zone\": \"Zona Postman\",\n  \"location\": \"Quetzaltenango\",\n  \"price\": 175000,\n  \"rooms\": 2,\n  \"baths\": 1,\n  \"parking\": 1,\n  \"area\": 80,\n  \"date\": \"{{test_date}}\",\n  \"description\": \"Propiedad temporal para validar los permisos del panel.\",\n  \"commercial\": \"Registro de prueba que se eliminará al terminar.\",\n  \"images\": [\n    \"https://example.com/postman-property-test.jpg\"\n  ],\n  \"renders\": [],\n  \"video\": \"https://youtu.be/dQw4w9WgXcQ\",\n  \"demo\": false,\n  \"published\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/properties/{{property_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "properties",
+                "{{property_id}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('PUT responde 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Sigue como borrador', function () { pm.expect(pm.response.json().published).to.eql(false); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Editar borrador (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"QA Postman — borrador editado\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/properties/{{property_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "properties",
+                "{{property_id}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('PATCH responde 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Guarda el cambio', function () { pm.expect(pm.response.json().title).to.eql('QA Postman — borrador editado'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Enviar borrador propio a papelera",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/properties/{{property_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "properties",
+                "{{property_id}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Mover a papelera responde 204', function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar papelera propia",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/properties/trash/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "properties",
+                "trash"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Papelera responde 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Incluye el borrador propio', function () { const ids = pm.response.json().results.map(function (item) { return String(item.id); }); pm.expect(ids).to.include(pm.collectionVariables.get('property_id')); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Empleado no puede restaurar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/properties/{{property_id}}/restore/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "properties",
+                "{{property_id}}",
+                "restore"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Restaurar responde 403', function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{employee_access_token}}",
+            "type": "string"
+          }
+        ]
+      },
+      "description": "Requiere una cuenta Empleado activa. Si faltan las credenciales, Postman omite esta carpeta.",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (!pm.collectionVariables.get('employee_email') || !pm.collectionVariables.get('employee_password')) { pm.execution.skipRequest(); }"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 — Propiedades como Arquitecta",
+      "item": [
+        {
+          "name": "Login Arquitecta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{architect_email}}\",\n  \"password\": \"{{architect_password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login responde 200', function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set('architect_access_token', pm.response.json().access);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar papelera",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/properties/trash/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "properties",
+                "trash"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Arquitecta ve la papelera', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Ve el borrador del Empleado', function () { const ids = pm.response.json().results.map(function (item) { return String(item.id); }); pm.expect(ids).to.include(pm.collectionVariables.get('property_id')); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Restaurar publicación",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/properties/{{property_id}}/restore/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "properties",
+                "{{property_id}}",
+                "restore"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Restaurar responde 204', function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Arquitecta no puede borrar permanentemente",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/properties/{{property_id}}/permanent/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "properties",
+                "{{property_id}}",
+                "permanent"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Borrado permanente responde 403', function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Arquitecta puede publicar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"QA Postman — publicación Arquitecta\",\n  \"operation\": \"Venta\",\n  \"type\": \"Casa\",\n  \"zone\": \"Zona Postman\",\n  \"location\": \"Quetzaltenango\",\n  \"price\": 175000,\n  \"rooms\": 2,\n  \"baths\": 1,\n  \"parking\": 1,\n  \"area\": 80,\n  \"date\": \"{{test_date}}\",\n  \"description\": \"Propiedad temporal para validar los permisos del panel.\",\n  \"commercial\": \"Registro de prueba que se eliminará al terminar.\",\n  \"images\": [\n    \"https://example.com/postman-property-test.jpg\"\n  ],\n  \"renders\": [],\n  \"video\": \"https://youtu.be/dQw4w9WgXcQ\",\n  \"demo\": false,\n  \"published\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/properties/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "properties"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Crear publicación responde 201', function () { pm.response.to.have.status(201); });",
+                  "pm.collectionVariables.set('architect_property_id', String(pm.response.json().id));",
+                  "pm.test('Queda publicada', function () { pm.expect(pm.response.json().published).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{architect_access_token}}",
+            "type": "string"
+          }
+        ]
+      },
+      "description": "Requiere cuenta Arquitecta y el borrador creado en la carpeta anterior.",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (!pm.collectionVariables.get('architect_email') || !pm.collectionVariables.get('architect_password') || !pm.collectionVariables.get('property_id')) { pm.execution.skipRequest(); }"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 — Limpieza como Ingeniero",
+      "item": [
+        {
+          "name": "Volver a papelera el borrador",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/properties/{{property_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "properties",
+                "{{property_id}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Mover a papelera responde 204', function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar permanentemente el borrador QA",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/properties/{{property_id}}/permanent/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "properties",
+                "{{property_id}}",
+                "permanent"
+              ]
+            },
+            "description": "Opera solo sobre el ID del borrador creado por esta colección."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Borrado permanente responde 204', function () { pm.response.to.have.status(204); });",
+                  "pm.collectionVariables.set('deleted_property_id', pm.collectionVariables.get('property_id'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Confirmar que el borrador fue eliminado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/properties/{{deleted_property_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "properties",
+                "{{deleted_property_id}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('El detalle responde 404', function () { pm.response.to.have.status(404); });",
+                  "pm.collectionVariables.unset('property_id');",
+                  "pm.collectionVariables.unset('deleted_property_id');"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Enviar publicación QA a papelera",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/properties/{{architect_property_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "properties",
+                "{{architect_property_id}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Mover publicación a papelera responde 204', function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar permanentemente la publicación QA",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/properties/{{architect_property_id}}/permanent/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "properties",
+                "{{architect_property_id}}",
+                "permanent"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Borrado permanente responde 204', function () { pm.response.to.have.status(204); });",
+                  "pm.collectionVariables.set('deleted_architect_property_id', pm.collectionVariables.get('architect_property_id'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Confirmar que la publicación fue eliminada",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/properties/{{deleted_architect_property_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "properties",
+                "{{deleted_architect_property_id}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('El detalle responde 404', function () { pm.response.to.have.status(404); });",
+                  "pm.collectionVariables.unset('architect_property_id');",
+                  "pm.collectionVariables.unset('deleted_architect_property_id');"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Elimina permanentemente solo las propiedades QA creadas por esta colección.",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (!pm.collectionVariables.get('access_token') || (!pm.collectionVariables.get('property_id') && !pm.collectionVariables.get('architect_property_id'))) { pm.execution.skipRequest(); }"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 — Logout y revocación",
+      "item": [
+        {
+          "name": "Cerrar sesión",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/logout/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "logout"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Logout responde 204', function () { pm.response.to.have.status(204); });",
+                  "pm.collectionVariables.set('revoked_access_token', pm.collectionVariables.get('access_token'));",
+                  "pm.collectionVariables.set('revoked_refresh_token', pm.collectionVariables.get('refresh_token'));",
+                  "pm.collectionVariables.unset('access_token');",
+                  "pm.collectionVariables.unset('refresh_token');"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Access revocado ya no funciona",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/me/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "me"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{revoked_access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Access revocado responde 401', function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Refresh revocado ya no funciona",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{revoked_refresh_token}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/refresh/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "refresh"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Refresh revocado responde 401', function () { pm.response.to.have.status(401); });",
+                  "pm.collectionVariables.unset('employee_access_token');",
+                  "pm.collectionVariables.unset('architect_access_token');",
+                  "pm.collectionVariables.unset('revoked_access_token');",
+                  "pm.collectionVariables.unset('revoked_refresh_token');"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
