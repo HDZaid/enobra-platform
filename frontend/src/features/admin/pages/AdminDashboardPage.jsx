@@ -14,7 +14,7 @@ const stats = [
 ];
 
 export function AdminDashboardPage() {
-  const { session, preview, previewNews } = useOutletContext();
+  const { session, preview, previewNews, previewInquiries } = useOutletContext();
   const [counts, setCounts] = useState({ news: null, messages: null });
   const [warning, setWarning] = useState('');
 
@@ -39,7 +39,7 @@ export function AdminDashboardPage() {
     return () => { active = false; };
   }, [session, preview]);
 
-  const values = preview ? { news: previewNews.length, messages: null } : counts;
+  const values = preview ? { news: previewNews.length, messages: previewInquiries.length } : counts;
   return (
     <div>
       <section className="rounded-2xl bg-gradient-to-br from-[#12233f] to-[#304e7d] p-7 text-white sm:p-9">

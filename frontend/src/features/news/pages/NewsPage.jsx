@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { NewsCard } from '../components/NewsCard.jsx';
 import { loadNewsPage } from '../services/publicNewsSource.js';
+import { NEWS_CATEGORIES, nextNewsQuery, validNewsCategory } from '../utils/newsFilters.js';
 import '../styles/news-fonts.css';
 
 const PAGE_SIZE = 12;
@@ -10,29 +11,31 @@ const container = 'mx-auto w-[calc(100%-40px)] max-w-[1240px] md:w-[calc(100%-64
 
 export function NewsPage() {
   const [params, setParams] = useSearchParams();
+  const category = validNewsCategory(params.get('category'));
   const requestedPage = Number(params.get('page'));
   const currentPage = Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
-  const [state, setState] = useState({ page: null, items: [], count: 0, preview: false, error: '' });
+  const [state, setState] = useState({ page: null, category: '', items: [], count: 0, preview: false, error: '' });
 
   useEffect(() => {
     document.title = 'Noticias y eventos | EnObra';
     const controller = new AbortController();
-    loadNewsPage({ page: currentPage, pageSize: PAGE_SIZE, signal: controller.signal })
+    loadNewsPage({ page: currentPage, pageSize: PAGE_SIZE, category, signal: controller.signal })
       .then((data) => {
-        if (!controller.signal.aborted) setState({ ...data, error: '' });
+        if (!controller.signal.aborted) setState({ ...data, category, error: '' });
       })
       .catch(() => {
         if (!controller.signal.aborted) {
-          setState({ page: currentPage, items: [], count: 0, preview: false,
+          setState({ page: currentPage, category, items: [], count: 0, preview: false,
             error: 'No se pudieron consultar las noticias. Intenta nuevamente.' });
         }
       });
     return () => controller.abort();
-  }, [currentPage]);
+  }, [currentPage, category]);
 
-  const loading = state.page !== currentPage;
+  const loading = state.page !== currentPage || state.category !== category;
   const pages = Math.max(1, Math.ceil(state.count / PAGE_SIZE));
-  const changePage = (page) => setParams(page === 1 ? {} : { page: String(page) });
+  const changePage = (page) => setParams((previous) => nextNewsQuery(previous, { page }));
+  const changeCategory = (value) => setParams((previous) => nextNewsQuery(previous, { category: value }));
 
   return (
     <main id="main" className="min-h-[70vh] bg-white font-['Inter',Arial,sans-serif] text-[#12233f]">
@@ -53,6 +56,20 @@ export function NewsPage() {
       </section>
 
       <section className={`${container} py-15 md:py-18 lg:py-24`} aria-label="Publicaciones">
+        <div className="mb-7 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="font-['Outfit',Arial,sans-serif] text-2xl font-semibold">Publicaciones</h2>
+            <p className="mt-1 text-sm text-[#626b79]">Explora las novedades por categoría.</p>
+          </div>
+          <label className="flex items-center gap-3 text-sm font-semibold text-[#304057]">
+            Categoría
+            <select aria-label="Filtrar noticias por categoría" value={category} onChange={(event) => changeCategory(event.target.value)}
+              className="min-w-[170px] border border-[#dfe5ec] bg-white px-3 py-2.5 text-sm font-normal text-[#12233f] focus-visible:outline-2 focus-visible:outline-[#ff6a1f]">
+              <option value="">Todas</option>
+              {NEWS_CATEGORIES.map((value) => <option key={value} value={value}>{value}</option>)}
+            </select>
+          </label>
+        </div>
         {state.preview && !loading && (
           <p role="status" className="mb-6 text-[13px] leading-relaxed text-[#626b79]">
             Publicaciones demostrativas. Los anuncios reales se incorporarán al recibir la información del cliente.
@@ -63,7 +80,7 @@ export function NewsPage() {
         ) : state.error ? (
           <p role="alert" className="text-[#a22a20]">{state.error}</p>
         ) : state.items.length === 0 ? (
-          <p className="text-[#626b79]">No hay publicaciones por el momento.</p>
+          <p className="text-[#626b79]">No hay publicaciones en esta categoría por el momento.</p>
         ) : (
           <div className="grid grid-cols-1 gap-[30px] sm:grid-cols-2">
             {state.items.map((entry) => <NewsCard key={entry.id} item={entry} />)}

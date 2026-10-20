@@ -56,7 +56,7 @@ export function AdminShell({ children, name, preview, onLogout }) {
           <div className="min-w-0 flex-1"><p className="text-[10px] font-bold tracking-[.16em] text-[#b94308] uppercase">Administración</p><h1 className="font-['Outfit',Arial,sans-serif] text-xl font-semibold">{pageNames[pathname] || 'Panel'}</h1></div>
           <ShieldCheck size={19} aria-hidden="true" className="hidden text-[#304e7d] sm:block" />
         </header>
-        {preview && <div role="status" className="border-b border-[#f4cfae] bg-[#fff1e5] px-5 py-3 text-sm text-[#88420d] sm:px-8">Vista previa local: puedes ensayar cambios en Noticias, pero solo en memoria. No se enviarán a Django ni se publicarán.</div>}
+        {preview && <div role="status" className="border-b border-[#f4cfae] bg-[#fff1e5] px-5 py-3 text-sm text-[#88420d] sm:px-8">Vista previa local: Noticias y Mensajes contienen datos de prueba. Los cambios solo existen en memoria y no se envían a Django.</div>}
         <div className="mx-auto w-full max-w-[1160px] px-5 py-7 sm:px-8 sm:py-9">{children}</div>
       </div>
     </div>

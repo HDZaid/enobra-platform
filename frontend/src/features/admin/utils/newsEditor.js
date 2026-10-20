@@ -84,3 +84,8 @@ export function adminNewsImageSrc(value, preview = false) {
   if (preview && validNewsImageReference(value, { preview: true }) && value.startsWith('/assets/')) return value;
   return validNewsImageReference(value) ? value : '';
 }
+
+// Solo para la demostración: una transición de publicación no toca Django.
+export function togglePreviewNewsPublished(items, id) {
+  return items.map((item) => item.id === id ? { ...item, published: !item.published } : item);
+}

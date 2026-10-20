@@ -5,11 +5,13 @@ import { readAdminSession } from '../../features/admin/utils/adminData.js';
 import { AdminShell } from '../../features/admin/components/AdminShell.jsx';
 import { routePaths } from '../../app/routePaths.js';
 import { demoNews } from '../../features/news/data/demoNews.js';
+import { demoInquiries } from '../../features/admin/utils/inbox.js';
 
 export function AdminLayout() {
   const [session, setSession] = useState(null);
   const [preview, setPreview] = useState(false);
   const [previewNews, setPreviewNews] = useState(() => demoNews.map((item) => ({ ...item })));
+  const [previewInquiries, setPreviewInquiries] = useState(() => demoInquiries.map((item) => ({ ...item })));
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -25,6 +27,7 @@ export function AdminLayout() {
     if (!import.meta.env.DEV) return;
     setPreview(true);
     setPreviewNews(demoNews.map((item) => ({ ...item })));
+    setPreviewInquiries(demoInquiries.map((item) => ({ ...item })));
     setSession(null);
     navigate(routePaths.admin, { replace: true });
   }
@@ -40,7 +43,7 @@ export function AdminLayout() {
     }
   }
 
-  const context = { session, preview, previewNews, setPreviewNews, login, openPreview, logout };
+  const context = { session, preview, previewNews, setPreviewNews, previewInquiries, setPreviewInquiries, login, openPreview, logout };
   const isLoginPage = location.pathname === routePaths.adminLogin;
 
   if (isLoginPage) {

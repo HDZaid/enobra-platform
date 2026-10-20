@@ -1,6 +1,7 @@
 import { demoNews } from '../data/demoNews.js';
 import { newsService } from './newsService.js';
 import { normalizeNews, readNewsPage } from './newsMapper.js';
+import { paginateDemoNews, validNewsCategory } from '../utils/newsFilters.js';
 
 // Solo contenido de muestra en desarrollo y ante red desconectada o API 501.
 // En producción, los fallos de Django siempre se muestran al usuario.
@@ -10,16 +11,18 @@ function canPreview(error) {
   return previewAllowed && (error?.status === 501 || (error instanceof TypeError && !('status' in error)));
 }
 
-export async function loadNewsPage({ page = 1, pageSize = 12, signal } = {}) {
+export async function loadNewsPage({ page = 1, pageSize = 12, category = '', signal } = {}) {
   let response;
   try {
-    response = await newsService.list({ page, page_size: pageSize }, { signal });
+    const params = { page, page_size: pageSize };
+    if (validNewsCategory(category)) params.category = category;
+    response = await newsService.list(params, { signal });
   } catch (error) {
     if (signal?.aborted || !canPreview(error)) throw error;
-    const first = (page - 1) * pageSize;
+    const sample = paginateDemoNews(demoNews, { page, pageSize, category: validNewsCategory(category) });
     return {
-      items: demoNews.slice(first, first + pageSize).map(normalizeNews),
-      count: demoNews.length,
+      items: sample.items.map(normalizeNews),
+      count: sample.count,
       page,
       pageSize,
       preview: true,
