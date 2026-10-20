@@ -38,6 +38,9 @@ secrets.json
 /media/
 /staticfiles/
 /static_root/
+/backend/media/
+/backend/staticfiles/
+/backend/static_root/
 
 # Tests / cobertura / linters
 .pytest_cache/
@@ -52,6 +55,7 @@ htmlcov/
 # Logs
 *.log
 /logs/
+/backend/logs/
 
 # Django local
 local_settings.py
