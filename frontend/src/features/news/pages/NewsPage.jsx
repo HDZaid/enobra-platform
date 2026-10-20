@@ -11,6 +11,7 @@ const container = 'mx-auto w-[calc(100%-40px)] max-w-[1240px] md:w-[calc(100%-64
 
 export function NewsPage() {
   const [params, setParams] = useSearchParams();
+  const [retryIndex, setRetryIndex] = useState(0);
   const category = validNewsCategory(params.get('category'));
   const requestedPage = Number(params.get('page'));
   const currentPage = Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
@@ -30,7 +31,7 @@ export function NewsPage() {
         }
       });
     return () => controller.abort();
-  }, [currentPage, category]);
+  }, [currentPage, category, retryIndex]);
 
   const loading = state.page !== currentPage || state.category !== category;
   const pages = Math.max(1, Math.ceil(state.count / PAGE_SIZE));
@@ -78,14 +79,15 @@ export function NewsPage() {
         {loading ? (
           <p role="status" aria-live="polite" className="text-[#626b79]">Cargando noticias…</p>
         ) : state.error ? (
-          <p role="alert" className="text-[#a22a20]">{state.error}</p>
+          <div role="alert" className="rounded-lg border border-[#f0b8b8] bg-[#fff7f7] p-5 text-sm text-[#a22a20]"><p>{state.error}</p><button type="button" onClick={() => { setState((current) => ({ ...current, page: null })); setRetryIndex((current) => current + 1); }} className="mt-3 border border-[#a22a20] px-4 py-2 font-semibold">Volver a intentar</button></div>
         ) : state.items.length === 0 ? (
-          <p className="text-[#626b79]">No hay publicaciones en esta categoría por el momento.</p>
+          <div className="rounded-lg border border-[#dfe5ec] p-6 text-[#626b79]"><p>No hay publicaciones en esta categoría o página por el momento.</p><button type="button" onClick={() => setParams((previous) => nextNewsQuery(previous, { category: '', page: 1 }))} className="mt-3 text-sm font-semibold text-[#b94308] underline">Ver todas las noticias</button></div>
         ) : (
           <div className="grid grid-cols-1 gap-[30px] sm:grid-cols-2">
             {state.items.map((entry) => <NewsCard key={entry.id} item={entry} />)}
           </div>
         )}
+        {!loading && !state.error && state.items.length > 0 && <p className="mt-5 text-right text-xs text-[#626b79]">{state.count} publicaciones en total · Página {currentPage} de {pages}</p>}
         {!loading && !state.error && pages > 1 && (
           <nav className="mt-9 flex flex-wrap items-center justify-center gap-4" aria-label="Paginación de noticias">
             <button type="button" disabled={currentPage <= 1} onClick={() => changePage(currentPage - 1)}

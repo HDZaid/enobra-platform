@@ -65,10 +65,10 @@ export function AdminDashboardPage() {
           {[
             ['01', 'Noticias', 'Crear y editar noticias; en vista previa, los cambios son temporales.', routePaths.adminNews],
             ['02', 'Mensajes', 'Ver las consultas y su estado de atención.', routePaths.adminInbox],
-            ['03', 'Medios', 'Conectar las imágenes cuando Django tenga Storage operativo.', null],
+            ['03', 'Imágenes', 'El editor permite subir imágenes mediante la API de medios. Verificar el proveedor de Storage en el entorno real.', null],
           ].map(([num, title, description, link]) => <div key={num} className="rounded-lg bg-[#f3f6fa] p-5"><span className="flex size-8 items-center justify-center rounded-full bg-[#ff6a1f] text-xs font-bold text-white">{num}</span><h4 className="mt-4 font-semibold">{title}</h4><p className="mt-2 text-sm leading-relaxed text-[#626b79]">{description}</p>{link && <Link to={link} className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-[#b94308]">Abrir <ArrowRight size={15}/></Link>}</div>)}
         </div>
-        <p className="mt-5 flex items-center gap-2 text-xs text-[#626b79]"><Plus size={15}/> En vista previa los cambios no se guardan. La carga real de imágenes requiere el endpoint de Django.</p>
+        <p className="mt-5 flex items-center gap-2 text-xs text-[#626b79]"><Plus size={15}/> En vista previa los cambios no se guardan. Las imágenes reales se suben mediante el endpoint de medios de Django.</p>
       </section>
     </div>
   );

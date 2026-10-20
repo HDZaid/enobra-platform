@@ -110,7 +110,7 @@ export function ContactForm() {
         <Field name="name" label="Nombre" value={values.name} error={errors.name}
           onChange={update} autoComplete="name" maxLength={120} />
         <Field name="email" label="Correo electrónico" type="email" value={values.email}
-          error={errors.email} onChange={update} autoComplete="email" />
+          error={errors.email} onChange={update} autoComplete="email" maxLength={254} />
         <Field name="phone" label="Teléfono" type="tel" value={values.phone}
           error={errors.phone} onChange={update} autoComplete="tel-national" inputMode="tel" />
         <div className="min-w-0">
@@ -128,6 +128,7 @@ export function ContactForm() {
             required maxLength={2000} rows={5} className={inputClass}
             aria-invalid={Boolean(errors.message)}
             aria-describedby={errors.message ? 'contact-message-error' : undefined} />
+          <p className="mt-1 text-right text-xs text-[#626b79]">{values.message.length}/2000 caracteres</p>
           {errors.message && <p id="contact-message-error" className="mt-1 text-xs text-[#b42318]">{errors.message}</p>}
         </div>
         <div className="hidden" aria-hidden="true">
@@ -137,8 +138,8 @@ export function ContactForm() {
         </div>
         <div className="sm:col-span-2">
           <p className="mb-5 text-xs leading-relaxed text-[#626b79]">
-            El envío depende de que la API de Django tenga habilitado el almacenamiento de solicitudes.
-            Si todavía no está disponible, te avisaremos sin confirmar un envío que no ocurrió.
+            Revisaremos tu consulta para dar seguimiento a tu solicitud.
+            El formulario solo confirmará el envío cuando el servidor responda correctamente.
           </p>
           <button type="submit" disabled={sending}
             className="inline-flex min-h-[50px] cursor-pointer items-center justify-between gap-7 rounded-[3px] bg-[#ff6a1f] px-6 py-3 text-sm font-bold text-[#12233f] transition-colors hover:bg-[#ff8a50] focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[#304e7d] disabled:cursor-wait disabled:opacity-70">

@@ -29,7 +29,7 @@ export function AdminInboxPage() {
   const [expandedId, setExpandedId] = useState(null);
   const [savingId, setSavingId] = useState(null);
   const [notice, setNotice] = useState('');
-  const [data, setData] = useState({ items: [], count: 0, loading: true, error: '' });
+  const [data, setData] = useState({ items: [], count: 0, loading: true, error: '', page: null, kind: '', status: '' });
 
   useEffect(() => {
     document.title = 'Solicitudes recibidas | EnObra';
@@ -43,9 +43,13 @@ export function AdminInboxPage() {
         const response = await inquiriesService.list(params, session.access);
         const collection = readAdminCollection(response);
         const items = collection.items.map(normalizeInquiry);
-        if (active) setData({ items, count: collection.count, loading: false, error: '' });
+        if (active) {
+          setData({ items, count: collection.count, loading: false, error: '', page, kind, status });
+          const lastPage = Math.max(1, Math.ceil(collection.count / INBOX_PAGE_SIZE));
+          if (page > lastPage) setPage(lastPage);
+        }
       } catch (error) {
-        if (active) setData({ items: [], count: 0, loading: false, error: errorText(error, 'consultar las solicitudes') });
+        if (active) setData({ items: [], count: 0, loading: false, error: errorText(error, 'consultar las solicitudes'), page, kind, status });
       }
     }
     void load();
@@ -58,13 +62,18 @@ export function AdminInboxPage() {
   const items = preview ? paginateInquiries(filteredPreview, page) : remoteItems;
   const count = preview ? filteredPreview.length : data.count;
   const totalPages = Math.max(1, Math.ceil(count / INBOX_PAGE_SIZE));
-  const loading = !preview && data.loading;
+  const loading = !preview && (data.loading || data.page !== page || data.kind !== kind || data.status !== status);
 
   function changeFilters(setter, value) {
     setter(value);
     setPage(1);
     setExpandedId(null);
     setNotice('');
+    if (!preview) setData((previous) => ({ ...previous, loading: true }));
+  }
+
+  function clearFilters() {
+    setKind(''); setStatus(''); setSearch(''); setPage(1); setExpandedId(null); setNotice('');
     if (!preview) setData((previous) => ({ ...previous, loading: true }));
   }
 
@@ -110,7 +119,7 @@ export function AdminInboxPage() {
       </div>
 
       {preview && <p role="status" className="mt-5 rounded-lg border border-[#f4cfae] bg-[#fff1e5] p-4 text-sm text-[#88420d]">Datos ficticios para probar el panel. Los cambios de estado son temporales y se perderán al recargar la página. No hay mensajes reales ni comunicación con Django.</p>}
-      {notice && <p role="status" className="mt-4 rounded-lg border border-[#dfe5ec] bg-white p-4 text-sm">{notice}</p>}
+      {notice && <p role="status" aria-live="polite" className="mt-4 rounded-lg border border-[#dfe5ec] bg-white p-4 text-sm">{notice}</p>}
 
       <div className="mt-6 overflow-hidden rounded-xl bg-white shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#dfe5ec] px-5 py-4">
@@ -123,8 +132,8 @@ export function AdminInboxPage() {
         </div>
         {!preview && search.trim() && <p className="border-b border-[#dfe5ec] bg-[#f8fafc] px-5 py-3 text-xs text-[#626b79]">La búsqueda se aplica únicamente a la página cargada. Django todavía no ofrece un filtro de búsqueda global para solicitudes.</p>}
         {loading ? <p role="status" className="p-6 text-sm text-[#626b79]">Cargando solicitudes…</p>
-          : !preview && data.error ? <p role="alert" className="p-6 text-sm text-[#9c2929]">{data.error}</p>
-            : items.length === 0 ? <div className="px-5 py-14 text-center"><Mail size={34} className="mx-auto text-[#626b79]" aria-hidden="true"/><p className="mt-3 font-semibold">No hay solicitudes que coincidan</p><p className="mt-1 text-sm text-[#626b79]">Prueba otros filtros o revisa otra página.</p></div>
+          : !preview && data.error ? <div role="alert" className="p-6 text-sm text-[#9c2929]"><p>{data.error}</p><button type="button" onClick={reload} className="mt-3 rounded-lg border border-[#dfe5ec] px-4 py-2 text-xs font-semibold text-[#304e7d]">Reintentar consulta</button></div>
+            : items.length === 0 ? <div className="px-5 py-14 text-center"><Mail size={34} className="mx-auto text-[#626b79]" aria-hidden="true"/><p className="mt-3 font-semibold">No hay solicitudes que coincidan</p><p className="mt-1 text-sm text-[#626b79]">Prueba otros filtros o revisa otra página.</p><button type="button" onClick={clearFilters} className="mt-4 text-xs font-semibold text-[#b94308] underline">Limpiar filtros</button></div>
               : <div className="divide-y divide-[#dfe5ec]">{items.map((item) => {
                 const expanded = expandedId === item.id;
                 const next = nextInquiryStatus(item.status);
@@ -156,6 +165,7 @@ export function AdminInboxPage() {
                 </article>;
               })}</div>}
       </div>
+      {!loading && (!data.error || preview) && <p className="mt-3 text-right text-xs text-[#626b79]">{preview ? `Mostrando ${items.length} de ${count} ejemplos` : `Mostrando ${items.length} de ${count} solicitudes (búsqueda local a esta página)`}</p>}
       {!loading && (!data.error || preview) && totalPages > 1 && <nav aria-label="Paginación de solicitudes" className="mt-5 flex items-center justify-end gap-3"><button type="button" aria-label="Página anterior" disabled={page <= 1} onClick={() => { if (!preview) setData((previous) => ({ ...previous, loading: true })); setExpandedId(null); setPage((current) => current - 1); }} className="rounded-lg border border-[#dfe5ec] bg-white p-2 disabled:opacity-40"><ChevronLeft size={18}/></button><span className="text-sm">Página {page} de {totalPages}</span><button type="button" aria-label="Página siguiente" disabled={page >= totalPages} onClick={() => { if (!preview) setData((previous) => ({ ...previous, loading: true })); setExpandedId(null); setPage((current) => current + 1); }} className="rounded-lg border border-[#dfe5ec] bg-white p-2 disabled:opacity-40"><ChevronRight size={18}/></button></nav>}
     </section>
   );

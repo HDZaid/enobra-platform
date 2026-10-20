@@ -4,10 +4,12 @@ import { Link, useParams } from 'react-router-dom';
 import { loadNewsDetail } from '../services/publicNewsSource.js';
 import { newsImageUrl } from '../services/newsMapper.js';
 import { NewsImage } from '../components/NewsImage.jsx';
+import { formatNewsDate } from '../utils/newsDate.js';
 import '../styles/news-fonts.css';
 
 export function NewsDetailPage() {
   const { slug } = useParams();
+  const [retryIndex, setRetryIndex] = useState(0);
   const [state, setState] = useState({ slug: null, item: null, preview: false, error: '' });
 
   useEffect(() => {
@@ -25,7 +27,7 @@ export function NewsDetailPage() {
           error: error?.status === 404 ? '' : 'No se pudo consultar esta publicación.' });
       });
     return () => controller.abort();
-  }, [slug]);
+  }, [slug, retryIndex]);
 
   const loading = state.slug !== slug;
   const image = state.item ? newsImageUrl(state.item.image) : '';
@@ -39,7 +41,7 @@ export function NewsDetailPage() {
         {loading ? (
           <p role="status" aria-live="polite">Cargando publicación…</p>
         ) : state.error ? (
-          <p role="alert" className="text-[#a22a20]">{state.error}</p>
+          <div role="alert" className="rounded-lg border border-[#f0b8b8] bg-[#fff7f7] p-5 text-sm text-[#a22a20]"><p>{state.error}</p><button type="button" onClick={() => { setState((current) => ({ ...current, slug: null })); setRetryIndex((current) => current + 1); }} className="mt-3 border border-[#a22a20] px-4 py-2 font-semibold">Volver a intentar</button></div>
         ) : !state.item ? (
           <>
             <h1 className="font-['Outfit',Arial,sans-serif] text-4xl font-bold">Publicación no encontrada</h1>
@@ -53,7 +55,7 @@ export function NewsDetailPage() {
               <p role="status" className="mb-5 text-[13px] text-[#626b79]">Publicación de demostración. El contenido real está pendiente.</p>
             )}
             <p className="mb-4 text-xs font-bold tracking-[0.19em] text-[#b94308] uppercase">
-              {state.item.category} · {state.item.date}{state.item.demo ? ' · EJEMPLO' : ''}
+              {state.item.category} · {formatNewsDate(state.item.date)}{state.item.demo ? ' · EJEMPLO' : ''}
             </p>
             <h1 className="max-w-[950px] font-['Outfit',Arial,sans-serif] text-[clamp(36px,5vw,64px)] leading-[1.1] font-bold tracking-[-0.035em]">
               {state.item.title}
