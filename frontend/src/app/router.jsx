@@ -6,6 +6,10 @@ import { routePaths } from './routePaths.js';
 import { NewsPage } from '../features/news/pages/NewsPage.jsx';
 import { NewsDetailPage } from '../features/news/pages/NewsDetailPage.jsx';
 import { ContactPage } from '../features/contact/pages/ContactPage.jsx';
+import { AdminLoginPage } from '../features/admin/pages/AdminLoginPage.jsx';
+import { AdminDashboardPage } from '../features/admin/pages/AdminDashboardPage.jsx';
+import { AdminNewsPage } from '../features/admin/pages/AdminNewsPage.jsx';
+import { AdminInboxPage } from '../features/admin/pages/AdminInboxPage.jsx';
 
 // En esta fase son marcadores de ruta, no diseños definitivos.
 const publicPages = [
@@ -35,14 +39,10 @@ export const router = createBrowserRouter([
   {
     element: <AdminLayout />,
     children: [
-      {
-        path: routePaths.admin,
-        element: <PendingPage title="Panel administrativo" owner="Equipo" />,
-      },
-      {
-        path: routePaths.adminLogin,
-        element: <PendingPage title="Acceso administrativo" owner="Jennifer" />,
-      },
+      { path: routePaths.admin, element: <AdminDashboardPage /> },
+      { path: routePaths.adminLogin, element: <AdminLoginPage /> },
+      { path: routePaths.adminNews, element: <AdminNewsPage /> },
+      { path: routePaths.adminInbox, element: <AdminInboxPage /> },
     ],
   },
 ]);
