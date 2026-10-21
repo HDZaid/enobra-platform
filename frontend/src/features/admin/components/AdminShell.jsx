@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { ArrowUpRight, LayoutDashboard, LogOut, Mail, Menu, Newspaper, ShieldCheck, X } from 'lucide-react';
+import { ArrowUpRight, LayoutDashboard, LogOut, Mail, Menu, Newspaper, ShieldCheck, Users, X } from 'lucide-react';
 import { routePaths } from '../../../app/routePaths.js';
 import { adminRoleProfile, canAccessAdminSection } from '../utils/adminData.js';
 import '../styles/admin-fonts.css';
@@ -9,12 +9,14 @@ const navigation = [
   { label: 'Resumen', to: routePaths.admin, icon: LayoutDashboard, end: true, section: 'dashboard' },
   { label: 'Noticias', to: routePaths.adminNews, icon: Newspaper, section: 'news' },
   { label: 'Mensajes', to: routePaths.adminInbox, icon: Mail, section: 'inbox' },
+  { label: 'Usuarios', to: routePaths.adminUsers, icon: Users, section: 'users' },
 ];
 
 const pageNames = {
   [routePaths.admin]: 'Resumen',
   [routePaths.adminNews]: 'Noticias',
   [routePaths.adminInbox]: 'Mensajes',
+  [routePaths.adminUsers]: 'Usuarios',
 };
 
 export function AdminShell({ children, user, preview, onLogout }) {

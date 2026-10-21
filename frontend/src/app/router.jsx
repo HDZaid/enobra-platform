@@ -13,6 +13,7 @@ import { AdminLoginPage } from '../features/admin/pages/AdminLoginPage.jsx';
 import { AdminDashboardPage } from '../features/admin/pages/AdminDashboardPage.jsx';
 import { AdminNewsPage } from '../features/admin/pages/AdminNewsPage.jsx';
 import { AdminInboxPage } from '../features/admin/pages/AdminInboxPage.jsx';
+import { AdminUsersPage } from '../features/admin/pages/AdminUsersPage.jsx';
 import { ProjectsPage } from '../features/projects/pages/ProjectsPage.jsx';
 import { ProjectDetailPage } from '../features/projects/pages/ProjectDetailPage.jsx';
 import { PropertiesPage } from '../features/properties/pages/PropertiesPage.jsx';
@@ -65,6 +66,7 @@ export const router = createBrowserRouter([
       { path: routePaths.adminLogin, element: <AdminLoginPage /> },
       { path: routePaths.adminNews, element: <AdminNewsPage /> },
       { path: routePaths.adminInbox, element: <AdminInboxPage /> },
+      { path: routePaths.adminUsers, element: <AdminUsersPage /> },
     ],
   },
 ]);
