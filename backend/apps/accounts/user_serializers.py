@@ -1,5 +1,3 @@
-from types import SimpleNamespace
-
 from django.contrib.auth.password_validation import (
     CommonPasswordValidator, MinimumLengthValidator, NumericPasswordValidator,
     UserAttributeSimilarityValidator, validate_password,
@@ -7,6 +5,7 @@ from django.contrib.auth.password_validation import (
 from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 
+from persistence.models.access import Usuario
 from .serializers import RoleSerializer
 
 
@@ -30,11 +29,12 @@ class UserCreateSerializer(serializers.Serializer):
         return value.strip().lower()
 
     def validate(self, attrs):
-        user = SimpleNamespace(username=attrs['email'], email=attrs['email'], first_name=attrs['name'], last_name='')
+        # Instancia sin guardar: el validador de similitud consulta los metadatos del modelo.
+        user = Usuario(nombre=attrs['name'], correo=attrs['email'])
         try:
             validate_password(attrs['password'], user, password_validators=[
                 MinimumLengthValidator(10), CommonPasswordValidator(), NumericPasswordValidator(),
-                UserAttributeSimilarityValidator(),
+                UserAttributeSimilarityValidator(user_attributes=('nombre', 'correo')),
             ])
         except DjangoValidationError as exc:
             raise serializers.ValidationError({'password': exc.messages}) from None
