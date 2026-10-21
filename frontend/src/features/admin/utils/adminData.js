@@ -25,6 +25,7 @@ export const adminSectionPermissions = Object.freeze({
   dashboard: Object.freeze([]),
   news: Object.freeze([FULL_ACCESS_PERMISSION]),
   inbox: Object.freeze([FULL_ACCESS_PERMISSION]),
+  users: Object.freeze([FULL_ACCESS_PERMISSION]),
   properties: PROPERTY_PERMISSIONS,
 });
 

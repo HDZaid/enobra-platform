@@ -13,6 +13,7 @@ const sectionByPath = {
   [routePaths.admin]: 'dashboard',
   [routePaths.adminNews]: 'news',
   [routePaths.adminInbox]: 'inbox',
+  [routePaths.adminUsers]: 'users',
 };
 
 export function AdminLayout() {
