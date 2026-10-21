@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 from apps.common.enums import Role
+from apps.common.pagination import Page
 
 
 @dataclass(frozen=True)
@@ -69,3 +70,14 @@ class AccessControlRepository(ABC):
 
     @abstractmethod
     def update_role(self, role_id: int, data: dict, *, actor_id: str) -> Optional[dict]: ...
+
+
+class UserRepository(ABC):
+    @abstractmethod
+    def list(self, *, q: str, page: int, page_size: int) -> Page: ...
+
+    @abstractmethod
+    def role_options(self) -> list[dict]: ...
+
+    @abstractmethod
+    def create(self, data: dict, *, actor_id: str) -> dict: ...
