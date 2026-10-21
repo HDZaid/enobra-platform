@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { matchPath, Outlet, useLocation } from 'react-router-dom';
 import { Header } from './Header.jsx';
 import { Footer } from './Footer.jsx';
 import { reference } from './data/reference.js';
 import { companyService } from './services/companyService.js';
 import { useReferenceResource } from '../ui/useReferenceResource.js';
 import '../../styles/leo.css';
+import { routePaths } from '../../app/routePaths.js';
 
 export function SiteLayout() {
   const location = useLocation();
@@ -36,7 +37,9 @@ export function SiteLayout() {
       return () => cancelAnimationFrame(frame);
     }
     window.scrollTo(0, 0);
-    if (page === 'pending') document.title = 'EnObra';
+    if (!Object.values(routePaths).some((path) => matchPath({ path, end: true }, location.pathname))) {
+      document.title = 'Página no encontrada | EnObra';
+    }
   }, [location.pathname, location.hash, page]);
   return (
     <div className="leo-site" data-page={page}>

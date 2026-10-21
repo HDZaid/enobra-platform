@@ -78,3 +78,83 @@ credenciales por configuración segura, permisos efectivos, CORS, caducidad/refr
 URLs de medios, respuestas vacías/errores y guardados persistidos. Los datos demo
 no equivalen a datos reales. Los formularios de administración de proyectos y
 propiedades se evalúan según el trabajo publicado, sin inventar módulos ausentes.
+
+## Etapa 3: Geo y aplicación conjunta
+
+Después de validar y publicar `452ed73` (Jennifer), se integra mediante merge el
+commit original `da2d292e64f4feed256352d06674788f7d65aed6` de Geo. Su autor,
+fecha y commit se conservan en el historial. Este avance toca solo frontend y
+`docs/geo-frontend.md`, por lo que no exige una selección de backend.
+
+Segundo conflicto textual en router.jsx: se incorporan Proyectos, su detalle,
+Bienes Raíces y su detalle manteniendo todas las rutas de Leo y Jennifer. Se
+retiran los marcadores de Geo y se evitan rutas repetidas de Jennifer. El merge
+automático duplicaba la clave `/media` de Vite; se conserva un único proxy.
+Se preserva la eliminación del banner de `d2c2808`, sin restaurar HomeHero.
+
+Se corrige SiteLayout para que no sobrescriba los títulos de Noticias/Contacto;
+las rutas desconocidas tienen un título propio. PendingPage se convierte en un
+contenedor dentro del único main del layout, evitando otro landmark anidado en
+la ruta no encontrada. CatalogPage conserva su sincronización de título.
+
+Compartidos finales: `src/app/router.jsx`, `src/app/routePaths.js`,
+`src/components/layout/AdminLayout.jsx`, `src/components/layout/SiteLayout.jsx`,
+`src/features/shared/pages/PendingPage.jsx`, `vite.config.js`, `eslint.config.js`,
+`src/styles/fonts.css` y los README. Las dependencias y package-lock.json siguen
+idénticos a `d2c2808`; no se añadieron dependencias a la aplicación.
+
+Validación de la aplicación conjunta:
+
+- `npm --prefix frontend ci` con caché escribible: correcto.
+- `npm --prefix frontend run lint`: correcto.
+- `npm --prefix frontend run test`: 72 pruebas aprobadas, cero fallidas/omitidas.
+- `npm --prefix frontend run build`: correcto (Vite, 2018 módulos).
+- `git diff --check` y comprobación del índice: correctos.
+- Chromium: 12 rutas a 1440 y 390 px, incluyendo detalles, login y ruta desconocida;
+  un solo main, IDs únicos, títulos de Noticias/Contacto y sin desbordamiento.
+- Filtro de año y categoría con query string; formulario de contacto con teléfono
+  normalizado; apertura/cierre con Escape del diálogo de visita; catálogos vacíos,
+  error 501, reintento y detalle 404. Imágenes API fallidas muestran su respaldo.
+- Redirección de acceso anónimo, error de login 401, sesión con `admin.all`,
+  dashboard, editor de noticias y envío de un borrador con Bearer y `published:false`,
+  bandeja de mensajes, logout, rol Arquitecta y denegación de la ruta de noticias.
+- Cero errores JavaScript no capturados en ese recorrido. Las respuestas están
+  interceptadas; los mensajes de éxito de la UI se verifican frente a acuses de
+  prueba, no prueban ninguna escritura real ni acceso a producción.
+- `git diff d2c2808 -- backend` vacío: esta fase no modifica backend.
+
+### Repetir el recorrido de navegador
+
+`frontend/tests/browser/integration.cjs` conserva el recorrido ejecutado. Usa
+Playwright como herramienta de verificación externa; no añade dependencias al
+producto. Requiere el servidor Vite con prefijo API predeterminado en 5173 y un
+Chromium instalado. En esta máquina:
+
+```bash
+npm --cache /workspace/.npm-cache --prefix /tmp/enobra-browser install --no-audit --no-fund playwright
+# Desde la raíz, con npm --prefix frontend run dev en otra terminal:
+PLAYWRIGHT_MODULE=/tmp/enobra-browser/node_modules/playwright \
+CHROMIUM_PATH=/usr/bin/chromium \
+node frontend/tests/browser/integration.cjs
+```
+
+Las variables anteriores seleccionan herramientas locales y no contienen secretos.
+Tras reinstalar node_modules, reiniciar Vite para evitar sus dependencias optimizadas
+obsoletas. Las pruebas Node siguen ejecutándose con `npm --prefix frontend run test`.
+
+## Pendientes reales antes de backend
+
+Todo el trabajo frontend publicado en las ramas revisadas queda incorporado.
+No hay módulos públicos pendientes de Geo en el estado inspeccionado. Eso no
+significa que el producto esté completo: faltan formularios administrativos de
+proyectos, propiedades y contenido institucional que esas ramas no proporcionan;
+la sesión no tiene renovación automática ni persistencia tras recargar; servicios y
+búsqueda global todavía necesitan implementación de backend. El buscador de Leo
+conserva su comportamiento de referencia y no se presenta como búsqueda real.
+
+Validar contra Django/Supabase los roles/permisos, listado de borradores, CRUD y
+persistencia, contacto/visitas, archivos multipart y URLs públicas, CORS, refresh y
+expiración. Confirmar contenido real y datos institucionales. Video en esta versión
+usa enlaces HTTPS de YouTube conforme a VideoReferenceField (no MP4/WebM).
+No se consultó ni modificó la base de datos durante esta fase. Los informes de cada
+rama conservan su evidencia histórica; este informe define la verificación conjunta.

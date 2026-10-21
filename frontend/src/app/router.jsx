@@ -13,16 +13,35 @@ import { AdminLoginPage } from '../features/admin/pages/AdminLoginPage.jsx';
 import { AdminDashboardPage } from '../features/admin/pages/AdminDashboardPage.jsx';
 import { AdminNewsPage } from '../features/admin/pages/AdminNewsPage.jsx';
 import { AdminInboxPage } from '../features/admin/pages/AdminInboxPage.jsx';
+import { ProjectsPage } from '../features/projects/pages/ProjectsPage.jsx';
+import { ProjectDetailPage } from '../features/projects/pages/ProjectDetailPage.jsx';
+import { PropertiesPage } from '../features/properties/pages/PropertiesPage.jsx';
+import { PropertyDetailPage } from '../features/properties/pages/PropertyDetailPage.jsx';
 
-// Las rutas pendientes de Geo se incorporan en la siguiente etapa.
+// Las rutas de cada módulo se integran sin reemplazar las páginas del equipo.
 const publicPages = [
   { path: routePaths.home, title: 'Inicio', owner: 'Leo', element: <HomePage /> },
   { path: routePaths.about, title: 'Nosotros', owner: 'Leo', element: <AboutPage /> },
   { path: routePaths.services, title: 'Servicios', owner: 'Leo', element: <ServicesPage /> },
-  { path: routePaths.projects, title: 'Proyectos', owner: 'Geo' },
-  { path: routePaths.projectDetail, title: 'Detalle del proyecto', owner: 'Geo' },
-  { path: routePaths.properties, title: 'Bienes raíces', owner: 'Geo' },
-  { path: routePaths.propertyDetail, title: 'Detalle de propiedad', owner: 'Geo' },
+  { path: routePaths.projects, title: 'Proyectos', owner: 'Geo', element: <ProjectsPage /> },
+  {
+    path: routePaths.projectDetail,
+    title: 'Detalle del proyecto',
+    owner: 'Geo',
+    element: <ProjectDetailPage />,
+  },
+  {
+    path: routePaths.properties,
+    title: 'Bienes raíces',
+    owner: 'Geo',
+    element: <PropertiesPage />,
+  },
+  {
+    path: routePaths.propertyDetail,
+    title: 'Detalle de propiedad',
+    owner: 'Geo',
+    element: <PropertyDetailPage />,
+  },
 ];
 
 export const router = createBrowserRouter([

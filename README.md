@@ -118,11 +118,16 @@ npm run build
 
 ## Estado actual
 
-La API define contratos e interfaces y ya admite configurar la conexión a PostgreSQL mediante
-`DATABASE_URL`; los modelos y repositorios todavía están pendientes. Los endpoints sin
-implementación responden `501 not_implemented`. Las tablas de negocio ya existen y deben
-mapearse sin `makemigrations`/`migrate`. El frontend contiene rutas, servicios HTTP y pantallas
-provisionales.
+La API define contratos e interfaces y contiene repositorios Django para varios módulos;
+requiere configurar PostgreSQL mediante `DATABASE_URL` para probar persistencia real.
+Las interfaces sin implementación responden `501 not_implemented`. Las tablas de negocio
+existentes se mapean sin `makemigrations`/`migrate`.
+
+En `frontend-dev` están integrados Inicio, Nosotros, Servicios, Proyectos, Bienes Raíces,
+Noticias, Contacto y el panel de noticias/mensajes. Las rutas y la UI se validaron con
+respuestas API controladas; la integración real con Django y los formularios
+administrativos todavía ausentes se detallan en el
+[reporte de integración](docs/frontend-integration.md).
 
 Consulta [la documentación del backend](backend/README.md),
 [la del frontend](frontend/README.md) y [el contrato OpenAPI](docs/openapi.yaml).

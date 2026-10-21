@@ -45,11 +45,12 @@ export default [
   },
 
   {
-    files: ['tests/**/*.mjs'],
+    files: ['tests/**/*.mjs', 'tests/browser/**/*.cjs'],
 
     languageOptions: {
       globals: {
         ...globals.node,
+        ...globals.browser,
         Response: 'readonly',
       },
     },
