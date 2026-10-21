@@ -23,7 +23,9 @@ export function AdminLoginPage() {
         ? 'El backend aún no tiene habilitada la autenticación real.'
         : error?.status === 401
           ? 'Correo o contraseña incorrectos.'
-          : error?.message || 'No se pudo iniciar sesión. Comprueba la conexión con Django.');
+          : error?.status === 429
+            ? 'Demasiados intentos de inicio de sesión. Espera un minuto e inténtalo de nuevo.'
+            : error?.message || 'No se pudo iniciar sesión. Comprueba la conexión con Django.');
     } finally {
       setBusy(false);
     }

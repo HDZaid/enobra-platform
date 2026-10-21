@@ -1,11 +1,19 @@
 import { useState } from 'react';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { authService } from '../../features/admin/services/authService.js';
-import { readAdminSession } from '../../features/admin/utils/adminData.js';
+import { canAccessAdminSection, readAdminSession } from '../../features/admin/utils/adminData.js';
 import { AdminShell } from '../../features/admin/components/AdminShell.jsx';
+import { AdminAccessDenied } from '../../features/admin/components/AdminAccessDenied.jsx';
 import { routePaths } from '../../app/routePaths.js';
 import { demoNews } from '../../features/news/data/demoNews.js';
 import { demoInquiries } from '../../features/admin/utils/inbox.js';
+
+// Sección del panel que corresponde a cada ruta (ver adminSectionPermissions).
+const sectionByPath = {
+  [routePaths.admin]: 'dashboard',
+  [routePaths.adminNews]: 'news',
+  [routePaths.adminInbox]: 'inbox',
+};
 
 export function AdminLayout() {
   const [session, setSession] = useState(null);
@@ -17,7 +25,16 @@ export function AdminLayout() {
 
   async function login(credentials) {
     const payload = await authService.login(credentials);
-    const nextSession = readAdminSession(payload);
+    let nextSession;
+    try {
+      nextSession = readAdminSession(payload);
+    } catch (error) {
+      // Django ya abrió una sesión: se revoca para no dejar un refresh token huérfano.
+      if (typeof payload?.refresh === 'string' && payload.refresh) {
+        void authService.logout(payload.refresh, payload.access).catch(() => {});
+      }
+      throw error;
+    }
     setSession(nextSession);
     setPreview(false);
     navigate(routePaths.admin, { replace: true });
@@ -54,9 +71,13 @@ export function AdminLayout() {
   // La protección real de datos y operaciones pertenece al backend Django.
   if (!session && !preview) return <Navigate to={routePaths.adminLogin} replace />;
 
+  // Se ocultan las secciones que Django rechazaría con 403 para el rol actual.
+  const section = sectionByPath[location.pathname.replace(/\/+$/, '') || routePaths.admin];
+  const allowed = preview || !section || canAccessAdminSection(session.user, section);
+
   return (
-    <AdminShell name={session?.user?.name || 'Vista previa'} preview={preview} onLogout={logout}>
-      <Outlet context={context} />
+    <AdminShell user={session?.user} preview={preview} onLogout={logout}>
+      {allowed ? <Outlet context={context} /> : <AdminAccessDenied user={session.user} />}
     </AdminShell>
   );
 }

@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { ArrowUpRight, LayoutDashboard, LogOut, Mail, Menu, Newspaper, ShieldCheck, X } from 'lucide-react';
 import { routePaths } from '../../../app/routePaths.js';
+import { adminRoleProfile, canAccessAdminSection } from '../utils/adminData.js';
 import '../styles/admin-fonts.css';
 
 const navigation = [
-  { label: 'Resumen', to: routePaths.admin, icon: LayoutDashboard, end: true },
-  { label: 'Noticias', to: routePaths.adminNews, icon: Newspaper },
-  { label: 'Mensajes', to: routePaths.adminInbox, icon: Mail },
+  { label: 'Resumen', to: routePaths.admin, icon: LayoutDashboard, end: true, section: 'dashboard' },
+  { label: 'Noticias', to: routePaths.adminNews, icon: Newspaper, section: 'news' },
+  { label: 'Mensajes', to: routePaths.adminInbox, icon: Mail, section: 'inbox' },
 ];
 
 const pageNames = {
@@ -16,9 +17,13 @@ const pageNames = {
   [routePaths.adminInbox]: 'Mensajes',
 };
 
-export function AdminShell({ children, name, preview, onLogout }) {
+export function AdminShell({ children, user, preview, onLogout }) {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
+  const name = user?.name || 'Vista previa';
+  const profile = adminRoleProfile(user);
+  // En la vista previa se muestran todas las secciones; en sesión real, solo las que autoriza Django.
+  const visibleNavigation = navigation.filter(({ section }) => preview || canAccessAdminSection(user, section));
   const linkClass = ({ isActive }) => `flex w-full items-center gap-3 border-l-[3px] px-5 py-3 text-sm transition-colors ${isActive
     ? 'border-[#ff6a1f] bg-white/15 font-semibold text-white'
     : 'border-transparent text-white/70 hover:bg-white/10 hover:text-white'}`;
@@ -30,11 +35,11 @@ export function AdminShell({ children, name, preview, onLogout }) {
         <div className="border-b border-white/15 px-5 py-6">
           <Link to="/" className="font-['Outfit',Arial,sans-serif] text-[26px] font-bold" onClick={() => setOpen(false)}>En<span className="text-[#ff6a1f]">Obra</span></Link>
           <p className="mt-1 text-[10px] font-bold tracking-[.16em] text-white/70">CONSTRUYE</p>
-          <span className="mt-3 inline-block rounded-full bg-[#ff6a1f] px-3 py-1 text-[10px] font-bold tracking-widest">ADMIN</span>
+          <span className="mt-3 inline-block rounded-full bg-[#ff6a1f] px-3 py-1 text-[10px] font-bold tracking-widest uppercase">{preview ? 'Demo' : profile.label}</span>
         </div>
         <nav className="flex-1 overflow-y-auto py-5" aria-label="Secciones del panel">
           <p className="mb-2 px-5 text-[10px] font-semibold tracking-[.17em] text-white/50 uppercase">Principal</p>
-          {navigation.map(({ label, to, icon: Icon, end }) => (
+          {visibleNavigation.map(({ label, to, icon: Icon, end }) => (
             <NavLink key={to} to={to} end={end} className={linkClass} onClick={() => setOpen(false)}>
               <Icon size={19} aria-hidden="true" />{label}
             </NavLink>
@@ -46,7 +51,7 @@ export function AdminShell({ children, name, preview, onLogout }) {
         </nav>
         <div className="flex items-center gap-2 border-t border-white/15 px-4 py-4">
           <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#ff6a1f] font-semibold" aria-hidden="true">{name.slice(0, 1).toUpperCase()}</span>
-          <div className="min-w-0 flex-1"><p className="truncate text-sm font-semibold">{name}</p><p className="text-xs text-white/60">{preview ? 'Solo demostración' : 'Administrador'}</p></div>
+          <div className="min-w-0 flex-1"><p className="truncate text-sm font-semibold">{name}</p><p className="truncate text-xs text-white/60" title={preview ? undefined : profile.description}>{preview ? 'Solo demostración' : profile.label}</p></div>
           <button type="button" onClick={onLogout} className="rounded-md p-2 hover:bg-white/15" title={preview ? 'Salir de vista previa' : 'Cerrar sesión'} aria-label="Salir del panel"><LogOut size={19}/></button>
         </div>
       </aside>
