@@ -21,3 +21,5 @@ no reemplazan el contrato ni implican que una funcionalidad ya esté integrada e
 - [Integración del frontend](frontend-integration.md): procedencia por rama, conflictos, validación y pendientes.
 
 - [Integración parcial React–Django y pendientes](integracion-backend-frontend.md): flujos reales verificados, límites de catálogos y pruebas reproducibles.
+
+- [Trabajo en equipo y ramas compartidas](TRABAJO-EN-EQUIPO.md): reparto, Administrador para Pablo, advertencias y Conventional Commits.

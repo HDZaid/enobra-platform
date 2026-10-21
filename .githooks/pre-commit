@@ -1,0 +1,21 @@
+#!/bin/sh
+# Advisory scope warnings: this does not identify GitHub users or enforce permissions.
+branch=$(git symbolic-ref --quiet --short HEAD) || exit 0
+case "$branch" in
+  backend-dev)
+    if ! git diff --cached --quiet -- frontend/; then
+      printf '%s\n' \
+        'ADVERTENCIA: este commit de backend-dev modifica frontend/.' \
+        'Frontend corresponde a Leo, Geo y Jennifer. Pablo tiene autorizado el Administrador del frontend.' \
+        'Juan y Henry: coordinen antes de tocar frontend; el trabajo autorizado de interfaz va en frontend-dev.' >&2
+    fi
+    ;;
+  frontend-dev)
+    if ! git diff --cached --quiet -- backend/; then
+      printf '%s\n' \
+        'ADVERTENCIA: este commit de frontend-dev modifica backend/.' \
+        'Backend corresponde a Juan, Pablo y Henry; coordinen y realicen ese trabajo en backend-dev.' >&2
+    fi
+    ;;
+esac
+exit 0

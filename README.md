@@ -4,6 +4,13 @@ Monorepo con dos aplicaciones independientes: **Django + Django REST Framework**
 `backend/` y **React + Vite** en `frontend/`. Se comunican por HTTP mediante `/api/v1/`.
 Cada aplicación tiene sus dependencias, configuración y comandos de arranque.
 
+## Ramas compartidas del equipo
+
+Frontend: **Leo, Geo y Jennifer en frontend-dev**; Pablo trabaja el **Administrador**
+también en frontend-dev. Backend: **Juan, Pablo y Henry en backend-dev**. Una sola rama
+por equipo, sin ramas alternas. Antes de trabajar o publicar, revisar y sincronizar
+los cambios de compañeros. Ver [reglas de trabajo](docs/TRABAJO-EN-EQUIPO.md).
+
 ## Estructura
 
 ```text

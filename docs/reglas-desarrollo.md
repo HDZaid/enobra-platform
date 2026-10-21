@@ -1,6 +1,7 @@
 # Reglas de desarrollo
 
-Estado: acuerdos iniciales revisables. Fecha: 12 de octubre de 2026.
+Estado: acuerdos de ramas y equipo actualizados el 21 de octubre de 2026.
+Regla vigente: [Trabajo en equipo](TRABAJO-EN-EQUIPO.md); una rama compartida por área, sin ramas alternas.
 
 Somos seis integrantes: tres de backend y tres de frontend. Trabajamos mediante
 contratos para poder avanzar en paralelo. Responsables, distribución, ramas,
@@ -10,8 +11,9 @@ ajuste se documenta en el PR correspondiente.
 ## Equipo y coordinación
 
 Los usuarios de GitHub identifican a las personas responsables de coordinar cada área.
-La asignación no es exclusiva ni restringe quién puede contribuir: cualquier integrante
-puede apoyar otro módulo, avisando y coordinando los cambios compartidos.
+El reparto vigente separa frontend y backend. Pablo tiene además autorización para
+el Administrador del frontend. Las demás colaboraciones fuera del área requieren
+advertir y coordinar previamente; no asumir autorización por el último commit.
 
 | Área | Integrante / usuario de GitHub | Responsabilidad inicial |
 | --- | --- | --- |
@@ -19,8 +21,8 @@ puede apoyar otro módulo, avisando y coordinando los cambios compartidos.
 | Frontend | Geo — [@g4usSi](https://github.com/g4usSi) | Proyectos, Bienes raíces y sus detalles. |
 | Frontend | Jennifer — [@Jeidy25Saquic](https://github.com/Jeidy25Saquic) | Noticias, Contacto, base del panel y autenticación del cliente. |
 | Backend | Henry — [@HDZaid](https://github.com/HDZaid) | Contratos/API existentes; reparto de módulos backend por acordar. |
-| Backend | Pendiente 1 | Usuario y módulos por confirmar. |
-| Backend | Pendiente 2 | Usuario y módulos por confirmar. |
+| Backend | Juan | Módulos backend por coordinar en backend-dev. |
+| Backend y colaboración frontend | Pablo | Backend en backend-dev; Administrador del frontend en frontend-dev, coordinado con Jennifer. |
 
 Los tres integrantes del frontend implementan también los formularios administrativos
 de sus propios módulos. El panel, la navegación, la sesión y los componentes comunes
@@ -87,47 +89,24 @@ La persistencia implementa las interfaces existentes y se registra en
 
 ## Ramas y sincronización
 
-- `develop` es la base de integración y de nuevas ramas de trabajo.
-- `main` se reserva como propuesta para versiones estables. Actualizar ramas de trabajo
-  no implica publicar una versión ni incorporar automáticamente `develop` en `main`.
-- Se conservan las ramas existentes. Para trabajo nuevo se sugieren nombres descriptivos
-  como `feature/<modulo>`, `fix/<problema>` o `docs/<tema>`; no se renombra trabajo en curso
-  solo para ajustarlo a una convención.
-- `frontend-dev` es una rama compartida existente, no otra fuente del contrato. Si el
-  equipo la sigue usando, debe recibir `develop` y sus cambios se revisan antes de integrarlos.
-- Sincronizar con merge para preservar el historial compartido. No sobrescribir ramas
-  de otras personas, forzar pushes ni resolver conflictos descartando un lado completo.
+- Frontend completo: Leo, Geo y Jennifer, junto con Pablo para Administrador, trabajan
+  **todos en frontend-dev**. Backend completo: Juan, Pablo y Henry trabajan
+  **todos en backend-dev**. No crear ramas personales ni alternativas por módulo.
+- develop integra los avances revisados de las dos ramas compartidas. main permanece
+  para versiones estables. No hacer trabajo diario directamente en esas dos ramas.
+- Antes de empezar y antes de publicar: fetch, leer commits y diff de los compañeros,
+  sincronizar con merge y validar el resultado. Si un compañero publicó mientras se
+  hacía push, volver a revisar e integrar; nunca forzar el push ni hacer rebase.
+- Usar mensajes convencionales para commits y merges. Conservar trabajo propio y
+  ajeno al cambiar de rama o resolver conflictos; no usar reset --hard ni git clean.
+- Revisar [el procedimiento completo y activar los hooks](TRABAJO-EN-EQUIPO.md).
 
-Ejemplo desde una rama de trabajo con el árbol limpio:
-
-```powershell
-git fetch origin
-git merge origin/develop
-# Resolver conflictos y ejecutar las comprobaciones de lo afectado.
-git push origin HEAD
-```
-
-Antes de cambiar de rama, guardar el trabajo propio en un commit o stash identificado.
-No aplicar ni borrar stashes de otros trabajos durante una sincronización.
-Actualizar una rama con `develop` conserva sus avances, pero no integra esos avances
-de vuelta en `develop`; eso se realiza mediante su PR.
-
-### Situación observada en las ramas actuales
-
-La separación de Django a `backend/` puede incorporarse a las ramas de frontend sin
-conflictos textuales en el estado revisado. Esto no garantiza que las funcionalidades
-se puedan combinar entre sí sin revisión.
-
-La comparación del avance `b9289dd` (`frontend-dev` y `feature/projects-&-real-estates`)
-con `530a7f9` (`feature/news-admin-contact`) presenta un conflicto en
-`frontend/src/app/router.jsx`. Al integrar esos avances, conservar las rutas de ambas
-funcionalidades, revisar imports, layouts y dependencias, y probar la navegación completa.
-Este conflicto corresponde a la futura integración entre funcionalidades, no a la
-sincronización individual con `develop`.
+Los informes de ramas anteriores documentan la historia; no autorizan a volver a
+crear ramas feature/fix/personales. La integración previa ya se consolidó en develop.
 
 ## Commits, PR y validación
 
-Hacer commits de alcance claro, con un título que explique el cambio y una descripción
+Usar Conventional Commits de alcance claro, con un título que explique el cambio y una descripción
 cuando sea necesario. Ejemplos: `feat: agregar detalle de propiedades`,
 `fix: validar fecha de visita` y `docs: actualizar contrato de medios`.
 
