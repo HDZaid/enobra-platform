@@ -180,7 +180,7 @@ class PropertyRestoreView(APIView):
     permission_classes = [HasAnyPermission]
     required_permissions = ("properties.restore",)
 
-    @extend_schema(responses={204: None, 404: ErrorSerializer, **ERR}, tags=TAG, summary="Restaurar publicación desde papelera")
+    @extend_schema(request=None, responses={204: None, 404: ErrorSerializer, **ERR}, tags=TAG, summary="Restaurar publicación desde papelera")
     def post(self, request, property_id: int):
         if not resolve(PropertyRepository).restore(property_id, restored_by=request.user.id):
             raise NotFound("La publicación no existe en papelera.")

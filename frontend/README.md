@@ -72,3 +72,12 @@ sujeta a cambios y pendiente de implementación.
 El estado unificado, las ramas revisadas, los contratos y las limitaciones se documentan
 en [Integración del frontend](../docs/frontend-integration.md). Los informes ADMIN/NEWS
 describen sus entregas de origen; el reporte de integración indica la validación conjunta.
+
+## Conexión actual con Django
+
+Login, datos institucionales, Noticias, Contacto y Mensajes se verificaron de extremo
+a extremo con Django/ORM y almacenamiento local desechable. Inicio consulta noticias
+y Contacto consulta los datos de empresa. Consulta [integración y pendientes](../docs/integracion-backend-frontend.md)
+para reproducir las pruebas y conocer los límites de catálogos y Supabase.
+La previsualización pública de noticias es opcional: `VITE_NEWS_PREVIEW=true`, solo
+en desarrollo. Sin esa opción, una API de noticias caída muestra error.

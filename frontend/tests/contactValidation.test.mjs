@@ -37,3 +37,9 @@ test('usa el asunto de la URL solo cuando está permitido', () => {
 test('rechaza el campo oculto cuando se llena', () => {
   assert.ok(validateContact({ ...valid, website: 'spam.test' }).website);
 });
+
+
+test('rechaza correos que exceden el contrato del backend', () => {
+  const email = 'a'.repeat(60) + '@' + 'b'.repeat(60) + '.' + 'c'.repeat(40) + '.com';
+  assert.ok(validateContact({ ...valid, email }).email);
+});

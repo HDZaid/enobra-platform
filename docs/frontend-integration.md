@@ -158,3 +158,9 @@ expiración. Confirmar contenido real y datos institucionales. Video en esta ver
 usa enlaces HTTPS de YouTube conforme a VideoReferenceField (no MP4/WebM).
 No se consultó ni modificó la base de datos durante esta fase. Los informes de cada
 rama conservan su evidencia histórica; este informe define la verificación conjunta.
+
+## Integración posterior con Django
+
+El [estado de conexión React–Django y sus pendientes](integracion-backend-frontend.md)
+registra la validación posterior con API/ORM reales en una base local desechable.
+Este documento conserva la procedencia histórica de la unión de ramas de frontend.

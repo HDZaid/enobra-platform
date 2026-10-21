@@ -3284,3 +3284,9 @@
     font-size: 36px;
   }
 }
+
+/* Keep the shared news image fallback within the existing home card composition. */
+:where(.leo-page, .leo-chrome) .home-news-section .news-card > .home-news-image {
+  height: 270px;
+  padding: 0;
+}

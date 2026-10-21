@@ -110,7 +110,7 @@ export function ContactForm() {
         <Field name="name" label="Nombre" value={values.name} error={errors.name}
           onChange={update} autoComplete="name" maxLength={120} />
         <Field name="email" label="Correo electrónico" type="email" value={values.email}
-          error={errors.email} onChange={update} autoComplete="email" maxLength={254} />
+          error={errors.email} onChange={update} autoComplete="email" maxLength={150} />
         <Field name="phone" label="Teléfono" type="tel" value={values.phone}
           error={errors.phone} onChange={update} autoComplete="tel-national" inputMode="tel" />
         <div className="min-w-0">

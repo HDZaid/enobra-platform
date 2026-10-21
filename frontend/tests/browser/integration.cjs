@@ -89,7 +89,7 @@ const assert = require('node:assert/strict');
           });
     if (p === 'auth/logout/') return r.fulfill({ status: 204 });
     if (p === 'inquiries/contact/' || p === 'inquiries/visits/')
-      return reply({ id: 1, status: 'nuevo', created_at: '2026-10-20T12:00:00Z' }, 201);
+      return reply({ id: '1', status: 'nuevo', created_at: '2026-10-20T12:00:00Z' }, 201);
     if (p === 'projects/years/') return reply({ years: [2026] });
     if (p === 'projects/') return reply(collection(mode === 'empty' ? [] : [project]));
     if (p === 'projects/casa-patio/') return reply(project);

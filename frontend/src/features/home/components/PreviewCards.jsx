@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom';
+import { newsImageUrl } from '../../news/services/newsMapper.js';
+import { NewsImage } from '../../news/components/NewsImage.jsx';
 
 export function ProjectPreviewCard({ project }) {
   return (
@@ -18,9 +20,9 @@ export function ProjectPreviewCard({ project }) {
 export function NewsPreviewCard({ news }) {
   return (
     <Link className="news-card" to={`/noticias/${encodeURIComponent(news.id)}`}>
-      <img src={news.image} alt={news.title} loading="lazy" />
+      <NewsImage key={news.image} src={newsImageUrl(news.image)} alt={news.title} className="home-news-image" />
       <div>
-        <p className="eyebrow">{news.category} · EJEMPLO</p>
+        <p className="eyebrow">{news.category}{news.demo && ' · EJEMPLO'}</p>
         <h3>{news.title}</h3>
         <p>{news.description.slice(0, 115)}…</p>
         <span className="text-link">Leer más →</span>

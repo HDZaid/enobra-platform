@@ -1,12 +1,18 @@
 import { useEffect } from 'react';
 import { ArrowUpRight, MapPin, MessageCircle, Phone } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { companyService } from '../../../components/layout/services/companyService.js';
+import { reference } from '../../../components/layout/data/reference.js';
+import { useReferenceResource } from '../../../components/ui/useReferenceResource.js';
+import { ContentStatus } from '../../../components/ui/ContentStatus.jsx';
 import { ContactForm } from '../components/ContactForm.jsx';
 import '../styles/contact-fonts.css';
 
 const container = 'mx-auto w-[calc(100%-40px)] max-w-[1240px] md:w-[calc(100%-64px)] xl:w-[calc(100%-96px)]';
 
 export function ContactPage() {
+  const company = useReferenceResource(companyService.get, reference);
+  const details = company.data;
   useEffect(() => {
     document.title = 'Contacto | EnObra';
   }, []);
@@ -35,18 +41,19 @@ export function ContactPage() {
             </h2>
             <div className="my-7 h-[3px] w-[54px] bg-[#ff6a1f]" aria-hidden="true" />
             <div className="space-y-5 text-sm leading-[1.8] text-[#4c5665]">
-              <p className="font-semibold text-[#12233f]">Ing. Luis Bernardo Balcárcel López</p>
-              <p className="flex items-start gap-3"><MapPin className="mt-1 h-[18px] w-[18px] shrink-0 text-[#b94308]" aria-hidden="true" />11 ave. 4-07 of. 205 Edificio Rivera</p>
+              <p className="font-semibold text-[#12233f]">{details.person}</p>
+              <p className="flex items-start gap-3"><MapPin className="mt-1 h-[18px] w-[18px] shrink-0 text-[#b94308]" aria-hidden="true" />{details.address}</p>
               <div className="flex items-start gap-3">
                 <Phone className="mt-1 h-[18px] w-[18px] shrink-0 text-[#b94308]" aria-hidden="true" />
-                <p><a className="hover:underline focus-visible:outline-2" href="tel:+50277632054">7763-2054</a> · <a className="hover:underline focus-visible:outline-2" href="tel:+50257265711">5726 5711</a></p>
+                <p>{details.phones.map((phone, index) => <span key={phone}>{index > 0 && ' · '}<a className="hover:underline focus-visible:outline-2" href={`tel:+502${phone.replace(/\D/g, '')}`}>{phone}</a></span>)}</p>
               </div>
-              <p className="text-xs text-[#626b79]">Correo institucional: pendiente de confirmar.</p>
-              <a className="inline-flex items-center gap-2 font-bold text-[#b94308] hover:underline focus-visible:outline-2 focus-visible:outline-offset-4"
-                href="https://wa.me/50257265711?text=Hola%2C%20quisiera%20informaci%C3%B3n%20sobre%20los%20servicios%20de%20EnObra."
+              <p className="text-xs text-[#626b79]">{details.email ? <a href={`mailto:${details.email}`}>{details.email}</a> : 'Correo institucional: pendiente de confirmar.'}</p>
+              <ContentStatus resource={company} />
+              {details.whatsapp && <a className="inline-flex items-center gap-2 font-bold text-[#b94308] hover:underline focus-visible:outline-2 focus-visible:outline-offset-4"
+                href={`https://wa.me/${details.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent('Hola, quisiera información sobre los servicios de EnObra.')}`}
                 target="_blank" rel="noopener noreferrer">
                 <MessageCircle size={18} aria-hidden="true" /> Escríbenos por WhatsApp <ArrowUpRight size={16} aria-hidden="true" />
-              </a>
+              </a>}
             </div>
           </div>
           <ContactForm />

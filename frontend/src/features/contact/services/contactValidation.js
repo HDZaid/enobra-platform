@@ -34,6 +34,7 @@ export function validateContact(form) {
   else if (data.name.length > 120) errors.name = 'Usa un máximo de 120 caracteres.';
 
   if (!data.email) errors.email = 'Ingresa tu correo electrónico.';
+  else if (data.email.length > 150) errors.email = 'Usa un máximo de 150 caracteres.';
   else if (!emailPattern.test(data.email)) errors.email = 'Ingresa un correo válido.';
 
   if (!data.phone) errors.phone = 'Ingresa tu número de teléfono.';

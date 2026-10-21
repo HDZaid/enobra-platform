@@ -5,7 +5,7 @@ import { paginateDemoNews, validNewsCategory } from '../utils/newsFilters.js';
 
 // Solo contenido de muestra en desarrollo y ante red desconectada o API 501.
 // En producción, los fallos de Django siempre se muestran al usuario.
-const previewAllowed = import.meta.env?.DEV && import.meta.env?.VITE_NEWS_PREVIEW !== 'false';
+const previewAllowed = import.meta.env?.DEV && import.meta.env?.VITE_NEWS_PREVIEW === 'true';
 
 function canPreview(error) {
   return previewAllowed && (error?.status === 501 || (error instanceof TypeError && !('status' in error)));
