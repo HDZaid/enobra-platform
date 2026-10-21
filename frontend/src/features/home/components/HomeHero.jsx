@@ -38,7 +38,6 @@ export function HomeHero() {
           <span className="micro">
             HOGARES &nbsp; | &nbsp; EMPRESAS &nbsp; | &nbsp; COMUNIDADES
           </span>
-          <em>Construyendo un mejor mañana</em>
         </div>
         <a className="scroll-cue" href="#proposito" aria-label="Descubrir más">
           <span>DESCUBRIR</span>
