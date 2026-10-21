@@ -81,6 +81,23 @@ class UserManagementAPITests(TestCase):
             'email': 'new@example.com', 'password': self.payload()['password']}, format='json')
         self.assertEqual(result.status_code, 401)
 
+    def test_password_similar_to_name_or_email_returns_field_error_without_creating_user(self):
+        cases = [
+            {'name': 'Colaborador Prueba', 'password': 'ColaboradorPrueba2026!'},
+            {'email': 'colaborador2026@example.com', 'password': 'colaborador2026'},
+        ]
+        for fields in cases:
+            with self.subTest(attribute='name' if 'name' in fields else 'email'):
+                response = self.client.post(URL, self.payload(**fields), format='json')
+                self.assertEqual(response.status_code, 400, response.content)
+                body = response.json()
+                self.assertEqual(body['error']['code'], 'validation_error')
+                self.assertTrue(body['error']['details']['password'])
+                self.assertNotIn(fields['password'], str(body))
+        self.assertEqual(Usuario.objects.count(), 1)
+        self.assertEqual(UsuarioRol.objects.count(), 1)
+        self.assertFalse(HistorialActividad.objects.filter(modulo='users').exists())
+
     def test_list_pagination_search_and_no_password_exposure(self):
         self.client.post(URL, self.payload(), format='json')
         response = self.client.get(URL + '?q=new@example.com&page_size=1').json()
