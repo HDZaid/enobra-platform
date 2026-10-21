@@ -105,9 +105,10 @@ junto con la base temporal. No se usan credenciales ni datos de producción.
   colección dinámica en una ampliación coordinada.
 - DEBUG, SECRET_KEY, HTTPS, cabeceras, CORS, proxy y límites deben revisarse para
   producción. Esta entrega no constituye despliegue ni certificación de producción.
-- Diagnóstico de BD: las piezas de `fix/db-connection-diagnostics` y
-  `frontend/news-admin-contact` siguen distribuidas entre ramas; no se fusionaron
-  cambios backend adicionales durante esta integración.
+- Diagnóstico de BD: el fragmento incompleto de `fix/db-connection-diagnostics`
+  se archivó durante la limpieza de ramas por faltar su módulo requerido. El módulo
+  complementario sigue en `frontend/news-admin-contact`; no se incorporó al backend.
+  Ver [revisión de ramas](estado-ramas.md).
 
 ## Pruebas ejecutadas
 

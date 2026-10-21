@@ -15,7 +15,7 @@ significa que los catálogos estén terminados ni que se haya desplegado producc
 | frontend-dev | Retirar después de publicar el merge | HEAD revisado: 4d3ea145eab46edb3f30fc13a7805435b84400f7. Queda como ancestro de develop. |
 | feature/projects-&-real-estates | Retirar después de publicar el merge | HEAD revisado: da2d292e64f4feed256352d06674788f7d65aed6. Ya incorporado mediante merge a frontend-dev y, por tanto, a develop. |
 | frontend/news-admin-contact | Conservar | Diez commits exclusivos respecto a la integración. El frontend se incorporó selectivamente; quedan diagnóstico/configuración backend y documentación no adoptados. No equivale a una rama fusionada por completo. |
-| fix/db-connection-diagnostics | Conservar | Un commit exclusivo (a79493d); contiene comandos/pruebas de diagnóstico todavía no incorporados. Sus dependencias deben revisarse junto con los cambios de la otra rama. |
+| fix/db-connection-diagnostics | Retirar tras revisión adicional solicitada | Commit a79493d archivado; las pruebas y la carga de runserver fallan por dependencia ausente. Se conserva bundle y parche recuperable. |
 
 La eliminación se condiciona al SHA revisado de cada referencia remota y se solicita
 como una operación atómica: si una rama avanzó, no se borra con esos valores antiguos.
@@ -49,3 +49,39 @@ Validación en el resultado de la fusión:
 
 La limpieza de esta entrega se limita a referencias Git incorporadas. No se ejecutan
 `git clean`, borrados de contenido, migraciones ni cambios a datos/archivos locales.
+
+
+## Revisión adicional de ramas con commits de Henry
+
+Tras revisar nuevamente las referencias remotas, la única rama de trabajo cuyo
+cambio exclusivo es de Henry es `fix/db-connection-diagnostics`, HEAD
+`a79493d994a9d24b86fb8a3e2393babd8153aeca`.
+
+Su título describe adaptación del login, pero el diff real solo añade tres archivos:
+check_database.py, un reemplazo de runserver y test_db_diagnostics.py. Todos importan
+persistence.db_diagnostics, ausente de su árbol. Se exportó el backend de esa rama a
+un directorio temporal, sin cambiar develop ni crear ramas/worktrees, y se ejecutaron:
+
+- `manage.py test tests.test_db_diagnostics --settings=config.test_settings`:
+  un error de importación, salida 1; no ejecutó los casos internos de diagnóstico.
+- `manage.py help runserver`: salida 1, error de importación del comando personalizado.
+
+Ambos terminan en `ModuleNotFoundError: No module named 'persistence.db_diagnostics'`.
+No se solicitó conexión ni se escribieron datos de Supabase. La rama no ofrece un
+arranque utilizable como está publicada y no aporta frontend nuevo. Tras la solicitud
+expresa de limpiar las ramas de Henry se retira esta referencia, sin integrar código
+incompleto. Esto no significa que la idea del diagnóstico sea inútil: su recuperación
+queda disponible si se decide completarla posteriormente.
+
+Antes de retirarla se creó y verificó un segundo bundle completo:
+`/workspace/repository-backups/enobra-before-henry-cleanup.bundle`.
+También se guardó el commit como parche independiente:
+`/workspace/repository-backups/henry-db-diagnostics-a79493d.patch`.
+La eliminación remota se condiciona al SHA anterior para no borrar cambios recientes.
+
+`frontend/news-admin-contact` no se elimina: aunque Henry firma su último commit,
+contiene una entrega de Jennifer y conserva cambios backend/documentación exclusivos,
+incluido el módulo de diagnóstico que falta en la otra rama. La autoría del último
+commit no demuestra propiedad exclusiva ni que una rama haya cumplido su función.
+`develop` y `main` permanecen. Esta revisión solo cambia documentación y referencias
+Git; el backend y frontend validados en develop no se modifican.
