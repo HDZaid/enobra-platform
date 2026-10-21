@@ -16,7 +16,7 @@ Ejemplo (cuando existan las implementaciones):
 
 
 def register_repositories(register) -> None:
-    from apps.accounts.interfaces import AccessControlRepository, AuthService
+    from apps.accounts.interfaces import AccessControlRepository, AuthService, UserRepository
     from apps.company.interfaces import CompanyRepository, InstitutionRepository
     from apps.projects.interfaces import ProjectRepository
     from apps.properties.interfaces import PropertyRepository
@@ -25,6 +25,7 @@ def register_repositories(register) -> None:
     from apps.media.interfaces import MediaStorage
     from persistence.accounts import DjangoAuthService
     from persistence.access_control import DjangoAccessControlRepository
+    from persistence.users import DjangoUserRepository
     from persistence.company import DjangoCompanyRepository, DjangoInstitutionRepository
     from persistence.catalog import DjangoProjectRepository, DjangoPropertyRepository, DjangoNewsRepository
     from persistence.inquiries import DjangoInquiryRepository
@@ -32,6 +33,7 @@ def register_repositories(register) -> None:
 
     register(AuthService, DjangoAuthService())
     register(AccessControlRepository, DjangoAccessControlRepository())
+    register(UserRepository, DjangoUserRepository())
     register(CompanyRepository, DjangoCompanyRepository())
     register(InstitutionRepository, DjangoInstitutionRepository())
     register(ProjectRepository, DjangoProjectRepository())
