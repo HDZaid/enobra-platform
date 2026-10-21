@@ -6,8 +6,15 @@ import { routePaths } from './routePaths.js';
 import { HomePage } from '../features/home/pages/HomePage.jsx';
 import { AboutPage } from '../features/about/pages/AboutPage.jsx';
 import { ServicesPage } from '../features/services/pages/ServicesPage.jsx';
+import { NewsPage } from '../features/news/pages/NewsPage.jsx';
+import { NewsDetailPage } from '../features/news/pages/NewsDetailPage.jsx';
+import { ContactPage } from '../features/contact/pages/ContactPage.jsx';
+import { AdminLoginPage } from '../features/admin/pages/AdminLoginPage.jsx';
+import { AdminDashboardPage } from '../features/admin/pages/AdminDashboardPage.jsx';
+import { AdminNewsPage } from '../features/admin/pages/AdminNewsPage.jsx';
+import { AdminInboxPage } from '../features/admin/pages/AdminInboxPage.jsx';
 
-// Solo las rutas de Leo tienen diseño definitivo; se conservan los demás marcadores.
+// Las rutas pendientes de Geo se incorporan en la siguiente etapa.
 const publicPages = [
   { path: routePaths.home, title: 'Inicio', owner: 'Leo', element: <HomePage /> },
   { path: routePaths.about, title: 'Nosotros', owner: 'Leo', element: <AboutPage /> },
@@ -16,15 +23,15 @@ const publicPages = [
   { path: routePaths.projectDetail, title: 'Detalle del proyecto', owner: 'Geo' },
   { path: routePaths.properties, title: 'Bienes raíces', owner: 'Geo' },
   { path: routePaths.propertyDetail, title: 'Detalle de propiedad', owner: 'Geo' },
-  { path: routePaths.news, title: 'Noticias', owner: 'Jennifer' },
-  { path: routePaths.newsDetail, title: 'Detalle de noticia', owner: 'Jennifer' },
-  { path: routePaths.contact, title: 'Contacto', owner: 'Jennifer' },
 ];
 
 export const router = createBrowserRouter([
   {
     element: <SiteLayout />,
     children: [
+      { path: routePaths.news, element: <NewsPage /> },
+      { path: routePaths.newsDetail, element: <NewsDetailPage /> },
+      { path: routePaths.contact, element: <ContactPage /> },
       ...publicPages.map(({ path, title, owner, element }) => ({
         path,
         element: element ?? <PendingPage title={title} owner={owner} />,
@@ -35,14 +42,10 @@ export const router = createBrowserRouter([
   {
     element: <AdminLayout />,
     children: [
-      {
-        path: routePaths.admin,
-        element: <PendingPage title="Panel administrativo" owner="Equipo" />,
-      },
-      {
-        path: routePaths.adminLogin,
-        element: <PendingPage title="Acceso administrativo" owner="Jennifer" />,
-      },
+      { path: routePaths.admin, element: <AdminDashboardPage /> },
+      { path: routePaths.adminLogin, element: <AdminLoginPage /> },
+      { path: routePaths.adminNews, element: <AdminNewsPage /> },
+      { path: routePaths.adminInbox, element: <AdminInboxPage /> },
     ],
   },
 ]);

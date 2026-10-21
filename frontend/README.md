@@ -67,3 +67,9 @@ sujeta a cambios y pendiente de implementación.
 3. Reemplazar los marcadores temporales por componentes fieles al mockup.
 4. Acordar endpoints faltantes para edición institucional y videos con el backend antes de desarrollar formularios definitivos.
 5. Integrar API y verificar permisos, validaciones, errores y cambios persistidos.
+
+## Integración en frontend-dev
+
+El estado unificado, las ramas revisadas, los contratos y las limitaciones se documentan
+en [Integración del frontend](../docs/frontend-integration.md). Los informes ADMIN/NEWS
+describen sus entregas de origen; el reporte de integración indica la validación conjunta.
