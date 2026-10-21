@@ -3,8 +3,9 @@ info:
   title: EnObra API
   version: 1.0.0
   description: 'Contrato HTTP del backend de EnObra (constructora y bienes raíces,
-    Quetzaltenango). Todas las rutas cuelgan de /api/v1/. Los endpoints de escritura
-    requieren `Authorization: Bearer <access_token>` con rol admin.'
+    Quetzaltenango). Todas las rutas cuelgan de /api/v1/. Los endpoints protegidos
+    requieren `Authorization: Bearer <access_token>` y se autorizan por permisos efectivos
+    derivados de los roles activos del usuario.'
 paths:
   /api/v1/admin/media/:
     post:
@@ -113,6 +114,325 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: ''
         '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/v1/admin/permissions/:
+    get:
+      operationId: v1_admin_permissions_list
+      summary: Permisos configurados para asignar a roles
+      tags:
+      - Roles y permisos
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Permission'
+          description: ''
+  /api/v1/admin/properties/{property_id}/permanent/:
+    delete:
+      operationId: v1_admin_properties_permanent_destroy
+      summary: Eliminar publicación permanentemente
+      parameters:
+      - in: path
+        name: property_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Bienes raíces
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/v1/admin/properties/{property_id}/restore/:
+    post:
+      operationId: v1_admin_properties_restore_create
+      summary: Restaurar publicación desde papelera
+      parameters:
+      - in: path
+        name: property_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Bienes raíces
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/v1/admin/properties/trash/:
+    get:
+      operationId: v1_admin_properties_trash_retrieve
+      summary: Listar publicaciones en papelera
+      parameters:
+      - in: query
+        name: ids
+        schema:
+          type: string
+          minLength: 1
+        description: 'Ids separados por coma (vista ''Favoritos''). Ej.: 1,4,5'
+      - in: query
+        name: max_price
+        schema:
+          type: integer
+          minimum: 0
+      - in: query
+        name: min_price
+        schema:
+          type: integer
+          minimum: 0
+      - in: query
+        name: operation
+        schema:
+          enum:
+          - Venta
+          - Alquiler
+          type: string
+          minLength: 1
+        description: |-
+          * `Venta` - Venta
+          * `Alquiler` - Alquiler
+      - in: query
+        name: page
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - in: query
+        name: page_size
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 12
+      - in: query
+        name: q
+        schema:
+          type: string
+          default: ''
+      - in: query
+        name: sort
+        schema:
+          enum:
+          - recent
+          - price_asc
+          - price_desc
+          type: string
+          default: recent
+          minLength: 1
+        description: |-
+          * `recent` - Más recientes
+          * `price_asc` - Precio ascendente
+          * `price_desc` - Precio descendente
+      - in: query
+        name: type
+        schema:
+          enum:
+          - Casa
+          - Apartamento
+          - Terreno
+          - Local
+          type: string
+          minLength: 1
+        description: |-
+          * `Casa` - Casa
+          * `Apartamento` - Apartamento
+          * `Terreno` - Terreno
+          * `Local` - Local
+      - in: query
+        name: zone
+        schema:
+          type: string
+          minLength: 1
+      tags:
+      - Bienes raíces
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPropertyList'
+          description: ''
+  /api/v1/admin/roles/:
+    get:
+      operationId: v1_admin_roles_list
+      summary: Listar roles y permisos asignados
+      tags:
+      - Roles y permisos
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+          description: ''
+    post:
+      operationId: v1_admin_roles_create
+      summary: Crear un rol a partir de permisos existentes
+      tags:
+      - Roles y permisos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RoleWriteRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/v1/admin/roles/{role_id}/:
+    get:
+      operationId: v1_admin_roles_retrieve
+      summary: Consultar un rol
+      parameters:
+      - in: path
+        name: role_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Roles y permisos
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+    patch:
+      operationId: v1_admin_roles_partial_update
+      summary: Actualizar nombre, estado o permisos de un rol
+      parameters:
+      - in: path
+        name: role_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Roles y permisos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedRoleWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedRoleWriteRequest'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '404':
           content:
             application/json:
               schema:
@@ -1572,6 +1892,7 @@ components:
           type: string
           format: email
           minLength: 1
+          maxLength: 150
         phone:
           type: string
           minLength: 1
@@ -2165,6 +2486,35 @@ components:
         published:
           type: boolean
           default: true
+    PatchedRoleWriteRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 60
+        description:
+          type: string
+          maxLength: 250
+        active:
+          type: boolean
+        permissions:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            maxLength: 100
+    Permission:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+      required:
+      - description
+      - name
     Principle:
       type: object
       properties:
@@ -2383,6 +2733,12 @@ components:
           type: boolean
         published:
           type: boolean
+        trashed_at:
+          type: string
+          format: date-time
+        trashed_by:
+          type: string
+          nullable: true
       required:
       - area
       - baths
@@ -2539,11 +2895,49 @@ components:
           minLength: 1
       required:
       - refresh
-    RoleEnum:
-      enum:
-      - admin
-      type: string
-      description: '* `admin` - Administrador'
+    Role:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        active:
+          type: boolean
+        permissions:
+          type: array
+          items:
+            type: string
+      required:
+      - active
+      - description
+      - id
+      - name
+      - permissions
+    RoleWriteRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 60
+        description:
+          type: string
+          maxLength: 250
+        active:
+          type: boolean
+        permissions:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            maxLength: 100
+      required:
+      - name
+      - permissions
     SearchHit:
       type: object
       properties:
@@ -2648,12 +3042,22 @@ components:
           type: string
           format: email
         role:
-          $ref: '#/components/schemas/RoleEnum'
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+        permissions:
+          type: array
+          items:
+            type: string
       required:
       - email
       - id
       - name
+      - permissions
       - role
+      - roles
     VisitInquiryCreateRequest:
       type: object
       description: Modal 'Solicitar visita' de una propiedad.

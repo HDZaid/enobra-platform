@@ -1,0 +1,3292 @@
+/* Adapted from the official mockup, compact services variant. Scoped to Leo pages and public chrome. */
+@font-face {
+  font-family: 'EnObra Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/assets/enobra/inter-400.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'EnObra Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(/assets/enobra/inter-500.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'EnObra Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(/assets/enobra/inter-600.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'EnObra Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(/assets/enobra/inter-700.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'EnObra Outfit';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/assets/enobra/outfit-400.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'EnObra Outfit';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(/assets/enobra/outfit-500.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'EnObra Outfit';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(/assets/enobra/outfit-600.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'EnObra Outfit';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(/assets/enobra/outfit-700.ttf) format('truetype');
+}
+.leo-site {
+  --navy: #12233f;
+  --blue: #304e7d;
+  --orange: #ff6a1f;
+  --orange-text: #b94308;
+  --white: #fff;
+  --light: #f3f6fa;
+  --gray: #6b7280;
+  --text-secondary: #626b79;
+  --gray-light: #a3a3a3;
+  --line: #dfe5ec;
+  --radius: 12px;
+  --shadow: 0 8px 30px #12233f09;
+  --heading: 'EnObra Outfit', 'Arial', sans-serif;
+  --body: 'EnObra Inter', 'Arial', sans-serif;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+:where(.leo-page, .leo-chrome) * {
+  box-sizing: border-box;
+}
+:where(.leo-page, .leo-chrome) {
+  margin: 0;
+  color: var(--navy);
+  font-family: var(--body);
+  line-height: 1.65;
+  font-size: 16px;
+}
+:where(.leo-page, .leo-chrome) button,
+:where(.leo-page, .leo-chrome) input,
+:where(.leo-page, .leo-chrome) select,
+:where(.leo-page, .leo-chrome) textarea {
+  font: inherit;
+}
+:where(.leo-page, .leo-chrome) button,
+:where(.leo-page, .leo-chrome) a,
+:where(.leo-page, .leo-chrome) input,
+:where(.leo-page, .leo-chrome) select,
+:where(.leo-page, .leo-chrome) textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+:where(.leo-page, .leo-chrome) button {
+  cursor: pointer;
+}
+:where(.leo-page, .leo-chrome) a {
+  color: inherit;
+  text-decoration: none;
+}
+:where(.leo-page, .leo-chrome) button {
+  color: inherit;
+}
+:where(.leo-page, .leo-chrome) button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+:where(.leo-page, .leo-chrome) img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  background: var(--light);
+}
+:where(.leo-page, .leo-chrome) svg {
+  width: 24px;
+  height: 24px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+:where(.leo-page, .leo-chrome) h1,
+:where(.leo-page, .leo-chrome) h2,
+:where(.leo-page, .leo-chrome) h3 {
+  font-family: var(--heading);
+  line-height: 1.17;
+  letter-spacing: -0.035em;
+  margin: 0;
+  font-weight: 700;
+}
+:where(.leo-page, .leo-chrome) h2 {
+  font-size: clamp(30px, 3.1vw, 44px);
+}
+:where(.leo-page, .leo-chrome) h3 {
+  font-size: 22px;
+}
+:where(.leo-page, .leo-chrome) p {
+  margin: 0 0 20px;
+}
+:where(.leo-page, .leo-chrome) button:focus-visible,
+:where(.leo-page, .leo-chrome) a:focus-visible,
+:where(.leo-page, .leo-chrome) input:focus-visible,
+:where(.leo-page, .leo-chrome) select:focus-visible,
+:where(.leo-page, .leo-chrome) textarea:focus-visible,
+:where(.leo-page, .leo-chrome) summary:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 4px;
+}
+:where(.leo-page, .leo-chrome) .hero :focus-visible,
+:where(.leo-page, .leo-chrome) footer :focus-visible {
+  outline-color: var(--white);
+}
+:where(.leo-page, .leo-chrome) [hidden] {
+  display: none !important;
+}
+:where(.leo-page, .leo-chrome) .container {
+  width: min(1240px, calc(100% - 96px));
+  margin-inline: auto;
+}
+:where(.leo-page, .leo-chrome) .section {
+  padding-block: 96px;
+}
+:where(.leo-page, .leo-chrome) .tinted {
+  background: var(--light);
+}
+:where(.leo-page, .leo-chrome) .eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.19em;
+  color: var(--orange-text);
+  margin-bottom: 18px;
+}
+:where(.leo-page, .leo-chrome) .accent-line {
+  height: 3px;
+  width: 54px;
+  background: var(--orange);
+  margin: 24px 0;
+}
+:where(.leo-page, .leo-chrome) .small {
+  font-size: 13px;
+}
+:where(.leo-page, .leo-chrome) .muted {
+  color: var(--text-secondary);
+}
+:where(.leo-page, .leo-chrome) .text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--orange-text);
+  font-size: 14px;
+  font-weight: 700;
+  background: none;
+  border: 0;
+  padding: 8px 0;
+}
+:where(.leo-page, .leo-chrome) .text-link span,
+:where(.leo-page, .leo-chrome) .button span {
+  transition: transform 0.25s;
+}
+:where(.leo-page, .leo-chrome) .text-link:hover span,
+:where(.leo-page, .leo-chrome) .button:hover span {
+  transform: translateX(4px);
+}
+:where(.leo-page, .leo-chrome) .button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  min-height: 50px;
+  padding: 13px 23px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 700;
+  transition:
+    background 0.25s,
+    transform 0.25s;
+}
+:where(.leo-page, .leo-chrome) .primary {
+  background: var(--orange);
+  color: var(--navy);
+}
+:where(.leo-page, .leo-chrome) .primary:hover {
+  background: #ff8a50;
+  transform: translateY(-2px);
+}
+:where(.leo-page, .leo-chrome) .outline {
+  border-color: #ffffff90;
+  background: transparent;
+  color: var(--white);
+}
+:where(.leo-page, .leo-chrome) .outline:hover {
+  background: #ffffff18;
+}
+:where(.leo-page, .leo-chrome) .icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 44px;
+  border: 0;
+  background: transparent;
+  border-radius: 7px;
+}
+:where(.leo-page, .leo-chrome) .icon-button:hover {
+  background: #12233f0b;
+}
+:where(.leo-page, .leo-chrome) .skip {
+  position: fixed;
+  top: -100px;
+  left: 15px;
+  background: white;
+  z-index: 200;
+  padding: 12px;
+}
+:where(.leo-page, .leo-chrome) .skip:focus {
+  top: 12px;
+}
+:where(.leo-page, .leo-chrome) header {
+  position: fixed;
+  inset: 0 0 auto;
+  background: white;
+  z-index: 30;
+  transition: box-shadow 0.3s;
+}
+:where(.leo-page, .leo-chrome) header.scrolled {
+  box-shadow: 0 3px 22px #12233f14;
+}
+:where(.leo-page, .leo-chrome) .header-inner {
+  height: 105px;
+  padding: 0 180px 0 4%;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  transition: height 0.3s;
+}
+:where(.leo-page, .leo-chrome) .scrolled .header-inner {
+  height: 85px;
+}
+:where(.leo-page, .leo-chrome) .brand {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  flex-shrink: 0;
+  line-height: 1;
+}
+:where(.leo-page, .leo-chrome) .brand-icon {
+  width: 42px;
+  height: 51px;
+}
+:where(.leo-page, .leo-chrome) .brand small {
+  display: block;
+  letter-spacing: 0.25em;
+  font-size: 9px;
+  font-style: normal;
+  margin-bottom: 2px;
+}
+:where(.leo-page, .leo-chrome) .brand strong {
+  font-family: var(--heading);
+  font-size: 36px;
+  letter-spacing: -0.06em;
+  display: block;
+}
+:where(.leo-page, .leo-chrome) .brand strong span {
+  color: var(--orange-text);
+}
+:where(.leo-page, .leo-chrome) .brand em {
+  font-style: normal;
+  font-size: 8px;
+  display: block;
+  letter-spacing: 0.015em;
+  margin-top: 6px;
+}
+:where(.leo-page, .leo-chrome) .header-inner nav {
+  display: flex;
+  margin-left: auto;
+  gap: 25px;
+  align-items: center;
+}
+:where(.leo-page, .leo-chrome) .header-inner nav a {
+  position: relative;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 13px 0;
+}
+:where(.leo-page, .leo-chrome) .header-inner nav a:after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--orange);
+  transition: width 0.3s;
+}
+:where(.leo-page, .leo-chrome) .header-inner nav a.active:after,
+:where(.leo-page, .leo-chrome) .header-inner nav a:hover:after {
+  width: 100%;
+}
+:where(.leo-page, .leo-chrome) .header-manifesto {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 160px;
+  padding: 15px 12px 8px 45px;
+  background: var(--navy);
+  clip-path: polygon(22% 0, 100% 0, 100% 100%, 0 100%);
+  color: white;
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  line-height: 1.8;
+}
+:where(.leo-page, .leo-chrome) .header-manifesto i {
+  display: block;
+  width: 30px;
+  height: 2px;
+  background: var(--orange);
+  margin-top: 5px;
+}
+:where(.leo-page, .leo-chrome) .menu-toggle {
+  display: none;
+}
+:where(.leo-page, .leo-chrome) .hero {
+  margin-top: 105px;
+  min-height: 690px;
+  position: relative;
+  color: white;
+  overflow: hidden;
+}
+:where(.leo-page, .leo-chrome) .hero > img,
+:where(.leo-page, .leo-chrome) .hero-overlay {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+}
+:where(.leo-page, .leo-chrome) .hero > img {
+  object-position: center 60%;
+}
+:where(.leo-page, .leo-chrome) .hero-overlay {
+  background:
+    linear-gradient(90deg, #101e35ed 0%, #10233ed1 32%, #12233f40 75%, #12233f15),
+    linear-gradient(0deg, #12233f99, transparent 45%);
+}
+:where(.leo-page, .leo-chrome) .hero-content {
+  position: relative;
+  padding-top: 90px;
+  padding-bottom: 30px;
+}
+:where(.leo-page, .leo-chrome) .hero .eyebrow {
+  color: #ff985e;
+  font-size: 11px;
+}
+:where(.leo-page, .leo-chrome) .hero h1 {
+  font-size: clamp(44px, 5vw, 72px);
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+  max-width: 700px;
+  animation: leo-enter 0.6s both;
+}
+:where(.leo-page, .leo-chrome) .hero h1 span {
+  color: var(--orange);
+}
+:where(.leo-page, .leo-chrome) .hero-description {
+  max-width: 460px;
+  font-size: 17px;
+  color: #edf0f5;
+  margin-top: 25px;
+  animation: leo-enter 0.6s 0.1s both;
+}
+:where(.leo-page, .leo-chrome) .hero-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+  animation: leo-enter 0.6s 0.2s both;
+}
+:where(.leo-page, .leo-chrome) .hero-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 65px;
+}
+:where(.leo-page, .leo-chrome) .micro {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+:where(.leo-page, .leo-chrome) .micro:before {
+  content: '';
+  width: 36px;
+  height: 2px;
+  background: var(--orange);
+}
+:where(.leo-page, .leo-chrome) .hero-bottom em {
+  font-family: Georgia, serif;
+  font-size: 19px;
+  transform: rotate(-5deg);
+  border-bottom: 2px solid var(--orange);
+  padding-bottom: 6px;
+}
+:where(.leo-page, .leo-chrome) .section-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 60px;
+  align-items: end;
+  margin-bottom: 40px;
+}
+:where(.leo-page, .leo-chrome) .section-heading > p {
+  max-width: 345px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+:where(.leo-page, .leo-chrome) .section-heading .text-link {
+  flex-shrink: 0;
+}
+:where(.leo-page, .leo-chrome) label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+}
+:where(.leo-page, .leo-chrome) input,
+:where(.leo-page, .leo-chrome) select,
+:where(.leo-page, .leo-chrome) textarea {
+  display: block;
+  width: 100%;
+  margin-top: 7px;
+  padding: 11px 12px;
+  border: 1px solid #cdd5df;
+  border-radius: 5px;
+  background: white;
+  color: var(--navy);
+  font-size: 14px;
+  min-width: 0;
+}
+:where(.leo-page, .leo-chrome) input::placeholder,
+:where(.leo-page, .leo-chrome) textarea::placeholder {
+  color: #6b7280;
+}
+:where(.leo-page, .leo-chrome) textarea {
+  resize: vertical;
+  min-height: 105px;
+}
+:where(.leo-page, .leo-chrome) .projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 26px;
+}
+:where(.leo-page, .leo-chrome) .project-card {
+  border: 0;
+  text-align: left;
+  background: none;
+  padding: 0;
+}
+:where(.leo-page, .leo-chrome) .project-image {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+}
+:where(.leo-page, .leo-chrome) .project-image img {
+  aspect-ratio: 1.3;
+  transition: transform 0.6s;
+}
+:where(.leo-page, .leo-chrome) .project-image span {
+  position: absolute;
+  inset: 0;
+  background: #12233f70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+:where(.leo-page, .leo-chrome) .project-card:hover img {
+  transform: scale(1.05);
+}
+:where(.leo-page, .leo-chrome) .project-card:hover .project-image span,
+:where(.leo-page, .leo-chrome) .project-card:focus-visible .project-image span {
+  opacity: 1;
+}
+:where(.leo-page, .leo-chrome) .project-card h3 {
+  font-size: 20px;
+  margin: 22px 0 12px;
+}
+:where(.leo-page, .leo-chrome) .project-card p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  border-left: 3px solid var(--orange);
+  padding-left: 12px;
+}
+:where(.leo-page, .leo-chrome) .contact-info {
+  font-size: 14px;
+  line-height: 1.8;
+  margin-top: 25px;
+}
+:where(.leo-page, .leo-chrome) .contact-info p {
+  margin-bottom: 12px;
+}
+:where(.leo-page, .leo-chrome) .contact-info a:hover {
+  text-decoration: underline;
+}
+:where(.leo-page, .leo-chrome) input[aria-invalid='true'],
+:where(.leo-page, .leo-chrome) textarea[aria-invalid='true'] {
+  border-color: #b42318;
+}
+:where(.leo-page, .leo-chrome) .spinner {
+  width: 17px;
+  height: 17px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: leo-spin 0.6s linear infinite;
+}
+:where(.leo-page, .leo-chrome) footer {
+  background:
+    linear-gradient(#12233ff2, #12233ff2),
+    url('/assets/enobra/edificio.jpg') center/cover;
+  color: white;
+}
+:where(.leo-page, .leo-chrome) .footer-top {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 0.6fr;
+  gap: 50px;
+  padding-block: 60px;
+}
+:where(.leo-page, .leo-chrome) .footer-brand strong span {
+  color: var(--orange);
+}
+:where(.leo-page, .leo-chrome) .footer-brand strong {
+  font-size: 43px;
+}
+:where(.leo-page, .leo-chrome) .footer-brand em {
+  font-size: 10px;
+}
+:where(.leo-page, .leo-chrome) .footer-top .contact-info {
+  font-size: 12px;
+  color: #d4dcea;
+}
+:where(.leo-page, .leo-chrome) .footer-motto {
+  align-self: center;
+  text-align: center;
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 25px;
+}
+:where(.leo-page, .leo-chrome) .footer-motto i {
+  display: block;
+  width: 45px;
+  height: 2px;
+  background: var(--orange);
+  margin: 20px auto;
+}
+:where(.leo-page, .leo-chrome) .footer-manifesto {
+  font-size: 15px;
+  letter-spacing: 0.2em;
+  line-height: 1.85;
+  justify-self: end;
+  align-self: center;
+}
+:where(.leo-page, .leo-chrome) .footer-manifesto span {
+  color: #ff985e;
+}
+:where(.leo-page, .leo-chrome) .footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  border-top: 1px solid #ffffff20;
+  padding-block: 22px;
+  font-size: 10px;
+  color: #d4dcea;
+}
+:where(.leo-page, .leo-chrome) .footer-bottom p {
+  margin: 0;
+}
+:where(.leo-page, .leo-chrome) .footer-bottom nav {
+  display: flex;
+  gap: 20px;
+}
+:where(.leo-page, .leo-chrome) #back-top {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background: var(--navy);
+  color: white;
+  z-index: 20;
+  box-shadow: 0 4px 15px #0002;
+}
+:where(.leo-page, .leo-chrome) #toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translate(-50%, 20px);
+  background: var(--navy);
+  color: white;
+  padding: 12px 22px;
+  border-radius: 8px;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  font-size: 14px;
+  width: max-content;
+  max-width: 90vw;
+  transition: 0.25s;
+}
+:where(.leo-page, .leo-chrome) #toast.visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+:where(.leo-page, .leo-chrome) dialog {
+  padding: 0;
+  border: 0;
+  border-radius: 14px;
+  width: min(800px, calc(100% - 32px));
+  max-height: 90dvh;
+  color: var(--navy);
+  box-shadow: 0 25px 100px #0004;
+  overflow: auto;
+}
+:where(.leo-page, .leo-chrome) dialog::backdrop {
+  background: #09172bcc;
+  backdrop-filter: blur(4px);
+}
+:where(.leo-page, .leo-chrome) .modal-close {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  background: white;
+  z-index: 3;
+  font-size: 28px;
+  box-shadow: 0 3px 10px #0002;
+}
+:where(.leo-page, .leo-chrome) .modal-close:hover {
+  background: var(--light);
+}
+.modal-.leo-site {
+  padding: 34px;
+}
+.modal-.leo-site h2 {
+  font-size: 31px;
+  padding-right: 20px;
+  margin-bottom: 20px;
+}
+.modal-.leo-site .eyebrow {
+  margin-bottom: 10px;
+}
+.modal-.leo-site > p {
+  color: var(--text-secondary);
+}
+:where(.leo-page, .leo-chrome) .gallery {
+  position: relative;
+  background: var(--navy);
+}
+:where(.leo-page, .leo-chrome) .gallery img {
+  width: 100%;
+  height: 360px;
+}
+:where(.leo-page, .leo-chrome) .gallery-controls {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  right: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+}
+:where(.leo-page, .leo-chrome) .gallery-controls button {
+  background: white;
+  color: var(--navy);
+  font-size: 20px;
+}
+:where(.leo-page, .leo-chrome) .gallery-controls span {
+  background: #12233fc9;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 13px;
+}
+:where(.leo-page, .leo-chrome) .modal-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 25px;
+}
+:where(.leo-page, .leo-chrome) .search-results h3 {
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  color: var(--orange-text);
+  margin: 28px 0 10px;
+}
+:where(.leo-page, .leo-chrome) .search-result {
+  display: flex;
+  text-align: left;
+  justify-content: space-between;
+  gap: 15px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: white;
+  width: 100%;
+  padding: 15px 5px;
+  font-size: 15px;
+}
+:where(.leo-page, .leo-chrome) .search-result:hover {
+  background: var(--light);
+}
+:where(.leo-page, .leo-chrome) .search-result small {
+  color: var(--text-secondary);
+}
+:where(.leo-page, .leo-chrome) .reveal {
+  opacity: 1;
+}
+:where(.leo-page, .leo-chrome) .js-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.6s var(--ease),
+    transform 0.6s var(--ease);
+}
+:where(.leo-page, .leo-chrome) .js-reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+:where(.leo-page, .leo-chrome) .noscript {
+  position: fixed;
+  bottom: 0;
+  background: white;
+  padding: 20px;
+  width: 100%;
+  z-index: 100;
+}
+@keyframes leo-enter {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes leo-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (max-width: 1200px) {
+  :where(.leo-page, .leo-chrome) .header-manifesto {
+    display: none;
+  }
+  :where(.leo-page, .leo-chrome) .header-inner {
+    padding-inline: 4%;
+    gap: 18px;
+  }
+  :where(.leo-page, .leo-chrome) .header-inner nav {
+    gap: 20px;
+  }
+}
+@media (max-width: 1024px) {
+  :where(.leo-page, .leo-chrome) .container {
+    width: calc(100% - 64px);
+  }
+  :where(.leo-page, .leo-chrome) .header-inner nav {
+    gap: 15px;
+  }
+  :where(.leo-page, .leo-chrome) .header-inner nav a {
+    font-size: 12px;
+  }
+  :where(.leo-page, .leo-chrome) .brand strong {
+    font-size: 30px;
+  }
+  :where(.leo-page, .leo-chrome) .brand-icon {
+    width: 32px;
+  }
+  :where(.leo-page, .leo-chrome) .section {
+    padding-block: 70px;
+  }
+  :where(.leo-page, .leo-chrome) .projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  :where(.leo-page, .leo-chrome) .hero h1 {
+    font-size: 62px;
+  }
+  :where(.leo-page, .leo-chrome) .section-heading {
+    gap: 30px;
+  }
+  :where(.leo-page, .leo-chrome) .section-heading > p {
+    max-width: 280px;
+  }
+  :where(.leo-page, .leo-chrome) .footer-bottom {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+@media (max-width: 768px) {
+  :where(.leo-page, .leo-chrome) .container {
+    width: calc(100% - 40px);
+  }
+  :where(.leo-page, .leo-chrome) .header-inner,
+  :where(.leo-page, .leo-chrome) .scrolled .header-inner {
+    height: 80px;
+    padding: 0 20px;
+  }
+  :where(.leo-page, .leo-chrome) .header-inner #search-open {
+    margin-left: auto;
+  }
+  :where(.leo-page, .leo-chrome) .menu-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  :where(.leo-page, .leo-chrome) .menu-toggle span {
+    height: 2px;
+    width: 22px;
+    background: var(--navy);
+    transition:
+      transform 0.25s,
+      opacity 0.25s;
+  }
+  :where(.leo-page, .leo-chrome) .menu-toggle[aria-expanded='true'] span:first-child {
+    transform: translateY(7px) rotate(45deg);
+  }
+  :where(.leo-page, .leo-chrome) .menu-toggle[aria-expanded='true'] span:nth-child(2) {
+    opacity: 0;
+  }
+  :where(.leo-page, .leo-chrome) .menu-toggle[aria-expanded='true'] span:last-child {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+  :where(.leo-page, .leo-chrome) .header-inner nav {
+    display: flex;
+    position: absolute;
+    top: 80px;
+    left: 0;
+    right: 0;
+    background: white;
+    padding: 20px 30px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    box-shadow: 0 15px 20px #12233f10;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: 0.25s;
+  }
+  :where(.leo-page, .leo-chrome) .header-inner nav.open {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+  :where(.leo-page, .leo-chrome) .header-inner nav a {
+    font-size: 15px;
+    padding: 12px;
+  }
+  :where(.leo-page, .leo-chrome) .header-inner nav a.active:after {
+    width: 30px;
+    left: 12px;
+  }
+  :where(.leo-page, .leo-chrome) .hero {
+    margin-top: 80px;
+    min-height: 650px;
+    text-align: center;
+  }
+  :where(.leo-page, .leo-chrome) .hero-content {
+    padding-top: 75px;
+  }
+  :where(.leo-page, .leo-chrome) .hero-overlay {
+    background:
+      linear-gradient(90deg, #12233fde, #12233f75), linear-gradient(0deg, #12233f88, transparent);
+  }
+  :where(.leo-page, .leo-chrome) .hero h1 {
+    font-size: 56px;
+  }
+  :where(.leo-page, .leo-chrome) .hero-description {
+    margin: 25px auto 0;
+  }
+  :where(.leo-page, .leo-chrome) .hero-actions {
+    justify-content: center;
+  }
+  :where(.leo-page, .leo-chrome) .hero-bottom {
+    justify-content: center;
+    margin-top: 58px;
+  }
+  :where(.leo-page, .leo-chrome) .hero-bottom em {
+    display: none;
+  }
+  :where(.leo-page, .leo-chrome) .hero .eyebrow {
+    font-size: 9px;
+  }
+  :where(.leo-page, .leo-chrome) .section-heading {
+    display: block;
+  }
+  :where(.leo-page, .leo-chrome) .section-heading > p {
+    max-width: 100%;
+    margin-top: 22px;
+  }
+  :where(.leo-page, .leo-chrome) .section-heading > .text-link {
+    margin-top: 20px;
+  }
+  :where(.leo-page, .leo-chrome) .section {
+    padding-block: 60px;
+  }
+  :where(.leo-page, .leo-chrome) .footer-top {
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+  :where(.leo-page, .leo-chrome) .footer-manifesto {
+    display: none;
+  }
+  :where(.leo-page, .leo-chrome) .footer-motto {
+    font-size: 21px;
+  }
+  :where(.leo-page, .leo-chrome) .footer-bottom nav {
+    flex-wrap: wrap;
+    gap: 10px 20px;
+  }
+  :where(.leo-page, .leo-chrome) .gallery img {
+    height: 280px;
+  }
+  .modal-.leo-site {
+    padding: 26px;
+  }
+  .modal-.leo-site h2 {
+    font-size: 27px;
+  }
+}
+@media (max-width: 480px) {
+  :where(.leo-page, .leo-chrome) .hero {
+    min-height: 630px;
+  }
+  :where(.leo-page, .leo-chrome) .hero h1 {
+    font-size: 43px;
+  }
+  :where(.leo-page, .leo-chrome) .hero-content {
+    padding-top: 65px;
+  }
+  :where(.leo-page, .leo-chrome) .hero-description {
+    font-size: 15px;
+  }
+  :where(.leo-page, .leo-chrome) .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+    margin-inline: 22px;
+  }
+  :where(.leo-page, .leo-chrome) .hero-actions .button {
+    min-height: 48px;
+  }
+  :where(.leo-page, .leo-chrome) .hero-bottom {
+    margin-top: 38px;
+  }
+  :where(.leo-page, .leo-chrome) .micro {
+    font-size: 8px;
+    gap: 8px;
+  }
+  :where(.leo-page, .leo-chrome) .micro:before {
+    width: 20px;
+  }
+  :where(.leo-page, .leo-chrome) .projects-grid {
+    grid-template-columns: 1fr;
+  }
+  :where(.leo-page, .leo-chrome) .search-field {
+    grid-column: 1/-1;
+  }
+  :where(.leo-page, .leo-chrome) .footer-top {
+    grid-template-columns: 1fr;
+    padding-block: 45px;
+  }
+  :where(.leo-page, .leo-chrome) .footer-motto {
+    text-align: left;
+    justify-self: start;
+  }
+  :where(.leo-page, .leo-chrome) .footer-motto i {
+    margin-left: 0;
+  }
+  :where(.leo-page, .leo-chrome) .brand strong {
+    font-size: 31px;
+  }
+  :where(.leo-page, .leo-chrome) .brand-icon {
+    width: 32px;
+  }
+  :where(.leo-page, .leo-chrome) .brand em {
+    font-size: 7px;
+  }
+  :where(.leo-page, .leo-chrome) .header-inner {
+    gap: 8px;
+  }
+  .modal-.leo-site {
+    padding: 24px 20px;
+  }
+  :where(.leo-page, .leo-chrome) .gallery img {
+    height: 240px;
+  }
+  :where(.leo-page, .leo-chrome) .modal-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :where(.leo-page, .leo-chrome) *,
+  :where(.leo-page, .leo-chrome) *:before,
+  :where(.leo-page, .leo-chrome) *:after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  :where(.leo-page, .leo-chrome) .js-reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+:where(.leo-page, .leo-chrome) .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.leo-site:not([data-page='index']) .leo-site-main {
+  padding-top: 105px;
+}
+:where(.leo-page, .leo-chrome) .header-inner {
+  padding-right: 150px;
+  gap: 15px;
+}
+:where(.leo-page, .leo-chrome) .header-inner nav {
+  gap: 18px;
+}
+:where(.leo-page, .leo-chrome) .header-manifesto {
+  width: 130px;
+  padding-left: 37px;
+}
+:where(.leo-page, .leo-chrome) .header-inner nav a {
+  font-size: 12px;
+}
+:where(.leo-page, .leo-chrome) .official-logo {
+  width: 190px;
+  max-height: 65px;
+  object-fit: contain;
+}
+:where(.leo-page, .leo-chrome) .page-intro {
+  background: var(--light);
+  padding: 45px 0 65px;
+  border-bottom: 1px solid var(--line);
+}
+:where(.leo-page, .leo-chrome) .page-intro h1 {
+  font-size: clamp(38px, 4.7vw, 64px);
+  max-width: 950px;
+}
+:where(.leo-page, .leo-chrome) .page-intro .eyebrow {
+  margin-top: 27px;
+}
+:where(.leo-page, .leo-chrome) .page-intro > div > p:last-child:not(.eyebrow) {
+  max-width: 650px;
+  color: var(--text-secondary);
+  margin: 22px 0 0;
+}
+:where(.leo-page, .leo-chrome) .breadcrumb {
+  display: inline-block;
+  color: var(--text-secondary);
+  font-size: 13px;
+  margin-bottom: 22px;
+}
+:where(.leo-page, .leo-chrome) .home-about {
+  max-width: 780px;
+  text-align: center;
+}
+:where(.leo-page, .leo-chrome) .home-about > p:not(.eyebrow) {
+  margin-top: 20px;
+  color: var(--text-secondary);
+}
+:where(.leo-page, .leo-chrome) .business-grid,
+:where(.leo-page, .leo-chrome) .news-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+:where(.leo-page, .leo-chrome) .business-card,
+:where(.leo-page, .leo-chrome) .news-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  transition: transform 0.3s;
+}
+:where(.leo-page, .leo-chrome) .business-card:hover,
+:where(.leo-page, .leo-chrome) .news-card:hover {
+  transform: translateY(-4px);
+}
+:where(.leo-page, .leo-chrome) .business-card > img {
+  height: 300px;
+}
+:where(.leo-page, .leo-chrome) .business-card > div,
+:where(.leo-page, .leo-chrome) .news-card > div {
+  padding: 32px;
+}
+:where(.leo-page, .leo-chrome) .business-card h3 {
+  font-size: 32px;
+}
+:where(.leo-page, .leo-chrome) .business-card p:not(.eyebrow),
+:where(.leo-page, .leo-chrome) .news-card p:not(.eyebrow) {
+  color: var(--text-secondary);
+  margin: 18px 0 0;
+}
+:where(.leo-page, .leo-chrome) .news-card img {
+  aspect-ratio: 2;
+  object-fit: cover;
+}
+:where(.leo-page, .leo-chrome) .news-card h3 {
+  font-size: 25px;
+}
+:where(.leo-page, .leo-chrome) .institutional {
+  display: grid;
+  grid-template-columns: 0.75fr 1.25fr;
+  gap: 90px;
+  align-items: start;
+}
+:where(.leo-page, .leo-chrome) .institutional aside {
+  position: sticky;
+  top: 125px;
+}
+:where(.leo-page, .leo-chrome) .institutional aside img {
+  aspect-ratio: 4/5;
+  border-radius: 10px;
+}
+:where(.leo-page, .leo-chrome) .institutional blockquote {
+  margin: 25px 0;
+  font-family: var(--heading);
+  font-size: 28px;
+  line-height: 1.3;
+}
+:where(.leo-page, .leo-chrome) .prose {
+  color: var(--text-secondary);
+  line-height: 1.9;
+  white-space: pre-line;
+  margin-top: 25px;
+}
+:where(.leo-page, .leo-chrome) .prose p {
+  margin-bottom: 25px;
+  white-space: normal;
+}
+:where(.leo-page, .leo-chrome) .signature {
+  margin-top: 35px;
+  padding-left: 20px;
+  border-left: 3px solid var(--orange);
+  font-size: 14px;
+}
+:where(.leo-page, .leo-chrome) .mission-grid {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 80px;
+}
+:where(.leo-page, .leo-chrome) .principles-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+  margin-top: 40px;
+}
+:where(.leo-page, .leo-chrome) .principles-grid article {
+  padding: 25px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+:where(.leo-page, .leo-chrome) .principle-number {
+  font-family: var(--heading);
+  font-size: 35px;
+  color: var(--orange-text);
+}
+:where(.leo-page, .leo-chrome) .principles-grid h3 {
+  font-size: 21px;
+  margin: 20px 0;
+}
+:where(.leo-page, .leo-chrome) .principles-grid p {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+:where(.leo-page, .leo-chrome) .project-card {
+  display: block;
+}
+:where(.leo-page, .leo-chrome) .footer-top .text-link {
+  color: #ff985e;
+}
+:where(.leo-page, .leo-chrome) .footer-bottom nav {
+  flex-wrap: wrap;
+}
+:where(.leo-page, .leo-chrome) .footer-bottom {
+  font-size: 11px;
+}
+:where(.leo-page, .leo-chrome) .danger {
+  color: #b42318;
+}
+:where(.leo-page, .leo-chrome) .secondary {
+  border: 1px solid var(--line);
+  background: white;
+  color: var(--navy);
+}
+:where(.leo-page, .leo-chrome) .upload-label {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+:where(.leo-page, .leo-chrome) .upload-label input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  margin: 0;
+}
+:where(.leo-page, .leo-chrome) .upload-panel {
+  padding: 20px;
+  background: var(--light);
+  border-radius: 8px;
+}
+:where(.leo-page, .leo-chrome) .upload-panel p {
+  margin-top: 15px;
+  margin-bottom: 0;
+}
+:where(.leo-page, .leo-chrome) .checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+:where(.leo-page, .leo-chrome) .checkbox-label input {
+  width: auto;
+  margin: 0;
+}
+@media (max-width: 1200px) {
+  :where(.leo-page, .leo-chrome) .header-inner {
+    padding-right: 4%;
+  }
+  :where(.leo-page, .leo-chrome) .header-inner nav {
+    gap: 13px;
+  }
+  :where(.leo-page, .leo-chrome) .institutional {
+    gap: 45px;
+  }
+  :where(.leo-page, .leo-chrome) .principles-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 1024px) {
+  :where(.leo-page, .leo-chrome) .header-inner .brand {
+    gap: 5px;
+  }
+  :where(.leo-page, .leo-chrome) .header-inner nav {
+    gap: 10px;
+  }
+  :where(.leo-page, .leo-chrome) .header-inner nav a {
+    font-size: 11px;
+  }
+  :where(.leo-page, .leo-chrome) .header-inner {
+    gap: 10px;
+  }
+  :where(.leo-page, .leo-chrome) .mission-grid {
+    gap: 45px;
+  }
+  :where(.leo-page, .leo-chrome) .business-card > img {
+    height: 240px;
+  }
+}
+@media (max-width: 768px) {
+  .leo-site:not([data-page='index']) .leo-site-main {
+    padding-top: 80px;
+  }
+  :where(.leo-page, .leo-chrome) .header-inner nav a {
+    font-size: 15px;
+  }
+  :where(.leo-page, .leo-chrome) .page-intro {
+    padding: 25px 0 45px;
+  }
+  :where(.leo-page, .leo-chrome) .institutional,
+  :where(.leo-page, .leo-chrome) .mission-grid {
+    grid-template-columns: 1fr;
+    gap: 35px;
+  }
+  :where(.leo-page, .leo-chrome) .institutional aside {
+    position: static;
+  }
+  :where(.leo-page, .leo-chrome) .institutional aside img {
+    height: 320px;
+    aspect-ratio: auto;
+  }
+  :where(.leo-page, .leo-chrome) .business-card > div,
+  :where(.leo-page, .leo-chrome) .news-card > div {
+    padding: 22px;
+  }
+  :where(.leo-page, .leo-chrome) .business-card h3 {
+    font-size: 26px;
+  }
+  :where(.leo-page, .leo-chrome) .footer-bottom nav {
+    gap: 12px;
+  }
+}
+@media (max-width: 480px) {
+  :where(.leo-page, .leo-chrome) .business-grid,
+  :where(.leo-page, .leo-chrome) .news-grid,
+  :where(.leo-page, .leo-chrome) .principles-grid {
+    grid-template-columns: 1fr;
+  }
+  :where(.leo-page, .leo-chrome) .page-intro h1 {
+    font-size: 36px;
+  }
+}
+.leo-site {
+  --paper: #fbfaf7;
+  --warm: #f4f1eb;
+  --ink: #0d1c31;
+  --line-soft: #d9dfe6;
+  --shadow-soft: 0 18px 55px rgba(13, 28, 49, 0.08);
+  --shadow-hover: 0 24px 70px rgba(13, 28, 49, 0.14);
+}
+:where(.leo-page, .leo-chrome) {
+  background: var(--paper);
+  color: var(--ink);
+  text-rendering: optimizeLegibility;
+}
+:where(.leo-page, .leo-chrome) .section {
+  position: relative;
+}
+:where(.leo-page, .leo-chrome) .section-heading h2 {
+  max-width: 760px;
+}
+:where(.leo-page, .leo-chrome) .section-heading .eyebrow {
+  margin-bottom: 12px;
+}
+:where(.leo-page, .leo-chrome) .text-link {
+  position: relative;
+  gap: 10px;
+}
+:where(.leo-page, .leo-chrome) .text-link:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 3px;
+  width: 0;
+  height: 1px;
+  background: currentColor;
+  transition: width 0.3s var(--ease);
+}
+:where(.leo-page, .leo-chrome) .text-link:hover:after {
+  width: 100%;
+}
+:where(.leo-page, .leo-chrome) .button {
+  border-radius: 2px;
+  letter-spacing: 0.01em;
+}
+:where(.leo-page, .leo-chrome) .primary {
+  color: #101b2b;
+}
+.leo-site[data-page='index'] .leo-chrome header {
+  background: transparent;
+  color: white;
+  box-shadow: none;
+}
+.leo-site[data-page='index'] .leo-chrome header:not(.scrolled) .header-inner {
+  height: 112px;
+}
+.leo-site[data-page='index'] .leo-chrome header:not(.scrolled) .header-inner nav a,
+.leo-site[data-page='index'] .leo-chrome header:not(.scrolled) .brand,
+.leo-site[data-page='index'] .leo-chrome header:not(.scrolled) #search-open {
+  color: white;
+}
+.leo-site[data-page='index'] .leo-chrome header:not(.scrolled) .menu-toggle span {
+  background: white;
+}
+.leo-site[data-page='index'] .leo-chrome header:not(.scrolled) .header-inner nav a:after {
+  background: #ff8a50;
+}
+.leo-site[data-page='index'] .leo-chrome header.scrolled {
+  background: rgba(255, 255, 255, 0.93);
+  color: var(--navy);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(18, 35, 63, 0.07);
+  box-shadow: 0 10px 35px rgba(18, 35, 63, 0.08);
+}
+.leo-site[data-page='index'] .header-manifesto {
+  background: rgba(13, 28, 49, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.leo-site:not([data-page='index']) .leo-chrome header {
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(18, 35, 63, 0.06);
+}
+.leo-site[data-page='index'] .hero {
+  margin-top: 0;
+  min-height: min(900px, 100svh);
+  height: min(900px, 100svh);
+  isolation: isolate;
+}
+:where(.leo-page, .leo-chrome) .hero > img.parallax-media {
+  inset: -4% 0;
+  height: 108%;
+  width: 100%;
+  transform: translate3d(0, var(--parallax-y, 0px), 0) scale(1.035);
+  will-change: transform;
+}
+:where(.leo-page, .leo-chrome) .hero-overlay {
+  z-index: 1;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(8, 20, 37, 0.93) 0%,
+      rgba(10, 27, 49, 0.79) 37%,
+      rgba(13, 34, 60, 0.36) 70%,
+      rgba(13, 34, 60, 0.16) 100%
+    ),
+    linear-gradient(0deg, rgba(7, 18, 33, 0.76) 0%, transparent 48%);
+}
+:where(.leo-page, .leo-chrome) .hero:after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent calc(25% - 0.5px),
+    rgba(255, 255, 255, 0.055) 25%,
+    transparent calc(25% + 0.5px),
+    transparent calc(50% - 0.5px),
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent calc(50% + 0.5px),
+    transparent calc(75% - 0.5px),
+    rgba(255, 255, 255, 0.045) 75%,
+    transparent calc(75% + 0.5px)
+  );
+}
+.leo-site[data-page='index'] .hero-content {
+  z-index: 2;
+  padding-top: clamp(175px, 20vh, 215px);
+  padding-bottom: 45px;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+:where(.leo-page, .leo-chrome) .hero .eyebrow {
+  letter-spacing: 0.22em;
+  margin-bottom: 20px;
+}
+:where(.leo-page, .leo-chrome) .hero h1 {
+  font-size: clamp(52px, 5.8vw, 88px);
+  max-width: 790px;
+  line-height: 0.99;
+  letter-spacing: -0.052em;
+  text-wrap: balance;
+}
+:where(.leo-page, .leo-chrome) .hero h1 span {
+  display: inline-block;
+  color: #ff7b36;
+}
+:where(.leo-page, .leo-chrome) .hero-description {
+  font-size: clamp(15px, 1.25vw, 18px);
+  line-height: 1.75;
+  max-width: 500px;
+  color: rgba(255, 255, 255, 0.84);
+}
+:where(.leo-page, .leo-chrome) .hero-actions {
+  margin-top: 34px;
+}
+:where(.leo-page, .leo-chrome) .hero-actions .button {
+  min-height: 54px;
+  padding-inline: 26px;
+}
+:where(.leo-page, .leo-chrome) .hero-bottom {
+  margin-top: auto;
+  width: 100%;
+  padding-top: 50px;
+  color: rgba(255, 255, 255, 0.78);
+}
+:where(.leo-page, .leo-chrome) .scroll-cue {
+  position: absolute;
+  right: 0;
+  bottom: 44px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: rgba(255, 255, 255, 0.72);
+  writing-mode: vertical-rl;
+  z-index: 3;
+}
+:where(.leo-page, .leo-chrome) .scroll-cue i {
+  display: block;
+  width: 1px;
+  height: 54px;
+  background: linear-gradient(var(--orange), rgba(255, 255, 255, 0.25));
+  animation: leo-cue 1.9s var(--ease) infinite;
+}
+@keyframes leo-cue {
+  0%,
+  100% {
+    transform: scaleY(0.65);
+    transform-origin: top;
+    opacity: 0.55;
+  }
+  50% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+:where(.leo-page, .leo-chrome) .home-about {
+  max-width: none;
+  text-align: left;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.82fr);
+  gap: clamp(60px, 8vw, 120px);
+  align-items: center;
+  padding-block: clamp(90px, 10vw, 150px);
+}
+:where(.leo-page, .leo-chrome) .home-about-copy {
+  max-width: 690px;
+}
+:where(.leo-page, .leo-chrome) .home-about h2 {
+  font-size: clamp(42px, 4.8vw, 66px);
+  line-height: 1.02;
+  letter-spacing: -0.05em;
+}
+:where(.leo-page, .leo-chrome) .home-about h2 span {
+  color: var(--orange-text);
+}
+:where(.leo-page, .leo-chrome) .home-about-lead {
+  font-size: clamp(16px, 1.3vw, 19px);
+  line-height: 1.9;
+  color: var(--text-secondary);
+  max-width: 620px;
+  margin: 32px 0 24px;
+}
+:where(.leo-page, .leo-chrome) .home-proof {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 52px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+:where(.leo-page, .leo-chrome) .home-proof > div {
+  padding: 22px 22px 22px 0;
+  border-right: 1px solid var(--line);
+}
+:where(.leo-page, .leo-chrome) .home-proof > div + div {
+  padding-left: 22px;
+}
+:where(.leo-page, .leo-chrome) .home-proof > div:last-child {
+  border-right: 0;
+}
+:where(.leo-page, .leo-chrome) .home-proof strong {
+  display: block;
+  font-family: var(--heading);
+  font-size: 18px;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+:where(.leo-page, .leo-chrome) .home-proof small {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 11px;
+  line-height: 1.55;
+  margin-top: 7px;
+}
+:where(.leo-page, .leo-chrome) .home-about-visual {
+  margin: 0;
+  position: relative;
+  padding: 0 0 38px 38px;
+}
+:where(.leo-page, .leo-chrome) .home-about-visual:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 58%;
+  height: 64%;
+  background: var(--orange);
+  z-index: 0;
+}
+:where(.leo-page, .leo-chrome) .home-about-visual:after {
+  content: '';
+  position: absolute;
+  right: -28px;
+  top: -28px;
+  width: 78px;
+  height: 78px;
+  border-top: 1px solid var(--navy);
+  border-right: 1px solid var(--navy);
+  opacity: 0.45;
+}
+:where(.leo-page, .leo-chrome) .image-frame {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  background: var(--warm);
+}
+:where(.leo-page, .leo-chrome) .home-about-visual img {
+  height: clamp(460px, 50vw, 640px);
+  object-position: center;
+  transition: transform 0.8s var(--ease);
+}
+:where(.leo-page, .leo-chrome) .home-about-visual:hover img {
+  transform: scale(1.025);
+}
+:where(.leo-page, .leo-chrome) .home-about-visual figcaption {
+  position: absolute;
+  z-index: 2;
+  right: -3px;
+  bottom: 7px;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--text-secondary);
+}
+:where(.leo-page, .leo-chrome) .home-business-section {
+  background: var(--warm);
+  overflow: hidden;
+}
+:where(.leo-page, .leo-chrome) .home-business-section:before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(18, 35, 63, 0.035) 1px, transparent 1px);
+  background-size: 25% 100%;
+  pointer-events: none;
+}
+:where(.leo-page, .leo-chrome) .home-business-section .section-heading {
+  margin-bottom: 55px;
+}
+:where(.leo-page, .leo-chrome) .home-business-section .business-grid {
+  gap: 28px;
+  align-items: start;
+}
+:where(.leo-page, .leo-chrome) .home-business-section .business-card {
+  position: relative;
+  height: 560px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--navy);
+  overflow: hidden;
+  isolation: isolate;
+}
+:where(.leo-page, .leo-chrome) .home-business-section .business-card:nth-child(2) {
+  margin-top: 72px;
+}
+:where(.leo-page, .leo-chrome) .home-business-section .business-card > img {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  transition:
+    transform 0.9s var(--ease),
+    filter 0.5s var(--ease);
+}
+:where(.leo-page, .leo-chrome) .home-business-section .business-card:before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(7, 18, 33, 0.05) 15%, rgba(7, 18, 33, 0.84) 100%);
+  transition: background 0.45s var(--ease);
+}
+:where(.leo-page, .leo-chrome) .home-business-section .business-card > div {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 42px;
+  color: white;
+}
+:where(.leo-page, .leo-chrome) .home-business-section .business-card .eyebrow {
+  color: #ff9a65;
+}
+:where(.leo-page, .leo-chrome) .home-business-section .business-card h3 {
+  font-size: clamp(30px, 3vw, 43px);
+  max-width: 420px;
+  color: white;
+}
+:where(.leo-page, .leo-chrome) .home-business-section .business-card p:not(.eyebrow) {
+  color: rgba(255, 255, 255, 0.75);
+  max-width: 460px;
+  line-height: 1.7;
+}
+:where(.leo-page, .leo-chrome) .home-business-section .business-card .text-link {
+  color: white;
+}
+:where(.leo-page, .leo-chrome) .home-business-section .business-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
+}
+:where(.leo-page, .leo-chrome) .home-business-section .business-card:hover > img {
+  transform: scale(1.045);
+}
+:where(.leo-page, .leo-chrome) .home-business-section .business-card:hover:before {
+  background: linear-gradient(180deg, rgba(7, 18, 33, 0.1) 0%, rgba(7, 18, 33, 0.9) 100%);
+}
+:where(.leo-page, .leo-chrome) .portfolio-showcase {
+  padding-block: clamp(100px, 10vw, 145px);
+}
+:where(.leo-page, .leo-chrome) #home-projects {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+  grid-template-rows: repeat(2, minmax(260px, 1fr));
+  gap: 22px;
+  height: 720px;
+}
+:where(.leo-page, .leo-chrome) #home-projects .project-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--navy);
+  min-width: 0;
+}
+:where(.leo-page, .leo-chrome) #home-projects .project-card:first-child {
+  grid-row: 1 / 3;
+}
+:where(.leo-page, .leo-chrome) #home-projects .project-image {
+  height: 100%;
+  border-radius: 0;
+}
+:where(.leo-page, .leo-chrome) #home-projects .project-image:after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 38%, rgba(7, 18, 33, 0.88) 100%);
+  z-index: 1;
+  transition: background 0.35s var(--ease);
+}
+:where(.leo-page, .leo-chrome) #home-projects .project-image img {
+  height: 100%;
+  aspect-ratio: auto;
+  transform: scale(1.001);
+  transition: transform 0.85s var(--ease);
+}
+:where(.leo-page, .leo-chrome) #home-projects .project-image span {
+  z-index: 3;
+  inset: auto 26px 26px auto;
+  width: 48px;
+  height: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.48);
+  border-radius: 50%;
+  font-size: 0;
+  opacity: 1;
+  background: rgba(10, 27, 49, 0.24);
+  backdrop-filter: blur(5px);
+}
+:where(.leo-page, .leo-chrome) #home-projects .project-image span:after {
+  content: '↗';
+  font-size: 19px;
+}
+:where(.leo-page, .leo-chrome) #home-projects .project-card h3,
+:where(.leo-page, .leo-chrome) #home-projects .project-card p {
+  position: absolute;
+  z-index: 2;
+  left: 30px;
+  right: 82px;
+  color: white;
+  margin: 0;
+}
+:where(.leo-page, .leo-chrome) #home-projects .project-card h3 {
+  bottom: 56px;
+  font-size: clamp(22px, 2.2vw, 34px);
+  line-height: 1.08;
+}
+:where(.leo-page, .leo-chrome) #home-projects .project-card p {
+  bottom: 26px;
+  border: 0;
+  padding: 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+:where(.leo-page, .leo-chrome) #home-projects .project-card:hover .project-image img {
+  transform: scale(1.045);
+}
+:where(.leo-page, .leo-chrome) #home-projects .project-card:hover .project-image:after {
+  background: linear-gradient(180deg, rgba(7, 18, 33, 0.04) 26%, rgba(7, 18, 33, 0.93) 100%);
+}
+:where(.leo-page, .leo-chrome) .portfolio-showcase > .small {
+  margin-top: 18px;
+}
+:where(.leo-page, .leo-chrome) .home-news-section {
+  background: #f6f5f2;
+}
+:where(.leo-page, .leo-chrome) .home-news-section .news-grid {
+  gap: 42px;
+}
+:where(.leo-page, .leo-chrome) .home-news-section .news-card {
+  border: 0;
+  border-top: 1px solid rgba(18, 35, 63, 0.18);
+  border-radius: 0;
+  background: transparent;
+  display: grid;
+  grid-template-columns: 1fr;
+  box-shadow: none;
+  padding-top: 20px;
+}
+:where(.leo-page, .leo-chrome) .home-news-section .news-card img {
+  height: 270px;
+  aspect-ratio: auto;
+  filter: saturate(0.88);
+  transition:
+    transform 0.7s var(--ease),
+    filter 0.4s;
+}
+:where(.leo-page, .leo-chrome) .home-news-section .news-card > div {
+  padding: 24px 0 0;
+}
+:where(.leo-page, .leo-chrome) .home-news-section .news-card h3 {
+  font-size: clamp(24px, 2.2vw, 31px);
+  line-height: 1.16;
+}
+:where(.leo-page, .leo-chrome) .home-news-section .news-card:hover {
+  transform: none;
+}
+:where(.leo-page, .leo-chrome) .home-news-section .news-card:hover img {
+  transform: scale(1.018);
+  filter: saturate(1);
+}
+:where(.leo-page, .leo-chrome) .impact-banner {
+  position: relative;
+  min-height: 620px;
+  color: white;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+}
+:where(.leo-page, .leo-chrome) .impact-banner > img {
+  position: absolute;
+  inset: -6% 0;
+  width: 100%;
+  height: 112%;
+  object-fit: cover;
+  object-position: center;
+  transform: translate3d(0, var(--parallax-y, 0px), 0) scale(1.035);
+  will-change: transform;
+  z-index: -3;
+}
+:where(.leo-page, .leo-chrome) .impact-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(7, 18, 33, 0.93) 0%,
+    rgba(8, 24, 43, 0.72) 45%,
+    rgba(8, 24, 43, 0.28) 80%
+  );
+  z-index: -2;
+}
+:where(.leo-page, .leo-chrome) .impact-banner:after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 49.95%,
+    rgba(255, 255, 255, 0.12) 50%,
+    transparent 50.05%
+  );
+  z-index: -1;
+}
+:where(.leo-page, .leo-chrome) .impact-content {
+  padding-block: 110px;
+}
+:where(.leo-page, .leo-chrome) .impact-content .eyebrow {
+  color: #ff9a65;
+}
+:where(.leo-page, .leo-chrome) .impact-content h2 {
+  font-size: clamp(44px, 5.2vw, 72px);
+  line-height: 1.03;
+  max-width: 760px;
+  letter-spacing: -0.05em;
+}
+:where(.leo-page, .leo-chrome) .impact-content > p:not(.eyebrow) {
+  max-width: 560px;
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 17px;
+  line-height: 1.8;
+  margin: 27px 0 32px;
+}
+:where(.leo-page, .leo-chrome) .impact-button {
+  background: transparent;
+  color: white;
+  border-color: rgba(255, 255, 255, 0.55);
+}
+:where(.leo-page, .leo-chrome) .impact-button:hover {
+  background: white;
+  color: var(--navy);
+  transform: translateY(-2px);
+}
+:where(.leo-page, .leo-chrome) .page-intro {
+  position: relative;
+  background: var(--warm);
+  padding: 70px 0 88px;
+  overflow: hidden;
+}
+:where(.leo-page, .leo-chrome) .page-intro:after {
+  content: '';
+  position: absolute;
+  right: -10%;
+  top: -35%;
+  width: 50%;
+  height: 170%;
+  border-left: 1px solid rgba(18, 35, 63, 0.08);
+  transform: skewX(-12deg);
+  box-shadow:
+    -120px 0 0 -119px rgba(18, 35, 63, 0.08),
+    -240px 0 0 -239px rgba(18, 35, 63, 0.08);
+  pointer-events: none;
+}
+:where(.leo-page, .leo-chrome) .page-intro > div {
+  position: relative;
+  z-index: 1;
+}
+:where(.leo-page, .leo-chrome) .page-intro h1 {
+  font-size: clamp(44px, 5vw, 70px);
+  line-height: 1.01;
+  letter-spacing: -0.052em;
+}
+:where(.leo-page, .leo-chrome) .page-intro > div > p:last-child:not(.eyebrow) {
+  font-size: 16px;
+  line-height: 1.8;
+}
+:where(.leo-page, .leo-chrome) .institutional aside img {
+  border-radius: 2px;
+}
+:where(.leo-page, .leo-chrome) .institutional blockquote {
+  font-size: clamp(27px, 2.5vw, 36px);
+  line-height: 1.22;
+  letter-spacing: -0.035em;
+}
+:where(.leo-page, .leo-chrome) .principles-grid {
+  gap: 24px;
+}
+:where(.leo-page, .leo-chrome) .principles-grid article {
+  border: 0;
+  border-top: 2px solid var(--navy);
+  border-radius: 0;
+  padding: 26px 8px 12px 0;
+  transition:
+    transform 0.3s var(--ease),
+    border-color 0.3s;
+}
+:where(.leo-page, .leo-chrome) .principles-grid article:hover {
+  transform: translateY(-4px);
+  border-color: var(--orange);
+}
+:where(.leo-page, .leo-chrome) .project-card .project-image {
+  border-radius: 2px;
+}
+:where(.leo-page, .leo-chrome) .news-card {
+  border-radius: 2px;
+}
+:where(.leo-page, .leo-chrome) #contact-form-container {
+  background: white;
+  padding: 36px;
+  box-shadow: var(--shadow-soft);
+  border-top: 3px solid var(--orange);
+}
+:where(.leo-page, .leo-chrome) input,
+:where(.leo-page, .leo-chrome) select,
+:where(.leo-page, .leo-chrome) textarea {
+  border-radius: 2px;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+:where(.leo-page, .leo-chrome) input:focus,
+:where(.leo-page, .leo-chrome) select:focus,
+:where(.leo-page, .leo-chrome) textarea:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(48, 78, 125, 0.1);
+  outline: 0;
+}
+:where(.leo-page, .leo-chrome) .reveal-item {
+  opacity: 0;
+  transform: translate3d(0, 24px, 0);
+  transition:
+    opacity 0.72s var(--ease),
+    transform 0.72s var(--ease);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+:where(.leo-page, .leo-chrome) .reveal-item.reveal-left {
+  transform: translate3d(-26px, 0, 0);
+}
+:where(.leo-page, .leo-chrome) .reveal-item.reveal-right {
+  transform: translate3d(26px, 0, 0);
+}
+:where(.leo-page, .leo-chrome) .reveal-item.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+:where(.leo-page, .leo-chrome) footer {
+  position: relative;
+  background:
+    linear-gradient(rgba(9, 23, 42, 0.96), rgba(9, 23, 42, 0.96)),
+    url('/assets/enobra/edificio.jpg') center 35% / cover;
+}
+:where(.leo-page, .leo-chrome) .footer-top {
+  padding-block: 78px;
+}
+:where(.leo-page, .leo-chrome) .footer-bottom {
+  padding-block: 26px;
+  color: rgba(255, 255, 255, 0.68);
+}
+
+@media (max-width: 1024px) {
+  .leo-site[data-page='index'] .hero {
+    min-height: 780px;
+    height: 780px;
+  }
+  :where(.leo-page, .leo-chrome) .home-about {
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+  }
+  :where(.leo-page, .leo-chrome) .home-proof {
+    grid-template-columns: 1fr;
+  }
+  :where(.leo-page, .leo-chrome) .home-proof > div,
+  :where(.leo-page, .leo-chrome) .home-proof > div + div {
+    padding: 14px 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  :where(.leo-page, .leo-chrome) .home-proof > div:last-child {
+    border-bottom: 0;
+  }
+  :where(.leo-page, .leo-chrome) .home-business-section .business-card {
+    height: 500px;
+  }
+  :where(.leo-page, .leo-chrome) #home-projects {
+    height: 620px;
+  }
+  :where(.leo-page, .leo-chrome) .impact-banner {
+    min-height: 540px;
+  }
+}
+
+@media (max-width: 768px) {
+  .leo-site[data-page='index'] .leo-chrome header:not(.scrolled) .header-inner {
+    height: 80px;
+  }
+  .leo-site[data-page='index'] .leo-chrome header:not(.scrolled) #navigation {
+    color: var(--navy);
+  }
+  .leo-site[data-page='index'] .leo-chrome header:not(.scrolled) #navigation a {
+    color: var(--navy);
+  }
+  .leo-site[data-page='index'] .hero {
+    height: auto;
+    min-height: 720px;
+  }
+  .leo-site[data-page='index'] .hero-content {
+    padding-top: 145px;
+    align-items: center;
+    text-align: center;
+  }
+  :where(.leo-page, .leo-chrome) .hero:after {
+    background: linear-gradient(
+      90deg,
+      transparent calc(50% - 0.5px),
+      rgba(255, 255, 255, 0.045) 50%,
+      transparent calc(50% + 0.5px)
+    );
+  }
+  :where(.leo-page, .leo-chrome) .hero h1 {
+    font-size: clamp(46px, 12vw, 64px);
+  }
+  :where(.leo-page, .leo-chrome) .hero-bottom {
+    margin-top: auto;
+    padding-top: 44px;
+  }
+  :where(.leo-page, .leo-chrome) .scroll-cue {
+    display: none;
+  }
+  :where(.leo-page, .leo-chrome) .home-about {
+    grid-template-columns: 1fr;
+    gap: 55px;
+    padding-block: 85px;
+  }
+  :where(.leo-page, .leo-chrome) .home-about-copy {
+    max-width: none;
+  }
+  :where(.leo-page, .leo-chrome) .home-about h2 {
+    font-size: clamp(39px, 10vw, 54px);
+  }
+  :where(.leo-page, .leo-chrome) .home-proof {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  :where(.leo-page, .leo-chrome) .home-proof > div,
+  :where(.leo-page, .leo-chrome) .home-proof > div + div {
+    padding: 18px 12px 18px 0;
+    border-right: 1px solid var(--line);
+    border-bottom: 0;
+  }
+  :where(.leo-page, .leo-chrome) .home-proof > div + div {
+    padding-left: 12px;
+  }
+  :where(.leo-page, .leo-chrome) .home-proof > div:last-child {
+    border-right: 0;
+  }
+  :where(.leo-page, .leo-chrome) .home-about-visual {
+    max-width: 560px;
+    margin-left: auto;
+    padding-left: 28px;
+  }
+  :where(.leo-page, .leo-chrome) .home-about-visual img {
+    height: 480px;
+  }
+  :where(.leo-page, .leo-chrome) .home-business-section .business-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  :where(.leo-page, .leo-chrome) .home-business-section .business-card,
+  :where(.leo-page, .leo-chrome) .home-business-section .business-card:nth-child(2) {
+    height: 470px;
+    margin-top: 0;
+  }
+  :where(.leo-page, .leo-chrome) .home-business-section .business-card > div {
+    padding: 30px;
+  }
+  :where(.leo-page, .leo-chrome) #home-projects {
+    height: auto;
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    gap: 18px;
+  }
+  :where(.leo-page, .leo-chrome) #home-projects .project-card,
+  :where(.leo-page, .leo-chrome) #home-projects .project-card:first-child {
+    grid-row: auto;
+    height: 420px;
+  }
+  :where(.leo-page, .leo-chrome) #home-projects .project-card:not(:first-child) {
+    height: 330px;
+  }
+  :where(.leo-page, .leo-chrome) .home-news-section .news-grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  :where(.leo-page, .leo-chrome) .impact-banner {
+    min-height: 520px;
+    text-align: left;
+  }
+  :where(.leo-page, .leo-chrome) .impact-content {
+    padding-block: 85px;
+  }
+  :where(.leo-page, .leo-chrome) .impact-content h2 {
+    font-size: clamp(40px, 10vw, 58px);
+  }
+  :where(.leo-page, .leo-chrome) #contact-form-container {
+    padding: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .leo-site[data-page='index'] .hero {
+    min-height: 680px;
+  }
+  .leo-site[data-page='index'] .hero-content {
+    padding-top: 130px;
+  }
+  :where(.leo-page, .leo-chrome) .hero-actions {
+    width: 100%;
+    margin-inline: 0;
+  }
+  :where(.leo-page, .leo-chrome) .hero-bottom {
+    display: none;
+  }
+  :where(.leo-page, .leo-chrome) .home-proof {
+    grid-template-columns: 1fr;
+    margin-top: 38px;
+  }
+  :where(.leo-page, .leo-chrome) .home-proof > div,
+  :where(.leo-page, .leo-chrome) .home-proof > div + div {
+    padding: 14px 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  :where(.leo-page, .leo-chrome) .home-about-visual {
+    padding: 0 0 25px 22px;
+  }
+  :where(.leo-page, .leo-chrome) .home-about-visual img {
+    height: 390px;
+  }
+  :where(.leo-page, .leo-chrome) .home-business-section .business-card {
+    height: 430px;
+  }
+  :where(.leo-page, .leo-chrome) .home-business-section .business-card > div {
+    padding: 25px;
+  }
+  :where(.leo-page, .leo-chrome) #home-projects .project-card,
+  :where(.leo-page, .leo-chrome) #home-projects .project-card:first-child {
+    height: 360px;
+  }
+  :where(.leo-page, .leo-chrome) #home-projects .project-card:not(:first-child) {
+    height: 300px;
+  }
+  :where(.leo-page, .leo-chrome) #home-projects .project-card h3 {
+    left: 22px;
+    bottom: 54px;
+    right: 72px;
+    font-size: 24px;
+  }
+  :where(.leo-page, .leo-chrome) #home-projects .project-card p {
+    left: 22px;
+    bottom: 22px;
+    right: 72px;
+  }
+  :where(.leo-page, .leo-chrome) #home-projects .project-image span {
+    right: 20px;
+    bottom: 20px;
+    width: 44px;
+    height: 44px;
+  }
+  :where(.leo-page, .leo-chrome) .impact-banner {
+    min-height: 500px;
+  }
+  :where(.leo-page, .leo-chrome) .page-intro {
+    padding: 48px 0 62px;
+  }
+  :where(.leo-page, .leo-chrome) .page-intro h1 {
+    font-size: clamp(37px, 11vw, 48px);
+  }
+  :where(.leo-page, .leo-chrome) #contact-form-container {
+    padding: 22px;
+  }
+}
+@media (min-width: 1201px) {
+  :where(.leo-page, .leo-chrome) .header-inner {
+    padding-right: 282px;
+  }
+  :where(.leo-page, .leo-chrome) .header-manifesto,
+  .leo-site[data-page='index'] .header-manifesto {
+    width: 262px;
+    padding: 8px 20px 8px 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    background: transparent;
+    clip-path: none;
+    isolation: isolate;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    line-height: 1.38;
+    animation: leo-manifesto-enter 0.7s var(--ease) both;
+  }
+  :where(.leo-page, .leo-chrome) .header-manifesto::before,
+  :where(.leo-page, .leo-chrome) .header-manifesto::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    clip-path: polygon(27% 0, 100% 0, 100% 100%, 0 100%);
+    transition:
+      transform 0.55s var(--ease),
+      filter 0.55s var(--ease);
+  }
+  :where(.leo-page, .leo-chrome) .header-manifesto::before {
+    z-index: -2;
+    background: #547294b8;
+    transform: translateX(-13px);
+  }
+  :where(.leo-page, .leo-chrome) .header-manifesto::after {
+    z-index: -1;
+    background: linear-gradient(120deg, #243e60 0%, #152b49 46%, #102039 100%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  :where(.leo-page, .leo-chrome) .header-manifesto:hover::before {
+    transform: translateX(-19px);
+  }
+  :where(.leo-page, .leo-chrome) .header-manifesto:hover::after {
+    filter: brightness(1.15);
+  }
+  :where(.leo-page, .leo-chrome) .manifesto-copy {
+    display: block;
+    position: relative;
+    white-space: nowrap;
+    transition: transform 0.45s var(--ease);
+  }
+  :where(.leo-page, .leo-chrome) .header-manifesto:hover .manifesto-copy {
+    transform: translateX(3px);
+  }
+  :where(.leo-page, .leo-chrome) .manifesto-copy::before {
+    content: '';
+    position: absolute;
+    left: -19px;
+    top: 2px;
+    bottom: 2px;
+    width: 2px;
+    background: var(--orange);
+    box-shadow: 0 0 10px #ff6a1f5c;
+    transform-origin: top;
+    animation: leo-manifesto-rule 0.85s 0.2s var(--ease) both;
+  }
+  :where(.leo-page, .leo-chrome) .header-manifesto i {
+    position: relative;
+    width: 32px;
+    margin-top: 6px;
+    transition: width 0.45s var(--ease);
+  }
+  :where(.leo-page, .leo-chrome) .header-manifesto:hover i {
+    width: 57px;
+  }
+  :where(.leo-page, .leo-chrome) .header-inner nav a {
+    transition:
+      transform 0.25s var(--ease),
+      color 0.25s var(--ease);
+  }
+  :where(.leo-page, .leo-chrome) .header-inner nav a:hover {
+    transform: translateY(-2px);
+  }
+  :where(.leo-page, .leo-chrome) #search-open svg {
+    transition: transform 0.3s var(--ease);
+  }
+  :where(.leo-page, .leo-chrome) #search-open:hover svg,
+  :where(.leo-page, .leo-chrome) #search-open:focus-visible svg {
+    transform: scale(1.08) rotate(-8deg);
+  }
+}
+@keyframes leo-manifesto-enter {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes leo-manifesto-rule {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@media (max-width: 768px) {
+  :where(.leo-page, .leo-chrome) .header-inner nav.open a {
+    animation: leo-nav-link-enter 0.3s var(--ease) both;
+  }
+  :where(.leo-page, .leo-chrome) .header-inner nav.open a:nth-child(2) {
+    animation-delay: 30ms;
+  }
+  :where(.leo-page, .leo-chrome) .header-inner nav.open a:nth-child(3) {
+    animation-delay: 60ms;
+  }
+  :where(.leo-page, .leo-chrome) .header-inner nav.open a:nth-child(4) {
+    animation-delay: 90ms;
+  }
+  :where(.leo-page, .leo-chrome) .header-inner nav.open a:nth-child(5) {
+    animation-delay: 120ms;
+  }
+  :where(.leo-page, .leo-chrome) .header-inner nav.open a:nth-child(6) {
+    animation-delay: 150ms;
+  }
+  :where(.leo-page, .leo-chrome) .header-inner nav.open a:nth-child(7) {
+    animation-delay: 180ms;
+  }
+}
+@keyframes leo-nav-link-enter {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :where(.leo-page, .leo-chrome) .header-manifesto,
+  :where(.leo-page, .leo-chrome) .manifesto-copy::before,
+  :where(.leo-page, .leo-chrome) .header-inner nav.open a {
+    animation: none !important;
+  }
+  :where(.leo-page, .leo-chrome) .header-manifesto::before,
+  :where(.leo-page, .leo-chrome) .header-manifesto::after,
+  :where(.leo-page, .leo-chrome) .manifesto-copy,
+  :where(.leo-page, .leo-chrome) .header-manifesto i,
+  :where(.leo-page, .leo-chrome) .header-inner nav a,
+  :where(.leo-page, .leo-chrome) #search-open svg {
+    transition: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(.leo-page, .leo-chrome) .scroll-cue i {
+    animation: none !important;
+  }
+  :where(.leo-page, .leo-chrome) .parallax-media {
+    transform: none !important;
+    will-change: auto !important;
+  }
+  :where(.leo-page, .leo-chrome) .reveal-item {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+.leo-site[data-page='index'] .hero {
+  height: auto;
+}
+.leo-site[data-page='index'] .hero-content {
+  min-height: min(900px, 100svh);
+  padding-bottom: clamp(76px, 8vh, 112px);
+}
+.leo-site[data-page='index'] .hero-bottom {
+  padding-right: 86px;
+}
+@media (max-width: 1024px) {
+  .leo-site[data-page='index'] .hero {
+    min-height: 780px;
+  }
+  .leo-site[data-page='index'] .hero-content {
+    min-height: 780px;
+  }
+}
+@media (max-width: 768px) {
+  .leo-site[data-page='index'] .hero {
+    min-height: 720px;
+  }
+  .leo-site[data-page='index'] .hero-content {
+    min-height: 720px;
+    padding-bottom: 54px;
+  }
+  .leo-site[data-page='index'] .hero-bottom {
+    padding-right: 0;
+  }
+}
+@media (max-width: 480px) {
+  .leo-site[data-page='index'] .hero {
+    min-height: 680px;
+  }
+  .leo-site[data-page='index'] .hero-content {
+    min-height: 680px;
+  }
+}
+@media (max-height: 760px) and (min-width: 769px) {
+  .leo-site[data-page='index'] .hero-content {
+    padding-top: 130px;
+    padding-bottom: 48px;
+  }
+  .leo-site[data-page='index'] .hero h1 {
+    font-size: clamp(48px, 5.2vw, 74px);
+  }
+  .leo-site[data-page='index'] .hero-description {
+    margin-top: 18px;
+  }
+  .leo-site[data-page='index'] .hero-actions {
+    margin-top: 23px;
+  }
+  .leo-site[data-page='index'] .hero-bottom {
+    padding-top: 24px;
+  }
+}
+.leo-site[data-page='index'] .leo-chrome header.scrolled,
+.leo-site:not([data-page='index']) .leo-chrome header {
+  background: linear-gradient(110deg, rgba(237, 246, 251, 0.97), rgba(218, 234, 245, 0.97));
+  border-bottom: 1px solid rgba(33, 70, 105, 0.12);
+  box-shadow: 0 8px 28px rgba(18, 35, 63, 0.08);
+}
+@media (max-width: 768px) {
+  :where(.leo-page, .leo-chrome) .header-inner nav {
+    background: #e8f3f9;
+    border-bottom: 1px solid rgba(33, 70, 105, 0.12);
+  }
+}
+.leo-site[data-page='servicios'] .page-intro {
+  background: #edf5f9;
+}
+@media (min-width: 769px) and (hover: hover) {
+  :where(.leo-page, .leo-chrome) #home-projects {
+    transition:
+      grid-template-columns 0.55s var(--ease),
+      grid-template-rows 0.55s var(--ease);
+  }
+  :where(.leo-page, .leo-chrome)
+    #home-projects:has(.project-card:first-child:is(:hover, :focus-visible)) {
+    grid-template-columns: minmax(0, 1.52fr) minmax(280px, 0.48fr);
+  }
+  :where(.leo-page, .leo-chrome)
+    #home-projects:has(.project-card:nth-child(2):is(:hover, :focus-visible)) {
+    grid-template-columns: minmax(0, 1.07fr) minmax(280px, 0.93fr);
+    grid-template-rows: minmax(260px, 1.3fr) minmax(260px, 0.7fr);
+  }
+  :where(.leo-page, .leo-chrome)
+    #home-projects:has(.project-card:nth-child(3):is(:hover, :focus-visible)) {
+    grid-template-columns: minmax(0, 1.07fr) minmax(280px, 0.93fr);
+    grid-template-rows: minmax(260px, 0.7fr) minmax(260px, 1.3fr);
+  }
+}
+.leo-site[data-page='index'] .leo-chrome header.scrolled,
+.leo-site:not([data-page='index']) .leo-chrome header.scrolled {
+  background: rgba(222, 237, 248, 0.82);
+  backdrop-filter: blur(20px) saturate(1.15);
+  -webkit-backdrop-filter: blur(20px) saturate(1.15);
+  border: 1px solid rgba(33, 70, 105, 0.12);
+  box-shadow: 0 14px 38px rgba(13, 37, 60, 0.14);
+}
+@media (min-width: 1360px) {
+  :where(.leo-page, .leo-chrome) header {
+    transition:
+      top 0.35s var(--ease),
+      left 0.35s var(--ease),
+      right 0.35s var(--ease),
+      border-radius 0.35s var(--ease),
+      box-shadow 0.35s var(--ease),
+      background 0.35s var(--ease);
+  }
+  :where(.leo-page, .leo-chrome) header.scrolled {
+    top: 12px;
+    left: 24px;
+    right: 24px;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+}
+
+/* Restore browser defaults neutralized by Tailwind Preflight, within Leo only. */
+:where(.leo-page, .leo-chrome) {
+  background: var(--paper);
+}
+:where(.leo-page, .leo-chrome) ul {
+  list-style: disc;
+  padding-left: 40px;
+  margin-block: 1em;
+}
+:where(.leo-page, .leo-chrome) strong,
+:where(.leo-page, .leo-chrome) b {
+  font-weight: bold;
+}
+:where(.leo-page, .leo-chrome) em {
+  font-style: italic;
+}
+:where(.leo-page, .leo-chrome) .brand em {
+  font-style: normal;
+}
+:where(.leo-page, .leo-chrome) dialog {
+  margin: auto;
+  padding: 0;
+}
+.leo-site-main {
+  min-height: 40vh;
+}
+.leo-site[data-page='pending'] .leo-site-main {
+  padding-top: 105px;
+}
+.leo-page {
+  overflow: clip;
+}
+.leo-page #proposito {
+  scroll-margin-top: 85px;
+}
+.leo-content-status {
+  font-size: 12px;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+.leo-content-status button {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.leo-chrome footer .leo-content-status {
+  max-width: 330px;
+  color: #cbd5e1;
+  margin-top: 16px;
+}
+.leo-chrome .search-results section + section {
+  margin-top: 24px;
+}
+@media (max-width: 768px) {
+  .leo-site[data-page='pending'] .leo-site-main {
+    padding-top: 80px;
+  }
+  .leo-site[data-page='index'] .header-inner nav.open a {
+    color: var(--navy);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :where(.leo-page, .leo-chrome) *,
+  :where(.leo-page, .leo-chrome) *::before,
+  :where(.leo-page, .leo-chrome) *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Services introduction and in-flow index, matching the supplied screenshot. */
+
+.leo-site[data-page='servicios'] .services-intro {
+  padding-block: 82px 98px;
+  background: #f2f0eb;
+}
+
+.leo-page .services-intro-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.65fr);
+  gap: 9vw;
+  align-items: end;
+}
+
+.leo-page .services-intro h1 {
+  max-width: 820px;
+}
+
+.leo-page .services-intro h1 span {
+  color: var(--orange-text);
+}
+
+.leo-page .services-intro-copy {
+  padding-bottom: 5px;
+  max-width: 430px;
+}
+
+.leo-page .services-intro-copy > p {
+  font-size: 17px !important;
+  line-height: 1.85 !important;
+  color: var(--text-secondary);
+  margin: 0 0 34px !important;
+}
+
+.leo-page .services-intro-meta {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(18, 35, 63, 0.22);
+}
+
+.leo-page .services-intro-meta > span {
+  font-family: var(--heading);
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+
+.leo-page .services-intro-meta small {
+  font-size: 9px;
+  letter-spacing: 0.17em;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.leo-page .service-index-nav {
+  position: static;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+
+.leo-page .service-index-nav .container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.leo-page .service-index-nav a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 0 20px;
+  border-left: 1px solid var(--line);
+  font-size: 12px;
+  font-weight: 600;
+  transition:
+    background 0.25s,
+    color 0.25s;
+}
+
+.leo-page .service-index-nav a:last-child {
+  border-right: 1px solid var(--line);
+}
+
+.leo-page .service-index-nav a span {
+  font-family: var(--heading);
+  font-size: 11px;
+  color: var(--orange-text);
+  letter-spacing: 0.08em;
+}
+
+.leo-page .service-index-nav a:hover {
+  background: var(--navy);
+  color: white;
+}
+
+.leo-page .service-index-nav a:hover span {
+  color: #ff9a65;
+}
+
+.leo-page .services-showcase {
+  padding: 115px 0 40px;
+  overflow: hidden;
+}
+
+.leo-page .services-opening {
+  display: grid;
+  grid-template-columns: 0.55fr 1.15fr 0.8fr;
+  gap: 55px;
+  align-items: start;
+  margin-bottom: 105px;
+  padding-bottom: 54px;
+  border-bottom: 1px solid var(--line);
+}
+
+.leo-page .services-opening .eyebrow {
+  margin-top: 8px;
+}
+
+.leo-page .services-opening h2 {
+  font-size: clamp(35px, 3.6vw, 50px);
+  max-width: 590px;
+}
+
+.leo-page .services-opening > p:last-child {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.9;
+  margin: 5px 0 0;
+  max-width: 390px;
+}
+
+.leo-page #service-list {
+  counter-reset: service;
+}
+
+.leo-page .service-feature {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(360px, 0.88fr);
+  align-items: center;
+  gap: 0;
+  min-height: 650px;
+  margin: 0 0 150px;
+  scroll-margin-top: 170px;
+}
+
+.leo-page .service-feature:before {
+  content: '';
+  position: absolute;
+  left: -50vw;
+  right: -50vw;
+  top: 50%;
+  height: 1px;
+  background: rgba(18, 35, 63, 0.07);
+  z-index: -2;
+}
+
+.leo-page .service-visual {
+  position: relative;
+  min-width: 0;
+  padding: 42px 0 0 54px;
+}
+
+.leo-page .service-image-frame {
+  position: relative;
+  height: 610px;
+  overflow: hidden;
+  background: #e8ebee;
+}
+
+.leo-page .service-image-frame:after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 60%, rgba(9, 23, 42, 0.18));
+  pointer-events: none;
+}
+
+.leo-page .service-image-frame img {
+  height: 112%;
+  width: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: -6% 0;
+  transform: translate3d(0, var(--parallax-y, 0px), 0) scale(1.025);
+  transition: filter 0.45s var(--ease);
+  will-change: transform;
+}
+
+.leo-page .service-feature:hover .service-image-frame img {
+  filter: saturate(1.06) contrast(1.02);
+}
+
+.leo-page .service-visual-number {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  top: -4px;
+  font-family: var(--heading);
+  font-size: clamp(72px, 8vw, 118px);
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.08em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(18, 35, 63, 0.22);
+  user-select: none;
+}
+
+.leo-page .service-image-caption {
+  position: absolute;
+  left: 76px;
+  bottom: -29px;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: var(--text-secondary);
+}
+
+.leo-page .service-content {
+  position: relative;
+  z-index: 3;
+  margin-left: -72px;
+  background: #fff;
+  padding: 62px 0 58px 64px;
+  box-shadow: -36px 0 70px -62px rgba(18, 35, 63, 0.35);
+}
+
+.leo-page .service-kicker {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 30px;
+}
+
+.leo-page .service-kicker > span {
+  font-family: var(--heading);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--orange-text);
+}
+
+.leo-page .service-kicker i {
+  width: 42px;
+  height: 1px;
+  background: var(--orange);
+  display: block;
+}
+
+.leo-page .service-kicker small {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--text-secondary);
+}
+
+.leo-page .service-content h2 {
+  font-size: clamp(42px, 4.7vw, 66px);
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+  max-width: 570px;
+}
+
+.leo-page .service-lead {
+  max-width: 570px;
+  margin: 26px 0 36px;
+  color: var(--text-secondary);
+  font-size: 16px;
+  line-height: 1.85;
+}
+
+.leo-page .service-scope {
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+  max-width: 650px;
+}
+
+.leo-page .service-scope > p {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--orange-text);
+  margin-bottom: 16px;
+}
+
+.leo-page .service-scope ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 26px;
+}
+
+.leo-page .service-scope li {
+  position: relative;
+  padding: 9px 8px 9px 18px;
+  border-bottom: 1px solid rgba(18, 35, 63, 0.09);
+  font-size: 12px;
+  line-height: 1.45;
+  color: #36445a;
+}
+
+.leo-page .service-scope li:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 16px;
+  width: 5px;
+  height: 5px;
+  background: var(--orange);
+}
+
+.leo-page .service-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 22px;
+  margin-top: 34px;
+  padding: 0 0 9px;
+  border-bottom: 1px solid var(--navy);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.leo-page .service-cta b {
+  font-size: 19px;
+  font-weight: 400;
+  transition: transform 0.25s var(--ease);
+}
+
+.leo-page .service-cta:hover b {
+  transform: translate(4px, -4px);
+}
+
+.leo-page .service-feature--reverse {
+  grid-template-columns: minmax(360px, 0.88fr) minmax(0, 1.12fr);
+}
+
+.leo-page .service-feature--reverse .service-visual {
+  grid-column: 2;
+  grid-row: 1;
+  padding: 42px 54px 0 0;
+}
+
+.leo-page .service-feature--reverse .service-content {
+  grid-column: 1;
+  grid-row: 1;
+  margin-left: 0;
+  margin-right: -72px;
+  padding: 62px 64px 58px 0;
+  box-shadow: 36px 0 70px -62px rgba(18, 35, 63, 0.35);
+}
+
+.leo-page .service-feature--reverse .service-visual-number {
+  left: auto;
+  right: 0;
+}
+
+.leo-page .service-feature--reverse .service-image-caption {
+  left: auto;
+  right: 76px;
+}
+
+@media (max-width: 1024px) {
+  .leo-page .services-intro-grid {
+    gap: 55px;
+  }
+  .leo-page .service-index-nav {
+  }
+  .leo-page .service-index-nav a {
+    padding-inline: 12px;
+  }
+  .leo-page .services-opening {
+    grid-template-columns: 0.4fr 1fr;
+    gap: 35px;
+  }
+  .leo-page .services-opening > p:last-child {
+    grid-column: 2;
+  }
+  .leo-page .service-feature,
+  .leo-page .service-feature--reverse {
+    grid-template-columns: 1fr 1fr;
+    min-height: 580px;
+    margin-bottom: 110px;
+  }
+  .leo-page .service-image-frame {
+    height: 540px;
+  }
+  .leo-page .service-content,
+  .leo-page .service-feature--reverse .service-content {
+    margin-left: -38px;
+    margin-right: 0;
+    padding: 46px 0 44px 42px;
+  }
+  .leo-page .service-feature--reverse .service-content {
+    margin-left: 0;
+    margin-right: -38px;
+    padding: 46px 42px 44px 0;
+  }
+  .leo-page .service-content h2 {
+    font-size: clamp(38px, 5vw, 54px);
+  }
+  .leo-page .service-scope ul {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .leo-site[data-page='servicios'] .services-intro {
+    padding-block: 54px 66px;
+  }
+  .leo-page .services-intro-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .leo-page .services-intro-copy {
+    max-width: 600px;
+  }
+  .leo-page .service-index-nav {
+    overflow-x: auto;
+  }
+  .leo-page .service-index-nav .container {
+    width: max-content;
+    min-width: 100%;
+    grid-template-columns: repeat(4, minmax(150px, 1fr));
+  }
+  .leo-page .service-index-nav a {
+    min-height: 56px;
+    white-space: nowrap;
+  }
+  .leo-page .services-showcase {
+    padding-top: 78px;
+  }
+  .leo-page .services-opening {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    margin-bottom: 75px;
+    padding-bottom: 40px;
+  }
+  .leo-page .services-opening > p:last-child {
+    grid-column: auto;
+  }
+  .leo-page .service-feature,
+  .leo-page .service-feature--reverse {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    min-height: 0;
+    margin-bottom: 95px;
+  }
+  .leo-page .service-feature--reverse .service-visual {
+    order: 0;
+  }
+  .leo-page .service-feature--reverse .service-content {
+    order: 1;
+  }
+  .leo-page .service-visual,
+  .leo-page .service-feature--reverse .service-visual {
+    padding: 36px 0 0 26px;
+    width: 100%;
+  }
+  .leo-page .service-image-frame {
+    height: 460px;
+  }
+  .leo-page .service-visual-number,
+  .leo-page .service-feature--reverse .service-visual-number {
+    left: 0;
+    right: auto;
+    font-size: 82px;
+  }
+  .leo-page .service-image-caption,
+  .leo-page .service-feature--reverse .service-image-caption {
+    left: 42px;
+    right: auto;
+  }
+  .leo-page .service-content,
+  .leo-page .service-feature--reverse .service-content {
+    margin: 0;
+    padding: 48px 0 0 26px;
+    box-shadow: none;
+    width: 100%;
+  }
+  .leo-page .service-content h2 {
+    font-size: clamp(40px, 10vw, 56px);
+  }
+  .leo-page .service-scope ul {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .leo-page .services-intro-meta {
+    align-items: flex-start;
+  }
+  .leo-page .services-intro-meta > span {
+    font-size: 25px;
+  }
+  .leo-page .service-index-nav .container {
+    grid-template-columns: repeat(4, minmax(138px, 1fr));
+  }
+  .leo-page .services-showcase {
+    padding-top: 64px;
+  }
+  .leo-page .services-opening {
+    margin-bottom: 60px;
+  }
+  .leo-page .service-image-frame {
+    height: 360px;
+  }
+  .leo-page .service-visual,
+  .leo-page .service-feature--reverse .service-visual {
+    padding-left: 18px;
+  }
+  .leo-page .service-content,
+  .leo-page .service-feature--reverse .service-content {
+    padding-left: 18px;
+  }
+  .leo-page .service-image-caption,
+  .leo-page .service-feature--reverse .service-image-caption {
+    left: 28px;
+  }
+  .leo-page .service-scope ul {
+    grid-template-columns: 1fr;
+  }
+  .leo-page .service-feature {
+    margin-bottom: 78px;
+  }
+}
+
+.leo-page .service-index-nav a[aria-current='true'] {
+  background: var(--navy);
+  color: white;
+}
+
+.leo-page .service-index-nav a[aria-current='true'] span {
+  color: #ff9a65;
+}
+
+/* Match the supplied reference: blue introduction, one continuous paper-colored base. */
+.leo-site[data-page='servicios'] .services-intro {
+  background: #edf5f9;
+}
+.leo-page .services-showcase {
+  background: var(--paper);
+}
+.leo-page #service-list {
+  display: block;
+}
+.leo-page .service-feature {
+  isolation: isolate;
+}
+
+/* Original dark construction section. */
+
+.leo-page .service-feature--dark {
+  background: var(--navy);
+  color: white;
+  margin-left: calc((100vw - 100%) / -2);
+  margin-right: calc((100vw - 100%) / -2);
+  padding-left: calc((100vw - 100%) / 2);
+  padding-right: calc((100vw - 100%) / 2);
+  min-height: 760px;
+  margin-bottom: 0;
+}
+.leo-page .service-feature--dark:before {
+  display: none;
+}
+.leo-page .service-feature--dark .service-content {
+  background: var(--navy);
+  box-shadow: none;
+}
+.leo-page .service-feature--dark .service-lead,
+.leo-page .service-feature--dark .service-kicker small {
+  color: rgba(255, 255, 255, 0.68);
+}
+.leo-page .service-feature--dark .service-scope {
+  border-color: rgba(255, 255, 255, 0.18);
+}
+.leo-page .service-feature--dark .service-scope li {
+  color: rgba(255, 255, 255, 0.78);
+  border-color: rgba(255, 255, 255, 0.11);
+}
+.leo-page .service-feature--dark .service-visual-number {
+  -webkit-text-stroke-color: rgba(255, 255, 255, 0.26);
+}
+.leo-page .service-feature--dark .service-image-caption {
+  color: rgba(255, 255, 255, 0.55);
+}
+.leo-page .service-feature--dark .service-cta {
+  border-color: white;
+  color: white;
+}
+
+@media (max-width: 1024px) {
+  .leo-page .service-feature--dark {
+    min-height: 680px;
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .leo-page .service-feature--dark {
+    margin-left: calc((100vw - 100%) / -2);
+    margin-right: calc((100vw - 100%) / -2);
+    padding: 55px calc((100vw - 100%) / 2) 72px;
+    gap: 0;
+  }
+  .leo-page .service-feature--dark .service-content {
+    padding-top: 48px;
+  }
+}
+
+@media (max-width: 480px) {
+  .leo-page .service-feature--dark {
+    padding-block: 42px 64px;
+    margin-bottom: 0;
+  }
+}
+
+.leo-page .services-showcase {
+  padding-bottom: 0;
+}
+.leo-page .services-ending {
+  background: #edf5f9;
+}
+.leo-page .services-ending h2 {
+  font-size: clamp(44px, 5vw, 70px);
+  line-height: 1.01;
+  letter-spacing: -0.052em;
+}
+.leo-page .services-ending-space {
+  background: linear-gradient(160deg, #dcebf5 0%, #eaf3f8 50%, #dceaf3 100%);
+}
+@media (max-width: 480px) {
+  .leo-page .services-ending h2 {
+    font-size: 36px;
+  }
+}
+
+/* Keep the shared news image fallback within the existing home card composition. */
+:where(.leo-page, .leo-chrome) .home-news-section .news-card > .home-news-image {
+  height: 270px;
+  padding: 0;
+}

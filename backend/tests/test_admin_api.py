@@ -601,3 +601,14 @@ class AdminAPITests(TestCase):
         message = MensajeContacto.objects.get(pk=response.json()["id"])
         self.assertEqual(message.propiedad_id, prop["id"])
         self.assertTrue(Propiedad.objects.filter(pk=prop["id"], publicado=False).exists())
+
+    def test_contact_rejects_email_longer_than_declared_model(self):
+        before = MensajeContacto.objects.count()
+        response = self.public.post(API + "inquiries/contact/", {
+            "name": "Cliente", "email": "a" * 60 + "@" + "b" * 60 + "." + "c" * 40 + ".com",
+            "phone": "55551234", "subject": "Otro", "message": "Consulta", "website": "",
+        }, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()["error"]["code"], "validation_error")
+        self.assertIn("email", response.json()["error"]["details"])
+        self.assertEqual(MensajeContacto.objects.count(), before)

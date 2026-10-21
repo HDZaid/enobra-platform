@@ -1,8 +1,8 @@
-# EnObra — Frontend (base compartida)
+# EnObra — Frontend integrado
 
 Proyecto React + Vite en JavaScript/JSX, preparado para conectarse a los contratos de Django REST Framework de este mismo repositorio.
 
-> **Alcance de este PR:** solo estructura, rutas y servicios HTTP. Las pantallas muestran marcadores temporales; **no son una versión del mockup aprobado**. Nadie debe considerar completada una vista hasta migrar sus elementos y comprobar fidelidad visual y funcional.
+> **Estado en `develop`:** integrados los módulos públicos de Leo, Jennifer y Geo, más login, dashboard, noticias y mensajes del panel. Validación de UI con API controlada; la conexión real y persistencia se verifican en la fase de backend. Faltan los formularios administrativos de proyectos, propiedades y contenido institucional.
 
 ## Requisitos
 
@@ -31,9 +31,9 @@ dependencias y versiona también los cambios del lockfile.
 - El servidor Django está en [`../backend/`](../backend/README.md); se ejecuta en otra terminal.
 - El contrato compartido está en [`../docs/openapi.yaml`](../docs/openapi.yaml).
 - Prefijo predeterminado: `/api/v1`, configurable con `VITE_API_BASE_URL` en `.env.local`.
-- Vite redirige `/api` a Django en `http://127.0.0.1:8000` durante desarrollo.
+- Vite redirige `/api` y `/media` a Django en `http://127.0.0.1:8000` durante desarrollo.
 - La API responde con `{count,page,page_size,results}` en listados y `{error:{code,message,details}}` en errores.
-- Los contratos actuales siguen sin persistencia y pueden responder HTTP 501; este frontend **no simula operaciones exitosas**.
+- El backend incluido ya registra persistencia para varios módulos, pero necesita su configuración de base de datos. Servicios y búsqueda siguen pendientes; la UI maneja 501. Los modos demo están identificados, limitados a desarrollo y no representan guardados reales.
 - El cliente HTTP se encuentra en `src/services/apiClient.js` y los servicios particulares dentro de `src/features/*/services/`.
 - No subir secretos ni incluir contraseñas o tokens reales en el repositorio. Las peticiones protegidas reciben el token explícitamente; falta acordar sesión y renovación con el backend.
 
@@ -62,8 +62,22 @@ sujeta a cambios y pendiente de implementación.
 
 ## Siguiente fase
 
-1. Revisar y aceptar esta base entre los tres mediante Pull Request hacia `develop`.
-2. Cada integrante crea su rama desde el `develop` actualizado.
-3. Reemplazar los marcadores temporales por componentes fieles al mockup.
-4. Acordar endpoints faltantes para edición institucional y videos con el backend antes de desarrollar formularios definitivos.
-5. Integrar API y verificar permisos, validaciones, errores y cambios persistidos.
+1. Validar el flujo completo contra Django configurado: login/RBAC, expiración, consultas, guardados, medios, contacto y visitas.
+2. Incorporar los formularios administrativos de proyectos, propiedades y contenido institucional cuando sus autores los publiquen.
+3. Confirmar datos del cliente, contenido real y reglas de despliegue, CORS y medios.
+4. La integración validada está en `develop`. `main` permanece sin cambios; los informes de `frontend-dev` conservan la procedencia histórica de esta entrega.
+
+## Integración en frontend-dev
+
+El estado unificado, las ramas revisadas, los contratos y las limitaciones se documentan
+en [Integración del frontend](../docs/frontend-integration.md). Los informes ADMIN/NEWS
+describen sus entregas de origen; el reporte de integración indica la validación conjunta.
+
+## Conexión actual con Django
+
+Login, datos institucionales, Noticias, Contacto y Mensajes se verificaron de extremo
+a extremo con Django/ORM y almacenamiento local desechable. Inicio consulta noticias
+y Contacto consulta los datos de empresa. Consulta [integración y pendientes](../docs/integracion-backend-frontend.md)
+para reproducir las pruebas y conocer los límites de catálogos y Supabase.
+La previsualización pública de noticias es opcional: `VITE_NEWS_PREVIEW=true`, solo
+en desarrollo. Sin esa opción, una API de noticias caída muestra error.

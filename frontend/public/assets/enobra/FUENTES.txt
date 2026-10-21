@@ -1,0 +1,14 @@
+Fotografías ilustrativas de Unsplash. Licencia: https://unsplash.com/license
+
+hero.jpg: https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1800&q=85&fit=crop
+estructura.jpg: https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=1000&q=82&fit=crop
+construccion.jpg: https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1000&q=82&fit=crop
+interior.jpg: https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1000&q=82&fit=crop
+residencia.jpg: https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1000&q=82&fit=crop
+apartamento.jpg: https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1000&q=82&fit=crop
+edificio.jpg: https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1000&q=82&fit=crop
+local.jpg: https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1000&q=82&fit=crop
+terreno.jpg: https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1000&q=82&fit=crop
+
+Fuentes: https://fonts.google.com/specimen/Inter
+https://fonts.google.com/specimen/Outfit

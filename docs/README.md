@@ -16,3 +16,7 @@ las decisiones se revisan gradualmente y se actualizan junto con el código afec
 
 Los informes de implementación de una rama describen el estado de esa entrega;
 no reemplazan el contrato ni implican que una funcionalidad ya esté integrada en `develop`.
+
+- [Integración del frontend](frontend-integration.md): procedencia por rama, conflictos, validación y pendientes.
+
+- [Integración parcial React–Django y pendientes](integracion-backend-frontend.md): flujos reales verificados, límites de catálogos y pruebas reproducibles.

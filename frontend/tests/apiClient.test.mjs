@@ -25,7 +25,7 @@ test('envía el formulario de contacto como JSON', async () => {
   let request;
   globalThis.fetch = async (url, options) => {
     request = { url, options };
-    return new Response(JSON.stringify({ id: '1', status: 'nuevo' }), {
+    return new Response(JSON.stringify({ id: '1', status: 'nuevo', created_at: '2026-10-20T12:00:00Z' }), {
       status: 201, headers: { 'content-type': 'application/json' },
     });
   };

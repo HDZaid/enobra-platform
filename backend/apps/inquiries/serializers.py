@@ -10,7 +10,7 @@ class ContactInquiryCreateSerializer(serializers.Serializer):
     """Formulario de Contacto / 'Solicitar información' de Servicios."""
 
     name = serializers.CharField(max_length=120)
-    email = serializers.EmailField()
+    email = serializers.EmailField(max_length=150)
     phone = GuatemalaPhoneField()
     subject = serializers.CharField(
         max_length=80, help_text="Título de un servicio (Diseño, Construcción…), 'Bienes raíces' u 'Otro'."
