@@ -14,7 +14,7 @@ significa que los catálogos estén terminados ni que se haya desplegado producc
 | main | Conservar sin cambios | Rama principal existente; no recibe esta fusión. |
 | frontend-dev | Retirar después de publicar el merge | HEAD revisado: 4d3ea145eab46edb3f30fc13a7805435b84400f7. Queda como ancestro de develop. |
 | feature/projects-&-real-estates | Retirar después de publicar el merge | HEAD revisado: da2d292e64f4feed256352d06674788f7d65aed6. Ya incorporado mediante merge a frontend-dev y, por tanto, a develop. |
-| frontend/news-admin-contact | Conservar | Diez commits exclusivos respecto a la integración. El frontend se incorporó selectivamente; quedan diagnóstico/configuración backend y documentación no adoptados. No equivale a una rama fusionada por completo. |
+| frontend/news-admin-contact | Retirar tras integración final | Se fusiona su HEAD 9189058 preservando el frontend ya validado e incorporando diagnóstico/configuración y reporte pendientes. |
 | fix/db-connection-diagnostics | Retirar tras revisión adicional solicitada | Commit a79493d archivado; las pruebas y la carga de runserver fallan por dependencia ausente. Se conserva bundle y parche recuperable. |
 
 La eliminación se condiciona al SHA revisado de cada referencia remota y se solicita
@@ -79,9 +79,42 @@ También se guardó el commit como parche independiente:
 `/workspace/repository-backups/henry-db-diagnostics-a79493d.patch`.
 La eliminación remota se condiciona al SHA anterior para no borrar cambios recientes.
 
-`frontend/news-admin-contact` no se elimina: aunque Henry firma su último commit,
+En esa revisión `frontend/news-admin-contact` no se eliminó: aunque Henry firma su último commit,
 contiene una entrega de Jennifer y conserva cambios backend/documentación exclusivos,
 incluido el módulo de diagnóstico que falta en la otra rama. La autoría del último
 commit no demuestra propiedad exclusiva ni que una rama haya cumplido su función.
 `develop` y `main` permanecen. Esta revisión solo cambia documentación y referencias
 Git; el backend y frontend validados en develop no se modifican.
+
+
+## Cierre final de frontend/news-admin-contact
+
+Por solicitud posterior del usuario se integra el historial completo de
+`91890588be99ef91069eb2ac3157b99ea32b4ab0` mediante merge a develop. Su frontend ya
+estaba integrado selectivamente. Los conflictos se resolvieron conservando las
+versiones de develop tras comparar ambos lados: router con Leo/Geo/Jennifer,
+Contacto conectado a empresa, límite de correo, landmarks únicos, fuentes locales,
+vista previa optativa y proxy configurable. El árbol frontend queda idéntico al
+anterior a este merge; no se repite ni revierte esa implementación.
+
+Se incorporan los metadatos DATABASE_URL_SOURCE, el módulo db_diagnostics y el
+reporte de contratos, con sus estados actualizados. Se completa un comando manual
+`check_database` que comprueba columnas de las tablas public dentro de una
+transacción PostgreSQL de solo lectura y con timeout por sentencia. No cambia
+runserver ni añade llamadas automáticas a Supabase al iniciar la aplicación.
+
+Del parche archivado de a79493d se recuperan las pruebas de diagnóstico; se añaden
+pruebas de ocultación de credenciales en mensajes y del comando manual. El fallo por
+módulo ausente queda resuelto al integrar ahora ambas piezas. No se restaura la rama
+de diagnóstico eliminada ni su override de runserver.
+
+El respaldo completo previo al merge está en
+`/workspace/repository-backups/enobra-before-final-news-merge.bundle` y fue verificado.
+La eliminación de la rama se hace solo después de publicar y comprobar que su SHA
+es ancestro de develop, con protección ante avances remotos concurrentes.
+
+Validación del cierre final: 47 pruebas backend y 76 frontend aprobadas, lint/build
+y OpenAPI estricto correctos, comando check_database cargado correctamente y
+recorrido React→Django aprobado con SQLite/archivos temporales. Las pruebas del
+comando manual simulan la conexión PostgreSQL y verifican la transacción de solo
+lectura y ausencia de cambios de esquema; no se afirma acceso real a Supabase.

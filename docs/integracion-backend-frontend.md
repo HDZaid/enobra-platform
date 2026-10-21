@@ -105,17 +105,19 @@ junto con la base temporal. No se usan credenciales ni datos de producción.
   colección dinámica en una ampliación coordinada.
 - DEBUG, SECRET_KEY, HTTPS, cabeceras, CORS, proxy y límites deben revisarse para
   producción. Esta entrega no constituye despliegue ni certificación de producción.
-- Diagnóstico de BD: el fragmento incompleto de `fix/db-connection-diagnostics`
-  se archivó durante la limpieza de ramas por faltar su módulo requerido. El módulo
-  complementario sigue en `frontend/news-admin-contact`; no se incorporó al backend.
-  Ver [revisión de ramas](estado-ramas.md).
+- Diagnóstico de BD: integrado el módulo pendiente y los metadatos de configuración.
+  Desde backend se puede ejecutar `python manage.py check_database`: consulta solo
+  metadatos de public en una transacción PostgreSQL de solo lectura. No modifica
+  esquema/datos ni reemplaza runserver; sigue pendiente ejecutar la comprobación
+  contra Supabase desde un entorno con acceso. Los errores omiten DSN/contraseñas.
+
 
 ## Pruebas ejecutadas
 
 | Comprobación | Resultado |
 | --- | --- |
 | Django `check` | Correcto. |
-| Suite backend con SQLite aislada | 38 pruebas aprobadas. |
+| Suite backend con SQLite aislada | 47 pruebas aprobadas, incluido diagnóstico y comando manual. |
 | Suite frontend Node | 76 pruebas aprobadas, ninguna omitida. |
 | ESLint | Correcto. |
 | Build de producción Vite | Correcto. |

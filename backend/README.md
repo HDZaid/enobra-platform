@@ -299,3 +299,12 @@ Los datos generales aceptan valores pendientes; las redes deben exponerse como u
 - Autorización siempre en servidor (el rol viene del token verificado, no del cliente).
 - Validar tipo real y tamaño de imágenes en `MediaStorage`; no ejecutar ni servir archivos subidos como código.
 - Escapar/sanitizar el texto al renderizar en React (los campos son texto plano, no HTML).
+
+## Diagnóstico manual de conexión
+
+Con DATABASE_URL configurada de forma segura, desde backend ejecutar
+`python manage.py check_database`. Comprueba las tablas y columnas de public en una
+transacción PostgreSQL de solo lectura; no crea ni altera tablas y no cambia el
+arranque normal de runserver. Los errores muestran origen de configuración y
+sugerencias sin incluir la contraseña ni DSN. Esta comprobación no valida datos de
+negocio, todos los tipos/constraints ni sustituye las pruebas de la aplicación.

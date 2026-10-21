@@ -11,6 +11,8 @@ import dj_database_url
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+# Las variables del sistema tienen prioridad sobre backend/.env (load_dotenv no las reemplaza).
+_DATABASE_URL_FROM_SYSTEM = bool(os.environ.get("DATABASE_URL", "").strip())
 load_dotenv(BASE_DIR / ".env")
 
 
@@ -69,6 +71,12 @@ DATABASES = (
     }
     if DATABASE_URL
     else {}
+)
+# Solo informativo: lo usan los mensajes de diagnóstico de la conexión.
+DATABASE_URL_SOURCE = (
+    "variable de entorno del sistema DATABASE_URL (tiene prioridad sobre backend/.env)"
+    if _DATABASE_URL_FROM_SYSTEM
+    else str(BASE_DIR / ".env") if DATABASE_URL else "ninguna (DATABASE_URL vacía o sin definir)"
 )
 
 LANGUAGE_CODE = "es"
