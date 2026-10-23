@@ -5,7 +5,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.common.pagination import paginated, paginated_response
-from apps.common.permissions import is_admin
+from apps.common.permissions import is_admin, HasAnyPermission, has_any_permission
+from apps.common.pagination import PageQuerySerializer
 from apps.common.registry import resolve
 from apps.common.serializers import ErrorSerializer
 
@@ -85,8 +86,53 @@ class ProjectDetailView(APIView):
             raise NotFound("Proyecto no encontrado.")
         return Response(ProjectSerializer(updated).data)
 
-    @extend_schema(responses={204: None, 404: ErrorSerializer}, tags=TAG, summary="Eliminar proyecto (admin)")
+    @extend_schema(responses={204: None, 404: ErrorSerializer}, tags=TAG, summary="Enviar proyecto a papelera (admin)")
     def delete(self, request, project_id: str):
         if not resolve(ProjectRepository).delete(project_id, deleted_by=request.user.id):
             raise NotFound("Proyecto no encontrado.")
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ProjectTrashView(APIView):
+    permission_classes = [HasAnyPermission]
+    required_permissions = (
+        "projects.trash.any", "projects.trash.own",
+        "projects.restore", "projects.delete_permanently",
+    )
+
+    @extend_schema(parameters=[PageQuerySerializer], responses=paginated(ProjectSerializer),
+                   tags=TAG, summary="Listar proyectos en papelera")
+    def get(self, request):
+        query = PageQuerySerializer(data=request.query_params)
+        query.is_valid(raise_exception=True)
+        params = query.validated_data
+        can_see_all = has_any_permission(request.user, (
+            "projects.trash.any", "projects.restore", "projects.delete_permanently"))
+        page = resolve(ProjectRepository).list_trash(
+            page=params["page"], page_size=params["page_size"],
+            owner_id=None if can_see_all else int(request.user.id))
+        return paginated_response(page, params, ProjectSerializer)
+
+
+class ProjectRestoreView(APIView):
+    permission_classes = [HasAnyPermission]
+    required_permissions = ("projects.restore",)
+
+    @extend_schema(request=None, responses={204: None, 404: ErrorSerializer, **ERR},
+                   tags=TAG, summary="Restaurar proyecto desde papelera")
+    def post(self, request, project_id: str):
+        if not resolve(ProjectRepository).restore(project_id, restored_by=request.user.id):
+            raise NotFound("El proyecto no existe en papelera.")
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ProjectPermanentDeleteView(APIView):
+    permission_classes = [HasAnyPermission]
+    required_permissions = ("projects.delete_permanently",)
+
+    @extend_schema(responses={204: None, 404: ErrorSerializer, **ERR},
+                   tags=TAG, summary="Eliminar proyecto permanentemente desde papelera")
+    def delete(self, request, project_id: str):
+        if not resolve(ProjectRepository).delete_permanently(project_id, deleted_by=request.user.id):
+            raise NotFound("El proyecto no existe en papelera.")
         return Response(status=status.HTTP_204_NO_CONTENT)

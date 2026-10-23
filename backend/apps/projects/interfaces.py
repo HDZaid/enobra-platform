@@ -32,3 +32,16 @@ class ProjectRepository(ABC):
 
     @abstractmethod
     def delete(self, project_id: str, *, deleted_by: str | None = None) -> bool: ...
+
+
+    @abstractmethod
+    def list_trash(self, *, page: int, page_size: int, owner_id=None) -> Page: ...
+
+    @abstractmethod
+    def restore(self, project_id: str, *, restored_by: str) -> bool: ...
+
+    @abstractmethod
+    def delete_permanently(self, project_id: str, *, deleted_by: str) -> bool: ...
+
+    @abstractmethod
+    def is_own_draft(self, project_id: str, user_id: str) -> bool: ...
