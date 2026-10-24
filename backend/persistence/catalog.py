@@ -1,4 +1,6 @@
 """CRUD del panel: tablas de negocio y metadatos del mockup en contenido_pagina."""
+import json
+
 from django.db import IntegrityError, transaction
 from django.db.models import Max, Min
 from django.utils import timezone
@@ -11,33 +13,42 @@ from .models.projects import Proyecto, CategoriaProyecto, ProyectoVideo
 from .models.properties import Propiedad, TipoPropiedad, TipoOperacion, PropiedadVideo
 from .models.news import Noticia, CategoriaNoticia
 from .models.content import ContenidoPagina
+from .models.access import Usuario
+from apps.common.pagination import Page
 from .support import read_data, write_data, audit, page_of, unique_slug, publication_date, normalized
 
 
 class CatalogRepository:
+    supports_trash = False
+
     def _query(self, include_unpublished=True):
         qs = self.model.objects.select_related(*self.related).prefetch_related(*self.prefetch)
-        if self.module == "properties":
+        if self.supports_trash:
             trashed_ids = self._trashed_ids()
             if trashed_ids:
                 qs = qs.exclude(pk__in=trashed_ids)
         return qs if include_unpublished else qs.filter(publicado=True)
 
+    def _trash_metadata(self):
+        if not self.supports_trash:
+            return {}
+        rows = ContenidoPagina.objects.filter(
+            clave__startswith=f"admin.{self.module}.", contenido__contains='"trash"'
+        ).values_list("clave", "contenido")
+        metadata = {}
+        for key, content in rows:
+            try:
+                pk = int(key.rsplit(".", 1)[1])
+                extra = json.loads(content)
+            except (ValueError, TypeError, IndexError):
+                continue
+            trash = extra.get("trash") if isinstance(extra, dict) else None
+            if isinstance(trash, dict) and trash.get("trashed_at"):
+                metadata[pk] = extra
+        return metadata
+
     def _trashed_ids(self):
-        if self.module != "properties":
-            return []
-        keys = ContenidoPagina.objects.filter(
-            clave__startswith="admin.properties.", contenido__contains='"trash"'
-        ).values_list("clave", flat=True)
-        ids = []
-        for key in keys:
-            extra = read_data(key, {})
-            if isinstance(extra.get("trash"), dict) and extra["trash"].get("trashed_at"):
-                try:
-                    ids.append(int(key.rsplit(".", 1)[1]))
-                except (IndexError, ValueError):
-                    continue
-        return ids
+        return list(self._trash_metadata())
 
     def _lookup(self, key, include_unpublished=True, lock=False):
         qs = self._query(include_unpublished)
@@ -53,8 +64,9 @@ class CatalogRepository:
     def _meta_key(self, obj):
         return f"admin.{self.module}.{obj.pk}"
 
-    def _serialize(self, obj):
-        extra = read_data(self._meta_key(obj))
+    def _serialize(self, obj, extra=None):
+        if extra is None:
+            extra = read_data(self._meta_key(obj))
         result = {"id": obj.pk if self.identifier == "pk" else obj.slug,
             "title": obj.titulo, "published": obj.publicado, "demo": extra.get("demo", False),
             "created_at": obj.fecha_creacion, "updated_at": obj.fecha_actualizacion or obj.fecha_creacion,
@@ -142,7 +154,7 @@ class CatalogRepository:
         return self.get(key, include_unpublished=True)
 
     @transaction.atomic
-    def delete(self, key, *, deleted_by=None):
+    def _delete_record(self, key, *, deleted_by=None):
         obj = self._lookup(key, lock=True)
         if obj is None:
             return False
@@ -151,8 +163,104 @@ class CatalogRepository:
         obj.delete()
         return True
 
+    def is_own_draft(self, key, user_id):
+        try:
+            owner_id = int(user_id)
+        except (TypeError, ValueError):
+            return False
+        return self._query(include_unpublished=True).filter(
+            **{self.identifier: key}, creado_por_id=owner_id, publicado=False
+        ).exists()
+
+    @transaction.atomic
+    def delete(self, key, *, deleted_by=None):
+        if not self.supports_trash:
+            return self._delete_record(key, deleted_by=deleted_by)
+        obj = self._lookup(key, lock=True)
+        if obj is None:
+            return False
+        key = self._meta_key(obj)
+        extra = read_data(key, {})
+        if isinstance(extra.get("trash"), dict) and extra["trash"].get("trashed_at"):
+            return False
+        extra["trash"] = {
+            "trashed_at": timezone.now().isoformat(),
+            "trashed_by": str(deleted_by) if deleted_by is not None else None,
+            "was_published": bool(obj.publicado),
+        }
+        obj.publicado = False
+        obj.actualizado_por_id = deleted_by
+        obj.fecha_actualizacion = timezone.now()
+        obj.save(update_fields=["publicado", "actualizado_por", "fecha_actualizacion"])
+        write_data(key, extra, deleted_by)
+        audit(self.module, "PAPELERA", obj, deleted_by)
+        return True
+
+    def list_trash(self, *, page, page_size, owner_id=None):
+        metadata = self._trash_metadata()
+        if not metadata:
+            return Page()
+        qs = self.model.objects.filter(pk__in=metadata).select_related(*self.related).prefetch_related(*self.prefetch)
+        if owner_id is not None:
+            qs = qs.filter(creado_por_id=owner_id)
+        total = qs.count()
+        start = (page - 1) * page_size
+        objects = list(qs.order_by("-fecha_actualizacion", "-pk")[start:start + page_size])
+        actors = {metadata[obj.pk]["trash"].get("trashed_by") for obj in objects}
+        actor_ids = [int(actor) for actor in actors if str(actor).isdigit()]
+        names = dict(Usuario.objects.filter(pk__in=actor_ids).values_list("pk", "nombre"))
+        items = []
+        for obj in objects:
+            extra = metadata[obj.pk]
+            trash = extra["trash"]
+            actor = trash.get("trashed_by")
+            item = self._serialize(obj, extra=extra)
+            item.update(type=self.module, was_published=bool(trash.get("was_published", False)),
+                owner_id=str(obj.creado_por_id) if obj.creado_por_id is not None else None,
+                trashed_by_name=names.get(int(actor)) if str(actor).isdigit() else None)
+            items.append(item)
+        return Page(items=items, total=total)
+
+    @transaction.atomic
+    def restore(self, key, *, restored_by):
+        if not self.supports_trash:
+            return False
+        obj = self.model.objects.select_for_update().filter(**{self.identifier: key}).first()
+        if obj is None:
+            return False
+        key = self._meta_key(obj)
+        extra = read_data(key, {})
+        trash = extra.get("trash")
+        if not isinstance(trash, dict) or not trash.get("trashed_at"):
+            return False
+        obj.publicado = bool(trash.get("was_published", False))
+        obj.actualizado_por_id = restored_by
+        obj.fecha_actualizacion = timezone.now()
+        obj.save(update_fields=["publicado", "actualizado_por", "fecha_actualizacion"])
+        extra.pop("trash", None)
+        write_data(key, extra, restored_by)
+        audit(self.module, "RESTAURAR", obj, restored_by)
+        return True
+
+    @transaction.atomic
+    def delete_permanently(self, key, *, deleted_by):
+        if not self.supports_trash:
+            return False
+        obj = self.model.objects.select_for_update().filter(**{self.identifier: key}).first()
+        if obj is None:
+            return False
+        key = self._meta_key(obj)
+        extra = read_data(key, {})
+        trash = extra.get("trash")
+        if not isinstance(trash, dict) or not trash.get("trashed_at"):
+            return False
+        audit(self.module, "ELIMINAR_PERMANENTE", obj, deleted_by)
+        ContenidoPagina.objects.filter(clave=key).delete()
+        obj.delete()
+        return True
 
 class DjangoProjectRepository(CatalogRepository, ProjectRepository):
+    supports_trash = True
     model, module, identifier = Proyecto, "projects", "slug"
     related, prefetch = ("categoria",), ("videos",)
     video_model, video_fk = ProyectoVideo, "proyecto"
@@ -185,6 +293,7 @@ class DjangoNewsRepository(CatalogRepository, NewsRepository):
 
 
 class DjangoPropertyRepository(CatalogRepository, PropertyRepository):
+    supports_trash = True
     model, module, identifier = Propiedad, "properties", "pk"
     related, prefetch = ("tipo_propiedad", "tipo_operacion"), ("videos",)
     video_model, video_fk = PropiedadVideo, "propiedad"
@@ -210,78 +319,6 @@ class DjangoPropertyRepository(CatalogRepository, PropertyRepository):
             qs = qs.filter(pk__in=ids)
         order = {"price_asc": "precio", "price_desc": "-precio"}.get(filters.sort, "-fecha_publicacion")
         return page_of(qs.order_by(order, "-pk"), page, page_size, self._serialize)
-
-    def is_own_draft(self, property_id, user_id):
-        try:
-            owner_id = int(user_id)
-        except (TypeError, ValueError):
-            return False
-        return self._query(include_unpublished=True).filter(
-            pk=property_id, creado_por_id=owner_id, publicado=False
-        ).exists()
-
-    @transaction.atomic
-    def delete(self, property_id, *, deleted_by=None):
-        obj = self._lookup(property_id, lock=True)
-        if obj is None:
-            return False
-        key = self._meta_key(obj)
-        extra = read_data(key, {})
-        if isinstance(extra.get("trash"), dict) and extra["trash"].get("trashed_at"):
-            return False
-        extra["trash"] = {
-            "trashed_at": timezone.now().isoformat(),
-            "trashed_by": str(deleted_by) if deleted_by is not None else None,
-            "was_published": bool(obj.publicado),
-        }
-        obj.publicado = False
-        obj.actualizado_por_id = deleted_by
-        obj.fecha_actualizacion = timezone.now()
-        obj.save(update_fields=["publicado", "actualizado_por", "fecha_actualizacion"])
-        write_data(key, extra, deleted_by)
-        audit("properties", "PAPELERA", obj, deleted_by)
-        return True
-
-    def list_trash(self, *, page, page_size, owner_id=None):
-        ids = self._trashed_ids()
-        qs = self.model.objects.filter(pk__in=ids).select_related(*self.related).prefetch_related(*self.prefetch)
-        if owner_id is not None:
-            qs = qs.filter(creado_por_id=owner_id)
-        return page_of(qs.order_by("-fecha_actualizacion", "-pk"), page, page_size, self._serialize)
-
-    @transaction.atomic
-    def restore(self, property_id, *, restored_by):
-        obj = self.model.objects.select_for_update().filter(pk=property_id).first()
-        if obj is None:
-            return False
-        key = self._meta_key(obj)
-        extra = read_data(key, {})
-        trash = extra.get("trash")
-        if not isinstance(trash, dict) or not trash.get("trashed_at"):
-            return False
-        obj.publicado = bool(trash.get("was_published", False))
-        obj.actualizado_por_id = restored_by
-        obj.fecha_actualizacion = timezone.now()
-        obj.save(update_fields=["publicado", "actualizado_por", "fecha_actualizacion"])
-        extra.pop("trash", None)
-        write_data(key, extra, restored_by)
-        audit("properties", "RESTAURAR", obj, restored_by)
-        return True
-
-    @transaction.atomic
-    def delete_permanently(self, property_id, *, deleted_by):
-        obj = self.model.objects.select_for_update().filter(pk=property_id).first()
-        if obj is None:
-            return False
-        key = self._meta_key(obj)
-        extra = read_data(key, {})
-        trash = extra.get("trash")
-        if not isinstance(trash, dict) or not trash.get("trashed_at"):
-            return False
-        audit("properties", "ELIMINAR_PERMANENTE", obj, deleted_by)
-        ContenidoPagina.objects.filter(clave=key).delete()
-        obj.delete()
-        return True
 
     def facets(self, *, include_unpublished):
         qs = self._query(include_unpublished)

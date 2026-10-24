@@ -168,9 +168,10 @@ class AdminAPITests(TestCase):
                 self.assertEqual(response.json()["title"], "Reemplazado")
                 self.assertEqual(self.client.delete(url).status_code, 204)
                 self.assertEqual(self.client.get(url).status_code, 404)
-                if kind == "properties":
+                # BE-04: proyectos conserva su fila y audita PAPELERA, igual que propiedades.
+                if kind in ("properties", "projects"):
                     self.assertEqual(model.objects.count(), 1)
-                    self.assertTrue(ContenidoPagina.objects.filter(clave__startswith="admin.properties.").exists())
+                    self.assertTrue(ContenidoPagina.objects.filter(clave__startswith=f"admin.{kind}.").exists())
                     expected_actions = {"CREAR", "EDITAR", "PAPELERA"}
                 else:
                     self.assertEqual(model.objects.count(), 0)
