@@ -1,7 +1,8 @@
 from django.contrib.auth.hashers import make_password
 from django.db import IntegrityError, transaction
 from django.db.models import Q
-from rest_framework.exceptions import ValidationError
+from django.utils import timezone
+from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from apps.accounts.interfaces import UserRepository
 from .access_control import DjangoAccessControlRepository
@@ -11,6 +12,68 @@ from .support import page_of
 
 
 class DjangoUserRepository(UserRepository):
+    @staticmethod
+    def _lock_engineer_role():
+        # Serializa bajas y reasignaciones incluso para usuarios diferentes.
+        return Rol.objects.select_for_update().filter(nombre='Ingeniero', estado=True).first()
+
+    @staticmethod
+    def _protect_last_engineer(user, engineer, field):
+        if engineer is None or user.estado != 'ACTIVO':
+            return
+        if not UsuarioRol.objects.filter(usuario=user, rol=engineer).exists():
+            return
+        if not Usuario.objects.filter(estado='ACTIVO', roles=engineer).exclude(pk=user.pk).exists():
+            raise ValidationError({field: 'Debe conservarse al menos un Ingeniero activo.'})
+
+    @transaction.atomic
+    def update(self, user_id, data, *, actor_id):
+        engineer = self._lock_engineer_role()
+        user = Usuario.objects.select_for_update().filter(pk=user_id).first()
+        if user is None:
+            return None
+        if data.get('active') is False:
+            if str(user.pk) == str(actor_id):
+                raise PermissionDenied('No puedes desactivarte a ti mismo.')
+            self._protect_last_engineer(user, engineer, 'active')
+        previous_name, previous_state = user.nombre, user.estado
+        if 'name' in data:
+            user.nombre = data['name']
+        if 'active' in data:
+            user.estado = 'ACTIVO' if data['active'] else 'INACTIVO'
+        user.fecha_actualizacion = timezone.now()
+        user.save(update_fields=['nombre', 'estado', 'fecha_actualizacion'])
+        HistorialActividad.objects.create(usuario_id=actor_id, accion='EDITAR', modulo='users',
+            id_registro=user.pk, nombre_registro=user.nombre,
+            descripcion=f'Nombre: {previous_name} → {user.nombre}; estado: {previous_state} → {user.estado}')
+        return self._serialize(user)
+
+    @transaction.atomic
+    def replace_role(self, user_id, role_id, *, actor):
+        engineer = self._lock_engineer_role()
+        user = Usuario.objects.select_for_update().filter(pk=user_id).first()
+        if user is None:
+            return None
+        if str(user.pk) == str(actor.id):
+            raise PermissionDenied('No puedes cambiar tu propio rol.')
+        role = Rol.objects.select_for_update().filter(pk=role_id, estado=True).first()
+        if role is None:
+            raise ValidationError({'role_id': 'Selecciona un rol activo existente.'})
+        permissions = set(role.permisos.values_list('nombre', flat=True))
+        if not actor.has_permission('admin.all') and not permissions.issubset(actor.permissions):
+            raise PermissionDenied('No puedes asignar un rol con permisos que no posees.')
+        if engineer is None or role.pk != engineer.pk:
+            self._protect_last_engineer(user, engineer, 'role_id')
+        previous_roles = ', '.join(user.roles.order_by('nombre').values_list('nombre', flat=True)) or 'Sin rol'
+        UsuarioRol.objects.filter(usuario=user).exclude(rol=role).delete()
+        UsuarioRol.objects.get_or_create(usuario=user, rol=role)
+        user.fecha_actualizacion = timezone.now()
+        user.save(update_fields=['fecha_actualizacion'])
+        HistorialActividad.objects.create(usuario_id=actor.id, accion='ROL', modulo='users',
+            id_registro=user.pk, nombre_registro=user.nombre,
+            descripcion=f'Rol anterior: {previous_roles[:350]}; rol nuevo: {role.nombre}')
+        return self._serialize(user)
+
     @staticmethod
     def _serialize(user):
         roles = DjangoAccessControlRepository()

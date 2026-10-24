@@ -1,4 +1,4 @@
-# Creación de usuarios del panel
+# Administración de usuarios del panel
 
 ## Contrato implementado en backend-dev
 
@@ -37,6 +37,27 @@ de Django y `make_password`. Una cuenta inactiva no puede iniciar sesión.
 Se reutilizan `usuario`, `usuario_rol`, `rol` y `historial_actividad`. No se alteran
 la conexión, los modelos ni las tablas. El formulario puede operar una vez
 integrado este contrato en el entorno donde se ejecute el frontend.
+
+## Edición y reemplazo de rol (BE-08)
+
+Con `users.manage` (o `admin.all`), `PATCH /api/v1/admin/users/{id}/`
+acepta `name` y/o `active`; `PUT /api/v1/admin/users/{id}/role/` acepta
+`role_id`. Ambos devuelven `200` con la misma representación del usuario.
+El PUT reemplaza todas las asignaciones anteriores por un único rol activo;
+no agrega un rol adicional. El listado y la creación conservan sus permisos actuales.
+
+No se permite desactivarse ni cambiar el propio rol (`403`). Tampoco asignar
+permisos que el actor no posee (`403`), salvo cuando tiene `admin.all`.
+No se puede desactivar ni quitar el rol al último Ingeniero activo (`400`,
+detalle en `active` o `role_id`). Un rol inexistente o inactivo devuelve `400`
+con detalle en `role_id`; un usuario inexistente devuelve `404`.
+Los datos inválidos devuelven `400 validation_error`; sin sesión, `401`;
+sin `users.manage`, `403`. Se mantiene el formato de error uniforme.
+
+Las escrituras y su auditoría son atómicas: `EDITAR` registra los cambios de
+nombre/estado y `ROL` los nombres del rol anterior y del nuevo. Un fallo de
+auditoría revierte la escritura. Las bajas y reasignaciones bloquean el rol
+Ingeniero y la fila del usuario para proteger al último Ingeniero activo.
 
 Pruebas desde backend:
 

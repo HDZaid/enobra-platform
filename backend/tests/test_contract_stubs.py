@@ -1,7 +1,6 @@
 """BE-00: los contratos nuevos existen y validan permisos y entrada.
 
-Los que aun no tienen logica (edicion de usuarios, BE-08) responden 501; el historial
-ya es real (BE-07) y esta registrado en config/bindings.py."""
+Usuarios (BE-08) e historial (BE-07) tienen implementación real."""
 import io
 
 from django.contrib.auth.hashers import make_password
@@ -52,9 +51,6 @@ class ContractStubTests(TestCase):
             ("put", f"admin/users/{target}/role/", {"role_id": Rol.objects.get(nombre="Empleado").pk}),
         ]
 
-    def stub_requests(self):
-        return [r for r in self.requests() if not r[1].startswith("admin/audit/")]
-
     def call(self, client, method, path, body):
         return getattr(client, method)(API + path, body, format="json") if body else getattr(client, method)(API + path)
 
@@ -74,15 +70,16 @@ class ContractStubTests(TestCase):
                 self.assertEqual(response.status_code, 403)
                 self.assertEqual(response.json()["error"]["code"], "permission_denied")
 
-    def test_with_permission_gets_501_not_implemented(self):
+    def test_with_permission_gets_200(self):
         client = self.client_for(self.engineer)
-        for method, path, body in self.stub_requests():
+        for method, path, body in self.requests():
+            if not path.startswith("admin/users/"):
+                continue
             with self.subTest(path=path):
                 response = self.call(client, method, path, body)
-                self.assertEqual(response.status_code, 501, response.content)
-                self.assertEqual(response.json()["error"]["code"], "not_implemented")
+                self.assertEqual(response.status_code, 200, response.content)
 
-    def test_input_is_validated_before_501(self):
+    def test_input_is_validated(self):
         client = self.client_for(self.engineer)
         target = self.employee.pk
         cases = [
