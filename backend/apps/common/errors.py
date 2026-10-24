@@ -3,6 +3,8 @@ Contrato de error uniforme:
 
     { "error": { "code": "validation_error", "message": "...", "details": {...} } }
 """
+from decimal import InvalidOperation
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import exception_handler as drf_exception_handler
@@ -28,6 +30,11 @@ def error_body(code: str, message: str, details=None) -> dict:
 
 
 def exception_handler(exc, context):
+    if isinstance(exc, InvalidOperation):
+        return Response(
+            error_body("validation_error", "Un valor numérico excede la precisión permitida."),
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     if isinstance(exc, NotBoundError):
         return Response(
             error_body("not_implemented", "Este endpoint aún no tiene capa de datos acoplada.", str(exc)),
