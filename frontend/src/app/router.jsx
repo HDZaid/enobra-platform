@@ -21,6 +21,7 @@ import { AdminRolesPage } from '../features/admin-roles/pages/AdminRolesPage.jsx
 import { AdminRoleEditorPage } from '../features/admin-roles/pages/AdminRoleEditorPage.jsx';
 import { AdminPropertiesPage } from '../features/admin-properties/pages/AdminPropertiesPage.jsx';
 import { AdminPropertyEditorPage } from '../features/admin-properties/pages/AdminPropertyEditorPage.jsx';
+import { AdminTrashPage } from '../features/admin-trash/pages/AdminTrashPage.jsx';
 import { ProjectsPage } from '../features/projects/pages/ProjectsPage.jsx';
 import { ProjectDetailPage } from '../features/projects/pages/ProjectDetailPage.jsx';
 import { PropertiesPage } from '../features/properties/pages/PropertiesPage.jsx';
@@ -77,7 +78,7 @@ export const router = createBrowserRouter([
       { path: routePaths.adminProjects, element: <AdminProjectsPage /> },
       { path: routePaths.adminProjectNew, element: <AdminProjectEditorPage /> },
       { path: routePaths.adminProjectEdit, element: <AdminProjectEditorPage /> },
-      { path: routePaths.adminTrash, element: <AdminPlaceholderPage owner="Leo" /> },
+      { path: routePaths.adminTrash, element: <AdminTrashPage /> },
       { path: routePaths.adminHistory, element: <AdminPlaceholderPage owner="Leo" /> },
       { path: routePaths.adminRoles, element: <AdminRolesPage /> },
       { path: routePaths.adminRoleNew, element: <AdminRoleEditorPage /> },
