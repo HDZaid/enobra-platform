@@ -6,7 +6,7 @@ import { hasAdminPermission } from '../../admin/utils/adminData.js';
 import { PermissionMatrix } from '../components/PermissionMatrix.jsx';
 import { RoleError, RoleLoading, UnsavedRoleDialog } from '../components/RoleStates.jsx';
 import { rolesService } from '../services/rolesService.js';
-import { isOwnRole, makeRolePayload, readPermissions, readRole, roleDraft, roleFieldErrors, roleRequestError } from '../utils/roles.js';
+import { isOwnRole, makeRolePayload, readPermissions, readRole, roleDraft, roleFieldErrors, roleHasChanges, roleRequestError } from '../utils/roles.js';
 
 const inputClass = 'mt-2 w-full rounded-lg border border-[#dfe5ec] bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#304e7d]/30 disabled:bg-[#f3f6fa] disabled:text-[#626b79]';
 
@@ -32,7 +32,7 @@ function RoleEditor({ id, context }) {
   const inFlight = useRef(false);
   const errorSummary = useRef(null);
   const systemRole = resource.role?.name === 'Ingeniero';
-  const dirty = canManage && !resource.loading && !created && JSON.stringify(draft) !== JSON.stringify(baseline);
+  const dirty = canManage && !resource.loading && !created && roleHasChanges(draft, baseline, resource.role);
   const blocker = useBlocker(Boolean(dirty || busy));
   useBeforeUnload(useCallback((event) => {
     if (dirty || busy) { event.preventDefault(); event.returnValue = ''; }

@@ -3,7 +3,7 @@ import test from 'node:test';
 import { rolesService } from '../src/features/admin-roles/services/rolesService.js';
 import {
   groupPermissions, isOwnRole, makeRolePayload, readPermissions, readRole, readRoles,
-  roleDraft, roleFieldErrors, roleRequestError, setPermissionGroup,
+  roleDraft, roleFieldErrors, roleHasChanges, roleRequestError, setPermissionGroup,
 } from '../src/features/admin-roles/utils/roles.js';
 
 const role = () => ({ id: 3, name: 'Empleado', description: 'Borradores propios', active: true,
@@ -65,6 +65,31 @@ test('payload de Ingeniero solo envía descripción y conserva los campos proteg
   const draft = { ...roleDraft(original), name: 'Ataque', active: false, permissions: [], description: ' Revisada ' };
   assert.deepEqual(makeRolePayload(draft, original), { description: 'Revisada' });
   assert.deepEqual(original.permissions, ['admin.all']);
+});
+
+test('restaurar los permisos originales elimina el aviso de cambios aunque cambie su orden', () => {
+  const baseline = roleDraft(role());
+  const group = { items: [{ name: 'properties.create' }] };
+  const withoutCreate = setPermissionGroup(baseline.permissions, group, false);
+  assert.equal(roleHasChanges({ ...baseline, permissions: withoutCreate }, baseline), true);
+  const restored = setPermissionGroup(withoutCreate, group, true);
+  assert.notDeepEqual(restored, baseline.permissions);
+  assert.equal(roleHasChanges({ ...baseline, permissions: restored }, baseline), false);
+  assert.deepEqual(baseline.permissions, role().permissions);
+});
+
+test('detecta cambios reales en los datos y permisos sin confundir espacios descartados al guardar', () => {
+  const baseline = roleDraft(role());
+  assert.equal(roleHasChanges({ ...baseline, name: ` ${baseline.name} ` }, baseline), false);
+  for (const changes of [{ name: 'Nuevo nombre' }, { description: 'Nueva descripción' },
+    { active: false }, { permissions: ['properties.publish'] }]) {
+    assert.equal(roleHasChanges({ ...baseline, ...changes }, baseline), true);
+  }
+  const engineer = { ...role(), name: 'Ingeniero' };
+  const protectedDraft = roleDraft(engineer);
+  assert.equal(roleHasChanges({ ...protectedDraft, name: 'Otro', active: false,
+    permissions: [] }, protectedDraft, engineer), false);
+  assert.equal(roleHasChanges({ ...protectedDraft, description: 'Revisada' }, protectedDraft, engineer), true);
 });
 
 test('identifica el rol propio entre múltiples roles para actualizar la sesión', () => {
