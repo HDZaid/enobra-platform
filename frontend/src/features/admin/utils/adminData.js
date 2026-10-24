@@ -1,3 +1,6 @@
+import { matchPath } from 'react-router-dom';
+import { routePaths } from '../../../app/routePaths.js';
+
 // Comprobaciones del contrato HTTP de Django, sin guardar credenciales en el navegador.
 // Django autoriza por permisos efectivos (RBAC). El nombre del rol solo se usa para mostrarlo;
 // las secciones del panel se habilitan con `user.permissions`, igual que en el backend.
@@ -19,15 +22,37 @@ const PROPERTY_PERMISSIONS = Object.freeze([
   'properties.trash.any', 'properties.trash.own', 'properties.restore', 'properties.delete_permanently',
 ]);
 
-// Permisos que exige Django para las operaciones que usa cada sección.
-// Noticias (escritura y borradores), /admin/media/ y /inquiries/ usan IsAdmin → admin.all.
+const PROJECT_PERMISSIONS = PROPERTY_PERMISSIONS.map((permission) => permission.replace('properties.', 'projects.'));
+
 export const adminSectionPermissions = Object.freeze({
   dashboard: Object.freeze([]),
-  news: Object.freeze([FULL_ACCESS_PERMISSION]),
-  inbox: Object.freeze([FULL_ACCESS_PERMISSION]),
-  users: Object.freeze([FULL_ACCESS_PERMISSION]),
   properties: PROPERTY_PERMISSIONS,
+  projects: Object.freeze(PROJECT_PERMISSIONS),
+  trash: Object.freeze([...PROPERTY_PERMISSIONS, ...PROJECT_PERMISSIONS].filter((permission) =>
+    /\.(trash\.(any|own)|restore|delete_permanently)$/.test(permission))),
+  history: Object.freeze(['audit.read']),
+  roles: Object.freeze(['roles.manage', 'roles.read']),
+  users: Object.freeze(['users.manage', 'users.read']),
+  news: Object.freeze(['news.create', 'news.edit', 'news.publish', 'news.delete']),
+  inbox: Object.freeze(['inquiries.read', 'inquiries.manage']),
 });
+
+export function sectionForPath(pathname) {
+  const sections = [
+    ['dashboard', routePaths.admin], ['properties', routePaths.adminProperties],
+    ['projects', routePaths.adminProjects], ['trash', routePaths.adminTrash],
+    ['history', routePaths.adminHistory], ['roles', routePaths.adminRoles],
+    ['users', routePaths.adminUsers], ['news', routePaths.adminNews], ['inbox', routePaths.adminInbox],
+  ];
+  if (matchPath({ path: routePaths.admin, end: true }, pathname)) return 'dashboard';
+  return sections.slice(1).find(([, path]) => matchPath({ path: `${path}/*`, end: true }, pathname))?.[0] ?? null;
+}
+
+export function refreshedAdminSession(session, user) {
+  const next = readAdminSession({ ...session, user });
+  if (next.user.id !== session.user.id) throw new TypeError('La cuenta de la sesión ha cambiado.');
+  return next;
+}
 
 const isText = (value) => typeof value === 'string' && value.trim() !== '';
 const fold = (value) => String(value ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').trim().toLocaleLowerCase('es');
@@ -104,4 +129,23 @@ export const inquiryStatuses = Object.freeze({
 
 export function validInquiryStatus(value) {
   return Object.hasOwn(inquiryStatuses, value);
+}
+
+// Reglas de interfaz; Django sigue autorizando cada operación.
+export function adminActions(user, preview = false) {
+  const can = (permission) => preview || hasAdminPermission(user, permission);
+  return {
+    createNews: can('news.create'), editNews: can('news.edit'),
+    publishNews: can('news.publish'), deleteNews: can('news.delete'),
+    manageInquiries: can('inquiries.manage'),
+  };
+}
+
+export function newsPayloadForPermissions(payload, { existing = false, canPublish = false } = {}) {
+  if (canPublish) return { ...payload };
+  const result = { ...payload };
+  // PATCH conserva el estado actual; POST nunca hereda published=true del serializer.
+  if (existing) delete result.published;
+  else result.published = false;
+  return result;
 }

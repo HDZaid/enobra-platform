@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { adminRoleProfile, canAccessAdminSection, displayAdminCount, hasAdminPermission, inquiryStatuses, readAdminCollection, readAdminSession, validInquiryStatus } from '../src/features/admin/utils/adminData.js';
+import { adminSectionPermissions, refreshedAdminSession, sectionForPath, adminRoleProfile, canAccessAdminSection, displayAdminCount, hasAdminPermission, inquiryStatuses, readAdminCollection, readAdminSession, validInquiryStatus } from '../src/features/admin/utils/adminData.js';
 
 // Respuestas con la forma real de UserSerializer (role, roles, permissions).
 const ARCHITECT_PERMISSIONS = ['properties.create', 'properties.edit.any', 'properties.publish', 'properties.trash.any', 'properties.restore'];
@@ -85,4 +85,51 @@ test('los estados de solicitudes coinciden con el contrato de Django', () => {
   assert.deepEqual(Object.keys(inquiryStatuses), ['nuevo', 'atendido', 'archivado']);
   assert.equal(validInquiryStatus('nuevo'), true);
   assert.equal(validInquiryStatus('done'), false);
+});
+
+test('cada permiso fino habilita solo su sección y la papelera correspondiente', () => {
+  const groups = {
+    projects: ['create', 'edit.any', 'edit.own', 'publish', 'trash.any', 'trash.own', 'restore', 'delete_permanently'].map((p) => `projects.${p}`),
+    properties: ARCHITECT_PERMISSIONS.concat(['properties.edit.own', 'properties.trash.own', 'properties.delete_permanently']),
+    news: ['news.create', 'news.edit', 'news.publish', 'news.delete'],
+    inbox: ['inquiries.read', 'inquiries.manage'],
+    users: ['users.read', 'users.manage'], roles: ['roles.read', 'roles.manage'], history: ['audit.read'],
+  };
+  for (const [section, permissions] of Object.entries(groups)) {
+    for (const permission of permissions) {
+      const user = { permissions: [permission] };
+      assert.equal(canAccessAdminSection(user, section), true, permission);
+      for (const other of Object.keys(groups).filter((key) => key !== section)) {
+        assert.equal(canAccessAdminSection(user, other), false, `${permission}: ${other}`);
+      }
+      assert.equal(canAccessAdminSection(user, 'trash'), /\.(trash\.(any|own)|restore|delete_permanently)$/.test(permission));
+    }
+  }
+  for (const section of [...Object.keys(groups), 'trash', 'dashboard']) {
+    assert.equal(canAccessAdminSection({ permissions: ['admin.all'] }, section), true);
+  }
+  const createOnly = { permissions: ['properties.create'] };
+  assert.deepEqual(Object.keys(adminSectionPermissions).filter((section) => canAccessAdminSection(createOnly, section)), ['dashboard', 'properties']);
+});
+
+test('las rutas dinámicas y barras finales mantienen la sección sin confundir prefijos', () => {
+  for (const path of ['/admin/bienes-raices', '/admin/bienes-raices/', '/admin/bienes-raices/nuevo', '/admin/bienes-raices/12/editar']) assert.equal(sectionForPath(path), 'properties');
+  for (const path of ['/admin/proyectos', '/admin/proyectos/nuevo', '/admin/proyectos/casa-nueva/editar']) assert.equal(sectionForPath(path), 'projects');
+  for (const path of ['/admin/roles', '/admin/roles/nuevo', '/admin/roles/12']) assert.equal(sectionForPath(path), 'roles');
+  assert.equal(sectionForPath('/admin/'), 'dashboard');
+  assert.equal(sectionForPath('/admin/papelera'), 'trash');
+  assert.equal(sectionForPath('/admin/historial'), 'history');
+  for (const path of ['/admin/login', '/admin/proyectos-ajenos', '/proyectos/casa', '/admin/desconocido']) assert.equal(sectionForPath(path), null);
+});
+
+test('actualizar usuario reemplaza permisos sin cambiar tokens ni aceptar otra identidad', () => {
+  const session = readAdminSession(loginResponse({ role: 'Ingeniero', permissions: ['admin.all'] }));
+  const next = refreshedAdminSession(session, { ...session.user, permissions: ['properties.create'], role: 'Empleado' });
+  assert.equal(next.access, session.access);
+  assert.equal(next.refresh, session.refresh);
+  assert.deepEqual(next.user.permissions, ['properties.create']);
+  assert.deepEqual(session.user.permissions, ['admin.all']);
+  assert.equal(canAccessAdminSection(next.user, 'users'), false);
+  assert.throws(() => refreshedAdminSession(session, { ...session.user, id: '2' }), TypeError);
+  assert.throws(() => refreshedAdminSession(session, { ...session.user, permissions: [] }), /permisos/);
 });

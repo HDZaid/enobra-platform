@@ -11,7 +11,7 @@ export function AdminAccessDenied({ user }) {
       <h2 className="mt-4 font-['Outfit',Arial,sans-serif] text-2xl font-semibold">Esta sección no está disponible para tu rol</h2>
       <p className="mt-3 text-sm leading-relaxed text-[#626b79]">
         Tu rol actual es <strong className="text-[#12233f]">{profile.label}</strong> ({profile.description.toLocaleLowerCase('es')}).
-        Django solo permite esta sección a cuentas con acceso administrativo completo.
+        Tu cuenta no tiene los permisos necesarios para esta sección.
         Si necesitas entrar, pide a un Ingeniero que revise los permisos de tu rol.
       </p>
       <Link to={routePaths.admin} className="mt-6 inline-flex items-center gap-2 rounded-lg border border-[#dfe5ec] px-4 py-2.5 text-sm font-semibold text-[#304e7d] hover:bg-[#f3f6fa]"><ArrowLeft size={16} aria-hidden="true" /> Volver al resumen</Link>

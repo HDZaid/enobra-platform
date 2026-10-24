@@ -9,11 +9,19 @@ import { ServicesPage } from '../features/services/pages/ServicesPage.jsx';
 import { NewsPage } from '../features/news/pages/NewsPage.jsx';
 import { NewsDetailPage } from '../features/news/pages/NewsDetailPage.jsx';
 import { ContactPage } from '../features/contact/pages/ContactPage.jsx';
+import { AdminHistoryPage } from '../features/admin-history/pages/AdminHistoryPage.jsx';
 import { AdminLoginPage } from '../features/admin/pages/AdminLoginPage.jsx';
 import { AdminDashboardPage } from '../features/admin/pages/AdminDashboardPage.jsx';
 import { AdminNewsPage } from '../features/admin/pages/AdminNewsPage.jsx';
 import { AdminInboxPage } from '../features/admin/pages/AdminInboxPage.jsx';
 import { AdminUsersPage } from '../features/admin/pages/AdminUsersPage.jsx';
+import { AdminProjectsPage } from '../features/admin-projects/pages/AdminProjectsPage.jsx';
+import { AdminProjectEditorPage } from '../features/admin-projects/pages/AdminProjectEditorPage.jsx';
+import { AdminRolesPage } from '../features/admin-roles/pages/AdminRolesPage.jsx';
+import { AdminRoleEditorPage } from '../features/admin-roles/pages/AdminRoleEditorPage.jsx';
+import { AdminPropertiesPage } from '../features/admin-properties/pages/AdminPropertiesPage.jsx';
+import { AdminPropertyEditorPage } from '../features/admin-properties/pages/AdminPropertyEditorPage.jsx';
+import { AdminTrashPage } from '../features/admin-trash/pages/AdminTrashPage.jsx';
 import { ProjectsPage } from '../features/projects/pages/ProjectsPage.jsx';
 import { ProjectDetailPage } from '../features/projects/pages/ProjectDetailPage.jsx';
 import { PropertiesPage } from '../features/properties/pages/PropertiesPage.jsx';
@@ -64,6 +72,17 @@ export const router = createBrowserRouter([
     children: [
       { path: routePaths.admin, element: <AdminDashboardPage /> },
       { path: routePaths.adminLogin, element: <AdminLoginPage /> },
+      { path: routePaths.adminProperties, element: <AdminPropertiesPage /> },
+      { path: routePaths.adminPropertyNew, element: <AdminPropertyEditorPage /> },
+      { path: routePaths.adminPropertyEdit, element: <AdminPropertyEditorPage /> },
+      { path: routePaths.adminProjects, element: <AdminProjectsPage /> },
+      { path: routePaths.adminProjectNew, element: <AdminProjectEditorPage /> },
+      { path: routePaths.adminProjectEdit, element: <AdminProjectEditorPage /> },
+      { path: routePaths.adminTrash, element: <AdminTrashPage /> },
+      { path: routePaths.adminHistory, element: <AdminHistoryPage /> },
+      { path: routePaths.adminRoles, element: <AdminRolesPage /> },
+      { path: routePaths.adminRoleNew, element: <AdminRoleEditorPage /> },
+      { path: routePaths.adminRoleDetail, element: <AdminRoleEditorPage /> },
       { path: routePaths.adminNews, element: <AdminNewsPage /> },
       { path: routePaths.adminInbox, element: <AdminInboxPage /> },
       { path: routePaths.adminUsers, element: <AdminUsersPage /> },

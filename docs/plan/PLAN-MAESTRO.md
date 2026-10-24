@@ -326,13 +326,13 @@ Verificación:    comandos exactos.
 | FE-01b | Subida múltiple de imágenes con progreso | Leo | P0 | 3 h | [ ] |
 | FE-02 | Papelera | Leo | P0 | 4 h | [ ] |
 | FE-03 | Historial | Leo | P0 | 4 h | [ ] |
-| FE-06 | Rutas, menú y permisos del panel | Jennifer | P0 | 3 h | [ ] |
-| FE-07 | Proyectos admin (listado, subir, editar) | Jennifer | P0 | 5 h | [ ] |
-| FE-10 | Mensajes, Noticias y Resumen con permisos nuevos | Jennifer | P0 | 2 h | [ ] |
+| FE-06 | Rutas, menú y permisos del panel | Jennifer | P0 | 3 h | [x] |
+| FE-07 | Proyectos admin (listado, subir, editar) | Jennifer | P0 | 5 h | [x] |
+| FE-10 | Mensajes, Noticias y Resumen con permisos nuevos | Jennifer | P0 | 2 h | [x] |
 | FE-11 | Bienes Raíces admin: listado y acciones | Geo | P0 | 6 h | [ ] |
 | FE-12 | Bienes Raíces admin: subir y editar | Geo | P0 | 6 h | [ ] |
-| FE-13 | Roles y permisos | Pablo | P0 | 6 h | [ ] |
-| FE-14 | Usuarios: editar y cambiar rol | Pablo | P0 | 3 h | [ ] |
+| FE-13 | Roles y permisos | Pablo | P0 | 6 h | [x] Interfaz verificada; lectura real con roles.read pendiente de BE-01/02 |
+| FE-14 | Usuarios: editar y cambiar rol | Pablo | P0 | 3 h | [x] 24-oct: 162 pruebas, lint, build y recorrido con API real/SQLite |
 | FE-04, FE-05, FE-08, FE-09 | Backlog posterior a la entrega | varios | P1 | n/a | [ ] |
 
 ### Integración
@@ -358,3 +358,34 @@ Verificación:    comandos exactos.
 | Permisos del ingeniero cambian (DEC-01, 07, 08) | Media | Retrabajo en BE-01 y FE-06 | Los permisos se generan con una función; cambiar el catálogo es una línea |
 | Imágenes en disco local | Media | Se pierden en un despliegue sin disco persistente | Aceptable para la demo; DEC-09 antes de producción |
 | Agentes distintos generan estilos distintos | Media | Código inconsistente | Prompt base común; `AGENTS.md`; lint y tests obligatorios |
+
+### Evidencia FE-06
+
+Rutas y menú por permisos implementados en `frontend-dev`, conservando FE-11.
+Incluye placeholders por responsable, secciones dinámicas y `refreshUser()` en el
+contexto de sesión. Lint, 100 pruebas y build aprobados. Validación de interfaz
+con API simulada; la comprobación integrada de roles reales depende de BE-01/02.
+
+### Evidencia FE-10
+
+Implementado en `frontend-dev`: acciones de Noticias por `news.create/edit/publish/delete`,
+Mensajes de solo lectura sin `inquiries.manage`, y Resumen con totales de los módulos
+permitidos (`page_size=1`, token de sesión). Errores parciales muestran indicador no
+disponible; cero sigue siendo cero. Al editar sin permiso de publicación se omite
+`published` del PATCH; las nuevas noticias sin ese permiso se crean en borrador.
+Se ajustó también AdminNewsEditor porque sus botones permiten cambiar la publicación.
+
+Verificación: lint, 115 pruebas y build aprobados. Prueba Chromium reproducible en
+`frontend/tests/browser/admin-permissions.cjs` con ocho perfiles y API interceptada.
+No acredita Supabase ni autorización real: BE-01/02 siguen pendientes de integración.
+No se modificó backend, Roles de Pablo ni el módulo de propiedades de Geo.
+
+### Evidencia FE-07
+
+Implementados listado y formulario de Proyectos en `frontend-dev`. Se integró el
+commit de Leo `9a79504` (FE-01a/b) preservando su autoría y archivos, sin nuevas ramas.
+Lint, 141 pruebas y build aprobados; Chromium contra Django real con SQLite temporal
+verificó creación, subida múltiple, orden, sitio público, edición, despublicación,
+borradores, slug estable, cambios sin guardar y móvil. Sin acceso a Supabase.
+Papelera desactivada hasta verificar BE-04 en el entorno integrado. Roles finos
+pendientes de BE-01/02. Detalle en `frontend/src/features/admin-projects/README.md`.

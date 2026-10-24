@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Clock3, Mail, MessageSquareText, Search, ShieldCheck } from 'lucide-react';
 import { useOutletContext } from 'react-router-dom';
 import { inquiriesService } from '../services/inquiriesService.js';
-import { inquiryStatuses, readAdminCollection } from '../utils/adminData.js';
+import { adminActions, inquiryStatuses, readAdminCollection } from '../utils/adminData.js';
 import { advancePreviewInquiry, filterInquiries, formatInquiryDate, INBOX_PAGE_SIZE, nextInquiryStatus, normalizeInquiry, paginateInquiries } from '../utils/inbox.js';
 
 const kinds = { contacto: 'Contacto', visita: 'Solicitud de visita' };
@@ -21,6 +21,7 @@ function errorText(error, operation) {
 
 export function AdminInboxPage() {
   const { session, preview, previewInquiries, setPreviewInquiries } = useOutletContext();
+  const { manageInquiries } = adminActions(session?.user, preview);
   const [kind, setKind] = useState('');
   const [status, setStatus] = useState('');
   const [search, setSearch] = useState('');
@@ -85,7 +86,7 @@ export function AdminInboxPage() {
 
   async function advanceStatus(item) {
     const next = nextInquiryStatus(item.status);
-    if (!next || savingId) return;
+    if (!manageInquiries || !next || savingId) return;
     setNotice('');
     if (preview) {
       setPreviewInquiries((current) => advancePreviewInquiry(current, item.id));
@@ -147,7 +148,7 @@ export function AdminInboxPage() {
                     </div>
                     <div className="flex flex-wrap gap-2">
                       <button type="button" aria-expanded={expanded} aria-controls={`inquiry-detail-${item.id}`} onClick={() => setExpandedId(expanded ? null : item.id)} className="inline-flex items-center gap-1.5 rounded-lg border border-[#dfe5ec] px-3 py-2 text-xs font-semibold hover:bg-[#f3f6fa]">{expanded ? <ChevronUp size={16}/> : <ChevronDown size={16}/>} {expanded ? 'Ocultar' : 'Ver detalle'}</button>
-                      {next && <button type="button" disabled={savingId !== null} onClick={() => { void advanceStatus(item); }} className="inline-flex items-center gap-1.5 rounded-lg bg-[#304e7d] px-3 py-2 text-xs font-semibold text-white hover:bg-[#12233f] disabled:opacity-50"><ShieldCheck size={15}/>{savingId === item.id ? 'Guardando…' : next === 'atendido' ? 'Marcar atendido' : 'Archivar'}</button>}
+                      {manageInquiries && next && <button type="button" disabled={savingId !== null} onClick={() => { void advanceStatus(item); }} className="inline-flex items-center gap-1.5 rounded-lg bg-[#304e7d] px-3 py-2 text-xs font-semibold text-white hover:bg-[#12233f] disabled:opacity-50"><ShieldCheck size={15}/>{savingId === item.id ? 'Guardando…' : next === 'atendido' ? 'Marcar atendido' : 'Archivar'}</button>}
                     </div>
                   </div>
                   {expanded && <div id={`inquiry-detail-${item.id}`} className="mt-4 rounded-lg border border-[#dfe5ec] bg-[#f8fafc] p-4 text-sm">
