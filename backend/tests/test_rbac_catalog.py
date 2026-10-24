@@ -46,14 +46,18 @@ class PermissionCatalogTests(SimpleTestCase):
                 self.assertLessEqual(len(description), 255)
 
     def test_catalog_is_built_from_the_generator_without_repeated_literals(self):
-        for key, label in (("properties", "bienes raíces"), ("projects", "proyectos")):
-            generated = publication_permissions(key, label)
-            self.assertEqual(len(generated), 8)
+        news = publication_permissions("news", "noticias", ownership=False, trash=False)
+        self.assertEqual(list(news), ["news.create", "news.edit", "news.publish", "news.delete"])
+        for key, label, generated in (("properties", "bienes raíces", publication_permissions("properties", "bienes raíces")),
+                                      ("projects", "proyectos", publication_permissions("projects", "proyectos")),
+                                      ("news", "noticias", news)):
+            self.assertEqual(len(generated), 4 if key == "news" else 8)
             self.assertTrue(set(generated) <= set(PERMISSION_CATALOG))
             for name, description in generated.items():
                 self.assertEqual(PERMISSION_CATALOG[name], description)
         self.assertTrue(set(PLATFORM_PERMISSIONS) <= set(PERMISSION_CATALOG))
-        self.assertEqual(len(PLATFORM_PERMISSIONS) + 16, 32)
+        # 12 de la plataforma + 8 propiedades + 8 proyectos + 4 noticias (BE-05: las aportan las fábricas).
+        self.assertEqual(len(PLATFORM_PERMISSIONS) + 8 + 8 + 4, 32)
 
     def test_publication_permissions_with_ownership(self):
         self.assertEqual(list(publication_permissions("terrenos", "terrenos")), [
