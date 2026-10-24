@@ -20,6 +20,7 @@ import { AdminProjectEditorPage } from '../features/admin-projects/pages/AdminPr
 import { AdminRolesPage } from '../features/admin-roles/pages/AdminRolesPage.jsx';
 import { AdminRoleEditorPage } from '../features/admin-roles/pages/AdminRoleEditorPage.jsx';
 import { AdminPropertiesPage } from '../features/admin-properties/pages/AdminPropertiesPage.jsx';
+import { AdminPropertyEditorPage } from '../features/admin-properties/pages/AdminPropertyEditorPage.jsx';
 import { ProjectsPage } from '../features/projects/pages/ProjectsPage.jsx';
 import { ProjectDetailPage } from '../features/projects/pages/ProjectDetailPage.jsx';
 import { PropertiesPage } from '../features/properties/pages/PropertiesPage.jsx';
@@ -71,8 +72,8 @@ export const router = createBrowserRouter([
       { path: routePaths.admin, element: <AdminDashboardPage /> },
       { path: routePaths.adminLogin, element: <AdminLoginPage /> },
       { path: routePaths.adminProperties, element: <AdminPropertiesPage /> },
-      { path: routePaths.adminPropertyNew, element: <AdminPlaceholderPage owner="Geo" /> },
-      { path: routePaths.adminPropertyEdit, element: <AdminPlaceholderPage owner="Geo" /> },
+      { path: routePaths.adminPropertyNew, element: <AdminPropertyEditorPage /> },
+      { path: routePaths.adminPropertyEdit, element: <AdminPropertyEditorPage /> },
       { path: routePaths.adminProjects, element: <AdminProjectsPage /> },
       { path: routePaths.adminProjectNew, element: <AdminProjectEditorPage /> },
       { path: routePaths.adminProjectEdit, element: <AdminProjectEditorPage /> },

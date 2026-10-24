@@ -11,8 +11,6 @@ import {
   propertyStatusFilters, statusLabel, totalPages,
 } from '../utils/propertyList.js';
 
-// FE-12 (formulario de alta y edición) activa estos botones cuando sus rutas existan.
-const PROPERTY_FORM_ENABLED = false;
 
 const emptyFilters = { q: '', operation: '', type: '', zone: '' };
 const buttonClass = 'rounded-md border border-[#dfe5ec] p-2 text-[#304e7d] hover:bg-[#f3f6fa] disabled:cursor-not-allowed disabled:opacity-40';
@@ -101,8 +99,8 @@ export function AdminPropertiesPage() {
     } finally { setBusyId(null); }
   }
 
-  const newButton = PROPERTY_FORM_ENABLED && canCreateProperty(user)
-    ? <Link to={`${routePaths.adminProperties}/nuevo`} className="inline-flex items-center gap-2 rounded-lg bg-[#ff6a1f] px-5 py-3 text-sm font-semibold text-white hover:bg-[#b94308]"><Plus size={18} aria-hidden="true" /> Nueva propiedad</Link>
+  const newButton = canCreateProperty(user)
+    ? <Link to={routePaths.adminPropertyNew} className="inline-flex items-center gap-2 rounded-lg bg-[#ff6a1f] px-5 py-3 text-sm font-semibold text-white hover:bg-[#b94308]"><Plus size={18} aria-hidden="true" /> Nueva propiedad</Link>
     : null;
 
   return (
@@ -160,7 +158,7 @@ export function AdminPropertiesPage() {
                             <td className="px-5 py-4"><span className={`rounded-full px-3 py-1 text-xs font-semibold ${item.demo ? 'bg-[#fff1e5] text-[#88420d]' : item.published ? 'bg-[#e6f4ec] text-[#1f7a4d]' : 'bg-[#f3f6fa] text-[#626b79]'}`}>{statusLabel(item)}</span></td>
                             <td className="px-5 py-4"><div className="flex gap-2">
                               {item.published && <Link to={routePaths.propertyDetail.replace(':id', String(item.id))} target="_blank" rel="noopener noreferrer" aria-label={`Ver en el sitio ${item.title}`} title="Ver en el sitio" className={buttonClass}><Eye size={16} aria-hidden="true" /></Link>}
-                              {PROPERTY_FORM_ENABLED && canEditProperty(user, item) && <Link to={`${routePaths.adminProperties}/${item.id}/editar`} aria-label={`Editar ${item.title}`} title="Editar" className={buttonClass}><Pencil size={16} aria-hidden="true" /></Link>}
+                              {canEditProperty(user, item) && <Link to={routePaths.adminPropertyEdit.replace(':id', String(item.id))} aria-label={`Editar ${item.title}`} title="Editar" className={buttonClass}><Pencil size={16} aria-hidden="true" /></Link>}
                               {canTogglePublished(user, item) && <button type="button" disabled={busy} onClick={() => { void togglePublished(item); }} aria-label={item.published ? `Pasar a borrador ${item.title}` : `Publicar ${item.title}`} title={item.published ? 'Pasar a borrador' : 'Publicar'} className={buttonClass}>{item.published ? <EyeOff size={16} aria-hidden="true" /> : <Eye size={16} aria-hidden="true" />}</button>}
                               <button type="button" disabled={busy || Boolean(blocked)} onClick={() => { setTrashing(item); setNotice(''); }} aria-label={`Enviar a la papelera ${item.title}`} title={blocked || 'Enviar a la papelera'} className={`${buttonClass} !text-[#a62b2b] hover:!bg-[#fdeaea]`}><Trash2 size={16} aria-hidden="true" /></button>
                             </div></td>

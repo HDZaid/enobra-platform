@@ -31,6 +31,19 @@ const assertId = (id) => {
 };
 
 export const adminPropertiesService = {
+  // A diferencia de propertiesService.get, no oculta los borradores: el panel debe poder editarlos.
+  async get(id, token, options = {}) {
+    assertId(id);
+    return mapAdminProperty(await apiRequest(`properties/${id}/`, { ...options, token }));
+  },
+  async create(body, token) {
+    return mapAdminProperty(await apiRequest('properties/', { method: 'POST', body, token }));
+  },
+  // PATCH con la ficha completa del formulario; el backend valida también las reglas por tipo.
+  async update(id, body, token) {
+    assertId(id);
+    return mapAdminProperty(await apiRequest(`properties/${id}/`, { method: 'PATCH', body, token }));
+  },
   // Con token, el backend incluye borradores (todos o solo los propios según el rol).
   async list(filters, token, options = {}) {
     return mapAdminPage(await apiRequest(`properties/${buildPropertyQuery(filters)}`, { ...options, token }));
