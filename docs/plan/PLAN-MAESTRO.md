@@ -332,7 +332,7 @@ Verificación:    comandos exactos.
 | FE-11 | Bienes Raíces admin: listado y acciones | Geo | P0 | 6 h | [ ] |
 | FE-12 | Bienes Raíces admin: subir y editar | Geo | P0 | 6 h | [ ] |
 | FE-13 | Roles y permisos | Pablo | P0 | 6 h | [x] Interfaz verificada; lectura real con roles.read pendiente de BE-01/02 |
-| FE-14 | Usuarios: editar y cambiar rol | Pablo | P0 | 3 h | [ ] |
+| FE-14 | Usuarios: editar y cambiar rol | Pablo | P0 | 3 h | [x] 24-oct: 162 pruebas, lint, build y recorrido con API real/SQLite |
 | FE-04, FE-05, FE-08, FE-09 | Backlog posterior a la entrega | varios | P1 | n/a | [ ] |
 
 ### Integración

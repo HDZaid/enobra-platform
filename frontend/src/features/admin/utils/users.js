@@ -17,6 +17,41 @@ export function makeUserPayload(draft) {
     role_id: Number(draft.role_id), active: draft.active };
 }
 
+export function userEditDraft(user) {
+  return { name: user.name, active: user.active,
+    role_id: user.roles.length === 1 ? String(user.roles[0].id) : '' };
+}
+
+export function userEditChanges(draft, user) {
+  const data = {};
+  if (draft.name.trim() !== user.name) data.name = draft.name.trim();
+  if (draft.active !== user.active) data.active = draft.active;
+  const roleChanged = draft.role_id !== '' && (user.roles.length !== 1 ||
+    String(user.roles[0].id) !== String(draft.role_id));
+  return { data, ...(roleChanged ? { role_id: Number(draft.role_id) } : {}) };
+}
+
+export function canAssignUserRole(role, actor) {
+  const permissions = actor?.permissions || [];
+  return role.active && (permissions.includes('admin.all') ||
+    role.permissions.every((permission) => permissions.includes(permission)));
+}
+
+export function validateUserEditDraft(draft, user, roles, actor) {
+  const errors = {};
+  if (!draft.name.trim() || draft.name.trim().length > 120) errors.name = 'Escribe un nombre de hasta 120 caracteres.';
+  const changes = userEditChanges(draft, user);
+  const own = String(user.id) === String(actor?.id);
+  if (own && changes.data.active === false) errors.active = 'No puedes desactivarte a ti mismo.';
+  if (changes.role_id !== undefined) {
+    const role = roles.find((item) => item.id === changes.role_id);
+    if (own) errors.role_id = 'No puedes cambiar tu propio rol.';
+    else if (!role?.active) errors.role_id = 'Selecciona un rol activo.';
+    else if (!canAssignUserRole(role, actor)) errors.role_id = 'No puedes asignar un rol con permisos que no posees.';
+  }
+  return errors;
+}
+
 export function readUserRoles(payload) {
   if (!Array.isArray(payload) || payload.some((role) => !Number.isInteger(role.id) ||
       typeof role.name !== 'string' || typeof role.active !== 'boolean' || !Array.isArray(role.permissions))) {
@@ -38,7 +73,8 @@ export function readManagedUser(item) {
 
 export function userRequestError(error) {
   if (error?.status === 401) return 'Tu sesión venció. Vuelve a iniciar sesión para continuar.';
-  if (error?.status === 403) return 'Tu cuenta no tiene autorización para administrar usuarios.';
+  if (error?.status === 403) return error.message || 'Tu cuenta no tiene autorización para administrar usuarios.';
+  if (error?.status === 404 && error.message) return error.message;
   if (error?.status === 404 || error?.status === 501) return 'La gestión de usuarios todavía no está disponible en este servidor.';
   return error?.message || 'No se pudo contactar con el servidor. Inténtalo de nuevo.';
 }

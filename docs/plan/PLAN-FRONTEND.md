@@ -418,6 +418,23 @@ FE-14; esta revisión no valida Supabase.
 ### FE-14. Usuarios: editar y cambiar rol
 **P0 · M · 3 h · Pablo · Depende de BE-08 (Pablo) y FE-13 · Sáb 24**
 
+**Estado (24-oct):** implementada en `frontend-dev` con diálogo independiente
+de `AdminUserEditor`, que conserva su creación existente. Incluye edición de
+nombre/estado, reemplazo de rol activo, bloqueo de cambios propios de rol/estado,
+roles superiores deshabilitados y confirmación de desactivación con `ConfirmDialog`.
+PATCH y PUT se ejecutan por separado: si falla el rol tras guardar datos, se
+informa del resultado parcial y el reintento solo envía el rol pendiente.
+Se conservan los errores de campo y los mensajes de protección del servidor.
+
+Validación: lint, 162 pruebas y build aprobados; Chromium contra BE-08 publicado
+en `backend-dev`, exportado a una carpeta temporal sin mezclar ramas y con SQLite
+desechable. Comprobados edición/rol reales, tabla actualizada, cancelación y
+confirmación de baja, último Ingeniero protegido, controles propios bloqueados,
+móvil sin desborde y creación existente. Se interceptó un fallo 403 del PUT para
+comprobar guardado parcial y reintento; `users.read` y roles superiores se probaron
+con API interceptada. Los GET de usuarios/roles aún requieren `admin.all` en el
+backend; su apertura a permisos finos corresponde a BE-02 (Henry). No valida Supabase.
+
 **Objetivo:** completar la pantalla de usuarios, que hoy solo lista y crea (§4.5).
 
 **Leer primero:** `features/admin/pages/AdminUsersPage.jsx`, `components/AdminUserEditor.jsx`, `services/usersService.js`, `utils/users.js`, `tests/users.test.mjs`; `docs/usuarios-api.md` (con BE-08/BE-13).
