@@ -1,18 +1,10 @@
 """Permisos conocidos por la aplicación y asignación inicial de roles EnObra."""
+from apps.common.rbac import PLATFORM_PERMISSIONS, publication_permissions
 
 PERMISSION_CATALOG = {
-    "admin.all": "Acceso completo a las operaciones administrativas.",
-    "users.manage": "Crear y administrar cuentas de usuario.",
-    "roles.manage": "Consultar, crear y configurar roles y permisos.",
-    "audit.read": "Consultar el historial de actividad administrativa.",
-    "properties.create": "Crear publicaciones de bienes raíces.",
-    "properties.edit.any": "Editar cualquier publicación de bienes raíces.",
-    "properties.edit.own": "Editar borradores propios de bienes raíces.",
-    "properties.publish": "Publicar o retirar publicaciones de bienes raíces.",
-    "properties.trash.any": "Enviar cualquier publicación de bienes raíces a papelera.",
-    "properties.trash.own": "Enviar borradores propios a papelera.",
-    "properties.restore": "Restaurar publicaciones de bienes raíces desde papelera.",
-    "properties.delete_permanently": "Eliminar publicaciones de bienes raíces permanentemente.",
+    **PLATFORM_PERMISSIONS,
+    **publication_permissions("properties", "bienes raíces"),
+    **publication_permissions("projects", "proyectos"),
 }
 
 BUILTIN_ROLES = {
@@ -28,6 +20,7 @@ BUILTIN_ROLES = {
             "properties.publish",
             "properties.trash.any",
             "properties.restore",
+            "media.upload",
         ),
     },
     "Empleado": {
@@ -36,6 +29,7 @@ BUILTIN_ROLES = {
             "properties.create",
             "properties.edit.own",
             "properties.trash.own",
+            "media.upload",
         ),
     },
 }
