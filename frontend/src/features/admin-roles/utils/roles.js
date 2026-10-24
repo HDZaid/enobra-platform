@@ -55,6 +55,15 @@ export function makeRolePayload(draft, original) {
     permissions: [...new Set(draft.permissions)] };
 }
 
+export function roleHasChanges(draft, baseline, original) {
+  const normalize = (value) => {
+    const payload = makeRolePayload(value, original);
+    if (payload.permissions) payload.permissions.sort();
+    return JSON.stringify(payload);
+  };
+  return normalize(draft) !== normalize(baseline);
+}
+
 export function isOwnRole(user, role) {
   return Boolean(role && (user?.role === role.name || user?.roles?.includes(role.name)));
 }
