@@ -12,10 +12,12 @@ const valid = () => ({ ...emptyUserDraft(), name: ' Cuenta nueva ', email: ' USE
 const user = () => ({ id: '4', name: 'Cuenta nueva', email: 'user@example.com', active: true,
   roles: [{ id: 3, name: 'Empleado', permissions: ['properties.create'] }], created_at: '2026-10-21T12:00:00Z' });
 
-test('solo acceso administrativo completo habilita la sección Usuarios', () => {
-  assert.equal(canAccessAdminSection({ permissions: ['admin.all'] }, 'users'), true);
+test('Usuarios se habilita con lectura, gestión o acceso completo según FE-06', () => {
+  for (const permission of ['admin.all', 'users.manage', 'users.read']) {
+    assert.equal(canAccessAdminSection({ permissions: [permission] }, 'users'), true);
+  }
   for (const account of [null, { role: 'Ingeniero', permissions: [] },
-    { role: 'Arquitecta', permissions: ['properties.publish'] }, { permissions: ['users.manage'] }]) {
+    { role: 'Arquitecta', permissions: ['properties.publish'] }]) {
     assert.equal(canAccessAdminSection(account, 'users'), false);
   }
 });

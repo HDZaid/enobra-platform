@@ -326,7 +326,7 @@ Verificación:    comandos exactos.
 | FE-01b | Subida múltiple de imágenes con progreso | Leo | P0 | 3 h | [ ] |
 | FE-02 | Papelera | Leo | P0 | 4 h | [ ] |
 | FE-03 | Historial | Leo | P0 | 4 h | [ ] |
-| FE-06 | Rutas, menú y permisos del panel | Jennifer | P0 | 3 h | [ ] |
+| FE-06 | Rutas, menú y permisos del panel | Jennifer | P0 | 3 h | [x] |
 | FE-07 | Proyectos admin (listado, subir, editar) | Jennifer | P0 | 5 h | [ ] |
 | FE-10 | Mensajes, Noticias y Resumen con permisos nuevos | Jennifer | P0 | 2 h | [ ] |
 | FE-11 | Bienes Raíces admin: listado y acciones | Geo | P0 | 6 h | [ ] |
@@ -358,3 +358,10 @@ Verificación:    comandos exactos.
 | Permisos del ingeniero cambian (DEC-01, 07, 08) | Media | Retrabajo en BE-01 y FE-06 | Los permisos se generan con una función; cambiar el catálogo es una línea |
 | Imágenes en disco local | Media | Se pierden en un despliegue sin disco persistente | Aceptable para la demo; DEC-09 antes de producción |
 | Agentes distintos generan estilos distintos | Media | Código inconsistente | Prompt base común; `AGENTS.md`; lint y tests obligatorios |
+
+### Evidencia FE-06
+
+Rutas y menú por permisos implementados en `frontend-dev`, conservando FE-11.
+Incluye placeholders por responsable, secciones dinámicas y `refreshUser()` en el
+contexto de sesión. Lint, 100 pruebas y build aprobados. Validación de interfaz
+con API simulada; la comprobación integrada de roles reales depende de BE-01/02.

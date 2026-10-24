@@ -9,6 +9,7 @@ import { ServicesPage } from '../features/services/pages/ServicesPage.jsx';
 import { NewsPage } from '../features/news/pages/NewsPage.jsx';
 import { NewsDetailPage } from '../features/news/pages/NewsDetailPage.jsx';
 import { ContactPage } from '../features/contact/pages/ContactPage.jsx';
+import { AdminPlaceholderPage } from '../features/admin/pages/AdminPlaceholderPage.jsx';
 import { AdminLoginPage } from '../features/admin/pages/AdminLoginPage.jsx';
 import { AdminDashboardPage } from '../features/admin/pages/AdminDashboardPage.jsx';
 import { AdminNewsPage } from '../features/admin/pages/AdminNewsPage.jsx';
@@ -66,6 +67,16 @@ export const router = createBrowserRouter([
       { path: routePaths.admin, element: <AdminDashboardPage /> },
       { path: routePaths.adminLogin, element: <AdminLoginPage /> },
       { path: routePaths.adminProperties, element: <AdminPropertiesPage /> },
+      { path: routePaths.adminPropertyNew, element: <AdminPlaceholderPage owner="Geo" /> },
+      { path: routePaths.adminPropertyEdit, element: <AdminPlaceholderPage owner="Geo" /> },
+      { path: routePaths.adminProjects, element: <AdminPlaceholderPage owner="Jennifer" /> },
+      { path: routePaths.adminProjectNew, element: <AdminPlaceholderPage owner="Jennifer" /> },
+      { path: routePaths.adminProjectEdit, element: <AdminPlaceholderPage owner="Jennifer" /> },
+      { path: routePaths.adminTrash, element: <AdminPlaceholderPage owner="Leo" /> },
+      { path: routePaths.adminHistory, element: <AdminPlaceholderPage owner="Leo" /> },
+      { path: routePaths.adminRoles, element: <AdminPlaceholderPage owner="Pablo" /> },
+      { path: routePaths.adminRoleNew, element: <AdminPlaceholderPage owner="Pablo" /> },
+      { path: routePaths.adminRoleDetail, element: <AdminPlaceholderPage owner="Pablo" /> },
       { path: routePaths.adminNews, element: <AdminNewsPage /> },
       { path: routePaths.adminInbox, element: <AdminInboxPage /> },
       { path: routePaths.adminUsers, element: <AdminUsersPage /> },

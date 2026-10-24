@@ -1,25 +1,21 @@
 import { useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { ArrowUpRight, Building2, LayoutDashboard, LogOut, Mail, Menu, Newspaper, ShieldCheck, Users, X } from 'lucide-react';
+import { ArrowUpRight, Building2, FolderKanban, History, Trash2, LayoutDashboard, LogOut, Mail, Menu, Newspaper, ShieldCheck, Users, X } from 'lucide-react';
 import { routePaths } from '../../../app/routePaths.js';
-import { adminRoleProfile, canAccessAdminSection } from '../utils/adminData.js';
+import { adminRoleProfile, canAccessAdminSection, sectionForPath } from '../utils/adminData.js';
 import '../styles/admin-fonts.css';
 
 const navigation = [
-  { label: 'Resumen', to: routePaths.admin, icon: LayoutDashboard, end: true, section: 'dashboard' },
-  { label: 'Bienes raíces', to: routePaths.adminProperties, icon: Building2, section: 'properties' },
-  { label: 'Noticias', to: routePaths.adminNews, icon: Newspaper, section: 'news' },
-  { label: 'Mensajes', to: routePaths.adminInbox, icon: Mail, section: 'inbox' },
-  { label: 'Usuarios', to: routePaths.adminUsers, icon: Users, section: 'users' },
+  { label: 'Resumen', to: routePaths.admin, icon: LayoutDashboard, end: true, section: 'dashboard', group: 'Principal' },
+  { label: 'Bienes raíces', to: routePaths.adminProperties, icon: Building2, section: 'properties', group: 'Contenido' },
+  { label: 'Proyectos', to: routePaths.adminProjects, icon: FolderKanban, section: 'projects', group: 'Contenido' },
+  { label: 'Noticias', to: routePaths.adminNews, icon: Newspaper, section: 'news', group: 'Contenido' },
+  { label: 'Papelera', to: routePaths.adminTrash, icon: Trash2, section: 'trash', group: 'Contenido' },
+  { label: 'Mensajes', to: routePaths.adminInbox, icon: Mail, section: 'inbox', group: 'Comunicación' },
+  { label: 'Usuarios', to: routePaths.adminUsers, icon: Users, section: 'users', group: 'Administración' },
+  { label: 'Roles', to: routePaths.adminRoles, icon: ShieldCheck, section: 'roles', group: 'Administración' },
+  { label: 'Historial', to: routePaths.adminHistory, icon: History, section: 'history', group: 'Administración' },
 ];
-
-const pageNames = {
-  [routePaths.admin]: 'Resumen',
-  [routePaths.adminProperties]: 'Bienes raíces',
-  [routePaths.adminNews]: 'Noticias',
-  [routePaths.adminInbox]: 'Mensajes',
-  [routePaths.adminUsers]: 'Usuarios',
-};
 
 export function AdminShell({ children, user, preview, onLogout }) {
   const [open, setOpen] = useState(false);
@@ -42,12 +38,18 @@ export function AdminShell({ children, user, preview, onLogout }) {
           <span className="mt-3 inline-block rounded-full bg-[#ff6a1f] px-3 py-1 text-[10px] font-bold tracking-widest uppercase">{preview ? 'Demo' : profile.label}</span>
         </div>
         <nav className="flex-1 overflow-y-auto py-5" aria-label="Secciones del panel">
-          <p className="mb-2 px-5 text-[10px] font-semibold tracking-[.17em] text-white/50 uppercase">Principal</p>
-          {visibleNavigation.map(({ label, to, icon: Icon, end }) => (
-            <NavLink key={to} to={to} end={end} className={linkClass} onClick={() => setOpen(false)}>
-              <Icon size={19} aria-hidden="true" />{label}
-            </NavLink>
-          ))}
+          {['Principal', 'Contenido', 'Comunicación', 'Administración'].map((group) => {
+            const links = visibleNavigation.filter((item) => item.group === group);
+            if (!links.length) return null;
+            return <div key={group} className="mb-4">
+              <p className="mb-2 px-5 text-[10px] font-semibold tracking-[.17em] text-white/50 uppercase">{group}</p>
+              {links.map(({ label, to, icon: Icon, end }) => (
+                <NavLink key={to} to={to} end={end} className={linkClass} onClick={() => setOpen(false)}>
+                  <Icon size={19} aria-hidden="true" />{label}
+                </NavLink>
+              ))}
+            </div>;
+          })}
           <p className="mt-8 mb-2 px-5 text-[10px] font-semibold tracking-[.17em] text-white/50 uppercase">Sitio público</p>
           <Link to="/" className="flex items-center gap-3 px-5 py-3 text-sm text-white/70 hover:text-white" onClick={() => setOpen(false)}>
             <ArrowUpRight size={19} aria-hidden="true" /> Ver el sitio
@@ -62,7 +64,7 @@ export function AdminShell({ children, user, preview, onLogout }) {
       <div className="min-w-0 lg:pl-60">
         <header className="sticky top-0 z-20 flex min-h-16 items-center gap-3 border-b border-[#dfe5ec] bg-white px-5 sm:px-8">
           <button type="button" className="rounded-md p-2 hover:bg-[#f3f6fa] lg:hidden" onClick={() => setOpen(!open)} aria-label={open ? 'Cerrar menú' : 'Abrir menú'}>{open ? <X size={21}/> : <Menu size={21}/>}</button>
-          <div className="min-w-0 flex-1"><p className="text-[10px] font-bold tracking-[.16em] text-[#b94308] uppercase">Administración</p><h1 className="font-['Outfit',Arial,sans-serif] text-xl font-semibold">{pageNames[pathname] || 'Panel'}</h1></div>
+          <div className="min-w-0 flex-1"><p className="text-[10px] font-bold tracking-[.16em] text-[#b94308] uppercase">Administración</p><h1 className="font-['Outfit',Arial,sans-serif] text-xl font-semibold">{navigation.find((item) => item.section === sectionForPath(pathname))?.label || 'Panel'}</h1></div>
           <ShieldCheck size={19} aria-hidden="true" className="hidden text-[#304e7d] sm:block" />
         </header>
         {preview && <div role="status" className="border-b border-[#f4cfae] bg-[#fff1e5] px-5 py-3 text-sm text-[#88420d] sm:px-8">Vista previa local: Noticias y Mensajes contienen datos de prueba. Los cambios solo existen en memoria y no se envían a Django.</div>}
