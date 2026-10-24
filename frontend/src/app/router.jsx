@@ -9,7 +9,7 @@ import { ServicesPage } from '../features/services/pages/ServicesPage.jsx';
 import { NewsPage } from '../features/news/pages/NewsPage.jsx';
 import { NewsDetailPage } from '../features/news/pages/NewsDetailPage.jsx';
 import { ContactPage } from '../features/contact/pages/ContactPage.jsx';
-import { AdminPlaceholderPage } from '../features/admin/pages/AdminPlaceholderPage.jsx';
+import { AdminHistoryPage } from '../features/admin-history/pages/AdminHistoryPage.jsx';
 import { AdminLoginPage } from '../features/admin/pages/AdminLoginPage.jsx';
 import { AdminDashboardPage } from '../features/admin/pages/AdminDashboardPage.jsx';
 import { AdminNewsPage } from '../features/admin/pages/AdminNewsPage.jsx';
@@ -79,7 +79,7 @@ export const router = createBrowserRouter([
       { path: routePaths.adminProjectNew, element: <AdminProjectEditorPage /> },
       { path: routePaths.adminProjectEdit, element: <AdminProjectEditorPage /> },
       { path: routePaths.adminTrash, element: <AdminTrashPage /> },
-      { path: routePaths.adminHistory, element: <AdminPlaceholderPage owner="Leo" /> },
+      { path: routePaths.adminHistory, element: <AdminHistoryPage /> },
       { path: routePaths.adminRoles, element: <AdminRolesPage /> },
       { path: routePaths.adminRoleNew, element: <AdminRoleEditorPage /> },
       { path: routePaths.adminRoleDetail, element: <AdminRoleEditorPage /> },
