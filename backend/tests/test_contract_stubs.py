@@ -1,4 +1,7 @@
-"""BE-00: los contratos nuevos existen, validan permisos y entrada, y responden 501."""
+"""BE-00: los contratos nuevos existen y validan permisos y entrada.
+
+Los que aun no tienen logica (edicion de usuarios, BE-08) responden 501; el historial
+ya es real (BE-07) y esta registrado en config/bindings.py."""
 import io
 
 from django.contrib.auth.hashers import make_password
@@ -49,6 +52,9 @@ class ContractStubTests(TestCase):
             ("put", f"admin/users/{target}/role/", {"role_id": Rol.objects.get(nombre="Empleado").pk}),
         ]
 
+    def stub_requests(self):
+        return [r for r in self.requests() if not r[1].startswith("admin/audit/")]
+
     def call(self, client, method, path, body):
         return getattr(client, method)(API + path, body, format="json") if body else getattr(client, method)(API + path)
 
@@ -70,7 +76,7 @@ class ContractStubTests(TestCase):
 
     def test_with_permission_gets_501_not_implemented(self):
         client = self.client_for(self.engineer)
-        for method, path, body in self.requests():
+        for method, path, body in self.stub_requests():
             with self.subTest(path=path):
                 response = self.call(client, method, path, body)
                 self.assertEqual(response.status_code, 501, response.content)
@@ -96,6 +102,19 @@ class ContractStubTests(TestCase):
 
     def test_audit_read_does_not_grant_export(self):
         client = self.client_for(self.reader)
-        self.assertEqual(client.get(API + "admin/audit/").status_code, 501)
+        self.assertEqual(client.get(API + "admin/audit/").status_code, 200)
         self.assertEqual(client.get(API + "admin/audit/export/").status_code, 403)
         self.assertEqual(client.patch(API + f"admin/users/{self.employee.pk}/", {"name": "X"}, format="json").status_code, 403)
+
+    def test_audit_is_bound_in_the_real_registry(self):
+        """BE-07 queda conectado: con permiso responde 200 (no 501) sin parches de prueba."""
+        client = self.client_for(self.engineer)
+        self.assertEqual(client.get(API + "admin/audit/").status_code, 200)
+        self.assertEqual(client.get(API + "admin/audit/export/").status_code, 200)
+
+    def test_inquiry_notifier_is_bound_to_email(self):
+        from apps.common.registry import resolve
+        from apps.inquiries.notifiers import InquiryNotifier
+        from persistence.notifiers import EmailInquiryNotifier
+
+        self.assertIsInstance(resolve(InquiryNotifier), EmailInquiryNotifier)
