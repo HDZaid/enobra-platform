@@ -7,6 +7,149 @@ info:
     requieren `Authorization: Bearer <access_token>` y se autorizan por permisos efectivos
     derivados de los roles activos del usuario.'
 paths:
+  /api/v1/admin/audit/:
+    get:
+      operationId: v1_admin_audit_retrieve
+      summary: Consultar historial administrativo
+      parameters:
+      - in: query
+        name: action
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 50
+      - in: query
+        name: date_from
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: date_to
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: module
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 60
+      - in: query
+        name: page
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - in: query
+        name: page_size
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 12
+      - in: query
+        name: q
+        schema:
+          type: string
+      - in: query
+        name: user_id
+        schema:
+          type: integer
+          minimum: 1
+      tags:
+      - Historial
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAuditList'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/v1/admin/audit/export/:
+    get:
+      operationId: v1_admin_audit_export_retrieve
+      summary: Exportar hasta 10 000 eventos en CSV
+      parameters:
+      - in: query
+        name: action
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 50
+      - in: query
+        name: date_from
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: date_to
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: module
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 60
+      - in: query
+        name: q
+        schema:
+          type: string
+      - in: query
+        name: user_id
+        schema:
+          type: integer
+          minimum: 1
+      tags:
+      - Historial
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            text/csv:
+              schema:
+                type: string
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
   /api/v1/admin/media/:
     post:
       operationId: v1_admin_media_create
@@ -135,6 +278,117 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Permission'
+          description: ''
+  /api/v1/admin/projects/{project_id}/permanent/:
+    delete:
+      operationId: v1_admin_projects_permanent_destroy
+      summary: Eliminar proyecto permanentemente desde papelera
+      parameters:
+      - in: path
+        name: project_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Proyectos
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/v1/admin/projects/{project_id}/restore/:
+    post:
+      operationId: v1_admin_projects_restore_create
+      summary: Restaurar proyecto desde papelera
+      parameters:
+      - in: path
+        name: project_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Proyectos
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+  /api/v1/admin/projects/trash/:
+    get:
+      operationId: v1_admin_projects_trash_retrieve
+      summary: Listar proyectos en papelera
+      parameters:
+      - in: query
+        name: page
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - in: query
+        name: page_size
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 12
+      tags:
+      - Proyectos
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProjectList'
           description: ''
   /api/v1/admin/properties/{property_id}/permanent/:
     delete:
@@ -438,6 +692,47 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: ''
+  /api/v1/admin/trash/:
+    get:
+      operationId: v1_admin_trash_retrieve
+      summary: Listar papelera por tipo de publicación
+      parameters:
+      - in: query
+        name: page
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - in: query
+        name: page_size
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 12
+      - in: query
+        name: type
+        schema:
+          enum:
+          - properties
+          - projects
+          type: string
+          minLength: 1
+        description: |-
+          * `properties` - properties
+          * `projects` - projects
+        required: true
+      tags:
+      - Papelera
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTrashItemList'
+          description: ''
   /api/v1/admin/users/:
     get:
       operationId: v1_admin_users_retrieve
@@ -525,6 +820,130 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: ''
+  /api/v1/admin/users/{user_id}/:
+    patch:
+      operationId: v1_admin_users_partial_update
+      description: Requiere `users.manage`. Nadie puede desactivarse a sí mismo ni
+        desactivar al último Ingeniero activo.
+      summary: Editar nombre o estado de un usuario
+      parameters:
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Usuarios (admin)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserUpdateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserUpdateRequest'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManagedUser'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '501':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Pendiente de implementar (BE-08).
+  /api/v1/admin/users/{user_id}/role/:
+    put:
+      operationId: v1_admin_users_role_update
+      description: Requiere `users.manage`. Reemplaza el rol actual por `role_id`
+        (un usuario, un rol). El rol debe estar activo y no puede otorgar permisos
+        que quien lo asigna no tenga.
+      summary: Reemplazar el rol de un usuario
+      parameters:
+      - in: path
+        name: user_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Usuarios (admin)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRoleUpdateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserRoleUpdateRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManagedUser'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ''
+        '501':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Pendiente de implementar (BE-08).
   /api/v1/admin/users/roles/:
     get:
       operationId: v1_admin_users_roles_list
@@ -1446,7 +1865,7 @@ paths:
           description: ''
     delete:
       operationId: v1_projects_destroy
-      summary: Eliminar proyecto (admin)
+      summary: Enviar proyecto a papelera (admin)
       parameters:
       - in: path
         name: project_id
@@ -1868,6 +2287,48 @@ components:
       required:
       - access
       - expires_in
+    Audit:
+      type: object
+      properties:
+        id:
+          type: integer
+        user:
+          $ref: '#/components/schemas/AuditUser'
+        action:
+          type: string
+        module:
+          type: string
+        record_id:
+          type: integer
+          nullable: true
+        record_name:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        date:
+          type: string
+          format: date-time
+      required:
+      - action
+      - date
+      - description
+      - id
+      - module
+      - record_id
+      - record_name
+      - user
+    AuditUser:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+      required:
+      - id
+      - name
     Company:
       type: object
       properties:
@@ -2404,6 +2865,24 @@ components:
       description: |-
         * `Venta` - Venta
         * `Alquiler` - Alquiler
+    PaginatedAuditList:
+      type: object
+      properties:
+        count:
+          type: integer
+        page:
+          type: integer
+        page_size:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Audit'
+      required:
+      - count
+      - page
+      - page_size
+      - results
     PaginatedInquiryList:
       type: object
       properties:
@@ -2489,6 +2968,24 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Property'
+      required:
+      - count
+      - page
+      - page_size
+      - results
+    PaginatedTrashItemList:
+      type: object
+      properties:
+        count:
+          type: integer
+        page:
+          type: integer
+        page_size:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrashItem'
       required:
       - count
       - page
@@ -2664,6 +3161,15 @@ components:
             type: string
             minLength: 1
             maxLength: 100
+    PatchedUserUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        active:
+          type: boolean
     Permission:
       type: object
       properties:
@@ -3191,6 +3697,46 @@ components:
       - expires_in
       - refresh
       - user
+    TrashItem:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/TrashItemTypeEnum'
+        id:
+          type: string
+        title:
+          type: string
+        trashed_at:
+          type: string
+          format: date-time
+        trashed_by:
+          type: string
+          nullable: true
+        trashed_by_name:
+          type: string
+          nullable: true
+        was_published:
+          type: boolean
+        owner_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - owner_id
+      - title
+      - trashed_at
+      - trashed_by
+      - trashed_by_name
+      - type
+      - was_published
+    TrashItemTypeEnum:
+      enum:
+      - properties
+      - projects
+      type: string
+      description: |-
+        * `properties` - properties
+        * `projects` - projects
     User:
       type: object
       properties:
@@ -3245,6 +3791,14 @@ components:
       - email
       - name
       - password
+      - role_id
+    UserRoleUpdateRequest:
+      type: object
+      properties:
+        role_id:
+          type: integer
+          minimum: 1
+      required:
       - role_id
     VisitInquiryCreateRequest:
       type: object
