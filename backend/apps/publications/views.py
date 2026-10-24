@@ -1,4 +1,4 @@
-"""BE-04: Henry registra estas URLs en config/urls.py mediante BE-00."""
+"""BE-04: papelera unificada (registrada en config/urls.py por BE-00)."""
 from drf_spectacular.utils import extend_schema
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied

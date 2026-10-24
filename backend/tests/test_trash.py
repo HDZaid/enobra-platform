@@ -1,7 +1,6 @@
 """Pruebas de BE-04: exclusivamente con config.test_settings.
 
-BE-00: la URL unificada se monta solo en este URLConf de pruebas hasta que
-Henry la registre en config/urls.py. BE-01/02: se simulan permisos oficiales
+BE-00: la URL unificada ya esta registrada en config/urls.py. BE-01/02: se simulan permisos oficiales
 con Principal; no se cambian los cat?logos ni roles de producci?n.
 """
 from unittest.mock import patch
@@ -23,10 +22,7 @@ from tests import test_admin_api as admin_tests
 
 API = admin_tests.API
 
-urlpatterns = [
-    path("", include("config.urls")),
-    path("api/v1/", include("apps.publications.urls")),
-]
+urlpatterns = [path("", include("config.urls"))]
 
 
 @override_settings(ROOT_URLCONF=__name__)
@@ -274,3 +270,11 @@ class TrashTests(TestCase):
         self.assertFalse(repo.restore(item["id"], restored_by=self.user.pk))
         self.assertFalse(repo.delete_permanently(item["id"], deleted_by=self.user.pk))
         self.assertFalse(HistorialActividad.objects.filter(accion="RESTAURAR").exists())
+
+
+class TrashRouteRegistrationTests(TestCase):
+    """BE-00: /admin/trash/ debe existir en el URLConf real, no solo en pruebas."""
+
+    def test_unified_trash_is_mounted_and_requires_session(self):
+        response = APIClient().get(API + "admin/trash/?type=projects")
+        self.assertEqual(response.status_code, 401)
