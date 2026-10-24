@@ -1,11 +1,13 @@
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.common.pagination import paginated, paginated_response
-from apps.common.permissions import is_admin, HasAnyPermission, has_any_permission
+from apps.common.permissions import (
+    HasAnyPermission, ResourcePermission, has_any_permission, has_permission, is_admin, restrict_to_drafts,
+)
 from apps.common.pagination import PageQuerySerializer
 from apps.common.registry import resolve
 from apps.common.serializers import ErrorSerializer
@@ -21,8 +23,23 @@ from .serializers import (
 TAG = ["Proyectos"]
 ERR = {400: ErrorSerializer, 401: ErrorSerializer, 403: ErrorSerializer}
 
+PROJECT_PERMISSIONS = {
+    "POST": ("projects.create",),
+    "PUT": ("projects.edit.any", "projects.edit.own"),
+    "PATCH": ("projects.edit.any", "projects.edit.own"),
+    "DELETE": ("projects.trash.any", "projects.trash.own"),
+}
+
+
+def can_edit_any(request) -> bool:
+    """Quien edita cualquier proyecto también ve todos los borradores."""
+    return is_admin(request) or has_permission(request.user, "projects.edit.any")
+
 
 class ProjectListCreateView(APIView):
+    permission_classes = [ResourcePermission]
+    permission_map = PROJECT_PERMISSIONS
+
     @extend_schema(
         parameters=[ProjectListQuerySerializer],
         responses=paginated(ProjectSerializer),
@@ -38,7 +55,7 @@ class ProjectListCreateView(APIView):
         p.setdefault("page", 1)
         p.setdefault("page_size", 12)
         page = resolve(ProjectRepository).list(
-            year=p.get("year"), include_unpublished=is_admin(request), page=p["page"], page_size=p["page_size"]
+            year=p.get("year"), include_unpublished=can_edit_any(request), page=p["page"], page_size=p["page_size"]
         )
         return paginated_response(page, p, ProjectSerializer)
 
@@ -48,20 +65,29 @@ class ProjectListCreateView(APIView):
     def post(self, request):
         s = ProjectWriteSerializer(data=request.data)
         s.is_valid(raise_exception=True)
-        created = resolve(ProjectRepository).create(s.validated_data, created_by=request.user.id)
+        data = restrict_to_drafts(request, dict(s.validated_data), "projects.publish",
+                                  "Tu rol solo puede crear borradores.")
+        created = resolve(ProjectRepository).create(data, created_by=request.user.id)
         return Response(ProjectSerializer(created).data, status=status.HTTP_201_CREATED)
 
 
 class ProjectYearsView(APIView):
     @extend_schema(responses=ProjectYearsSerializer, tags=TAG, summary="Años disponibles para el filtro", auth=[])
     def get(self, request):
-        years = resolve(ProjectRepository).years(include_unpublished=is_admin(request))
+        years = resolve(ProjectRepository).years(include_unpublished=can_edit_any(request))
         return Response({"years": years})
 
 
 class ProjectDetailView(APIView):
+    permission_classes = [ResourcePermission]
+    permission_map = PROJECT_PERMISSIONS
+
     def _get_or_404(self, request, project_id):
-        item = resolve(ProjectRepository).get(project_id, include_unpublished=is_admin(request))
+        repository = resolve(ProjectRepository)
+        include_unpublished = can_edit_any(request)
+        if not include_unpublished and has_permission(request.user, "projects.edit.own"):
+            include_unpublished = repository.is_own_draft(project_id, request.user.id)
+        item = repository.get(project_id, include_unpublished=include_unpublished)
         if item is None:
             raise NotFound("Proyecto no encontrado.")
         return item
@@ -81,14 +107,23 @@ class ProjectDetailView(APIView):
     def _save(self, request, project_id, *, partial):
         s = ProjectWriteSerializer(data=request.data, partial=partial)
         s.is_valid(raise_exception=True)
-        updated = resolve(ProjectRepository).update(project_id, s.validated_data, updated_by=request.user.id)
+        repository = resolve(ProjectRepository)
+        if not can_edit_any(request) and not repository.is_own_draft(project_id, request.user.id):
+            raise PermissionDenied("Solo puedes editar tus propios borradores.")
+        data = restrict_to_drafts(request, dict(s.validated_data), "projects.publish",
+                                  "Tu rol no puede publicar proyectos.")
+        updated = repository.update(project_id, data, updated_by=request.user.id)
         if updated is None:
             raise NotFound("Proyecto no encontrado.")
         return Response(ProjectSerializer(updated).data)
 
     @extend_schema(responses={204: None, 404: ErrorSerializer}, tags=TAG, summary="Enviar proyecto a papelera (admin)")
     def delete(self, request, project_id: str):
-        if not resolve(ProjectRepository).delete(project_id, deleted_by=request.user.id):
+        repository = resolve(ProjectRepository)
+        can_trash_any = is_admin(request) or has_permission(request.user, "projects.trash.any")
+        if not can_trash_any and not repository.is_own_draft(project_id, request.user.id):
+            raise PermissionDenied("Solo puedes enviar tus propios borradores a papelera.")
+        if not repository.delete(project_id, deleted_by=request.user.id):
             raise NotFound("Proyecto no encontrado.")
         return Response(status=status.HTTP_204_NO_CONTENT)
 

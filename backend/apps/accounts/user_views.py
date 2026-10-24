@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.common.pagination import paginated, paginated_response
-from apps.common.permissions import HasAnyPermission, IsAdmin
+from apps.common.permissions import HasAnyPermission, ResourcePermission
 from apps.common.registry import resolve
 from apps.common.serializers import ErrorSerializer
 from .interfaces import UserRepository
@@ -15,7 +15,11 @@ from .user_serializers import (ManagedUserSerializer, UserCreateSerializer, User
 
 
 class UserListCreateView(APIView):
-    permission_classes = [IsAdmin]
+    permission_classes = [ResourcePermission]
+    # Crear cuentas sigue siendo exclusivo de admin.all: users.manage no basta, porque aún no se
+    # valida que el rol asignado no supere los permisos de quien lo asigna (sí se hace al cambiar rol).
+    permission_map = {"GET": ("users.read", "users.manage"), "POST": ("admin.all",)}
+    read_public = False
 
     @extend_schema(parameters=[UserListQuerySerializer], responses={200: paginated(ManagedUserSerializer),
         401: ErrorSerializer, 403: ErrorSerializer}, tags=['Usuarios (admin)'], summary='Consultar usuarios del panel')
@@ -37,7 +41,9 @@ class UserListCreateView(APIView):
 
 
 class UserRoleOptionsView(APIView):
-    permission_classes = [IsAdmin]
+    permission_classes = [ResourcePermission]
+    permission_map = {"GET": ("users.read", "users.manage")}
+    read_public = False
 
     @extend_schema(responses={200: RoleSerializer(many=True), 401: ErrorSerializer, 403: ErrorSerializer},
         tags=['Usuarios (admin)'], summary='Roles activos disponibles para crear usuarios')

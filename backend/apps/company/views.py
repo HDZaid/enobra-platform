@@ -2,6 +2,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.common.permissions import ResourcePermission
 from apps.common.registry import resolve
 from apps.common.serializers import ErrorSerializer
 
@@ -12,6 +13,9 @@ ERR = {400: ErrorSerializer, 401: ErrorSerializer, 403: ErrorSerializer}
 
 
 class CompanyView(APIView):
+    permission_classes = [ResourcePermission]
+    permission_map = {"PUT": ("company.edit",)}
+
     @extend_schema(responses=CompanySerializer, tags=["Empresa"], summary="Datos de contacto y marca", auth=[])
     def get(self, request):
         return Response(CompanySerializer(resolve(CompanyRepository).get()).data)
@@ -25,6 +29,9 @@ class CompanyView(APIView):
 
 
 class InstitutionView(APIView):
+    permission_classes = [ResourcePermission]
+    permission_map = {"PUT": ("company.edit",)}
+
     @extend_schema(responses=InstitutionSerializer, tags=["Empresa"], summary="Textos de Nosotros", auth=[])
     def get(self, request):
         return Response(InstitutionSerializer(resolve(InstitutionRepository).get()).data)

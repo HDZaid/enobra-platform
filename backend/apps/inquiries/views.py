@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.common.pagination import paginated, paginated_response
-from apps.common.permissions import IsAdmin
+from apps.common.permissions import ResourcePermission
 from apps.common.registry import resolve
 from apps.common.serializers import ErrorSerializer
 
@@ -23,6 +23,8 @@ from .serializers import (
 PUBLIC = ["Solicitudes (público)"]
 ADMIN = ["Solicitudes (admin)"]
 ERR = {401: ErrorSerializer, 403: ErrorSerializer}
+
+INQUIRY_READ = ("inquiries.read", "inquiries.manage")
 
 
 class ContactInquiryCreateView(APIView):
@@ -65,7 +67,9 @@ class VisitInquiryCreateView(APIView):
 
 
 class InquiryListView(APIView):
-    permission_classes = [IsAdmin]
+    permission_classes = [ResourcePermission]
+    permission_map = {"GET": INQUIRY_READ}
+    read_public = False
 
     @extend_schema(
         parameters=[InquiryListQuerySerializer],
@@ -86,7 +90,9 @@ class InquiryListView(APIView):
 
 
 class InquiryDetailView(APIView):
-    permission_classes = [IsAdmin]
+    permission_classes = [ResourcePermission]
+    permission_map = {"GET": INQUIRY_READ, "PATCH": ("inquiries.manage",)}
+    read_public = False
 
     @extend_schema(responses={200: InquirySerializer, 404: ErrorSerializer, **ERR}, tags=ADMIN, summary="Detalle de solicitud (admin)", operation_id="inquiries_retrieve")
     def get(self, request, inquiry_id: str):

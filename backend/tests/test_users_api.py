@@ -118,13 +118,23 @@ class UserManagementAPITests(TestCase):
             self.assertEqual(public.get(path).status_code, 401)
         self.assertEqual(public.post(URL, self.payload(), format='json').status_code, 401)
         from apps.accounts.interfaces import Principal
-        for role, permissions in [('Arquitecta', {'properties.publish'}), ('Empleado', {'properties.create'}),
-                                  ('Gestor', {'users.manage'})]:
+        for role, permissions in [('Arquitecta', {'properties.publish'}), ('Empleado', {'properties.create'})]:
             public.force_authenticate(Principal(id='1', name=role, email='viewer@example.com',
                 role=role, permissions=frozenset(permissions)))
             self.assertEqual(public.get(URL).status_code, 403)
             self.assertEqual(public.get(URL + 'roles/').status_code, 403)
             self.assertEqual(public.post(URL, self.payload(), format='json').status_code, 403)
+
+    def test_users_read_and_manage_can_list_but_only_admin_all_can_create(self):
+        # BE-02: GET /admin/users/ acepta users.read o users.manage; crear cuentas sigue exigiendo admin.all.
+        from apps.accounts.interfaces import Principal
+        client = APIClient()
+        for role, permissions in [('Lector', {'users.read'}), ('Gestor', {'users.manage'})]:
+            client.force_authenticate(Principal(id='1', name=role, email='viewer@example.com',
+                role=role, permissions=frozenset(permissions)))
+            self.assertEqual(client.get(URL).status_code, 200)
+            self.assertEqual(client.get(URL + 'roles/').status_code, 200)
+            self.assertEqual(client.post(URL, self.payload(), format='json').status_code, 403)
 
     def test_account_and_role_rollback_if_audit_fails(self):
         with patch('persistence.users.HistorialActividad.objects.create', side_effect=RuntimeError('audit unavailable')):
