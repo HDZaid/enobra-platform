@@ -81,3 +81,9 @@ class UserRepository(ABC):
 
     @abstractmethod
     def create(self, data: dict, *, actor_id: str) -> dict: ...
+
+    @abstractmethod
+    def update(self, user_id: int, data: dict, *, actor_id: str) -> Optional[dict]: ...
+
+    @abstractmethod
+    def replace_role(self, user_id: int, role_id: int, *, actor: Principal) -> Optional[dict]: ...

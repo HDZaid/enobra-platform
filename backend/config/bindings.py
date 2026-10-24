@@ -23,6 +23,8 @@ def register_repositories(register) -> None:
     from apps.news.interfaces import NewsRepository
     from apps.inquiries.interfaces import InquiryRepository
     from apps.media.interfaces import MediaStorage
+    from apps.audit.interfaces import AuditRepository
+    from apps.inquiries.notifiers import InquiryNotifier
     from persistence.accounts import DjangoAuthService
     from persistence.access_control import DjangoAccessControlRepository
     from persistence.users import DjangoUserRepository
@@ -30,6 +32,8 @@ def register_repositories(register) -> None:
     from persistence.catalog import DjangoProjectRepository, DjangoPropertyRepository, DjangoNewsRepository
     from persistence.inquiries import DjangoInquiryRepository
     from persistence.media import DjangoMediaStorage
+    from persistence.audit import DjangoAuditRepository
+    from persistence.notifiers import EmailInquiryNotifier
 
     register(AuthService, DjangoAuthService())
     register(AccessControlRepository, DjangoAccessControlRepository())
@@ -41,3 +45,5 @@ def register_repositories(register) -> None:
     register(NewsRepository, DjangoNewsRepository())
     register(InquiryRepository, DjangoInquiryRepository())
     register(MediaStorage, DjangoMediaStorage())
+    register(AuditRepository, DjangoAuditRepository())
+    register(InquiryNotifier, EmailInquiryNotifier())
