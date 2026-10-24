@@ -338,7 +338,7 @@ Verificación:    comandos exactos.
 ### Integración
 | ID | Tarea | Resp. | Estado |
 |---|---|---|---|
-| INT-01 | Integrar frontend en `develop` | Jennifer | [ ] |
+| INT-01 | Integrar frontend en `develop` | Jennifer | [x] Integración técnica; aceptación conjunta pendiente de INT-02/03/04 |
 | INT-02 | Integrar backend en `develop` | Henry | [ ] |
 | INT-03 | Regenerar OpenAPI | Henry | [ ] |
 | INT-04 | Pruebas por rol | Geo + Leo | [ ] |
@@ -389,3 +389,10 @@ verificó creación, subida múltiple, orden, sitio público, edición, despubli
 borradores, slug estable, cambios sin guardar y móvil. Sin acceso a Supabase.
 Papelera desactivada hasta verificar BE-04 en el entorno integrado. Roles finos
 pendientes de BE-01/02. Detalle en `frontend/src/features/admin-projects/README.md`.
+
+### Evidencia INT-01
+
+Frontend integrado sin conflictos desde `1ecb60a`; merge `9c4f706`. Lint, 181
+pruebas, build y recorridos Chromium aprobados. Backend sin cambios; papelera de
+Proyectos desactivada. La aceptación conjunta no se da por cerrada. Ver
+[reporte INT-01](../INT-01-integracion-frontend.md).
