@@ -124,14 +124,14 @@ class PropertyDetailView(APIView):
         s.is_valid(raise_exception=True)
         repository = resolve(PropertyRepository)
         can_edit_any = is_admin(request) or has_permission(request.user, "properties.edit.any")
-        if not can_edit_any and not repository.is_own_draft(property_id, request.user.id):
-            raise PermissionDenied("Solo puedes editar tus propios borradores.")
         data = dict(s.validated_data)
         if "published" in request.data and data.get("published") and not has_permission(request.user, "properties.publish"):
             raise PermissionDenied("Tu rol no puede publicar bienes raíces.")
         if not has_permission(request.user, "properties.publish"):
             data["published"] = False
-        updated = repository.update(property_id, data, updated_by=request.user.id)
+        updated = repository.update(
+            property_id, data, updated_by=request.user.id, require_own_draft=not can_edit_any,
+        )
         if updated is None:
             raise NotFound("Propiedad no encontrada.")
         return Response(PropertySerializer(updated).data)
@@ -140,9 +140,9 @@ class PropertyDetailView(APIView):
     def delete(self, request, property_id: int):
         repository = resolve(PropertyRepository)
         can_trash_any = is_admin(request) or has_permission(request.user, "properties.trash.any")
-        if not can_trash_any and not repository.is_own_draft(property_id, request.user.id):
-            raise PermissionDenied("Solo puedes enviar tus propios borradores a papelera.")
-        if not repository.delete(property_id, deleted_by=request.user.id):
+        if not repository.delete(
+            property_id, deleted_by=request.user.id, require_own_draft=not can_trash_any,
+        ):
             raise NotFound("Propiedad no encontrada.")
         return Response(status=status.HTTP_204_NO_CONTENT)
 

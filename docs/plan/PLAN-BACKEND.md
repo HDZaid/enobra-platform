@@ -241,6 +241,14 @@ Se registra en `bindings.py`. La fábrica es la **única fuente** de: (1) permis
 ### BE-06. Límites numéricos y carrera de borradores
 **P0 · M · 2 h · Pablo · BE-06a sin dependencias (Vie 23); BE-06b depende de BE-04 (Sáb 24)**
 
+**Estado (24-oct):** BE-06a y BE-06b implementadas. Edición y envío a papelera
+comprueban propietario y estado sobre la fila bloqueada dentro de la transacción.
+Las pruebas intercalan una publicación antes de PUT, PATCH y DELETE y verifican
+403 sin cambios adicionales; también cubren borradores ajenos y operaciones
+permitidas. Suite completa: 122 pruebas en verde con `config.test_settings`;
+`manage.py check` sin problemas. SQLite no valida el bloqueo concurrente real
+de PostgreSQL/Supabase.
+
 **Objetivo:** que los formularios de propiedades no provoquen errores 500 y que un Empleado no conserve autorización después de que su borrador se publique (§3.2; `docs/reporte-revision-admin.md` ADM-02; `docs/integracion-backend-frontend.md §2`).
 
 **Leer primero:** `apps/properties/serializers.py`; `persistence/models/properties.py` (`precio` `max_digits=12, decimal_places=2`; `superficie_m2` `max_digits=10`); `apps/common/errors.py`.
