@@ -11,6 +11,7 @@ export const routePaths = Object.freeze({
   contact: '/contacto',
   admin: '/admin',
   adminLogin: '/admin/login',
+  adminProperties: '/admin/bienes-raices',
   adminNews: '/admin/noticias',
   adminInbox: '/admin/mensajes',
   adminUsers: '/admin/usuarios',

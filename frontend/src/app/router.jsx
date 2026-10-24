@@ -14,6 +14,7 @@ import { AdminDashboardPage } from '../features/admin/pages/AdminDashboardPage.j
 import { AdminNewsPage } from '../features/admin/pages/AdminNewsPage.jsx';
 import { AdminInboxPage } from '../features/admin/pages/AdminInboxPage.jsx';
 import { AdminUsersPage } from '../features/admin/pages/AdminUsersPage.jsx';
+import { AdminPropertiesPage } from '../features/admin-properties/pages/AdminPropertiesPage.jsx';
 import { ProjectsPage } from '../features/projects/pages/ProjectsPage.jsx';
 import { ProjectDetailPage } from '../features/projects/pages/ProjectDetailPage.jsx';
 import { PropertiesPage } from '../features/properties/pages/PropertiesPage.jsx';
@@ -64,6 +65,7 @@ export const router = createBrowserRouter([
     children: [
       { path: routePaths.admin, element: <AdminDashboardPage /> },
       { path: routePaths.adminLogin, element: <AdminLoginPage /> },
+      { path: routePaths.adminProperties, element: <AdminPropertiesPage /> },
       { path: routePaths.adminNews, element: <AdminNewsPage /> },
       { path: routePaths.adminInbox, element: <AdminInboxPage /> },
       { path: routePaths.adminUsers, element: <AdminUsersPage /> },

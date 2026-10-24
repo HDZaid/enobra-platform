@@ -11,6 +11,7 @@ import { demoInquiries } from '../../features/admin/utils/inbox.js';
 // Sección del panel que corresponde a cada ruta (ver adminSectionPermissions).
 const sectionByPath = {
   [routePaths.admin]: 'dashboard',
+  [routePaths.adminProperties]: 'properties',
   [routePaths.adminNews]: 'news',
   [routePaths.adminInbox]: 'inbox',
   [routePaths.adminUsers]: 'users',
