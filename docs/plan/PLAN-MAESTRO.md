@@ -327,7 +327,7 @@ Verificación:    comandos exactos.
 | FE-02 | Papelera | Leo | P0 | 4 h | [ ] |
 | FE-03 | Historial | Leo | P0 | 4 h | [ ] |
 | FE-06 | Rutas, menú y permisos del panel | Jennifer | P0 | 3 h | [x] |
-| FE-07 | Proyectos admin (listado, subir, editar) | Jennifer | P0 | 5 h | [ ] |
+| FE-07 | Proyectos admin (listado, subir, editar) | Jennifer | P0 | 5 h | [x] |
 | FE-10 | Mensajes, Noticias y Resumen con permisos nuevos | Jennifer | P0 | 2 h | [x] |
 | FE-11 | Bienes Raíces admin: listado y acciones | Geo | P0 | 6 h | [ ] |
 | FE-12 | Bienes Raíces admin: subir y editar | Geo | P0 | 6 h | [ ] |
@@ -379,3 +379,13 @@ Verificación: lint, 115 pruebas y build aprobados. Prueba Chromium reproducible
 `frontend/tests/browser/admin-permissions.cjs` con ocho perfiles y API interceptada.
 No acredita Supabase ni autorización real: BE-01/02 siguen pendientes de integración.
 No se modificó backend, Roles de Pablo ni el módulo de propiedades de Geo.
+
+### Evidencia FE-07
+
+Implementados listado y formulario de Proyectos en `frontend-dev`. Se integró el
+commit de Leo `9a79504` (FE-01a/b) preservando su autoría y archivos, sin nuevas ramas.
+Lint, 141 pruebas y build aprobados; Chromium contra Django real con SQLite temporal
+verificó creación, subida múltiple, orden, sitio público, edición, despublicación,
+borradores, slug estable, cambios sin guardar y móvil. Sin acceso a Supabase.
+Papelera desactivada hasta verificar BE-04 en el entorno integrado. Roles finos
+pendientes de BE-01/02. Detalle en `frontend/src/features/admin-projects/README.md`.
