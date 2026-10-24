@@ -4,7 +4,7 @@ import json
 from django.db import IntegrityError, transaction
 from django.db.models import Max, Min
 from django.utils import timezone
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from apps.projects.interfaces import ProjectRepository
 from apps.properties.interfaces import PropertyRepository
@@ -140,8 +140,11 @@ class CatalogRepository:
         return self.get(getattr(obj, self.identifier), include_unpublished=True)
 
     @transaction.atomic
-    def update(self, key, data, *, updated_by):
+    def update(self, key, data, *, updated_by, require_own_draft=False):
         obj = self._lookup(key, lock=True)
+        if require_own_draft and (obj is None or obj.publicado
+                or str(obj.creado_por_id) != str(updated_by)):
+            raise PermissionDenied("Solo puedes editar tus propios borradores.")
         if obj is None:
             return None
         self._validate(data, obj)
@@ -173,10 +176,13 @@ class CatalogRepository:
         ).exists()
 
     @transaction.atomic
-    def delete(self, key, *, deleted_by=None):
+    def delete(self, key, *, deleted_by=None, require_own_draft=False):
         if not self.supports_trash:
             return self._delete_record(key, deleted_by=deleted_by)
         obj = self._lookup(key, lock=True)
+        if require_own_draft and (obj is None or obj.publicado
+                or str(obj.creado_por_id) != str(deleted_by)):
+            raise PermissionDenied("Solo puedes enviar tus propios borradores a papelera.")
         if obj is None:
             return False
         key = self._meta_key(obj)

@@ -42,10 +42,14 @@ class PropertyRepository(ABC):
     def create(self, data: dict, *, created_by: str) -> dict: ...
 
     @abstractmethod
-    def update(self, property_id: int, data: dict, *, updated_by: str) -> Optional[dict]: ...
+    def update(self, property_id: int, data: dict, *, updated_by: str,
+               require_own_draft: bool = False) -> Optional[dict]:
+        """Si se exige borrador propio, autorizar con la fila bloqueada en la transacción."""
 
     @abstractmethod
-    def delete(self, property_id: int, *, deleted_by: str | None = None) -> bool: ...
+    def delete(self, property_id: int, *, deleted_by: str | None = None,
+               require_own_draft: bool = False) -> bool:
+        """Enviar a papelera; comprobar borrador propio bajo bloqueo si se exige."""
 
     @abstractmethod
     def is_own_draft(self, property_id: int, user_id: str) -> bool: ...

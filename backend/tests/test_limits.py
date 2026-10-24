@@ -1,11 +1,13 @@
 """BE-06a: límites de propiedades y recuperación de errores decimales."""
 from decimal import InvalidOperation
+from datetime import date
 from unittest.mock import patch
 
 from django.test import TestCase
 from rest_framework.test import APIClient
 
 from apps.accounts.interfaces import Principal
+from persistence.catalog import DjangoPropertyRepository
 from persistence.models import ContenidoPagina, HistorialActividad, Propiedad, Usuario
 
 
@@ -92,3 +94,73 @@ class PropertyLimitsTests(TestCase):
                 self.assertEqual(response.json()["error"]["code"], "validation_error")
                 self.assertNotIn("internal detail", response.content.decode())
                 self.assertEqual(self.snapshot(), before)
+
+
+class PropertyDraftAuthorizationTests(TestCase):
+    """BE-06b: el estado al escribir prevalece sobre una lectura previa del borrador."""
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.employee = Usuario.objects.create(
+            nombre="Empleado", correo="draft-employee@example.com", password_hash="unused",
+        )
+        cls.other = Usuario.objects.create(
+            nombre="Otro", correo="draft-other@example.com", password_hash="unused",
+        )
+
+    def setUp(self):
+        self.client = APIClient()
+        self.client.force_authenticate(Principal(
+            id=str(self.employee.pk), name=self.employee.nombre, email=self.employee.correo,
+            role="Empleado", permissions=frozenset({"properties.edit.own", "properties.trash.own"}),
+        ))
+        self.repository = DjangoPropertyRepository()
+        self.item = self.repository.create(
+            PropertyLimitsTests.payload(self, published=False, date=date(2026, 10, 23)),
+            created_by=str(self.employee.pk),
+        )
+        self.url = URL + str(self.item["id"]) + "/"
+
+    def request_write(self, method):
+        data = PropertyLimitsTests.payload(self, published=False, title="Cambio del empleado")
+        if method == "patch":
+            data = {"title": "Cambio del empleado"}
+        return getattr(self.client, method)(self.url, data, format="json")
+
+    def test_publication_before_employee_write_returns_403_without_changes(self):
+        for method in ("put", "patch", "delete"):
+            with self.subTest(method=method):
+                Propiedad.objects.filter(pk=self.item["id"]).update(publicado=False)
+                self.assertTrue(self.repository.is_own_draft(self.item["id"], self.employee.pk))
+                operation = "delete" if method == "delete" else "update"
+                original = getattr(DjangoPropertyRepository, operation)
+                snapshots = []
+
+                def publish_then_write(repository, key, *args, **kwargs):
+                    # Intercalado determinista: otro escritor publica antes del bloqueo.
+                    Propiedad.objects.filter(pk=key).update(publicado=True)
+                    snapshots.append(PropertyLimitsTests.snapshot(self))
+                    return original(repository, key, *args, **kwargs)
+
+                with patch.object(DjangoPropertyRepository, operation, autospec=True,
+                                  side_effect=publish_then_write):
+                    response = self.request_write(method)
+                self.assertEqual(response.status_code, 403, response.content)
+                self.assertEqual(response.json()["error"]["code"], "permission_denied")
+                self.assertEqual(PropertyLimitsTests.snapshot(self), snapshots[0])
+
+    def test_another_owners_draft_cannot_be_written_or_trashed(self):
+        Propiedad.objects.filter(pk=self.item["id"]).update(creado_por=self.other)
+        before = PropertyLimitsTests.snapshot(self)
+        for method in ("put", "patch", "delete"):
+            with self.subTest(method=method):
+                response = self.request_write(method)
+                self.assertEqual(response.status_code, 403, response.content)
+                self.assertEqual(PropertyLimitsTests.snapshot(self), before)
+
+    def test_employee_can_replace_patch_and_trash_own_draft(self):
+        for method in ("put", "patch", "delete"):
+            with self.subTest(method=method):
+                response = self.request_write(method)
+                self.assertEqual(response.status_code, 204 if method == "delete" else 200,
+                                 response.content)
