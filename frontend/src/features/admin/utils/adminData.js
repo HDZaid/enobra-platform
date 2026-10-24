@@ -130,3 +130,22 @@ export const inquiryStatuses = Object.freeze({
 export function validInquiryStatus(value) {
   return Object.hasOwn(inquiryStatuses, value);
 }
+
+// Reglas de interfaz; Django sigue autorizando cada operación.
+export function adminActions(user, preview = false) {
+  const can = (permission) => preview || hasAdminPermission(user, permission);
+  return {
+    createNews: can('news.create'), editNews: can('news.edit'),
+    publishNews: can('news.publish'), deleteNews: can('news.delete'),
+    manageInquiries: can('inquiries.manage'),
+  };
+}
+
+export function newsPayloadForPermissions(payload, { existing = false, canPublish = false } = {}) {
+  if (canPublish) return { ...payload };
+  const result = { ...payload };
+  // PATCH conserva el estado actual; POST nunca hereda published=true del serializer.
+  if (existing) delete result.published;
+  else result.published = false;
+  return result;
+}

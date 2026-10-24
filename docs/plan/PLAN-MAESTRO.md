@@ -328,7 +328,7 @@ Verificación:    comandos exactos.
 | FE-03 | Historial | Leo | P0 | 4 h | [ ] |
 | FE-06 | Rutas, menú y permisos del panel | Jennifer | P0 | 3 h | [x] |
 | FE-07 | Proyectos admin (listado, subir, editar) | Jennifer | P0 | 5 h | [ ] |
-| FE-10 | Mensajes, Noticias y Resumen con permisos nuevos | Jennifer | P0 | 2 h | [ ] |
+| FE-10 | Mensajes, Noticias y Resumen con permisos nuevos | Jennifer | P0 | 2 h | [x] |
 | FE-11 | Bienes Raíces admin: listado y acciones | Geo | P0 | 6 h | [ ] |
 | FE-12 | Bienes Raíces admin: subir y editar | Geo | P0 | 6 h | [ ] |
 | FE-13 | Roles y permisos | Pablo | P0 | 6 h | [ ] |
@@ -365,3 +365,17 @@ Rutas y menú por permisos implementados en `frontend-dev`, conservando FE-11.
 Incluye placeholders por responsable, secciones dinámicas y `refreshUser()` en el
 contexto de sesión. Lint, 100 pruebas y build aprobados. Validación de interfaz
 con API simulada; la comprobación integrada de roles reales depende de BE-01/02.
+
+### Evidencia FE-10
+
+Implementado en `frontend-dev`: acciones de Noticias por `news.create/edit/publish/delete`,
+Mensajes de solo lectura sin `inquiries.manage`, y Resumen con totales de los módulos
+permitidos (`page_size=1`, token de sesión). Errores parciales muestran indicador no
+disponible; cero sigue siendo cero. Al editar sin permiso de publicación se omite
+`published` del PATCH; las nuevas noticias sin ese permiso se crean en borrador.
+Se ajustó también AdminNewsEditor porque sus botones permiten cambiar la publicación.
+
+Verificación: lint, 115 pruebas y build aprobados. Prueba Chromium reproducible en
+`frontend/tests/browser/admin-permissions.cjs` con ocho perfiles y API interceptada.
+No acredita Supabase ni autorización real: BE-01/02 siguen pendientes de integración.
+No se modificó backend, Roles de Pablo ni el módulo de propiedades de Geo.

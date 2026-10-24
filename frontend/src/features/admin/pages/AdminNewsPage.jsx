@@ -6,7 +6,7 @@ import { newsService } from '../../news/services/newsService.js';
 import { normalizeNews } from '../../news/services/newsMapper.js';
 import { NewsImage } from '../../news/components/NewsImage.jsx';
 import { AdminNewsEditor } from '../components/AdminNewsEditor.jsx';
-import { readAdminCollection } from '../utils/adminData.js';
+import { adminActions, newsPayloadForPermissions, readAdminCollection } from '../utils/adminData.js';
 import { adminNewsImageSrc, newsCategories, removePreviewNews, togglePreviewNewsPublished, upsertPreviewNews } from '../utils/newsEditor.js';
 import { filterNewsByPublication, formatNewsDate } from '../utils/newsWorkflow.js';
 
@@ -19,6 +19,7 @@ const messageForError = (error, action) => error?.status === 501
 
 export function AdminNewsPage() {
   const { session, preview, previewNews, setPreviewNews } = useOutletContext();
+  const actions = adminActions(session?.user, preview);
   const [page, setPage] = useState(1);
   const [category, setCategory] = useState('');
   const [search, setSearch] = useState('');
@@ -68,6 +69,8 @@ export function AdminNewsPage() {
 
   async function saveRemote(item, payload) {
     if (preview) return;
+    if (!(item ? actions.editNews : actions.createNews)) throw new Error('No tienes permiso para guardar esta noticia.');
+    payload = newsPayloadForPermissions(payload, { existing: Boolean(item), canPublish: actions.publishNews });
     if (item) await newsService.update(item.id, payload, session.access);
     else await newsService.create(payload, session.access);
     setEditing(undefined);
@@ -85,7 +88,7 @@ export function AdminNewsPage() {
   }
 
   async function togglePublished(item) {
-    if (publishingId !== null || deletingBusy) return;
+    if (!actions.publishNews || publishingId !== null || deletingBusy) return;
     setPublishingId(item.id);
     setNotice('');
     try {
@@ -106,7 +109,7 @@ export function AdminNewsPage() {
   }
 
   async function confirmDelete() {
-    if (!deleting || deletingBusy) return;
+    if (!actions.deleteNews || !deleting || deletingBusy) return;
     setDeletingBusy(true);
     setNotice('');
     try {
@@ -132,7 +135,7 @@ export function AdminNewsPage() {
     <section>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div><p className="text-sm text-[#626b79]">Contenido del sitio</p><h2 className="mt-1 font-['Outfit',Arial,sans-serif] text-[30px] font-semibold">Noticias y eventos</h2><p className="mt-2 max-w-[640px] text-sm text-[#626b79]">Crea, edita y organiza publicaciones. Puedes publicar una noticia o regresarla a borrador sin abrir el editor.</p></div>
-        <button type="button" onClick={() => { setEditing(null); setNotice(''); }} className="inline-flex items-center gap-2 rounded-lg bg-[#ff6a1f] px-5 py-3 text-sm font-semibold text-white hover:bg-[#b94308]"><Plus size={18}/> Añadir noticia</button>
+        {actions.createNews && <button type="button" onClick={() => { setEditing(null); setNotice(''); }} className="inline-flex items-center gap-2 rounded-lg bg-[#ff6a1f] px-5 py-3 text-sm font-semibold text-white hover:bg-[#b94308]"><Plus size={18}/> Añadir noticia</button>}
       </div>
       {preview && <p role="status" className="mt-5 rounded-lg border border-[#f4cfae] bg-[#fff1e5] p-4 text-sm text-[#88420d]">Modo de prueba: puedes crear, editar y eliminar noticias ficticias en memoria. No se publicarán en el sitio y los cambios desaparecerán al recargar.</p>}
       {notice && <p role="status" aria-live="polite" className="mt-5 rounded-lg border border-[#dfe5ec] bg-white p-4 text-sm">{notice}</p>}
@@ -144,12 +147,12 @@ export function AdminNewsPage() {
             : visibleItems.length === 0 ? <div className="p-6 text-sm text-[#626b79]"><p>No hay noticias que coincidan con los filtros en esta página.</p><button type="button" onClick={() => { setSearch(''); setCategory(''); setPublication('all'); setPage(1); }} className="mt-3 text-xs font-semibold text-[#b94308] underline">Limpiar filtros</button></div>
               : <div className="overflow-x-auto"><table className="min-w-[710px] w-full text-left text-sm"><thead className="bg-[#f3f6fa] text-[11px] tracking-wide text-[#626b79] uppercase"><tr><th scope="col" className="px-5 py-4">Publicación</th><th scope="col" className="px-5 py-4">Categoría</th><th scope="col" className="px-5 py-4">Fecha</th><th scope="col" className="px-5 py-4">Estado</th><th scope="col" className="px-5 py-4">Acciones</th></tr></thead><tbody>{visibleItems.map((item) => {
                 const src = adminNewsImageSrc(item.image, preview);
-                return <tr key={item.id} className="border-t border-[#dfe5ec]"><td className="px-5 py-4"><div className="flex items-center gap-3"><NewsImage key={src || item.id} src={src} alt={item.title} className="size-16 shrink-0 rounded-lg [&_[role=img]]:!min-h-0"/><span className="max-w-[240px] font-semibold">{item.title}</span></div></td><td className="px-5 py-4">{item.category}</td><td className="px-5 py-4">{formatNewsDate(item.date)}</td><td className="px-5 py-4"><span className={`rounded-full px-3 py-1 text-xs font-semibold ${item.demo ? 'bg-[#fff1e5] text-[#88420d]' : item.published ? 'bg-[#e6f4ec] text-[#1f7a4d]' : 'bg-[#f3f6fa] text-[#626b79]'}`}>{item.demo ? `Ejemplo · ${item.published ? 'Publicado' : 'Borrador'}` : item.published ? 'Publicado' : 'Borrador'}</span></td><td className="px-5 py-4"><div className="flex gap-2">{!preview && item.published && <Link to={routePaths.newsDetail.replace(':slug', encodeURIComponent(item.id))} target="_blank" rel="noopener noreferrer" aria-label={`Ver publicación ${item.title}`} title="Ver en el sitio" className="rounded-md border border-[#dfe5ec] p-2 text-[#304e7d] hover:bg-[#f3f6fa]"><Eye size={16}/></Link>}<button type="button" disabled={publishingId !== null || deletingBusy} aria-label={item.published ? `Pasar a borrador ${item.title}` : `Publicar ${item.title}`} title={item.published ? 'Pasar a borrador' : 'Publicar'} onClick={() => { void togglePublished(item); }} className="rounded-md border border-[#dfe5ec] p-2 text-[#304e7d] hover:bg-[#f3f6fa] disabled:opacity-40">{item.published ? <EyeOff size={16}/> : <Eye size={16}/>}</button><button type="button" disabled={publishingId !== null || deletingBusy} aria-label={`Editar ${item.title}`} title="Editar" onClick={() => { setEditing(item); setNotice(''); }} className="rounded-md border border-[#dfe5ec] p-2 text-[#304e7d] hover:bg-[#f3f6fa]"><Pencil size={16}/></button><button type="button" disabled={publishingId !== null || deletingBusy} aria-label={`Eliminar ${item.title}`} title="Eliminar" onClick={() => { setDeleting(item); setNotice(''); }} className="rounded-md border border-[#dfe5ec] p-2 text-[#a62b2b] hover:bg-[#fdeaea]"><Trash2 size={16}/></button></div></td></tr>;
+                return <tr key={item.id} className="border-t border-[#dfe5ec]"><td className="px-5 py-4"><div className="flex items-center gap-3"><NewsImage key={src || item.id} src={src} alt={item.title} className="size-16 shrink-0 rounded-lg [&_[role=img]]:!min-h-0"/><span className="max-w-[240px] font-semibold">{item.title}</span></div></td><td className="px-5 py-4">{item.category}</td><td className="px-5 py-4">{formatNewsDate(item.date)}</td><td className="px-5 py-4"><span className={`rounded-full px-3 py-1 text-xs font-semibold ${item.demo ? 'bg-[#fff1e5] text-[#88420d]' : item.published ? 'bg-[#e6f4ec] text-[#1f7a4d]' : 'bg-[#f3f6fa] text-[#626b79]'}`}>{item.demo ? `Ejemplo · ${item.published ? 'Publicado' : 'Borrador'}` : item.published ? 'Publicado' : 'Borrador'}</span></td><td className="px-5 py-4"><div className="flex gap-2">{!preview && item.published && <Link to={routePaths.newsDetail.replace(':slug', encodeURIComponent(item.id))} target="_blank" rel="noopener noreferrer" aria-label={`Ver publicación ${item.title}`} title="Ver en el sitio" className="rounded-md border border-[#dfe5ec] p-2 text-[#304e7d] hover:bg-[#f3f6fa]"><Eye size={16}/></Link>}{actions.publishNews && <button type="button" disabled={publishingId !== null || deletingBusy} aria-label={item.published ? `Pasar a borrador ${item.title}` : `Publicar ${item.title}`} title={item.published ? 'Pasar a borrador' : 'Publicar'} onClick={() => { void togglePublished(item); }} className="rounded-md border border-[#dfe5ec] p-2 text-[#304e7d] hover:bg-[#f3f6fa] disabled:opacity-40">{item.published ? <EyeOff size={16}/> : <Eye size={16}/>}</button>}{actions.editNews && <button type="button" disabled={publishingId !== null || deletingBusy} aria-label={`Editar ${item.title}`} title="Editar" onClick={() => { setEditing(item); setNotice(''); }} className="rounded-md border border-[#dfe5ec] p-2 text-[#304e7d] hover:bg-[#f3f6fa]"><Pencil size={16}/></button>}{actions.deleteNews && <button type="button" disabled={publishingId !== null || deletingBusy} aria-label={`Eliminar ${item.title}`} title="Eliminar" onClick={() => { setDeleting(item); setNotice(''); }} className="rounded-md border border-[#dfe5ec] p-2 text-[#a62b2b] hover:bg-[#fdeaea]"><Trash2 size={16}/></button>}</div></td></tr>;
               })}</tbody></table></div>}
       </div>
       {!loading && !state.error && totalPages > 1 && <nav aria-label="Paginación" className="mt-5 flex items-center justify-end gap-3"><button type="button" disabled={page <= 1} onClick={() => { if (!preview) setState((s) => ({ ...s, loading: true })); setPage((p) => p - 1); }} className="rounded-lg border border-[#dfe5ec] p-2 disabled:opacity-40" aria-label="Página anterior"><ChevronLeft size={18}/></button><span className="text-sm">{page} / {totalPages}</span><button type="button" disabled={page >= totalPages} onClick={() => { if (!preview) setState((s) => ({ ...s, loading: true })); setPage((p) => p + 1); }} className="rounded-lg border border-[#dfe5ec] p-2 disabled:opacity-40" aria-label="Página siguiente"><ChevronRight size={18}/></button></nav>}
-      {editing !== undefined && <AdminNewsEditor key={editing?.id || 'new'} item={editing} preview={preview} token={session?.access} onClose={() => setEditing(undefined)} onSaved={savePreview} onSaveRemote={saveRemote}/>}
-      {deleting && <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#09172b]/70 px-4"><section role="alertdialog" aria-modal="true" aria-labelledby="delete-news-title" className="w-full max-w-[430px] rounded-2xl bg-white p-6 shadow-xl"><h3 id="delete-news-title" className="text-xl font-semibold">¿Eliminar noticia?</h3><p className="mt-3 text-sm text-[#626b79]">«{deleting.title}» {preview ? 'se quitará únicamente de esta vista previa.' : 'se eliminará del sitio si Django confirma la operación.'}</p><div className="mt-6 flex justify-end gap-3"><button type="button" disabled={deletingBusy} onClick={() => setDeleting(null)} className="rounded-lg border border-[#dfe5ec] px-4 py-2 text-sm">Cancelar</button><button type="button" disabled={deletingBusy} onClick={() => { void confirmDelete(); }} className="rounded-lg bg-[#b64242] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{deletingBusy ? 'Eliminando…' : 'Sí, eliminar'}</button></div></section></div>}
+      {editing !== undefined && (editing ? actions.editNews : actions.createNews) && <AdminNewsEditor canPublish={actions.publishNews} key={editing?.id || 'new'} item={editing} preview={preview} token={session?.access} onClose={() => setEditing(undefined)} onSaved={savePreview} onSaveRemote={saveRemote}/>}
+      {actions.deleteNews && deleting && <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#09172b]/70 px-4"><section role="alertdialog" aria-modal="true" aria-labelledby="delete-news-title" className="w-full max-w-[430px] rounded-2xl bg-white p-6 shadow-xl"><h3 id="delete-news-title" className="text-xl font-semibold">¿Eliminar noticia?</h3><p className="mt-3 text-sm text-[#626b79]">«{deleting.title}» {preview ? 'se quitará únicamente de esta vista previa.' : 'se eliminará del sitio si Django confirma la operación.'}</p><div className="mt-6 flex justify-end gap-3"><button type="button" disabled={deletingBusy} onClick={() => setDeleting(null)} className="rounded-lg border border-[#dfe5ec] px-4 py-2 text-sm">Cancelar</button><button type="button" disabled={deletingBusy} onClick={() => { void confirmDelete(); }} className="rounded-lg bg-[#b64242] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{deletingBusy ? 'Eliminando…' : 'Sí, eliminar'}</button></div></section></div>}
     </section>
   );
 }
