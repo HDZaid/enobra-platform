@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "apps.inquiries",
     "apps.search",
     "apps.media",
+    "apps.audit",
 ]
 
 MIDDLEWARE = [

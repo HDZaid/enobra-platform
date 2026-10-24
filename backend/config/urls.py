@@ -15,6 +15,7 @@ api_v1 = [
     path("", include("apps.inquiries.urls")),
     path("", include("apps.search.urls")),
     path("", include("apps.media.urls")),
+    path("", include("apps.audit.urls")),
 ]
 
 urlpatterns = [
