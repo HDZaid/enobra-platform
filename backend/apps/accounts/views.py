@@ -5,7 +5,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.common.permissions import HasAnyPermission
+from apps.common.permissions import ResourcePermission
 from apps.common.registry import resolve
 from apps.common.serializers import ErrorSerializer
 
@@ -96,9 +96,13 @@ class MeView(APIView):
         return Response(UserSerializer(request.user).data)
 
 
+ROLES_READ = ("roles.read", "roles.manage")
+
+
 class PermissionListView(APIView):
-    permission_classes = [HasAnyPermission]
-    required_permissions = ("roles.manage",)
+    permission_classes = [ResourcePermission]
+    permission_map = {"GET": ROLES_READ}
+    read_public = False
 
     @extend_schema(
         responses=PermissionSerializer(many=True),
@@ -112,8 +116,9 @@ class PermissionListView(APIView):
 
 
 class RoleListCreateView(APIView):
-    permission_classes = [HasAnyPermission]
-    required_permissions = ("roles.manage",)
+    permission_classes = [ResourcePermission]
+    permission_map = {"GET": ROLES_READ, "POST": ("roles.manage",)}
+    read_public = False
 
     @extend_schema(
         responses=RoleSerializer(many=True),
@@ -139,8 +144,9 @@ class RoleListCreateView(APIView):
 
 
 class RoleDetailView(APIView):
-    permission_classes = [HasAnyPermission]
-    required_permissions = ("roles.manage",)
+    permission_classes = [ResourcePermission]
+    permission_map = {"GET": ROLES_READ, "PATCH": ("roles.manage",)}
+    read_public = False
 
     @extend_schema(
         responses={200: RoleSerializer, 404: ErrorSerializer},

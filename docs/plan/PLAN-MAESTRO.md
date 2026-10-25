@@ -309,7 +309,7 @@ Verificación:    comandos exactos.
 | BE-03 | Seed no destructivo | Henry | P0 | 1 h | [ ] |
 | BE-04 | Papelera genérica y unificada | Juan | P0 | 4 h | [ ] |
 | BE-05 | Fábrica de publicaciones (Abstract Factory) | Henry | P0 | 4 h | [ ] |
-| BE-06 | Límites numéricos y carrera de borradores | Pablo | P0 | 2 h | [ ] |
+| BE-06 | Límites numéricos y carrera de borradores | Pablo | P0 | 2 h | [x] BE-06a y BE-06b; 24-oct: 122 pruebas backend en verde (SQLite) |
 | BE-07 | Endpoint de Historial y exportación | Juan | P0 | 3 h | [ ] |
 | BE-08 | Editar usuarios y cambiar rol | Pablo | P0 | 3 h | [ ] |
 | BE-09 | Notificador de consultas (correo) | Juan | P0 | 3 h | [ ] |

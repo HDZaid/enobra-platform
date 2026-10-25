@@ -8,6 +8,11 @@ las decisiones se revisan gradualmente y se actualizan junto con el código afec
 - [Infraestructura](infraestructura.md): PostgreSQL en Supabase como decisión y propuestas
   todavía pendientes para despliegue y almacenamiento de imágenes (entre ellas R2).
 - [Contrato OpenAPI](openapi.yaml): referencia HTTP para backend y frontend.
+- [Roles y permisos (RBAC)](RBAC.md): los 32 permisos, roles predeterminados, seed, matriz rol × endpoint y cómo agregar un permiso (BE-11).
+- [Arquitectura del backend](arquitectura.md): interfaces, registro, `bindings.py` y la fábrica de publicaciones; cómo agregar un tipo (BE-11).
+- [ADR 0001: roles en la base de datos](adr/0001-rbac-por-datos.md): por qué los roles son datos y la fábrica solo se usa para publicaciones (BE-11).
+- [Auditoría administrativa](auditoria.md): API integrada, eventos, permisos, filtros, paginación y exportación CSV protegida (BE-12).
+- [Papelera de publicaciones](papelera.md): rutas reales, restauración, permisos, imágenes en JSON y límites de limpieza SQL (BE-12).
 - [Backend del administrador](admin-backend.md): implementación, mapeo sobre tablas existentes y pruebas aisladas.
 - [Cómo probar el administrador](probar-admin.md): comandos, script HTTP y recorrido manual con Swagger.
 - [Colección de Postman](postman/README.md): todos los endpoints, entorno local y prueba de imágenes.

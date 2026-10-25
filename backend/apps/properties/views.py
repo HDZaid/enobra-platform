@@ -1,13 +1,12 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.exceptions import NotFound, PermissionDenied
-from rest_framework.permissions import SAFE_METHODS, BasePermission
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.common.enums import Operation, PropertyType
 from apps.common.pagination import paginated, paginated_response
-from apps.common.permissions import has_any_permission, has_permission, is_admin, HasAnyPermission
+from apps.common.permissions import HasAnyPermission, ResourcePermission, has_permission, is_admin
 from apps.common.registry import resolve
 from apps.common.serializers import ErrorSerializer
 
@@ -23,19 +22,18 @@ TAG = ["Bienes raíces"]
 ERR = {400: ErrorSerializer, 401: ErrorSerializer, 403: ErrorSerializer}
 
 
-class PropertyAccessPermission(BasePermission):
+PROPERTY_PERMISSIONS = {
+    "POST": ("properties.create",),
+    "PUT": ("properties.edit.any", "properties.edit.own"),
+    "PATCH": ("properties.edit.any", "properties.edit.own"),
+    "DELETE": ("properties.trash.any", "properties.trash.own"),
+}
+
+
+class PropertyAccessPermission(ResourcePermission):
     """Lectura pública y escritura con permisos específicos de propiedades."""
 
-    def has_permission(self, request, view):
-        if request.method in SAFE_METHODS:
-            return True
-        permissions = {
-            "POST": ("properties.create",),
-            "PUT": ("properties.edit.any", "properties.edit.own"),
-            "PATCH": ("properties.edit.any", "properties.edit.own"),
-            "DELETE": ("properties.trash.any", "properties.trash.own"),
-        }.get(request.method, ())
-        return has_any_permission(request.user, permissions)
+    permission_map = PROPERTY_PERMISSIONS
 
 
 class PropertyListCreateView(APIView):
@@ -124,14 +122,14 @@ class PropertyDetailView(APIView):
         s.is_valid(raise_exception=True)
         repository = resolve(PropertyRepository)
         can_edit_any = is_admin(request) or has_permission(request.user, "properties.edit.any")
-        if not can_edit_any and not repository.is_own_draft(property_id, request.user.id):
-            raise PermissionDenied("Solo puedes editar tus propios borradores.")
         data = dict(s.validated_data)
         if "published" in request.data and data.get("published") and not has_permission(request.user, "properties.publish"):
             raise PermissionDenied("Tu rol no puede publicar bienes raíces.")
         if not has_permission(request.user, "properties.publish"):
             data["published"] = False
-        updated = repository.update(property_id, data, updated_by=request.user.id)
+        updated = repository.update(
+            property_id, data, updated_by=request.user.id, require_own_draft=not can_edit_any,
+        )
         if updated is None:
             raise NotFound("Propiedad no encontrada.")
         return Response(PropertySerializer(updated).data)
@@ -140,9 +138,9 @@ class PropertyDetailView(APIView):
     def delete(self, request, property_id: int):
         repository = resolve(PropertyRepository)
         can_trash_any = is_admin(request) or has_permission(request.user, "properties.trash.any")
-        if not can_trash_any and not repository.is_own_draft(property_id, request.user.id):
-            raise PermissionDenied("Solo puedes enviar tus propios borradores a papelera.")
-        if not repository.delete(property_id, deleted_by=request.user.id):
+        if not repository.delete(
+            property_id, deleted_by=request.user.id, require_own_draft=not can_trash_any,
+        ):
             raise NotFound("Propiedad no encontrada.")
         return Response(status=status.HTTP_204_NO_CONTENT)
 

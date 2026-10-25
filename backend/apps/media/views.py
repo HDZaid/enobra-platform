@@ -5,7 +5,7 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.common.permissions import IsAdmin
+from apps.common.permissions import ResourcePermission
 from apps.common.registry import resolve
 from apps.common.serializers import ErrorSerializer
 
@@ -17,7 +17,9 @@ ERR = {401: ErrorSerializer, 403: ErrorSerializer}
 
 
 class MediaUploadView(APIView):
-    permission_classes = [IsAdmin]
+    permission_classes = [ResourcePermission]
+    permission_map = {"POST": ("media.upload",)}
+    read_public = False
     parser_classes = [MultiPartParser]
 
     @extend_schema(
@@ -38,7 +40,9 @@ class MediaUploadView(APIView):
 
 
 class MediaDetailView(APIView):
-    permission_classes = [IsAdmin]
+    permission_classes = [ResourcePermission]
+    permission_map = {"GET": ("media.upload",), "DELETE": ("media.delete",)}
+    read_public = False
 
     @extend_schema(responses={200: MediaSerializer, 404: ErrorSerializer, **ERR}, tags=TAG, summary="Metadatos de una imagen")
     def get(self, request, media_id: str):

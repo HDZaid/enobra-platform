@@ -168,9 +168,10 @@ class AdminAPITests(TestCase):
                 self.assertEqual(response.json()["title"], "Reemplazado")
                 self.assertEqual(self.client.delete(url).status_code, 204)
                 self.assertEqual(self.client.get(url).status_code, 404)
-                if kind == "properties":
+                # BE-04: proyectos conserva su fila y audita PAPELERA, igual que propiedades.
+                if kind in ("properties", "projects"):
                     self.assertEqual(model.objects.count(), 1)
-                    self.assertTrue(ContenidoPagina.objects.filter(clave__startswith="admin.properties.").exists())
+                    self.assertTrue(ContenidoPagina.objects.filter(clave__startswith=f"admin.{kind}.").exists())
                     expected_actions = {"CREAR", "EDITAR", "PAPELERA"}
                 else:
                     self.assertEqual(model.objects.count(), 0)
@@ -417,9 +418,10 @@ class AdminAPITests(TestCase):
         call_command("seed_access_control", stdout=output)
         call_command("seed_access_control", stdout=output)
 
-        self.assertEqual(Permiso.objects.count(), 12)
+        # BE-01: el catálogo pasó de 12 a 32 permisos; Ingeniero 32 + Arquitecta 6 + Empleado 4.
+        self.assertEqual(Permiso.objects.count(), 32)
         self.assertEqual(Rol.objects.count(), 4)  # tres roles iniciales y el fixture legado
-        self.assertEqual(RolPermiso.objects.count(), 20)
+        self.assertEqual(RolPermiso.objects.count(), 42)
         self.assertEqual(Usuario.objects.count(), 2)
 
         roles = {
@@ -429,10 +431,10 @@ class AdminAPITests(TestCase):
         self.assertEqual(roles["Ingeniero"], set(Permiso.objects.values_list("nombre", flat=True)))
         self.assertEqual(roles["Arquitecta"], {
             "properties.create", "properties.edit.any", "properties.publish",
-            "properties.trash.any", "properties.restore",
+            "properties.trash.any", "properties.restore", "media.upload",
         })
         self.assertEqual(roles["Empleado"], {
-            "properties.create", "properties.edit.own", "properties.trash.own",
+            "properties.create", "properties.edit.own", "properties.trash.own", "media.upload",
         })
 
     def test_role_and_permission_endpoints_create_read_update_and_audit(self):

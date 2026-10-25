@@ -1,11 +1,29 @@
+import logging
+
 from django.db import transaction
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
 from apps.inquiries.interfaces import InquiryRepository
+from apps.inquiries.notifiers import InquiryNotifier
+from apps.common.registry import NotBoundError, resolve
 from .models.inquiries import MensajeContacto
 from .models.properties import Propiedad
 from .support import read_data, write_data, audit, page_of
+
+logger = logging.getLogger(__name__)
+
+
+def notify_after_commit(inquiry):
+    def notify():
+        try:
+            resolve(InquiryNotifier).notify_created(inquiry)
+        except NotBoundError:
+            logger.warning("Notificador no registrado; consulta=%s", inquiry["id"])
+        except Exception:
+            # SMTP exceptions can contain addresses, credentials or message contents.
+            logger.error("Falló la notificación; consulta=%s", inquiry["id"])
+    transaction.on_commit(notify)
 
 
 class DjangoInquiryRepository(InquiryRepository):
@@ -23,18 +41,24 @@ class DjangoInquiryRepository(InquiryRepository):
             "updated_at": extra.get("updated_at", obj.fecha_atencion or obj.fecha_recepcion),
             "updated_by": str(obj.atendido_por_id) if obj.atendido_por_id else None}
 
+    @transaction.atomic
     def create_contact(self, data):
         obj = MensajeContacto.objects.create(nombre=data["name"], correo=data["email"],
             telefono=data["phone"], asunto=data["subject"], mensaje=data["message"], origen="CONTACTO")
-        return self._serialize(obj)
+        inquiry = self._serialize(obj)
+        notify_after_commit(inquiry)
+        return inquiry
 
+    @transaction.atomic
     def create_visit(self, data):
         prop = Propiedad.objects.filter(pk=data["property_id"], publicado=True).first()
         if not prop:
             return None
         obj = MensajeContacto.objects.create(nombre=data["name"], telefono=data["phone"],
             propiedad=prop, fecha_preferida=data["preferred_date"], mensaje="Solicitud de visita", origen="VISITA")
-        return self._serialize(obj)
+        inquiry = self._serialize(obj)
+        notify_after_commit(inquiry)
+        return inquiry
 
     def list(self, *, kind, status, page, page_size):
         qs = self._query()

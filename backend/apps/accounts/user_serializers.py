@@ -45,3 +45,17 @@ class UserListQuerySerializer(serializers.Serializer):
     q = serializers.CharField(required=False, allow_blank=True, max_length=150)
     page = serializers.IntegerField(min_value=1, default=1)
     page_size = serializers.IntegerField(min_value=1, max_value=100, default=12)
+
+
+class UserUpdateSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=120, required=False)
+    active = serializers.BooleanField(required=False)
+
+    def validate(self, attrs):
+        if not attrs:
+            raise serializers.ValidationError('Envía al menos uno de: name, active.')
+        return attrs
+
+
+class UserRoleUpdateSerializer(serializers.Serializer):
+    role_id = serializers.IntegerField(min_value=1)

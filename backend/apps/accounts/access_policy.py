@@ -1,41 +1,75 @@
-"""Permisos conocidos por la aplicación y asignación inicial de roles EnObra."""
+"""
+Permisos conocidos por la aplicación y asignación inicial de roles EnObra.
 
-PERMISSION_CATALOG = {
-    "admin.all": "Acceso completo a las operaciones administrativas.",
-    "users.manage": "Crear y administrar cuentas de usuario.",
-    "roles.manage": "Consultar, crear y configurar roles y permisos.",
-    "audit.read": "Consultar el historial de actividad administrativa.",
-    "properties.create": "Crear publicaciones de bienes raíces.",
-    "properties.edit.any": "Editar cualquier publicación de bienes raíces.",
-    "properties.edit.own": "Editar borradores propios de bienes raíces.",
-    "properties.publish": "Publicar o retirar publicaciones de bienes raíces.",
-    "properties.trash.any": "Enviar cualquier publicación de bienes raíces a papelera.",
-    "properties.trash.own": "Enviar borradores propios a papelera.",
-    "properties.restore": "Restaurar publicaciones de bienes raíces desde papelera.",
-    "properties.delete_permanently": "Eliminar publicaciones de bienes raíces permanentemente.",
-}
+El catálogo se arma con los permisos de la plataforma más los que aporta cada fábrica de
+publicaciones registrada (`apps.publications`): agregar un tipo de publicación agrega sus
+permisos aquí sin editar este archivo. `PERMISSION_CATALOG` y `BUILTIN_ROLES` son vistas
+de solo lectura que se recalculan en cada acceso, así que se comportan como diccionarios.
+"""
+from collections.abc import Mapping
 
-BUILTIN_ROLES = {
-    "Ingeniero": {
-        "description": "Administrador principal de EnObra.",
-        "permissions": tuple(PERMISSION_CATALOG),
-    },
-    "Arquitecta": {
-        "description": "Subadministradora de publicaciones de bienes raíces.",
-        "permissions": (
-            "properties.create",
-            "properties.edit.any",
-            "properties.publish",
-            "properties.trash.any",
-            "properties.restore",
-        ),
-    },
-    "Empleado": {
-        "description": "Puede preparar borradores propios de bienes raíces.",
-        "permissions": (
-            "properties.create",
-            "properties.edit.own",
-            "properties.trash.own",
-        ),
-    },
-}
+from apps.common.rbac import PLATFORM_PERMISSIONS
+from apps.publications.registry import publication_registry
+
+
+def permission_catalog() -> dict[str, str]:
+    """`{permiso: descripción}`: plataforma + publicaciones registradas."""
+    catalog = dict(PLATFORM_PERMISSIONS)
+    for name, description in publication_registry.permissions().items():
+        if name in catalog:
+            raise ValueError(f"El permiso {name!r} ya existe en la plataforma.")
+        catalog[name] = description
+    return catalog
+
+
+def builtin_roles() -> dict[str, dict]:
+    """Roles predeterminados. El Ingeniero recibe siempre todo el catálogo."""
+    return {
+        "Ingeniero": {
+            "description": "Administrador principal de EnObra.",
+            "permissions": tuple(permission_catalog()),
+        },
+        "Arquitecta": {
+            "description": "Subadministradora de publicaciones de bienes raíces.",
+            "permissions": (
+                "properties.create",
+                "properties.edit.any",
+                "properties.publish",
+                "properties.trash.any",
+                "properties.restore",
+                "media.upload",
+            ),
+        },
+        "Empleado": {
+            "description": "Puede preparar borradores propios de bienes raíces.",
+            "permissions": (
+                "properties.create",
+                "properties.edit.own",
+                "properties.trash.own",
+                "media.upload",
+            ),
+        },
+    }
+
+
+class _LiveMapping(Mapping):
+    """Mapping de solo lectura que consulta su función en cada acceso."""
+
+    def __init__(self, build):
+        self._build = build
+
+    def __getitem__(self, key):
+        return self._build()[key]
+
+    def __iter__(self):
+        return iter(self._build())
+
+    def __len__(self):
+        return len(self._build())
+
+    def __repr__(self):
+        return repr(self._build())
+
+
+PERMISSION_CATALOG = _LiveMapping(permission_catalog)
+BUILTIN_ROLES = _LiveMapping(builtin_roles)
