@@ -376,6 +376,18 @@ validateImageFile(file)                                                    // �
 ### FE-13. Roles y permisos
 **P0 · U · 6 h · Pablo · Depende de FE-06 y FE-01a · Vie 23 (inicio) y sáb 24 (fin)**
 
+**Estado (24-oct):** interfaz implementada y revisada en `frontend-dev`.
+Se corrigió el aviso de cambios al restaurar los permisos originales en otro
+orden; compara el contenido que se enviaría, sin mutar el borrador.
+Lint, 156 pruebas y build aprobados. Chromium contra Django real con SQLite
+desechable verificó creación de un rol de tres permisos, edición, reversión,
+aviso al navegar, bloqueo de Ingeniero, `refreshUser()` y menú de una cuenta
+creada con ese rol por API; también se comprobó navegación móvil sin desborde.
+Solo lectura y errores 400/501 comprobados con API interceptada. La lectura
+real con `roles.read` sigue pendiente de BE-01/02 (Henry): los GET actuales
+todavía exigen `roles.manage`. La asignación desde pantalla corresponde a
+FE-14; esta revisión no valida Supabase.
+
 **Objetivo:** la pantalla para crear y editar roles con una matriz de permisos (§4.5). La API de roles y permisos ya existe.
 
 **Leer primero:** `apps/accounts/views.py` y `serializers.py` (`RoleWriteSerializer`); `persistence/access_control.py` (reglas del backend); `features/admin/components/AdminUserEditor.jsx` (patrón de diálogo y errores).
@@ -405,6 +417,23 @@ validateImageFile(file)                                                    // �
 
 ### FE-14. Usuarios: editar y cambiar rol
 **P0 · M · 3 h · Pablo · Depende de BE-08 (Pablo) y FE-13 · Sáb 24**
+
+**Estado (24-oct):** implementada en `frontend-dev` con diálogo independiente
+de `AdminUserEditor`, que conserva su creación existente. Incluye edición de
+nombre/estado, reemplazo de rol activo, bloqueo de cambios propios de rol/estado,
+roles superiores deshabilitados y confirmación de desactivación con `ConfirmDialog`.
+PATCH y PUT se ejecutan por separado: si falla el rol tras guardar datos, se
+informa del resultado parcial y el reintento solo envía el rol pendiente.
+Se conservan los errores de campo y los mensajes de protección del servidor.
+
+Validación: lint, 162 pruebas y build aprobados; Chromium contra BE-08 publicado
+en `backend-dev`, exportado a una carpeta temporal sin mezclar ramas y con SQLite
+desechable. Comprobados edición/rol reales, tabla actualizada, cancelación y
+confirmación de baja, último Ingeniero protegido, controles propios bloqueados,
+móvil sin desborde y creación existente. Se interceptó un fallo 403 del PUT para
+comprobar guardado parcial y reintento; `users.read` y roles superiores se probaron
+con API interceptada. Los GET de usuarios/roles aún requieren `admin.all` en el
+backend; su apertura a permisos finos corresponde a BE-02 (Henry). No valida Supabase.
 
 **Objetivo:** completar la pantalla de usuarios, que hoy solo lista y crea (§4.5).
 

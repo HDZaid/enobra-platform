@@ -1,0 +1,75 @@
+// Ejecutar contra Django/BD desechables; nunca usar credenciales de producción.
+const assert = require('node:assert/strict');
+const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+(async () => {
+  const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH, headless: true });
+  try {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    const errors = [];
+    const bodies = [];
+    let slug;
+    page.on('pageerror', (error) => errors.push(error.message));
+    page.on('request', (request) => {
+      if (/\/api\/v1\/projects\/(?:[^/?]+\/)?$/.test(request.url()) && ['POST', 'PATCH'].includes(request.method())) bodies.push(request.postDataJSON());
+    });
+    const base = process.env.INTEGRATION_BASE_URL;
+    await page.goto(`${base}/admin/login`);
+    await page.getByLabel('Correo electrónico').fill(process.env.INTEGRATION_EMAIL);
+    await page.getByLabel('Contraseña', { exact: true }).fill(process.env.INTEGRATION_PASSWORD);
+    await page.getByRole('button', { name: 'Ingresar al panel' }).click();
+    await page.getByRole('navigation', { name: 'Secciones del panel' }).getByRole('link', { name: 'Proyectos', exact: true }).click();
+    await page.getByRole('link', { name: 'Nuevo proyecto', exact: true }).click();
+    await page.getByLabel('Título *', { exact: true }).fill('Proyecto prueba FE07');
+    // Navegación SPA: no debe perder cambios sin confirmar.
+    await page.getByRole('link', { name: 'Volver a proyectos', exact: true }).click();
+    const confirmation = page.getByRole('dialog', { name: 'Cambios sin guardar' });
+    await confirmation.waitFor();
+    await confirmation.getByRole('button', { name: 'Cancelar', exact: true }).click();
+    await confirmation.waitFor({ state: 'hidden' });
+    await page.getByLabel('Categoría *', { exact: true }).fill('Vivienda');
+    await page.getByLabel('Descripción *', { exact: true }).fill('Contenido de integración de proyecto.');
+    assert.equal(await page.getByLabel('Categoría *', { exact: true }).inputValue(), 'Vivienda');
+    assert.equal(await page.getByLabel('Descripción *', { exact: true }).inputValue(), 'Contenido de integración de proyecto.');
+    const photos = page.getByRole('region', { name: 'Fotografías *', exact: true });
+    await photos.locator('input[type=file]').setInputFiles([process.env.INTEGRATION_IMAGE, process.env.INTEGRATION_IMAGE]);
+    await photos.getByText('2 imágenes listas · 0 pendientes', { exact: true }).waitFor();
+    const before = await photos.locator('ol img').evaluateAll((imgs) => imgs.map((img) => img.getAttribute('src')));
+    await photos.getByRole('button', { name: 'Mover imagen 2 antes', exact: true }).click();
+    const after = await photos.locator('ol img').evaluateAll((imgs) => imgs.map((img) => img.getAttribute('src')));
+    assert.deepEqual(after, [...before].reverse());
+    assert.equal(await page.getByLabel('Categoría *', { exact: true }).inputValue(), 'Vivienda');
+    assert.equal(await page.getByLabel('Descripción *', { exact: true }).inputValue(), 'Contenido de integración de proyecto.');
+    await page.getByRole('checkbox', { name: 'Publicar proyecto', exact: true }).check();
+    const created = page.waitForResponse((response) => response.url().endsWith('/api/v1/projects/') && response.request().method() === 'POST');
+    await page.getByRole('button', { name: 'Guardar proyecto', exact: true }).click();
+    const response = await created.catch(async (error) => { console.error('UI_ERRORS', errors); console.error('ALERTS', await page.getByRole('alert').allTextContents()); console.error('FORM', await page.locator('form').innerText()); throw error; });
+    assert.equal(response.status(), 201);
+    slug = (await response.json()).id;
+    await page.waitForURL('**/admin/proyectos');
+    const row = page.getByRole('row').filter({ hasText: 'Proyecto prueba FE07' });
+    await row.waitFor();
+    assert.equal(bodies[0].demo, false); assert.equal(bodies[0].published, true);
+    assert.deepEqual(bodies[0].images, after);
+    assert.equal(await row.getByRole('button', { name: 'Enviar a papelera' }).isDisabled(), true);
+    const publicPage = await browser.newPage();
+    await publicPage.goto(`${base}/proyectos/${slug}`);
+    await publicPage.getByRole('heading', { name: 'Proyecto prueba FE07', exact: true }).waitFor();
+    await publicPage.close();
+    await row.getByRole('link', { name: 'Editar', exact: true }).click();
+    assert.equal(await page.getByLabel('Identificador (no cambia al editar el título)').inputValue(), slug);
+    await page.getByLabel('Título *', { exact: true }).fill('Proyecto actualizado FE07');
+    await page.getByRole('button', { name: 'Guardar proyecto', exact: true }).click();
+    await page.waitForURL('**/admin/proyectos');
+    const updated = page.getByRole('row').filter({ hasText: 'Proyecto actualizado FE07' });
+    await updated.getByRole('button', { name: 'Pasar a borrador', exact: true }).click();
+    await updated.getByRole('button', { name: 'Publicar', exact: true }).waitFor();
+    await updated.getByRole('link', { name: 'Editar', exact: true }).click();
+    await page.getByLabel('Título *', { exact: true }).waitFor();
+    assert.equal(await page.getByLabel('Identificador (no cambia al editar el título)').inputValue(), slug);
+    assert.equal(await page.getByRole('checkbox', { name: 'Publicar proyecto', exact: true }).isChecked(), false);
+    await page.setViewportSize({ width: 390, height: 844 });
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
+    assert.deepEqual(errors, []);
+    console.log('PASS: Django real/SQLite temporal: crear con subida múltiple, reordenar, publicación pública, editar, slug estable, despublicar, editar borrador, aviso de cambios y móvil.');
+  } finally { await browser.close(); }
+})().catch((error) => { console.error(error); process.exitCode = 1; });

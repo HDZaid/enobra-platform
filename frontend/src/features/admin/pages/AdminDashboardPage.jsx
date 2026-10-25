@@ -2,22 +2,22 @@ import { useEffect, useState } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
 import { ArrowRight, FileText, Mail, Newspaper, Plus, Building2 } from 'lucide-react';
 import { routePaths } from '../../../app/routePaths.js';
-import { inquiriesService } from '../services/inquiriesService.js';
-import { newsService } from '../../news/services/newsService.js';
-import { adminRoleProfile, canAccessAdminSection, displayAdminCount, readAdminCollection } from '../utils/adminData.js';
+import { loadDashboardCounts } from '../utils/dashboard.js';
+import { adminRoleProfile, canAccessAdminSection, displayAdminCount } from '../utils/adminData.js';
 
 const stats = [
   { label: 'Noticias', key: 'news', icon: Newspaper, link: routePaths.adminNews, section: 'news' },
   { label: 'Mensajes', key: 'messages', icon: Mail, link: routePaths.adminInbox, section: 'inbox' },
-  { label: 'Proyectos', key: 'projects', icon: Building2 },
-  { label: 'Propiedades', key: 'properties', icon: FileText },
+  { label: 'Proyectos', key: 'projects', icon: Building2, link: routePaths.adminProjects, section: 'projects' },
+  { label: 'Propiedades', key: 'properties', icon: FileText, link: routePaths.adminProperties, section: 'properties' },
 ];
 
 const steps = [
   { title: 'Noticias', description: 'Crear y editar noticias; en vista previa, los cambios son temporales.', link: routePaths.adminNews, section: 'news' },
   { title: 'Mensajes', description: 'Ver las consultas y su estado de atención.', link: routePaths.adminInbox, section: 'inbox' },
+  { title: 'Proyectos', description: 'Accede a la sección de proyectos; las pantallas en construcción indican su responsable.', link: routePaths.adminProjects, section: 'projects' },
   { title: 'Imágenes', description: 'El editor permite subir imágenes mediante la API de medios. Verificar el proveedor de Storage en el entorno real.', link: null, section: 'news' },
-  { title: 'Bienes raíces', description: 'Tu rol puede preparar o publicar propiedades según sus permisos. El formulario administrativo de propiedades se habilitará cuando se integre ese módulo.', link: null, section: 'properties', onlyWithout: 'news' },
+  { title: 'Bienes raíces', description: 'Consulta el listado de propiedades y las acciones disponibles para tu cuenta.', link: routePaths.adminProperties, section: 'properties' },
 ];
 
 export function AdminDashboardPage() {
@@ -34,32 +34,20 @@ export function AdminDashboardPage() {
     if (preview) return undefined;
     let active = true;
     async function load() {
-      // Solo se consultan los módulos que Django autoriza para el rol; el resto produciría 403.
-      const skipped = Promise.resolve(null);
-      const [newsResult, inquiriesResult] = await Promise.allSettled([
-        canNews ? newsService.list({ page: 1, page_size: 1 }, { token: session.access }) : skipped,
-        canInbox ? inquiriesService.list({ page: 1, page_size: 1 }, session.access) : skipped,
-      ]);
+      const { counts: nextCounts, unavailable } = await loadDashboardCounts(session.user, session.access);
       if (!active) return;
-      let news = null;
-      let messages = null;
-      try { if (canNews && newsResult.status === 'fulfilled') news = readAdminCollection(newsResult.value).count; } catch { /* Contrato no válido. */ }
-      try { if (canInbox && inquiriesResult.status === 'fulfilled') messages = readAdminCollection(inquiriesResult.value).count; } catch { /* Contrato no válido. */ }
-      setCounts({ news, messages });
-      const missing = (canNews && news === null) || (canInbox && messages === null);
-      setWarning(missing ? 'Algunos indicadores no están disponibles. El backend aún puede tener módulos pendientes de implementación.' : '');
+      setCounts(nextCounts);
+      setWarning(unavailable ? 'Algunos indicadores no están disponibles. Revisa la conexión o los permisos del backend.' : '');
     }
     void load();
     return () => { active = false; };
   }, [session, preview, canNews, canInbox]);
 
   const values = preview ? { news: previewNews.length, messages: previewInquiries.length } : counts;
-  const visibleStats = stats.filter(({ section }) => !section || can(section));
+  const visibleStats = stats.filter(({ section }) => can(section));
   const visibleSteps = steps.filter(({ section, onlyWithout }) => can(section) && !(onlyWithout && can(onlyWithout)));
   const profile = adminRoleProfile(user);
-  const intro = canNews || canInbox
-    ? 'Administra las noticias de EnObra y consulta las solicitudes que envían los visitantes. Proyectos y propiedades se integrarán con los módulos del equipo.'
-    : `Iniciaste sesión como ${profile.label} (${profile.description.toLocaleLowerCase('es')}). Noticias y Mensajes requieren acceso administrativo completo; tus opciones de bienes raíces aparecerán aquí cuando se integre ese módulo.`;
+  const intro = 'Consulta los indicadores y accede a las secciones disponibles según los permisos de tu cuenta. Cada operación es autorizada por Django.';
 
   return (
     <div>

@@ -4,6 +4,7 @@ import { adminMediaService } from '../services/adminMediaService.js';
 import {
   adminNewsImageSrc, makeNewsPayload, newsCategories, validateNewsDraft,
 } from '../utils/newsEditor.js';
+import { newsPayloadForPermissions } from '../utils/adminData.js';
 import { formatNewsDate, newsDraftHasChanges, newsPreviewContent } from '../utils/newsWorkflow.js';
 
 const inputClass = 'mt-1.5 w-full rounded-lg border border-[#dfe5ec] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#304e7d] focus:ring-2 focus:ring-[#304e7d]/15';
@@ -31,7 +32,7 @@ function readFileAsDataUrl(file) {
   });
 }
 
-export function AdminNewsEditor({ item, preview, token, onClose, onSaved, onSaveRemote }) {
+export function AdminNewsEditor({ item, preview, token, canPublish = false, onClose, onSaved, onSaveRemote }) {
   const [original] = useState(() => initialDraft(item, preview));
   const [draft, setDraft] = useState(() => initialDraft(item, preview));
   const [file, setFile] = useState(null);
@@ -77,7 +78,7 @@ export function AdminNewsEditor({ item, preview, token, onClose, onSaved, onSave
     event.preventDefault();
     if (submitting) return;
     const action = event.nativeEvent?.submitter?.value || 'keep';
-    const published = action === 'published' ? true : action === 'draft' ? false : draft.published;
+    const published = !canPublish ? (item?.published ?? false) : action === 'published' ? true : action === 'draft' ? false : draft.published;
     const candidate = { ...draft, published };
     const validation = validateNewsDraft(candidate, { preview, file });
     setErrors(validation);
@@ -92,7 +93,7 @@ export function AdminNewsEditor({ item, preview, token, onClose, onSaved, onSave
       } else {
         // El upload devuelve la referencia que espera Django; no enviamos data URI al backend.
         const image = file ? await adminMediaService.uploadNewsImage(file, token) : draft.image;
-        await onSaveRemote(item, makeNewsPayload(candidate, image));
+        await onSaveRemote(item, newsPayloadForPermissions(makeNewsPayload(candidate, image), { existing: Boolean(item), canPublish }));
       }
     } catch (error) {
       setRequestError(error?.status === 401 || error?.status === 403
@@ -171,8 +172,9 @@ export function AdminNewsEditor({ item, preview, token, onClose, onSaved, onSave
           <div className="flex flex-wrap justify-end gap-3 border-t border-[#dfe5ec] pt-5">
             <button type="button" disabled={submitting} onClick={requestClose} className="rounded-lg border border-[#dfe5ec] px-5 py-2.5 text-sm font-semibold disabled:opacity-50">Cancelar</button>
             {item && <button type="submit" name="publication" value="keep" disabled={submitting} className="inline-flex items-center gap-2 rounded-lg border border-[#304e7d] px-4 py-2.5 text-sm font-semibold text-[#304e7d] disabled:opacity-50"><Save size={16}/> Guardar cambios</button>}
-            <button type="submit" name="publication" value="draft" disabled={submitting} className="inline-flex items-center gap-2 rounded-lg border border-[#dfe5ec] px-4 py-2.5 text-sm font-semibold disabled:opacity-50">Guardar borrador</button>
-            <button type="submit" name="publication" value="published" disabled={submitting} className="inline-flex items-center gap-2 rounded-lg bg-[#ff6a1f] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#b94308] disabled:opacity-50">{submitting ? 'Guardando…' : 'Guardar y publicar'}</button>
+            {!canPublish && <p role="status" className="w-full text-sm text-[#626b79]">No tienes permiso para cambiar la publicación. {item ? 'Se conservará su estado actual.' : 'La noticia se guardará como borrador.'}</p>}
+            {(canPublish || !item) && <button type="submit" name="publication" value="draft" disabled={submitting} className="inline-flex items-center gap-2 rounded-lg border border-[#dfe5ec] px-4 py-2.5 text-sm font-semibold disabled:opacity-50">Guardar borrador</button>}
+            {canPublish && <button type="submit" name="publication" value="published" disabled={submitting} className="inline-flex items-center gap-2 rounded-lg bg-[#ff6a1f] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#b94308] disabled:opacity-50">{submitting ? 'Guardando…' : 'Guardar y publicar'}</button>}
           </div>
         </form>
       </section>
