@@ -875,12 +875,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: ''
-        '501':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Pendiente de implementar (BE-08).
   /api/v1/admin/users/{user_id}/role/:
     put:
       operationId: v1_admin_users_role_update
@@ -938,12 +932,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: ''
-        '501':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Pendiente de implementar (BE-08).
   /api/v1/admin/users/roles/:
     get:
       operationId: v1_admin_users_roles_list
@@ -3092,21 +3080,27 @@ components:
           maxLength: 120
         price:
           type: integer
+          maximum: 9999999999
           minimum: 0
+          format: int64
         rooms:
           type: integer
+          maximum: 999
           minimum: 0
           default: 0
         baths:
           type: integer
+          maximum: 999
           minimum: 0
           default: 0
         parking:
           type: integer
+          maximum: 999
           minimum: 0
           default: 0
         area:
           type: integer
+          maximum: 99999999
           minimum: 1
         date:
           type: string
@@ -3490,21 +3484,27 @@ components:
           maxLength: 120
         price:
           type: integer
+          maximum: 9999999999
           minimum: 0
+          format: int64
         rooms:
           type: integer
+          maximum: 999
           minimum: 0
           default: 0
         baths:
           type: integer
+          maximum: 999
           minimum: 0
           default: 0
         parking:
           type: integer
+          maximum: 999
           minimum: 0
           default: 0
         area:
           type: integer
+          maximum: 99999999
           minimum: 1
         date:
           type: string
