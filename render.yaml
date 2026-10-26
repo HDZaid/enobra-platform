@@ -30,9 +30,17 @@ services:
       - key: DATABASE_POOLER_MODE
         value: transaction
       - key: MEDIA_STORAGE_BACKEND
-        value: cloudinary
-      - key: CLOUDINARY_URL
-        sync: false            # cloudinary://API_KEY:API_SECRET@CLOUD_NAME
+        value: r2
+      - key: R2_ACCOUNT_ID
+        sync: false            # identificador de cuenta de Cloudflare
+      - key: R2_ACCESS_KEY_ID
+        sync: false            # Access Key ID del token limitado al bucket
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false            # Secret Access Key del token limitado al bucket
+      - key: R2_BUCKET
+        sync: false            # p. ej. enobra-media
+      - key: R2_PUBLIC_BASE_URL
+        sync: false            # https://media.<dominio>.com.gt
       - key: INQUIRY_NOTIFIER
         value: resend
       - key: RESEND_API_KEY
