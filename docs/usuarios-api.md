@@ -2,10 +2,10 @@
 
 ## Contrato implementado en backend-dev
 
-Requiere `Authorization: Bearer <access>` y acceso administrativo completo
-(`admin.all`, incluyendo compatibilidad con cuentas Administrador antiguas).
-Arquitecta y Empleado no pueden consultar ni crear usuarios. El permiso aislado
-`users.manage` no permite asignarse roles superiores mediante estos endpoints.
+Requiere `Authorization: Bearer <access>`. Consultar exige `users.read` o `users.manage`;
+crear exige `users.manage`. Arquitecta y Empleado no pueden consultar ni crear usuarios.
+Quien tiene `users.manage` sin `admin.all` solo puede asignar roles cuyos permisos
+también posee (`403` en caso contrario), al crear y al cambiar el rol.
 
 - `GET /api/v1/admin/users/?q=&page=1&page_size=12`: listado paginado con búsqueda
   por nombre/correo. Máximo 100 filas por página.
@@ -44,7 +44,7 @@ Con `users.manage` (o `admin.all`), `PATCH /api/v1/admin/users/{id}/`
 acepta `name` y/o `active`; `PUT /api/v1/admin/users/{id}/role/` acepta
 `role_id`. Ambos devuelven `200` con la misma representación del usuario.
 El PUT reemplaza todas las asignaciones anteriores por un único rol activo;
-no agrega un rol adicional. El listado y la creación conservan sus permisos actuales.
+no agrega un rol adicional. El listado y la creación tienen sus propios permisos (arriba).
 
 No se permite desactivarse ni cambiar el propio rol (`403`). Tampoco asignar
 permisos que el actor no posee (`403`), salvo cuando tiene `admin.all`.

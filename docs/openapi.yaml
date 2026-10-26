@@ -781,7 +781,7 @@ paths:
           description: ''
     post:
       operationId: v1_admin_users_create
-      summary: Crear usuario y asignar un rol activo (administrador)
+      summary: Crear usuario y asignar un rol activo
       tags:
       - Usuarios (admin)
       requestBody:

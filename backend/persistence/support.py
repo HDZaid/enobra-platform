@@ -28,7 +28,7 @@ def audit(module, action, obj, actor=None):
     actor = actor or getattr(obj, "actualizado_por_id", None) or getattr(obj, "creado_por_id", None)
     if actor:
         HistorialActividad.objects.create(usuario_id=actor, accion=action, modulo=module,
-            id_registro=obj.pk, nombre_registro=str(getattr(obj, "titulo", ""))[:250])
+            id_registro=obj.pk, nombre_registro=str(getattr(obj, "titulo", "") or "")[:250])
 
 
 def page_of(qs, page, page_size, serialize):

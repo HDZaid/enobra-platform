@@ -1,10 +1,22 @@
 """Repositorio ORM para la administración de permisos y roles."""
 from django.db import IntegrityError, transaction
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from apps.accounts.interfaces import AccessControlRepository
 from .models.access import Permiso, Rol, RolPermiso
 from .models.audit import HistorialActividad
+
+
+def ensure_can_grant(actor, permissions, message):
+    """Nadie otorga permisos que no posee, salvo con `admin.all` (ADR 0001, límite 3).
+
+    `actor` es el Principal autenticado; si no se pasa (comandos internos) no se restringe.
+    """
+    if actor is None or actor.has_permission("admin.all"):
+        return
+    missing = sorted(set(permissions) - set(actor.permissions))
+    if missing:
+        raise PermissionDenied(f"{message} ({', '.join(missing)}).")
 
 
 class DjangoAccessControlRepository(AccessControlRepository):
@@ -56,11 +68,15 @@ class DjangoAccessControlRepository(AccessControlRepository):
         )
 
     @transaction.atomic
-    def create_role(self, data, *, actor_id):
+    def create_role(self, data, *, actor_id, actor=None):
         name = data["name"].strip()
         if name.casefold() in {"admin", "administrador"}:
             raise ValidationError({"name": "Este nombre está reservado para compatibilidad con roles existentes."})
         permissions = self._permissions(data["permissions"])
+        ensure_can_grant(
+            actor, [p.nombre for p in permissions],
+            "No puedes crear un rol con permisos que no posees",
+        )
         try:
             role = Rol.objects.create(
                 nombre=name,
@@ -75,7 +91,7 @@ class DjangoAccessControlRepository(AccessControlRepository):
         return self._serialize_role(role)
 
     @transaction.atomic
-    def update_role(self, role_id, data, *, actor_id):
+    def update_role(self, role_id, data, *, actor_id, actor=None):
         role = Rol.objects.select_for_update().filter(pk=role_id).first()
         if role is None:
             return None
@@ -84,6 +100,12 @@ class DjangoAccessControlRepository(AccessControlRepository):
             permission_objects = self._permissions(data["permissions"])
             if role.nombre == "Ingeniero" and not any(p.nombre == "admin.all" for p in permission_objects):
                 raise ValidationError({"permissions": "El rol Ingeniero debe conservar admin.all."})
+            # Solo cuentan los permisos que se agregan: quitar o conservar no escala privilegios.
+            current = set(role.permisos.values_list("nombre", flat=True))
+            ensure_can_grant(
+                actor, {p.nombre for p in permission_objects} - current,
+                "No puedes otorgar permisos que no posees",
+            )
         if role.nombre == "Ingeniero" and data.get("active") is False:
             raise ValidationError({"active": "El rol Ingeniero no puede desactivarse."})
         if "name" in data:

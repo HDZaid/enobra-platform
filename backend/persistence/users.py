@@ -5,7 +5,7 @@ from django.utils import timezone
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from apps.accounts.interfaces import UserRepository
-from .access_control import DjangoAccessControlRepository
+from .access_control import DjangoAccessControlRepository, ensure_can_grant
 from .models.access import Rol, Usuario, UsuarioRol
 from .models.audit import HistorialActividad
 from .support import page_of
@@ -92,10 +92,12 @@ class DjangoUserRepository(UserRepository):
         return [roles._serialize_role(role) for role in Rol.objects.filter(estado=True).order_by('nombre')]
 
     @transaction.atomic
-    def create(self, data, *, actor_id):
+    def create(self, data, *, actor_id, actor=None):
         role = Rol.objects.select_for_update().filter(pk=data['role_id'], estado=True).first()
         if role is None:
             raise ValidationError({'role_id': 'Selecciona un rol activo existente.'})
+        ensure_can_grant(actor, role.permisos.values_list('nombre', flat=True),
+            'No puedes asignar un rol con permisos que no posees')
         email = data['email'].strip().lower()
         if Usuario.objects.filter(correo__iexact=email).exists():
             raise ValidationError({'email': 'Ya existe un usuario con este correo.'})

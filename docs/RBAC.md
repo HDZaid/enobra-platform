@@ -171,7 +171,7 @@ La comprueban `RoleEndpointMatrixTests` y `GranularPermissionTests` en
 | `DELETE admin/media/{id}/` | `media.delete` | ✓ | ✗ | ✗ |
 | `PUT company/`, `PUT institution/` | `company.edit` | ✓ | ✗ | ✗ |
 | `GET admin/users/`, `GET admin/users/roles/` | `users.read`, `users.manage` | ✓ | ✗ | ✗ |
-| `POST admin/users/` | `admin.all` | ✓ | ✗ | ✗ |
+| `POST admin/users/` | `users.manage` (el rol asignado no puede superar tus permisos) | ✓ | ✗ | ✗ |
 | `PATCH admin/users/{id}/`, `PUT admin/users/{id}/role/` | `users.manage` | ✓ | ✗ | ✗ |
 | `GET admin/permissions/`, `GET admin/roles/`, `GET admin/roles/{id}/` | `roles.read`, `roles.manage` | ✓ | ✗ | ✗ |
 | `POST admin/roles/`, `PATCH admin/roles/{id}/` | `roles.manage` | ✓ | ✗ | ✗ |
@@ -188,7 +188,8 @@ con `properties.edit.own`, solo los suyos.
 
 Usuarios (BE-08, detalle en [usuarios-api.md](usuarios-api.md)):
 
-1. Crear cuentas exige `admin.all` (ver decisión pendiente 1).
+1. Crear cuentas exige `users.manage`, y el rol asignado no puede tener permisos que quien
+   crea no posee (`403`), salvo con `admin.all`.
 2. Nadie puede desactivarse ni cambiar su propio rol (`403`).
 3. Nadie puede asignar un rol con permisos que no posee (`403`), salvo con `admin.all`.
 4. No se puede desactivar ni quitar el rol al último Ingeniero activo (`400`).
@@ -224,15 +225,25 @@ fábrica y el catálogo los genera; ver [arquitectura.md](arquitectura.md#cómo-
 
 ## Decisiones pendientes y límites conocidos
 
-1. **Crear cuentas** (`POST admin/users/`) sigue exigiendo `admin.all`: con
-   `users.manage` se podría crear una cuenta con más permisos que los propios. Para
-   abrirlo hay que aplicar la regla 3 de usuarios también al crear.
+1. ~~**Crear cuentas** exigía `admin.all`~~ — **Cerrada el 25-oct.** `POST admin/users/` pide
+   `users.manage` y aplica la regla 3 de usuarios: el rol asignado no puede superar los
+   permisos de quien crea la cuenta (`403`), salvo `admin.all`.
 2. **Editar un proyecto sin `projects.publish` lo deja como borrador**, igual que en
    bienes raíces; si estaba publicado, queda despublicado. En noticias, en cambio, se
-   conserva el estado y cambiar `published` exige `news.publish`.
-3. **`roles.manage` permite otorgar cualquier permiso**, incluido `admin.all`, a
-   cualquier rol, también al propio. Hoy solo el Ingeniero tiene `roles.manage`. Hasta
-   que se aplique la misma regla que al asignar roles a usuarios, darlo solo a roles de
-   plena confianza.
+   conserva el estado y cambiar `published` exige `news.publish`. **Decisión (25-oct):
+   se mantiene**; hoy solo el Ingeniero edita proyectos y la regla evita que alguien sin
+   permiso de publicar cambie lo que ve el público.
+3. ~~**`roles.manage` permitía otorgar cualquier permiso**~~ — **Cerrada el 25-oct.** Al crear
+   un rol, o al agregar permisos a uno existente (también el propio), cada permiso debe
+   estar entre los de quien lo hace (`403`), salvo `admin.all`. Quitar o conservar permisos
+   no está restringido. Probado en `tests/test_privilege_escalation.py`.
 4. `GET projects/` con `projects.edit.own` (sin `.any`) no lista los borradores propios;
-   el detalle sí los muestra. Bienes raíces ya filtra por dueño.
+   el detalle sí los muestra. Bienes raíces ya filtra por dueño. **Decisión (25-oct): se
+   difiere**; ningún rol predeterminado tiene `projects.edit.own` (DEC-08). Debe
+   resolverse antes de dárselo a un rol.
+5. **Panel de bienes raíces del Empleado (INT-04/H1).** Con sesión, `GET properties/` de
+   un Empleado devuelve solo las propiedades que creó (borradores y publicadas); no ve las
+   publicadas por otros en el panel. **Decisión (25-oct): se mantiene.** Es coherente con
+   `properties.edit.own` y con la papelera propia, y el sitio público (sin token) sí
+   muestra todas las publicadas. Si el cliente pide lo contrario, el cambio es el filtro
+   `owner_id` en `PropertyRepository.list` (`persistence/catalog.py`).

@@ -16,9 +16,9 @@ from .user_serializers import (ManagedUserSerializer, UserCreateSerializer, User
 
 class UserListCreateView(APIView):
     permission_classes = [ResourcePermission]
-    # Crear cuentas sigue siendo exclusivo de admin.all: users.manage no basta, porque aún no se
-    # valida que el rol asignado no supere los permisos de quien lo asigna (sí se hace al cambiar rol).
-    permission_map = {"GET": ("users.read", "users.manage"), "POST": ("admin.all",)}
+    # Crear cuentas exige users.manage y, como al cambiar de rol, el rol asignado no puede superar
+    # los permisos de quien lo asigna (salvo admin.all). Decisión 1 de RBAC.md, cerrada el 25-oct.
+    permission_map = {"GET": ("users.read", "users.manage"), "POST": ("users.manage",)}
     read_public = False
 
     @extend_schema(parameters=[UserListQuerySerializer], responses={200: paginated(ManagedUserSerializer),
@@ -32,11 +32,13 @@ class UserListCreateView(APIView):
 
     @extend_schema(request=UserCreateSerializer, responses={201: ManagedUserSerializer,
         400: ErrorSerializer, 401: ErrorSerializer, 403: ErrorSerializer},
-        tags=['Usuarios (admin)'], summary='Crear usuario y asignar un rol activo (administrador)')
+        tags=['Usuarios (admin)'], summary='Crear usuario y asignar un rol activo')
     def post(self, request):
         serializer = UserCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        result = resolve(UserRepository).create(serializer.validated_data, actor_id=request.user.id)
+        result = resolve(UserRepository).create(
+            serializer.validated_data, actor_id=request.user.id, actor=request.user
+        )
         return Response(ManagedUserSerializer(result).data, status=status.HTTP_201_CREATED)
 
 

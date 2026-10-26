@@ -125,8 +125,9 @@ class UserManagementAPITests(TestCase):
             self.assertEqual(public.get(URL + 'roles/').status_code, 403)
             self.assertEqual(public.post(URL, self.payload(), format='json').status_code, 403)
 
-    def test_users_read_and_manage_can_list_but_only_admin_all_can_create(self):
-        # BE-02: GET /admin/users/ acepta users.read o users.manage; crear cuentas sigue exigiendo admin.all.
+    def test_users_read_and_manage_can_list_but_cannot_create_with_foreign_role(self):
+        # GET /admin/users/ acepta users.read o users.manage. Crear exige users.manage y un rol dentro de
+        # los permisos propios (ver tests/test_privilege_escalation.py); aquí el rol Empleado los excede.
         from apps.accounts.interfaces import Principal
         client = APIClient()
         for role, permissions in [('Lector', {'users.read'}), ('Gestor', {'users.manage'})]:

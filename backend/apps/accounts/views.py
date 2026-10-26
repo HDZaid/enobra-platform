@@ -138,7 +138,7 @@ class RoleListCreateView(APIView):
         serializer = RoleWriteSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         role = resolve(AccessControlRepository).create_role(
-            serializer.validated_data, actor_id=request.user.id
+            serializer.validated_data, actor_id=request.user.id, actor=request.user
         )
         return Response(RoleSerializer(role).data, status=status.HTTP_201_CREATED)
 
@@ -169,7 +169,7 @@ class RoleDetailView(APIView):
         serializer = RoleWriteSerializer(data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         role = resolve(AccessControlRepository).update_role(
-            role_id, serializer.validated_data, actor_id=request.user.id
+            role_id, serializer.validated_data, actor_id=request.user.id, actor=request.user
         )
         if role is None:
             raise NotFound("Rol no encontrado.")
