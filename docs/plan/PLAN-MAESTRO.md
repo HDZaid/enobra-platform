@@ -311,12 +311,12 @@ Verificación:    comandos exactos.
 | BE-05 | Fábrica de publicaciones (Abstract Factory) | Henry | P0 | 4 h | [ ] |
 | BE-06 | Límites numéricos y carrera de borradores | Pablo | P0 | 2 h | [x] BE-06a y BE-06b; 24-oct: 122 pruebas backend en verde (SQLite) |
 | BE-07 | Endpoint de Historial y exportación | Juan | P0 | 3 h | [ ] |
-| BE-08 | Editar usuarios y cambiar rol | Pablo | P0 | 3 h | [ ] |
+| BE-08 | Editar usuarios y cambiar rol | Pablo | P0 | 3 h | [x] Implementada en ec8f363; reglas verificadas al cerrar BE-13 el 25-oct |
 | BE-09 | Notificador de consultas (correo) | Juan | P0 | 3 h | [ ] |
 | BE-10 | Validar el esquema contra Supabase | Juan | P0 | 1.5 h | [ ] |
 | BE-11 | Docs: RBAC, arquitectura, ADR | Henry | P0 | 2 h | [ ] |
 | BE-12 | Docs: auditoría y papelera | Juan | P0 | 1.5 h | [ ] |
-| BE-13 | Docs: actualizar API de usuarios | Pablo | P0 | 0.5 h | [ ] |
+| BE-13 | Docs: actualizar API de usuarios | Pablo | P0 | 0.5 h | [x] 25-oct: permisos vigentes, seis reglas, errores y guardados parciales; 189 pruebas backend en verde |
 | BE-14 … BE-22 | Backlog posterior a la entrega | varios | P1/P2 | n/a | [ ] |
 
 ### Frontend (detalle en `PLAN-FRONTEND.md`)
