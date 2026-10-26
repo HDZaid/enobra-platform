@@ -1,8 +1,12 @@
 # Backend del panel administrativo
 
-Implementación sobre `develop`, basada en `MockUp---enObra/admin.js`, los contratos
-HTTP existentes y los modelos de `backend/persistence/models/`. No modifica el
-frontend, la conexión a Supabase, los modelos existentes ni el esquema de sus tablas.
+Cómo guarda el panel sus datos sobre las tablas existentes de Supabase, sin migraciones.
+Basado en `MockUp---enObra/admin.js` y los modelos de `backend/persistence/models/`.
+
+> Actualizado el 25-oct. Los permisos ya no dependen del rol `admin`: se calculan por
+> permiso ([RBAC.md](RBAC.md)). Borrar un proyecto o una propiedad la envía a la
+> [papelera](papelera.md); las noticias se borran en definitivo. El historial se describe
+> en [auditoria.md](auditoria.md).
 
 ## Funcionalidades
 
@@ -61,9 +65,9 @@ Eliminar contenido no elimina los archivos compartidos; sus bajas son explícita
 ## Requisitos de ejecución
 
 Instalar `backend/requirements.txt`. Las cuentas reales deben existir en `usuario`,
-estar `ACTIVO` y tener un rol activo llamado `admin` o `Administrador` (sin distinguir
-mayúsculas). Ambos perfiles reciben las mismas opciones del panel. No se crean cuentas
-de ejemplo ni se incluyen credenciales. `password_hash` debe usar un formato soportado
+estar `ACTIVO` y tener un rol activo con permisos (`seed_access_control` crea Ingeniero,
+Arquitecta y Empleado). Los roles antiguos `admin`/`Administrador` reciben `admin.all`
+por compatibilidad. No se crean cuentas de ejemplo ni se incluyen credenciales. `password_hash` debe usar un formato soportado
 por los hashers de Django; PBKDF2 es el predeterminado. Las claves en texto plano no
 sirven para iniciar sesión.
 
@@ -72,12 +76,10 @@ Mantener la configuración de conexión ya existente. No ejecutar migraciones pa
 estas tablas. No hace falta agregar `django.contrib.auth` ni `contenttypes` para
 verificar hashes.
 
-Las imágenes usan el almacenamiento Django predeterminado. En desarrollo se guardan
-en `backend/media/` y se sirven bajo `/media/` con DEBUG. `MEDIA_ROOT` y `MEDIA_URL`
-son opcionales. En producción configurar un directorio duradero y un servidor que
-sirva esa URL, o un backend de almacenamiento Django. El proveedor externo sigue
-pendiente; esta entrega no despliega ni configura un proveedor. El consumidor debe
-poder acceder a `/media/` en el origen del backend o usar una `MEDIA_URL` HTTPS pública.
+Las imágenes se guardan según `MEDIA_STORAGE_BACKEND`: `local` escribe en
+`backend/media/` y se sirven bajo `/media/` con DEBUG (solo desarrollo; el disco de Render
+se borra en cada despliegue); `cloudinary` las sube a Cloudinary y guarda su URL HTTPS.
+Ver [despliegue.md](despliegue.md).
 
 Limpieza periódica opcional de sesiones vencidas, desde `backend/`:
 
@@ -91,7 +93,7 @@ Desde `backend/`:
 
 ```powershell
 .\.venv\Scripts\python.exe manage.py check
-.\.venv\Scripts\python.exe manage.py test --settings=config.test_settings
+.\.venv\Scripts\python.exe manage.py test tests --settings=config.test_settings
 .\.venv\Scripts\python.exe manage.py spectacular --file ../docs/openapi.yaml --validate
 ```
 
@@ -104,6 +106,6 @@ las particularidades de PostgreSQL requieren validación adicional en un entorno
 PostgreSQL de pruebas; esta entrega no afirma haber probado Supabase en vivo.
 
 Los módulos públicos de servicios y buscador global siguen sin implementación
-registrada (`501`); no forman parte de las operaciones del panel. Las notificaciones
-externas por correo/WhatsApp no se configuran en esta entrega.
+registrada (`501`); no forman parte de las operaciones del panel. Cada consulta recibida
+se notifica por correo (SMTP o Resend); WhatsApp queda en el backlog.
 

@@ -1,35 +1,45 @@
 # Documentación de EnObra
 
-Esta carpeta reúne los acuerdos compartidos del equipo. Todo está sujeto a cambios:
-las decisiones se revisan gradualmente y se actualizan junto con el código afectado.
+**Empieza por [Estado del proyecto](estado-proyecto.md):** ramas, cifras de pruebas,
+pendientes con responsable y decisiones recientes. Si otro documento lo contradice, vale
+ese hasta su próxima actualización.
 
-**Empieza por [Estado del proyecto](estado-proyecto.md)** (vigente, 25 de octubre de 2026):
-ramas, cifras de pruebas, pendientes y qué documentos son históricos.
+## Referencia vigente
 
-- [INT-04: matriz de pruebas por rol](INT-04-matriz-roles.md): qué puede cada rol, probado en la API, Postman y el panel.
+| Documento | Para qué |
+|---|---|
+| [openapi.yaml](openapi.yaml) | Contrato HTTP entre backend y frontend (generado; no se edita a mano). |
+| [RBAC.md](RBAC.md) | Los 32 permisos, roles predeterminados, seed, matriz rol × endpoint, reglas de seguridad y decisiones. |
+| [adr/0001-rbac-por-datos.md](adr/0001-rbac-por-datos.md) | Por qué los roles son datos y la fábrica solo se usa para publicaciones. |
+| [arquitectura.md](arquitectura.md) | Interfaces, registro, `bindings.py`, fábrica de publicaciones; cómo agregar un tipo. |
+| [admin-backend.md](admin-backend.md) | Cómo se guardan los datos del panel sobre las tablas existentes (sin migraciones) y las sesiones. |
+| [papelera.md](papelera.md) | Rutas, restauración, permisos y conflicto con la limpieza SQL de Supabase. |
+| [auditoria.md](auditoria.md) | Historial: eventos, filtros, paginación y exportación CSV. |
+| [usuarios-api.md](usuarios-api.md) | Crear y editar cuentas, cambiar rol y sus reglas. |
+| [despliegue.md](despliegue.md) | Cloudflare Pages, Render, Supabase, Cloudinary y Resend: variables y pasos. |
 
-- [Reglas de desarrollo y responsables](reglas-desarrollo.md): equipo, contratos,
-  ramas, revisiones y criterios de entrega.
-- [Infraestructura](infraestructura.md): PostgreSQL en Supabase como decisión y propuestas
-  todavía pendientes para despliegue y almacenamiento de imágenes (entre ellas R2).
-- [Contrato OpenAPI](openapi.yaml): referencia HTTP para backend y frontend.
-- [Roles y permisos (RBAC)](RBAC.md): los 32 permisos, roles predeterminados, seed, matriz rol × endpoint y cómo agregar un permiso (BE-11).
-- [Arquitectura del backend](arquitectura.md): interfaces, registro, `bindings.py` y la fábrica de publicaciones; cómo agregar un tipo (BE-11).
-- [ADR 0001: roles en la base de datos](adr/0001-rbac-por-datos.md): por qué los roles son datos y la fábrica solo se usa para publicaciones (BE-11).
-- [Auditoría administrativa](auditoria.md): API integrada, eventos, permisos, filtros, paginación y exportación CSV protegida (BE-12).
-- [Papelera de publicaciones](papelera.md): rutas reales, restauración, permisos, imágenes en JSON y límites de limpieza SQL (BE-12).
-- [Backend del administrador](admin-backend.md): implementación, mapeo sobre tablas existentes y pruebas aisladas.
-- [Cómo probar el administrador](probar-admin.md): comandos, script HTTP y recorrido manual con Swagger.
-- [Colección de Postman](postman/README.md): todos los endpoints, entorno local y prueba de imágenes.
-- [Reporte de revisión administrativa](reporte-revision-admin.md): hallazgos, evidencia y pasos de reproducción.
-- [Reporte de contratos frontend ↔ backend](reporte-contratos-frontend.md): diferencias entre lo que consume React y lo que implementa Django.
-- [Backend](../backend/README.md) y [frontend](../frontend/README.md): instalación y desarrollo.
+## Pruebas
 
-Los informes de implementación de una rama describen el estado de esa entrega;
-no reemplazan el contrato ni implican que una funcionalidad ya esté integrada en `develop`.
+| Documento | Para qué |
+|---|---|
+| [INT-04-matriz-roles.md](INT-04-matriz-roles.md) | Qué puede cada rol, probado en la API, Postman y el panel. |
+| [postman/README.md](postman/README.md) | Colecciones de Postman y cómo correrlas con Newman. |
+| [BE-10-validacion-supabase.md](BE-10-validacion-supabase.md) | Comprobación de solo lectura del esquema real de Supabase (23-oct). |
 
-- [Integración del frontend](frontend-integration.md): procedencia por rama, conflictos, validación y pendientes.
+## Pendientes con Supabase
 
-- [Integración parcial React–Django y pendientes](integracion-backend-frontend.md): flujos reales verificados, límites de catálogos y pruebas reproducibles.
+| Documento | Para qué |
+|---|---|
+| [BE-04-compatibilidad-limpieza-supabase.md](BE-04-compatibilidad-limpieza-supabase.md) | La función `limpiar_proyectos_inactivos()` frente a la papelera. Leer antes de usar la papelera en la base real. |
+| [propuesta-tablas-imagenes.md](propuesta-tablas-imagenes.md) | Tablas de imágenes propuestas (no aplicadas) y su [SQL](sql/propuesta-tablas-imagenes.sql). |
 
-- [Trabajo en equipo y ramas compartidas](TRABAJO-EN-EQUIPO.md): reparto, Administrador para Pablo, advertencias y Conventional Commits.
+## Equipo y plan
+
+| Documento | Para qué |
+|---|---|
+| [TRABAJO-EN-EQUIPO.md](TRABAJO-EN-EQUIPO.md) | Ramas compartidas, sincronización, hooks y commits. **Regla vigente.** |
+| [reglas-desarrollo.md](reglas-desarrollo.md) | Responsables por área, contratos y criterios de entrega. |
+| [plan/](plan/) | Plan de entrega del 25-oct (maestro, backend y frontend) y backlog BE-14 a BE-22. |
+
+Los informes por etapa y por rama de octubre se retiraron el 25-oct porque sus cifras y
+pendientes quedaron consolidados en el estado del proyecto. Siguen en el historial de Git.

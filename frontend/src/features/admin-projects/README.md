@@ -10,14 +10,13 @@ valida antes de enviar y conserva el slug al editar. Envía siempre `demo: false
 `published` explícito. Sin `projects.publish`, se guarda como borrador y se informa.
 Bloquea guardado durante subidas y pide confirmación antes de salir con cambios.
 
-`PROJECT_TRASH_ENABLED` permanece en false. La API antigua elimina físicamente usando
-el mismo DELETE; activar solo tras probar BE-04 en el backend integrado. El guardado,
-la publicación y los borradores se probaron con Ingeniero (`admin.all`). Los permisos
-finos dependen de BE-01/02 y no se certifican con el backend anterior. Las reglas
-`edit.own`/`trash.own` suponen el filtrado de propietarios que debe hacer el servidor,
-igual que en el módulo de propiedades; nunca sustituyen la autorización del backend.
+`PROJECT_TRASH_ENABLED` sigue en `false` (`utils/projects.js`). Desde INT-02 el backend
+ya envía los proyectos a la papelera con `DELETE` y permite restaurarlos (verificado el
+25-oct, INT-04/H4); falta activarlo y probarlo en pantalla (Jennifer). Las reglas
+`edit.own`/`trash.own` suponen el filtrado de propietarios del servidor y nunca sustituyen
+su autorización.
 
-Verificación: lint, 141 pruebas y build. Chromium con Django real, SQLite y archivos
+Verificación original (24-oct): lint, 141 pruebas y build. Chromium con Django real, SQLite y archivos
 temporales: alta con dos fotos, reordenamiento, publicación pública, edición, slug
 estable, despublicación, edición de borrador, confirmación de cambios y ancho 390 px.
 Se ejecutó `frontend/tests/browser/admin-projects.cjs` mediante un adaptador temporal

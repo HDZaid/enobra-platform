@@ -28,12 +28,14 @@ contradice a otro documento, vale este hasta su próxima actualización.
 
 | Rama | Estado |
 |---|---|
-| `develop` | Integración vigente (`238fd1c`). Contiene todo `frontend-dev` (`1ecb60a`) y todo `backend-dev`. |
+| `develop` | Integración vigente (`9b2f69a`: `238fd1c` + INT-04 + INT-05). Contiene todo `frontend-dev` (`1ecb60a`) y todo `backend-dev`. |
 | `backend-dev` | Igual a `develop` (`238fd1c`). |
 | `frontend-dev` | En `1ecb60a`, ancestro de `develop`. Antes de seguir trabajando: `git merge origin/develop`. |
 | `main` | Sin cambios. No recibe la entrega hasta el despliegue. |
+| `despliegue/cloudinary` | `develop` + configuración de despliegue (Render, Cloudinary, Resend, Cloudflare Pages) + cierres de RBAC y H2 del 25-oct + limpieza de documentación. Se integra a `develop` y `main` al desplegar. |
+| `despliegue/r2` | Por crear desde `despliegue/cloudinary`, con imágenes en Cloudflare R2. |
 
-No quedan ramas alternas. `feature/Tareas-Leo` ya se retiró. PR #13 y #14 están
+No quedan ramas alternas de trabajo diario. `feature/Tareas-Leo` ya se retiró. PR #13 y #14 están
 fusionados.
 
 ## 3. Pruebas (cifras vigentes)
@@ -104,11 +106,10 @@ Backlog sin cambios: BE-14 a BE-22 y FE-04, FE-05, FE-08, FE-09 y FE-15
 
 ## 6. Documentos
 
-| Documento | Uso |
-|---|---|
-| **Este documento** | Estado vigente |
-| [INT-04-matriz-roles.md](INT-04-matriz-roles.md) | Qué puede cada rol, probado |
-| [RBAC.md](RBAC.md), [arquitectura.md](arquitectura.md), [papelera.md](papelera.md), [auditoria.md](auditoria.md), [usuarios-api.md](usuarios-api.md), [openapi.yaml](openapi.yaml) | Referencia vigente |
-| [plan/](plan/) | Plan de entrega y tablero |
-| [INT-01-integracion-frontend.md](INT-01-integracion-frontend.md) | Integración del frontend (24-oct) |
-| [estado-ramas.md](estado-ramas.md), [integracion-backend-frontend.md](integracion-backend-frontend.md), [frontend-integration.md](frontend-integration.md), [reporte-revision-admin.md](reporte-revision-admin.md), [reporte-contratos-frontend.md](reporte-contratos-frontend.md) | **Históricos** (12–21 de octubre). Sus cifras de pruebas y sus pendientes se actualizan aquí. |
+Índice completo en [README.md](README.md). Los informes por etapa y por rama de octubre
+(`estado-ramas.md`, `frontend-integration.md`, `integracion-backend-frontend.md`,
+`reporte-revision-admin.md`, `reporte-contratos-frontend.md`, `INT-01-integracion-frontend.md`,
+`geo-frontend.md`, `leo-frontend.md`, `usuarios-frontend.md`, `probar-admin.md`,
+`infraestructura.md` y los `frontend/ADMIN-*`, `NEWS-*` y `CONTACTO-*`) **se retiraron el
+25-oct** en `despliegue/cloudinary`: sus cifras y pendientes ya están aquí y siguen en el
+historial de Git (`git log --all -- <ruta>`).

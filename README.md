@@ -1,64 +1,69 @@
 # EnObra Platform
 
-Monorepo con dos aplicaciones independientes: **Django + Django REST Framework** en
-`backend/` y **React + Vite** en `frontend/`. Se comunican por HTTP mediante `/api/v1/`.
-Cada aplicación tiene sus dependencias, configuración y comandos de arranque.
+Sitio y panel administrativo de **Constructora EnObra** (Quetzaltenango, Guatemala).
+Monorepo con dos aplicaciones independientes que se comunican por HTTP en `/api/v1/`:
 
-## Ramas compartidas del equipo
+- `backend/`: **Django 5.2 + Django REST Framework** sobre PostgreSQL en Supabase.
+- `frontend/`: **React 18 + Vite**, sitio público y panel administrativo.
 
-Frontend: **Leo, Geo y Jennifer en frontend-dev**; Pablo trabaja el **Administrador**
-también en frontend-dev. Backend: **Juan, Pablo y Henry en backend-dev**. Una sola rama
-por equipo, sin ramas alternas. Antes de trabajar o publicar, revisar y sincronizar
-los cambios de compañeros. Ver [reglas de trabajo](docs/TRABAJO-EN-EQUIPO.md).
+**Estado vigente** (pruebas, pendientes y responsables): [docs/estado-proyecto.md](docs/estado-proyecto.md).
+
+## Qué hace
+
+- **Sitio público:** Inicio, Nosotros, Servicios, Proyectos, Bienes Raíces (filtros y
+  favoritos), Noticias y Contacto con solicitud de visita.
+- **Panel administrativo:** Bienes Raíces y Proyectos (alta, edición, publicación,
+  imágenes), Noticias, Mensajes, Papelera, Historial, Roles y Usuarios.
+- **Roles por datos:** 32 permisos definidos en código; los roles (Ingeniero, Arquitecta,
+  Empleado y los que se creen) se editan desde el panel sin desplegar. Ver
+  [RBAC](docs/RBAC.md) y el [ADR 0001](docs/adr/0001-rbac-por-datos.md).
+- **Aviso por correo** al recibir una consulta.
+
+## Ramas
+
+| Rama | Uso |
+|---|---|
+| `main` | Versiones estables. Recibe la entrega cuando se despliega. |
+| `develop` | Integración revisada de ambos equipos. |
+| `frontend-dev` | Leo, Geo y Jennifer (Pablo para el panel). |
+| `backend-dev` | Juan, Pablo y Henry. |
+| `despliegue/cloudinary` | Configuración de despliegue con imágenes en Cloudinary (incluye los últimos cierres de RBAC). |
+| `despliegue/r2` | Variante con imágenes en Cloudflare R2, derivada de la anterior (en preparación). |
+
+Reglas de trabajo, sincronización y commits: [docs/TRABAJO-EN-EQUIPO.md](docs/TRABAJO-EN-EQUIPO.md).
 
 ## Estructura
 
 ```text
 enobra-platform/
 ├── backend/
-│   ├── apps/                 # Contratos y lógica por dominio
-│   │   ├── accounts/         # Autenticación
-│   │   ├── common/           # Utilidades compartidas del backend
-│   │   ├── company/          # Empresa e información institucional
-│   │   ├── inquiries/        # Solicitudes de contacto y visitas
-│   │   ├── media/            # Contratos de medios
-│   │   ├── news/             # Noticias
-│   │   ├── projects/         # Proyectos
-│   │   ├── properties/       # Bienes raíces
-│   │   ├── search/           # Búsqueda
-│   │   └── services/         # Servicios de construcción
-│   ├── config/               # Settings, URLs, ASGI/WSGI y registro de implementaciones
-│   ├── .env.example          # Variables del servidor
-│   ├── manage.py
-│   ├── requirements.txt
-│   └── README.md             # Contratos y desarrollo de la API
+│   ├── apps/          # Contrato HTTP por dominio: serializers, vistas, URLs e interfaces
+│   │   ├── accounts/      # Autenticación, roles y usuarios
+│   │   ├── audit/         # Historial y exportación CSV
+│   │   ├── common/        # Permisos (RBAC), errores, paginación, registro
+│   │   ├── company/       # Empresa y textos institucionales
+│   │   ├── inquiries/     # Contacto, visitas y bandeja
+│   │   ├── media/         # Subida de imágenes
+│   │   ├── news/ projects/ properties/
+│   │   ├── publications/  # Fábrica de publicaciones y papelera unificada
+│   │   └── search/ services/  # Contratos pendientes (501)
+│   ├── persistence/   # Implementaciones ORM, almacenamiento de imágenes y notificaciones
+│   ├── config/        # settings, urls y bindings.py (único punto de acople)
+│   ├── scripts/       # Matriz de roles y prueba de integración con el navegador
+│   └── tests/
 ├── frontend/
-│   ├── src/
-│   │   ├── app/              # Entrada de la aplicación y rutas
-│   │   ├── components/       # Componentes reutilizables y layouts
-│   │   ├── features/         # Páginas y servicios organizados por funcionalidad
-│   │   ├── services/         # Cliente HTTP compartido
-│   │   ├── styles/           # Estilos globales
-│   │   └── main.jsx
-│   ├── tests/
-│   ├── .env.example          # Variables públicas de Vite
-│   ├── package.json
-│   ├── package-lock.json
-│   ├── vite.config.js
-│   └── README.md             # Desarrollo y reparto de módulos
-├── docs/
-│   ├── README.md             # Índice de documentación
-│   ├── reglas-desarrollo.md  # Equipo, contratos y flujo de colaboración
-│   ├── infraestructura.md    # Propuesta de despliegue, sujeta a cambios
-│   └── openapi.yaml          # Contrato compartido entre backend y frontend
-├── .gitignore
-└── README.md
+│   ├── public/        # _redirects y _headers para Cloudflare Pages
+│   ├── src/           # app/ (rutas), components/, features/, services/, styles/
+│   └── tests/         # Pruebas con node --test y recorridos de navegador
+├── docs/              # Documentación compartida y contrato OpenAPI
+├── render.yaml        # Servicio de Render (rama de despliegue)
+└── AGENTS.md          # Reglas para asistentes de IA que trabajan en el repositorio
 ```
 
 ## Desarrollo local
 
-Requisitos: Python 3.12+ y Node.js compatible con `frontend/package.json`.
-Abre dos terminales desde la raíz del repositorio.
+Requisitos: **Python 3.13** (3.12+ funciona) y **Node.js ≥ 20.19 o ≥ 22.12**. Dos terminales
+desde la raíz del repositorio.
 
 ### Terminal 1: backend (PowerShell)
 
@@ -66,14 +71,13 @@ Abre dos terminales desde la raíz del repositorio.
 cd backend
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
-Copy-Item .env.example .env
+Copy-Item .env.example .env          # solo la primera vez; completa DATABASE_URL
 .\.venv\Scripts\python.exe manage.py check
 .\.venv\Scripts\python.exe manage.py runserver
 ```
 
-La creación del entorno, instalación y copia de `.env` se hacen en el primer arranque.
-En los siguientes basta ejecutar `runserver` desde `backend/` con el Python del entorno.
-En macOS/Linux usa `.venv/bin/python` y `cp` en lugar de `Copy-Item`.
+En macOS/Linux usa `.venv/bin/python` y `cp`. Sin `DATABASE_URL` el servidor arranca, pero
+las rutas con datos fallan: la base es la de Supabase (o una copia de desarrollo).
 
 ### Terminal 2: frontend
 
@@ -83,67 +87,43 @@ npm ci
 npm run dev
 ```
 
-Frontend: <http://localhost:5173/>. API: <http://127.0.0.1:8000/api/v1/health/>.
-Swagger: <http://127.0.0.1:8000/api/docs/>.
-Vite ya redirige `/api` al backend durante desarrollo.
+- Frontend: <http://localhost:5173/> · Panel: <http://localhost:5173/admin/login>
+- API: <http://127.0.0.1:8000/api/v1/health/> · Swagger: <http://127.0.0.1:8000/api/docs/>
 
-## Configuración y responsabilidades
+Vite redirige `/api` y `/media` a Django durante el desarrollo.
 
-- **Backend:** código Python, validaciones, permisos y futuras implementaciones de persistencia.
-  Su archivo local `backend/.env` se carga automáticamente; las variables del sistema tienen prioridad.
-  Usa PostgreSQL alojado en Supabase mediante `DATABASE_URL` y accede a las tablas existentes
-  exclusivamente con Django ORM. No se crean esas tablas con migraciones de Django.
-- **Frontend:** componentes, rutas, estilos y peticiones HTTP. Para cambiar la URL de la API,
-  copia `frontend/.env.example` a `frontend/.env.local` y ajusta `VITE_API_BASE_URL`.
-  Las variables `VITE_*` son públicas: no deben contener secretos. React nunca se conecta
-  directamente a Supabase/PostgreSQL: consume únicamente la API de Django.
-- **Documentación compartida:** contratos y acuerdos entre ambas aplicaciones en `docs/`.
-- **Despliegue:** ejecuta Django desde `backend/` usando `config.wsgi:application` o
-  `config.asgi:application`. El resultado de compilar React está en `frontend/dist/`.
-  En producción configura el proxy de `/api` o una URL de API pública y su origen CORS;
-  el proxy de Vite solo funciona durante desarrollo.
+## Configuración
 
-La configuración activa de Django es `backend/config/`. Se retiraron `core/` y `api/`,
-que eran plantillas iniciales sin uso. Los imports internos (`apps.*`, `config.*`) se conservan.
+- **Backend:** lee `backend/.env` (las variables del sistema tienen prioridad). Accede a las
+  tablas existentes de Supabase solo con Django ORM y modelos `managed=False`: **no se
+  ejecutan migraciones** sobre esas tablas.
+- **Frontend:** `frontend/.env.local` con `VITE_API_BASE_URL`. Las variables `VITE_*` son
+  públicas: nunca contienen secretos. React solo habla con la API de Django.
+- **Secretos:** solo en variables de entorno o en el panel de cada plataforma. Nunca en el
+  repositorio.
 
-## Verificación
-
-Desde `backend/`:
+## Verificación antes de publicar
 
 ```powershell
+# backend/
 .\.venv\Scripts\python.exe manage.py check
-.\.venv\Scripts\python.exe manage.py spectacular --file ../docs/openapi.yaml --validate
-```
+.\.venv\Scripts\python.exe manage.py test tests --settings=config.test_settings
+.\.venv\Scripts\python.exe manage.py spectacular --file ../docs/openapi.yaml --validate   # si cambió el contrato
 
-Desde `frontend/`:
-
-```powershell
-npm test
+# frontend/
 npm run lint
+npm test
 npm run build
 ```
 
-## Estado actual
+Las pruebas usan SQLite y archivos temporales; **ninguna toca Supabase**.
 
-La API define contratos e interfaces y contiene repositorios Django para varios módulos;
-requiere configurar PostgreSQL mediante `DATABASE_URL` para probar persistencia real.
-Las interfaces sin implementación responden `501 not_implemented`. Las tablas de negocio
-existentes se mapean sin `makemigrations`/`migrate`.
+## Despliegue
 
-En `develop` están integrados Inicio, Nosotros, Servicios, Proyectos, Bienes Raíces,
-Noticias, Contacto y el panel de noticias/mensajes. Las rutas y la UI se validaron con
-respuestas API controladas; la integración real con Django y los formularios
-administrativos todavía ausentes se detallan en el
-[reporte de integración](docs/frontend-integration.md).
+Cloudflare Pages (frontend) + Render (API) + Supabase (base) + Cloudinary o R2 (imágenes) +
+Resend (correo). Guía paso a paso y variables: [docs/despliegue.md](docs/despliegue.md).
 
-Consulta [la documentación del backend](backend/README.md),
-[la del frontend](frontend/README.md) y [el contrato OpenAPI](docs/openapi.yaml).
+## Documentación
 
-## Trabajo en equipo
-
-Somos seis integrantes (tres de backend y tres de frontend), coordinados mediante
-contratos. Consulta las [reglas y responsables](docs/reglas-desarrollo.md) y la
-[propuesta de infraestructura](docs/infraestructura.md): Cloudflare Pages para el
-frontend con dominio `.gt` y Render para Django. El proveedor de fotos/renders sigue
-pendiente; Cloudflare R2 es solo una propuesta.
-Las asignaciones no restringen las contribuciones y todos los acuerdos están sujetos a cambios.
+Índice completo en [docs/README.md](docs/README.md). Detalle de cada aplicación en
+[backend/README.md](backend/README.md) y [frontend/README.md](frontend/README.md).

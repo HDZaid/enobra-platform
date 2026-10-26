@@ -1,83 +1,119 @@
-# EnObra — Frontend integrado
+# EnObra · Frontend
 
-Proyecto React + Vite en JavaScript/JSX, preparado para conectarse a los contratos de Django REST Framework de este mismo repositorio.
+React 18 + Vite (JavaScript/JSX), Tailwind CSS 4 y Lucide React. Contiene el sitio público y
+el panel administrativo; consume únicamente la API de Django (`../backend/`).
 
-> **Estado en `develop`:** integrados los módulos públicos de Leo, Jennifer y Geo, más login, dashboard, noticias y mensajes del panel. Validación de UI con API controlada; la conexión real y persistencia se verifican en la fase de backend. Faltan los formularios administrativos de proyectos, propiedades y contenido institucional.
+Estado, pruebas y pendientes vigentes: [../docs/estado-proyecto.md](../docs/estado-proyecto.md).
 
-## Requisitos
+## Arranque
 
-Node.js >= 20.19 o >= 22.12 y npm. Desde la raíz del repositorio:
+Node.js ≥ 20.19 o ≥ 22.12. Desde la raíz del repositorio, con el backend corriendo en otra
+terminal (ver [../backend/README.md](../backend/README.md)):
 
 ```bash
 cd frontend
 npm ci
-npm run dev
+npm run dev        # http://localhost:5173/
 ```
 
-Abra `http://localhost:5173/`. Para compilar y ejecutar comprobaciones:
+| Comando | Qué hace |
+|---|---|
+| `npm test` | Pruebas con `node --test` (`tests/*.test.mjs`) |
+| `npm run lint` | ESLint |
+| `npm run build` | Compila a `dist/` (incluye `public/_redirects` y `_headers`) |
+| `npm run preview` | Sirve el build localmente |
+
+Usa `npm ci` para instalar y `npm install` solo al agregar o actualizar dependencias,
+versionando también `package-lock.json`.
+
+## Variables (`.env.local`)
+
+Copia `.env.example`. Todas las `VITE_*` son **públicas** y se leen al compilar: nunca
+contienen secretos.
+
+| Variable | Desarrollo | Producción (Cloudflare Pages) |
+|---|---|---|
+| `VITE_API_BASE_URL` | `/api/v1` (Vite redirige `/api` y `/media` a Django) | `https://api.<dominio>/api/v1`, sin barra final |
+| `VITE_API_PROXY_TARGET` | Opcional; destino del proxy (por defecto `http://127.0.0.1:8000`) | No aplica |
+| `VITE_NEWS_PREVIEW` | `true` muestra noticias de ejemplo si la API falla | `false` |
+
+## Rutas
+
+Definidas en `src/app/routePaths.js` y `src/app/router.jsx`.
+
+| Sitio público | Panel (`/admin`, requiere sesión) |
+|---|---|
+| `/` Inicio · `/nosotros` · `/servicios` | `/admin/login` · `/admin` (resumen) |
+| `/proyectos` · `/proyectos/:slug` | `/admin/bienes-raices` · `/nuevo` · `/:id/editar` |
+| `/bienes-raices` · `/bienes-raices/:id` | `/admin/proyectos` · `/nuevo` · `/:slug/editar` |
+| `/noticias` · `/noticias/:slug` | `/admin/noticias` · `/admin/mensajes` |
+| `/contacto` | `/admin/papelera` · `/admin/historial` |
+| | `/admin/roles` · `/admin/usuarios` |
+
+Cada sección del panel se muestra según los permisos del usuario (`utils/adminData.js`).
+Ocultar un botón es solo comodidad: **el backend siempre decide**. Una ruta sin permiso
+muestra "No disponible para tu rol".
+
+## Organización
+
+```text
+src/
+├── app/              # Router y rutas
+├── components/
+│   ├── layout/       # Header, Footer, SiteLayout, AdminLayout, buscador
+│   └── ui/           # Kit compartido (Leo): MultiImageUploader, LoadingButton, ConfirmDialog,
+│                     # ErrorState, EmptyState, Notice, Skeleton, apiErrors, imageUpload
+├── features/         # Una carpeta por módulo: pages/, components/, services/, utils/
+│   ├── home/ about/ services/ projects/ properties/ news/ contact/   # sitio público
+│   └── admin/ admin-properties/ admin-projects/ admin-trash/ admin-history/ admin-roles/
+├── services/         # apiClient.js (HTTP) y uploadClient.js (subidas)
+└── styles/
+```
+
+| Responsable | Módulos |
+|---|---|
+| Leo (@Leonor-Rosales) | Inicio, Nosotros, Servicios, layout, kit de UI, Papelera, Historial |
+| Geo (@g4usSi) | Proyectos y Bienes Raíces públicos, Bienes Raíces del panel |
+| Jennifer (@Jeidy25Saquic) | Noticias, Contacto, sesión y navegación del panel, Proyectos del panel, Mensajes |
+| Pablo (@PabloZ7-425) | Roles y Usuarios del panel |
+
+Los archivos compartidos (`src/app/`, `components/layout/`, `services/apiClient.js`,
+`package.json`) tienen dueño: ver [../docs/TRABAJO-EN-EQUIPO.md](../docs/TRABAJO-EN-EQUIPO.md).
+
+## Contrato con la API
+
+- Contrato: [../docs/openapi.yaml](../docs/openapi.yaml). Listados `{count, page, page_size, results}`;
+  errores `{error: {code, message, details}}`. `apiErrors.js` distingue 401 (sesión vencida)
+  de 403 (sin permiso) y muestra los errores por campo.
+- Los formularios de publicaciones envían siempre `demo: false` y `published` explícito.
+  Sin permiso de publicar se guarda como borrador y se avisa.
+- Imágenes: `POST /admin/media/` y se guarda la URL que devuelve (disco local en
+  desarrollo; Cloudinary o R2 en producción). Nunca se suben directo al proveedor.
+- **Sesión:** el token vive solo en memoria. Recargar la página la cierra, y el acceso
+  dura **15 minutos sin renovación automática** (pendiente CF-03). Para la demo, entra de
+  nuevo antes de un recorrido largo.
+- Servicios y búsqueda global responden `501` en la API; la interfaz lo maneja.
+
+## Pruebas de navegador (opcionales)
+
+`tests/browser/*.cjs` usan Playwright y Chromium, que **no** son dependencias del proyecto.
+Instálalos aparte y pasa su ruta por variables:
 
 ```bash
-npm run test
-npm run lint
-npm run build
+npm --prefix /tmp/enobra-browser install playwright@1.64.1
+export PLAYWRIGHT_MODULE=/tmp/enobra-browser/node_modules/playwright CHROMIUM_PATH=/usr/bin/chromium
+
+# React contra Django real con una base SQLite temporal (no toca Supabase):
+python backend/scripts/verify_frontend_integration.py
 ```
 
-El repositorio incluye `package-lock.json` para instalar dependencias con `npm ci`.
-No incorpora `node_modules` ni tokens. Usa `npm install` cuando agregues o actualices
-dependencias y versiona también los cambios del lockfile.
+`verify_frontend_integration.py` crea la base y cuentas aleatorias, arranca Django y Vite en
+puertos libres, ejecuta `live-backend.cjs` y borra todo al terminar. Los recorridos que usan
+`INTEGRATION_BASE_URL`, `INTEGRATION_EMAIL` e `INTEGRATION_PASSWORD` crean datos: úsalos
+solo con cuentas y bases de prueba, nunca con producción.
 
-## API
+## Despliegue
 
-- El servidor Django está en [`../backend/`](../backend/README.md); se ejecuta en otra terminal.
-- El contrato compartido está en [`../docs/openapi.yaml`](../docs/openapi.yaml).
-- Prefijo predeterminado: `/api/v1`, configurable con `VITE_API_BASE_URL` en `.env.local`.
-- Vite redirige `/api` y `/media` a Django en `http://127.0.0.1:8000` durante desarrollo.
-- La API responde con `{count,page,page_size,results}` en listados y `{error:{code,message,details}}` en errores.
-- El backend incluido ya registra persistencia para varios módulos, pero necesita su configuración de base de datos. Servicios y búsqueda siguen pendientes; la UI maneja 501. Los modos demo están identificados, limitados a desarrollo y no representan guardados reales.
-- El cliente HTTP se encuentra en `src/services/apiClient.js` y los servicios particulares dentro de `src/features/*/services/`.
-- No subir secretos ni incluir contraseñas o tokens reales en el repositorio. Las peticiones protegidas reciben el token explícitamente; falta acordar sesión y renovación con el backend.
-
-## Reparto del trabajo
-
-| Persona | Módulo | Rutas públicas |
-| --- | --- | --- |
-| Leo (@Leonor-Rosales) | Inicio, Nosotros, Servicios, layout visual | `/`, `/nosotros`, `/servicios` |
-| Geo (@g4usSi) | Proyectos y Bienes raíces, detalles | `/proyectos`, `/bienes-raices` |
-| Jennifer (@Jeidy25Saquic) | Noticias, Contacto, panel y auth del frontend | `/noticias`, `/contacto`, `/admin` |
-
-El panel será compartido: **cada persona implementará los formularios de administración de su propio módulo**. Los cambios en archivos compartidos (`src/app/`, `src/components/layout/`, `src/styles/`) se coordinan y revisan entre las personas afectadas. Las asignaciones son orientativas: cualquier integrante puede contribuir a otros módulos.
-
-El equipo completo tiene tres integrantes de frontend y tres de backend. Las
-[reglas compartidas](../docs/reglas-desarrollo.md) identifican responsables, contratos
-y flujo de ramas. Todo está sujeto a cambios por acuerdo del equipo.
-
-## Rutas y mockup
-
-Las rutas de React se definen en `src/app/router.jsx` y `src/app/routePaths.js`. Se usan rutas limpias (`/noticias`) en lugar de archivos `.html`. Para migrar, conservar el contenido y aspecto del mockup original `MockUp---enObra`, sin copiar el `localStorage` como fuente permanente de contenido. El contenido administrable debe provenir de la API.
-
-La base inicial no incluía los archivos del mockup ni sus recursos. Las ramas de módulos
-pueden incorporarlos al migrar sus páginas, identificando los recursos de demostración.
-Cloudflare R2 es la [propuesta de almacenamiento](../docs/infraestructura.md), todavía
-sujeta a cambios y pendiente de implementación.
-
-## Siguiente fase
-
-1. Validar el flujo completo contra Django configurado: login/RBAC, expiración, consultas, guardados, medios, contacto y visitas.
-2. Incorporar los formularios administrativos de proyectos, propiedades y contenido institucional cuando sus autores los publiquen.
-3. Confirmar datos del cliente, contenido real y reglas de despliegue, CORS y medios.
-4. La integración validada está en `develop`. `main` permanece sin cambios; los informes de `frontend-dev` conservan la procedencia histórica de esta entrega.
-
-## Integración en frontend-dev
-
-El estado unificado, las ramas revisadas, los contratos y las limitaciones se documentan
-en [Integración del frontend](../docs/frontend-integration.md). Los informes ADMIN/NEWS
-describen sus entregas de origen; el reporte de integración indica la validación conjunta.
-
-## Conexión actual con Django
-
-Login, datos institucionales, Noticias, Contacto y Mensajes se verificaron de extremo
-a extremo con Django/ORM y almacenamiento local desechable. Inicio consulta noticias
-y Contacto consulta los datos de empresa. Consulta [integración y pendientes](../docs/integracion-backend-frontend.md)
-para reproducir las pruebas y conocer los límites de catálogos y Supabase.
-La previsualización pública de noticias es opcional: `VITE_NEWS_PREVIEW=true`, solo
-en desarrollo. Sin esa opción, una API de noticias caída muestra error.
+Cloudflare Pages: directorio raíz `frontend`, comando `npm run build`, salida `dist`.
+`public/_redirects` hace que las rutas del panel funcionen al recargar y `public/_headers`
+añade cabeceras de seguridad. Pasos completos en [../docs/despliegue.md](../docs/despliegue.md).

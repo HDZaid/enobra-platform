@@ -396,5 +396,5 @@ pendientes de BE-01/02. Detalle en `frontend/src/features/admin-projects/README.
 
 Frontend integrado sin conflictos desde `1ecb60a`; merge `9c4f706`. Lint, 181
 pruebas, build y recorridos Chromium aprobados. Backend sin cambios; papelera de
-Proyectos desactivada. La aceptación conjunta no se da por cerrada. Ver
-[reporte INT-01](../INT-01-integracion-frontend.md).
+Proyectos desactivada. La aceptación conjunta se dio en INT-04
+([matriz por rol](../INT-04-matriz-roles.md)); el reporte INT-01 se retiró el 25-oct y queda en el historial de Git.

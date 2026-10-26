@@ -140,12 +140,12 @@ autenticación o despliegues completos si solamente existe el contrato o una dem
 - Los favoritos permanecen en el frontend (`localStorage`).
 - La auditoría administrativa se registra en `historial_actividad` y los mensajes atendidos
   conservan su fila en `mensaje_contacto`, actualizando su estado.
-- El proveedor para fotos y renders está pendiente; Cloudflare R2 es una propuesta, no una decisión.
+- Fotos y renders: Cloudinary (rama `despliegue/cloudinary`) o Cloudflare R2 (rama `despliegue/r2`),
+  según lo que confirme el cliente. Ver [despliegue.md](despliegue.md).
 
 ## Cambios en los acuerdos
 
 Todo está sujeto a cambios. Proponer el ajuste en un issue o PR, explicar motivo e impacto,
 coordinar con las personas afectadas y actualizar estos documentos junto con el cambio.
 Completar “Pendiente 1” y “Pendiente 2” cuando se conozcan los usuarios, sin bloquear el
-desarrollo actual. La infraestructura se describe como [propuesta](infraestructura.md),
-no como un despliegue ya realizado.
+desarrollo actual. El despliegue se describe en [despliegue.md](despliegue.md).

@@ -1,7 +1,7 @@
 """Run React against real Django HTTP/ORM using a disposable local database.
 
 Never connects to DATABASE_URL, migrates Supabase, or uses production credentials.
-Requires npm dependencies, Chromium and Playwright (see docs/integracion-backend-frontend.md).
+Requires npm dependencies, Chromium and Playwright (see frontend/README.md, browser tests).
 """
 import io
 import os

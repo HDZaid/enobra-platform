@@ -1,8 +1,10 @@
 # Pruebas de EnObra con Postman
 
-Colección para el contrato de `develop`, commit `795ab6d`, revisada el 12 de octubre
-de 2026. Incluye **62 peticiones**: las **40 operaciones HTTP de OpenAPI**, Swagger,
-el esquema en vivo y comprobaciones adicionales de permisos, borradores y limpieza.
+Dos colecciones. `EnObra` (62 peticiones, revisada el 12-oct) cubre las 40 operaciones
+HTTP de OpenAPI de entonces, Swagger y comprobaciones de borradores y limpieza.
+`EnObra-RBAC` (actualizada el 25-oct en INT-04) prueba roles, permisos y la matriz por rol;
+es la de referencia para el contrato actual. Los endpoints agregados después del 12-oct
+(papelera unificada, historial, usuarios) están en la colección RBAC.
 
 ## Archivos
 
@@ -10,7 +12,7 @@ el esquema en vivo y comprobaciones adicionales de permisos, borradores y limpie
 - [EnObra-RBAC.postman_collection.json](EnObra-RBAC.postman_collection.json): colección enfocada en roles, permisos y reglas de propiedades por rol.
 - [EnObra-local.postman_environment.json](EnObra-local.postman_environment.json): entorno sin credenciales.
 - [fixtures/catalogo-prueba.png](fixtures/catalogo-prueba.png): PNG válido para probar subidas.
-- [Reporte de revisión](../reporte-revision-admin.md): problemas conocidos y reproducción.
+- [Estado del proyecto](../estado-proyecto.md): pendientes y hallazgos abiertos.
 
 ## Preparar el servidor
 

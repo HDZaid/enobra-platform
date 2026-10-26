@@ -20,6 +20,10 @@ estas dos nuevas ramas compartidas comienzan desde la integración vigente de de
 `develop` recibe los avances de ambos equipos mediante integración revisada.
 `main` se reserva para versiones estables; no publicar ahí el trabajo diario.
 
+**Excepción acordada el 25-oct:** `despliegue/cloudinary` y `despliegue/r2` preparan el
+despliegue (una por proveedor de imágenes). Se crean desde `develop` por decisión de Geo,
+no reciben trabajo diario y la que se use se integra a `develop` y `main` al desplegar.
+
 ## Advertencia para cambios de frontend
 
 **Juan, Henry y cualquier integrante sin participación autorizada en frontend: antes
@@ -100,7 +104,9 @@ compañeros. No crear una rama alterna para esquivar un conflicto.
 - Backend: desde backend, `python manage.py check` y
   `python manage.py test tests --settings=config.test_settings`. Si cambia el contrato,
   regenerar OpenAPI con `--validate --fail-on-warn` y revisar sus consumidores.
-- Integración: seguir [integracion-backend-frontend.md](integracion-backend-frontend.md).
+- Integración: `backend/scripts/verify_frontend_integration.py` (ver
+  [frontend/README.md](../frontend/README.md#pruebas-de-navegador-opcionales)) y la
+  [matriz por rol](INT-04-matriz-roles.md).
   No confundir una prueba local con validación de Supabase o de producción.
 - Los catálogos siguen en construcción; mantener documentados los límites reales.
 

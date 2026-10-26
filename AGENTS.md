@@ -16,6 +16,8 @@ Estas reglas sustituyen recomendaciones antiguas de crear ramas por módulo.
   de feature, fix ni worktrees para este flujo. `develop` integra avances revisados;
   `main` conserva versiones estables. La administración expresamente solicitada por
   el usuario puede actualizar documentación y configurar las ramas desde develop.
+  Excepción acordada: `despliegue/cloudinary` y `despliegue/r2` preparan el despliegue;
+  no reciben trabajo diario (ver docs/TRABAJO-EN-EQUIPO.md).
 - Antes de trabajar y antes de publicar: comprobar árbol limpio, fetch, revisar el
   log y diff de los cambios remotos de compañeros, y sincronizar mediante merge.
   Antes de cambiar de rama, conservar los cambios propios; no tocar los de otros.
