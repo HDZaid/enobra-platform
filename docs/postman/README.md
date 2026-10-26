@@ -81,6 +81,24 @@ restauración y eliminación de propiedades según el rol. Genera un rol `Postma
 eliminar roles. Las propiedades de prueba se borran permanentemente durante la carpeta
 de limpieza. Úsala únicamente contra una base de desarrollo o pruebas.
 
+La carpeta **03b — Matriz por rol (INT-04)** comprueba qué puede y qué no puede cada
+rol en imágenes, publicación, papelera unificada, historial, roles, usuarios,
+proyectos y noticias. No crea publicaciones; deja dos imágenes de prueba. El detalle
+de la matriz está en [INT-04-matriz-roles.md](../INT-04-matriz-roles.md).
+
+### Ejecutarla desde la terminal (Newman)
+
+La colección usa `pm.execution.skipRequest`, así que requiere **Newman 6**. Las
+credenciales se leen como variables de colección: complétalas en una copia local que
+no se sube al repositorio. Desde `docs/postman`:
+
+```bash
+npx newman@6.1.3 run copia-local-con-credenciales.json --working-dir .
+```
+
+Resultado de referencia (25 de octubre, servidor local con SQLite aislado y las tres
+cuentas de rol): **55 peticiones, 72 aserciones, 0 fallos**.
+
 No compartas ni versiones exportaciones que contengan contraseñas, tokens o datos
 reales. El entorno entregado está vacío y la colección no contiene secretos.
 

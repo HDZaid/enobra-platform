@@ -3,7 +3,7 @@
     "_postman_id": "b88ce66d-0ec0-4faa-9b9a-efbf938a2e3a",
     "name": "EnObra — RBAC y contratos de propiedades",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Colección para los contratos agregados: auth/me con roles/permisos, catálogo y CRUD de roles, propiedades por Ingeniero/Arquitecta/Empleado, papelera, restauración y borrado permanente. Ejecutar en orden. Requiere cuentas activas ya asignadas a esos roles; no registra usuarios. Crear rol QA deja un rol persistente, inactivo y sin permisos porque no existe DELETE de roles. Las propiedades temporales sí se eliminan al final. Usar una base de desarrollo/pruebas."
+    "description": "Colección para los contratos agregados: auth/me con roles/permisos, catálogo y CRUD de roles, propiedades por Ingeniero/Arquitecta/Empleado, papelera, restauración y borrado permanente. Ejecutar en orden. Requiere cuentas activas ya asignadas a esos roles; no registra usuarios. Crear rol QA deja un rol persistente, inactivo y sin permisos porque no existe DELETE de roles. Las propiedades temporales sí se eliminan al final. Usar una base de desarrollo/pruebas. La carpeta 03b agrega la matriz por rol de INT-04 (historial, usuarios, papelera unificada, proyectos, noticias e imágenes)."
   },
   "auth": {
     "type": "bearer",
@@ -179,7 +179,8 @@
                 "api",
                 "v1",
                 "auth",
-                "login"
+                "login",
+                ""
               ]
             },
             "auth": {
@@ -194,10 +195,10 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Login responde 200', function () { pm.response.to.have.status(200); });",
-                  "const data = pm.response.json();",
-                  "pm.collectionVariables.set('access_token', data.access);",
-                  "pm.collectionVariables.set('refresh_token', data.refresh);",
-                  "pm.test('Devuelve roles y permisos', function () { pm.expect(data.user.roles).to.be.an('array'); pm.expect(data.user.permissions).to.be.an('array'); });"
+                  "const body = pm.response.json();",
+                  "pm.collectionVariables.set('access_token', body.access);",
+                  "pm.collectionVariables.set('refresh_token', body.refresh);",
+                  "pm.test('Devuelve roles y permisos', function () { pm.expect(body.user.roles).to.be.an('array'); pm.expect(body.user.permissions).to.be.an('array'); });"
                 ]
               }
             }
@@ -222,7 +223,8 @@
                 "api",
                 "v1",
                 "auth",
-                "me"
+                "me",
+                ""
               ]
             }
           },
@@ -233,8 +235,8 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Usuario actual responde 200', function () { pm.response.to.have.status(200); });",
-                  "const data = pm.response.json();",
-                  "pm.test('Incluye permisos efectivos de administración', function () { pm.expect(data.permissions).to.include('admin.all'); });"
+                  "const body = pm.response.json();",
+                  "pm.test('Incluye permisos efectivos de administración', function () { pm.expect(body.permissions).to.include('admin.all'); });"
                 ]
               }
             }
@@ -272,7 +274,8 @@
                 "api",
                 "v1",
                 "auth",
-                "refresh"
+                "refresh",
+                ""
               ]
             },
             "auth": {
@@ -311,7 +314,8 @@
                 "api",
                 "v1",
                 "admin",
-                "roles"
+                "roles",
+                ""
               ]
             },
             "auth": {
@@ -354,7 +358,8 @@
                 "api",
                 "v1",
                 "admin",
-                "permissions"
+                "permissions",
+                ""
               ]
             }
           },
@@ -391,7 +396,8 @@
                 "api",
                 "v1",
                 "admin",
-                "roles"
+                "roles",
+                ""
               ]
             }
           },
@@ -431,7 +437,8 @@
                 "v1",
                 "admin",
                 "roles",
-                "{{architect_role_id}}"
+                "{{architect_role_id}}",
+                ""
               ]
             }
           },
@@ -468,7 +475,8 @@
                 "v1",
                 "admin",
                 "roles",
-                "{{employee_role_id}}"
+                "{{employee_role_id}}",
+                ""
               ]
             }
           },
@@ -517,7 +525,8 @@
                 "api",
                 "v1",
                 "admin",
-                "roles"
+                "roles",
+                ""
               ]
             },
             "description": "Crea un rol persistente único. No existe DELETE de roles; se desactivará y quedará sin permisos al final."
@@ -565,7 +574,8 @@
                 "v1",
                 "admin",
                 "roles",
-                "{{qa_role_id}}"
+                "{{qa_role_id}}",
+                ""
               ]
             }
           },
@@ -615,7 +625,8 @@
                 "v1",
                 "admin",
                 "roles",
-                "{{qa_role_id}}"
+                "{{qa_role_id}}",
+                ""
               ]
             }
           },
@@ -669,7 +680,8 @@
                 "api",
                 "v1",
                 "auth",
-                "login"
+                "login",
+                ""
               ]
             },
             "auth": {
@@ -709,7 +721,8 @@
                 "api",
                 "v1",
                 "admin",
-                "roles"
+                "roles",
+                ""
               ]
             }
           },
@@ -756,7 +769,8 @@
               "path": [
                 "api",
                 "v1",
-                "properties"
+                "properties",
+                ""
               ]
             }
           },
@@ -803,7 +817,8 @@
               "path": [
                 "api",
                 "v1",
-                "properties"
+                "properties",
+                ""
               ]
             }
           },
@@ -839,7 +854,8 @@
               "path": [
                 "api",
                 "v1",
-                "properties"
+                "properties",
+                ""
               ]
             }
           },
@@ -875,7 +891,8 @@
                 "api",
                 "v1",
                 "properties",
-                "{{property_id}}"
+                "{{property_id}}",
+                ""
               ]
             }
           },
@@ -924,7 +941,8 @@
                 "api",
                 "v1",
                 "properties",
-                "{{property_id}}"
+                "{{property_id}}",
+                ""
               ]
             }
           },
@@ -973,7 +991,8 @@
                 "api",
                 "v1",
                 "properties",
-                "{{property_id}}"
+                "{{property_id}}",
+                ""
               ]
             }
           },
@@ -1009,7 +1028,8 @@
                 "api",
                 "v1",
                 "properties",
-                "{{property_id}}"
+                "{{property_id}}",
+                ""
               ]
             }
           },
@@ -1045,7 +1065,8 @@
                 "v1",
                 "admin",
                 "properties",
-                "trash"
+                "trash",
+                ""
               ]
             }
           },
@@ -1083,7 +1104,8 @@
                 "admin",
                 "properties",
                 "{{property_id}}",
-                "restore"
+                "restore",
+                ""
               ]
             }
           },
@@ -1158,7 +1180,8 @@
                 "api",
                 "v1",
                 "auth",
-                "login"
+                "login",
+                ""
               ]
             },
             "auth": {
@@ -1198,7 +1221,8 @@
                 "v1",
                 "admin",
                 "properties",
-                "trash"
+                "trash",
+                ""
               ]
             }
           },
@@ -1236,7 +1260,8 @@
                 "admin",
                 "properties",
                 "{{property_id}}",
-                "restore"
+                "restore",
+                ""
               ]
             }
           },
@@ -1273,7 +1298,8 @@
                 "admin",
                 "properties",
                 "{{property_id}}",
-                "permanent"
+                "permanent",
+                ""
               ]
             }
           },
@@ -1320,7 +1346,8 @@
               "path": [
                 "api",
                 "v1",
-                "properties"
+                "properties",
+                ""
               ]
             }
           },
@@ -1363,6 +1390,998 @@
       ]
     },
     {
+      "name": "03b — Matriz por rol (INT-04)",
+      "description": "Comprobaciones de la matriz INT-04 (docs/INT-04-matriz-roles.md): qué puede y qué no puede cada rol en subir, publicar, papelera, historial, roles, usuarios, proyectos y noticias. No crea publicaciones; solo deja dos imágenes de prueba.",
+      "item": [
+        {
+          "name": "Empleado sube imagen",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/media/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "media",
+                ""
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employee_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "fixtures/catalogo-prueba.png"
+                },
+                {
+                  "key": "kind",
+                  "value": "photo",
+                  "type": "text"
+                }
+              ]
+            },
+            "description": "media.upload: los tres roles pueden subir. Deja una imagen de prueba en el almacenamiento."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('POST admin/media/ responde 201', function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Empleado no puede publicar su borrador (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/properties/{{property_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "properties",
+                "{{property_id}}",
+                ""
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employee_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"published\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('PATCH properties/{{property_id}}/ responde 403', function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Empleado papelera propia (unificada)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/trash/?type=properties",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "trash",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "properties"
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employee_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Solo debe listar lo creado por el Empleado."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('GET admin/trash/ responde 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Empleado no ve papelera de proyectos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/trash/?type=projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "trash",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "projects"
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employee_access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('GET admin/trash/ responde 403', function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Empleado no puede crear proyectos",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/projects/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "projects",
+                ""
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employee_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"QA INT-04 sin permiso\",\n  \"category\": \"Vivienda\",\n  \"country\": \"Guatemala\",\n  \"year\": 2026,\n  \"description\": \"No debe crearse\",\n  \"images\": [\n    \"https://example.com/qa.jpg\"\n  ],\n  \"renders\": [],\n  \"video\": \"\",\n  \"demo\": false,\n  \"published\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('POST projects/ responde 403', function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Empleado no puede crear noticias",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/news/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "news",
+                ""
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employee_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"QA INT-04 sin permiso\",\n  \"category\": \"Anuncios\",\n  \"date\": \"{{test_date}}\",\n  \"description\": \"No debe crearse\",\n  \"image\": \"https://example.com/qa.jpg\",\n  \"demo\": false,\n  \"published\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('POST news/ responde 403', function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Empleado no ve historial",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/audit/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "audit",
+                ""
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employee_access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('GET admin/audit/ responde 403', function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Empleado no ve usuarios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/users/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "users",
+                ""
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employee_access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('GET admin/users/ responde 403', function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Arquitecta sube imagen",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/media/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "media",
+                ""
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{architect_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "fixtures/catalogo-prueba.png"
+                },
+                {
+                  "key": "kind",
+                  "value": "photo",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('POST admin/media/ responde 201', function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Arquitecta papelera de propiedades (unificada)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/trash/?type=properties",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "trash",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "properties"
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{architect_access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('GET admin/trash/ responde 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Arquitecta no ve papelera de proyectos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/trash/?type=projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "trash",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "projects"
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{architect_access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('GET admin/trash/ responde 403', function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Arquitecta no puede crear proyectos",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/projects/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "projects",
+                ""
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{architect_access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"QA INT-04 sin permiso\",\n  \"category\": \"Vivienda\",\n  \"country\": \"Guatemala\",\n  \"year\": 2026,\n  \"description\": \"No debe crearse\",\n  \"images\": [\n    \"https://example.com/qa.jpg\"\n  ],\n  \"renders\": [],\n  \"video\": \"\",\n  \"demo\": false,\n  \"published\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('POST projects/ responde 403', function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Arquitecta no ve historial",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/audit/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "audit",
+                ""
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{architect_access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('GET admin/audit/ responde 403', function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Arquitecta no ve roles",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/roles/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "roles",
+                ""
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{architect_access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('GET admin/roles/ responde 403', function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Arquitecta no ve usuarios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/users/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "users",
+                ""
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{architect_access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('GET admin/users/ responde 403', function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Ingeniero ve historial",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/audit/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "audit",
+                ""
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('GET admin/audit/ responde 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Ingeniero exporta historial",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/audit/export/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "audit",
+                "export",
+                ""
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('GET admin/audit/export/ responde 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Ingeniero ve usuarios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/users/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "users",
+                ""
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('GET admin/users/ responde 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Ingeniero ve papelera de proyectos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/trash/?type=projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "trash",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "projects"
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('GET admin/trash/ responde 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "04 — Limpieza como Ingeniero",
       "item": [
         {
@@ -1384,7 +2403,8 @@
                 "api",
                 "v1",
                 "properties",
-                "{{property_id}}"
+                "{{property_id}}",
+                ""
               ]
             }
           },
@@ -1421,7 +2441,8 @@
                 "admin",
                 "properties",
                 "{{property_id}}",
-                "permanent"
+                "permanent",
+                ""
               ]
             },
             "description": "Opera solo sobre el ID del borrador creado por esta colección."
@@ -1458,7 +2479,8 @@
                 "api",
                 "v1",
                 "properties",
-                "{{deleted_property_id}}"
+                "{{deleted_property_id}}",
+                ""
               ]
             }
           },
@@ -1495,7 +2517,8 @@
                 "api",
                 "v1",
                 "properties",
-                "{{architect_property_id}}"
+                "{{architect_property_id}}",
+                ""
               ]
             }
           },
@@ -1532,7 +2555,8 @@
                 "admin",
                 "properties",
                 "{{architect_property_id}}",
-                "permanent"
+                "permanent",
+                ""
               ]
             }
           },
@@ -1568,7 +2592,8 @@
                 "api",
                 "v1",
                 "properties",
-                "{{deleted_architect_property_id}}"
+                "{{deleted_architect_property_id}}",
+                ""
               ]
             }
           },
@@ -1635,7 +2660,8 @@
                 "api",
                 "v1",
                 "auth",
-                "logout"
+                "logout",
+                ""
               ]
             },
             "auth": {
@@ -1677,7 +2703,8 @@
                 "api",
                 "v1",
                 "auth",
-                "me"
+                "me",
+                ""
               ]
             },
             "auth": {
@@ -1735,7 +2762,8 @@
                 "api",
                 "v1",
                 "auth",
-                "refresh"
+                "refresh",
+                ""
               ]
             },
             "auth": {
