@@ -18,7 +18,8 @@ class DjangoMediaStorage(MediaStorage):
     formats = {"JPEG": ("image/jpeg", "jpg"), "PNG": ("image/png", "png"),
                "WEBP": ("image/webp", "webp"), "GIF": ("image/gif", "gif")}
 
-    def save(self, file, *, filename, content_type, size, kind, uploaded_by):
+    def validated_format(self, file, *, content_type, size):
+        """Valida tamaño y contenido real de la imagen. -> (mime, extension)."""
         if size <= 0 or size > settings.MEDIA_MAX_UPLOAD_BYTES:
             raise ValidationError({"file": "Tamaño de imagen inválido."})
         try:
@@ -33,6 +34,10 @@ class DjangoMediaStorage(MediaStorage):
         except (UnidentifiedImageError, OSError, ValueError, SyntaxError,
                 Image.DecompressionBombError, Image.DecompressionBombWarning):
             raise ValidationError({"file": "El contenido no corresponde a una imagen permitida."})
+        return format_info
+
+    def save(self, file, *, filename, content_type, size, kind, uploaded_by):
+        format_info = self.validated_format(file, content_type=content_type, size=size)
         file.seek(0)
         media_id = uuid4().hex
         path = default_storage.save(f"uploads/{media_id}.{format_info[1]}", file)

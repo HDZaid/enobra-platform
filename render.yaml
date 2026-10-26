@@ -1,0 +1,43 @@
+# Render Blueprint del backend (plan gratuito). NO contiene secretos: los valores con
+# sync:false se escriben a mano en el panel de Render. Ver docs/despliegue.md.
+services:
+  - type: web
+    name: enobra-api
+    runtime: python
+    plan: free
+    region: oregon
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    # 512 MB de RAM: un proceso con hilos. El tiempo de espera cubre la subida de imágenes.
+    startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 60
+    healthCheckPath: /api/v1/health/
+    autoDeploy: false
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.17   # versión con la que se probó; Render usa 3.14 por defecto en servicios nuevos
+      - key: DJANGO_DEBUG
+        value: "false"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_ALLOWED_HOSTS
+        sync: false            # p. ej. api.tudominio.com
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false            # p. ej. https://tudominio.com
+      - key: FRONTEND_BASE_URL
+        sync: false            # p. ej. https://tudominio.com
+      - key: DATABASE_URL
+        sync: false            # cadena del pooler de Supabase (puerto 6543)
+      - key: DATABASE_POOLER_MODE
+        value: transaction
+      - key: MEDIA_STORAGE_BACKEND
+        value: cloudinary
+      - key: CLOUDINARY_URL
+        sync: false            # cloudinary://API_KEY:API_SECRET@CLOUD_NAME
+      - key: INQUIRY_NOTIFIER
+        value: resend
+      - key: RESEND_API_KEY
+        sync: false
+      - key: INQUIRY_NOTIFY_EMAILS
+        sync: false            # correos que reciben las consultas, separados por comas
+      - key: DEFAULT_FROM_EMAIL
+        sync: false            # remitente de un dominio verificado en Resend

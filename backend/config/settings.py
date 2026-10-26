@@ -23,6 +23,9 @@ def env_list(name: str, default: str = "") -> list[str]:
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-only-insecure-key")
 DEBUG = os.getenv("DJANGO_DEBUG", "true").lower() == "true"
 ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1")
+# Render expone el nombre público del servicio en esta variable.
+if os.getenv("RENDER_EXTERNAL_HOSTNAME"):
+    ALLOWED_HOSTS.append(os.environ["RENDER_EXTERNAL_HOSTNAME"])
 
 INSTALLED_APPS = [
     "rest_framework",
@@ -74,6 +77,11 @@ DATABASES = (
     if DATABASE_URL
     else {}
 )
+# Supabase "transaction pooler" (puerto 6543): sin cursores del lado del servidor
+# y sin conexiones persistentes. Activar con DATABASE_POOLER_MODE=transaction.
+if DATABASES and os.getenv("DATABASE_POOLER_MODE", "").lower() == "transaction":
+    DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] = True
+    DATABASES["default"]["CONN_MAX_AGE"] = 0
 # Solo informativo: lo usan los mensajes de diagnóstico de la conexión.
 DATABASE_URL_SOURCE = (
     "variable de entorno del sistema DATABASE_URL (tiene prioridad sobre backend/.env)"
@@ -96,6 +104,13 @@ MEDIA_ALLOWED_CONTENT_TYPES = ["image/jpeg", "image/png", "image/webp", "image/g
 MEDIA_ROOT = os.getenv("MEDIA_ROOT", str(BASE_DIR / "media"))
 MEDIA_URL = os.getenv("MEDIA_URL", "/media/")
 DATA_UPLOAD_MAX_MEMORY_SIZE = MEDIA_MAX_UPLOAD_BYTES + 1024 * 1024
+
+# --- Proveedores externos (se eligen por variable de entorno) ---------------
+# Imágenes: "local" (disco, desarrollo) o "cloudinary" (producción; usa CLOUDINARY_URL).
+MEDIA_STORAGE_BACKEND = os.getenv("MEDIA_STORAGE_BACKEND", "local").lower()
+# Correo de consultas: "email" (SMTP/consola) o "resend" (API HTTPS; usa RESEND_API_KEY).
+INQUIRY_NOTIFIER = os.getenv("INQUIRY_NOTIFIER", "email").lower()
+RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
 
 # --- Notificación de consultas por correo (BE-09) ----------------------------
 # Sin destinatarios en INQUIRY_NOTIFY_EMAILS no se envía nada. La consola imprime
@@ -151,3 +166,17 @@ SPECTACULAR_SETTINGS = {
         "RoleEnum": "apps.common.enums.Role.choices",
     },
 }
+
+# --- Producción (DJANGO_DEBUG=false) -----------------------------------------
+if not DEBUG:
+    from django.core.exceptions import ImproperlyConfigured
+
+    if SECRET_KEY == "dev-only-insecure-key" or len(SECRET_KEY) < 32:
+        raise ImproperlyConfigured(
+            "En producción DJANGO_SECRET_KEY debe ser una clave propia de al menos 32 caracteres.")
+    # Render termina TLS en su proxy y reenvía el esquema original.
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_SSL_REDIRECT = os.getenv("DJANGO_SSL_REDIRECT", "true").lower() == "true"
+    SECURE_REDIRECT_EXEMPT = [r"^api/v1/health/$"]  # chequeos internos y pinger
+    SECURE_HSTS_SECONDS = int(os.getenv("DJANGO_HSTS_SECONDS", "0"))  # subir tras verificar HTTPS
+    SECURE_CONTENT_TYPE_NOSNIFF = True

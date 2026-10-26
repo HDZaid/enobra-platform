@@ -15,6 +15,35 @@ Ejemplo (cuando existan las implementaciones):
 """
 
 
+def build_media_storage(local_class):
+    """MEDIA_STORAGE_BACKEND: local (por defecto) o cloudinary."""
+    from django.conf import settings
+    from django.core.exceptions import ImproperlyConfigured
+
+    backend = getattr(settings, "MEDIA_STORAGE_BACKEND", "local")
+    if backend == "cloudinary":
+        from persistence.media_cloudinary import CloudinaryMediaStorage
+        return CloudinaryMediaStorage()
+    if backend != "local":
+        raise ImproperlyConfigured(f"MEDIA_STORAGE_BACKEND desconocido: {backend!r} (local o cloudinary).")
+    return local_class()
+
+
+def build_notifier(email_class, resend_class):
+    """INQUIRY_NOTIFIER: email (por defecto) o resend."""
+    from django.conf import settings
+    from django.core.exceptions import ImproperlyConfigured
+
+    backend = getattr(settings, "INQUIRY_NOTIFIER", "email")
+    if backend == "resend":
+        if not getattr(settings, "RESEND_API_KEY", ""):
+            raise ImproperlyConfigured("INQUIRY_NOTIFIER=resend requiere RESEND_API_KEY.")
+        return resend_class()
+    if backend != "email":
+        raise ImproperlyConfigured(f"INQUIRY_NOTIFIER desconocido: {backend!r} (email o resend).")
+    return email_class()
+
+
 def register_repositories(register) -> None:
     from apps.accounts.interfaces import AccessControlRepository, AuthService, UserRepository
     from apps.company.interfaces import CompanyRepository, InstitutionRepository
@@ -33,7 +62,7 @@ def register_repositories(register) -> None:
     from persistence.inquiries import DjangoInquiryRepository
     from persistence.media import DjangoMediaStorage
     from persistence.audit import DjangoAuditRepository
-    from persistence.notifiers import EmailInquiryNotifier
+    from persistence.notifiers import EmailInquiryNotifier, ResendInquiryNotifier
     from apps.publications.factory import NewsFactory, ProjectFactory, PropertyFactory
     from apps.publications.registry import publication_registry
 
@@ -47,9 +76,9 @@ def register_repositories(register) -> None:
     register(PropertyRepository, properties)
     register(NewsRepository, news)
     register(InquiryRepository, DjangoInquiryRepository())
-    register(MediaStorage, DjangoMediaStorage())
+    register(MediaStorage, build_media_storage(DjangoMediaStorage))
     register(AuditRepository, DjangoAuditRepository())
-    register(InquiryNotifier, EmailInquiryNotifier())
+    register(InquiryNotifier, build_notifier(EmailInquiryNotifier, ResendInquiryNotifier))
 
     # Fábricas de publicaciones: fuente única del catálogo de permisos, de /admin/trash/ y de las
     # etiquetas del historial. Un tipo nuevo = una fábrica en apps/publications/factory.py + una línea.
