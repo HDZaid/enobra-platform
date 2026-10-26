@@ -1,5 +1,7 @@
 # Reporte de contratos frontend ↔ backend
 
+> **Documento histórico.** El estado vigente, con cifras de pruebas y pendientes actualizados al 25 de octubre de 2026, está en [estado-proyecto.md](estado-proyecto.md).
+
 Fecha: 20 de octubre de 2026. Rama: `frontend/news-admin-contact` (base `3cf779a`).
 Estado actualizado en `develop`: CF-01, CF-02 y CF-05 **corregidos**; los demás hallazgos conservan su alcance pendiente.
 

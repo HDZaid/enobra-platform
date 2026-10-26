@@ -1,5 +1,7 @@
 # Integración parcial de React y Django
 
+> **Documento histórico.** El estado vigente, con cifras de pruebas y pendientes actualizados al 25 de octubre de 2026, está en [estado-proyecto.md](estado-proyecto.md).
+
 Estado: integración validada en desarrollo local y promovida a `develop`.
 Origen integrado: `frontend-dev` en `4d3ea14`; se conserva su historial mediante merge.
 **El proyecto y, en particular, los catálogos siguen en desarrollo.**

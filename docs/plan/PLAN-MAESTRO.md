@@ -300,49 +300,51 @@ Verificación:    comandos exactos.
 
 `[ ]` pendiente · `[~]` en curso · `[x]` hecho · `[!]` bloqueado
 
+Actualizado el 25 de octubre de 2026 (INT-05), verificado por commit en `develop`. Pendientes abiertos y hallazgos: `docs/estado-proyecto.md`.
+
 ### Backend (detalle en `PLAN-BACKEND.md`)
 | ID | Tarea | Resp. | Prioridad | Est. | Estado |
 |---|---|---|---|---|---|
-| BE-00 | Contratos stub y congelar permisos | Henry | P0 | 2 h | [ ] |
-| BE-01 | Catálogo de 32 permisos y roles base | Henry | P0 | 3 h | [ ] |
-| BE-02 | `ResourcePermission` aplicado a todos los módulos | Henry | P0 | 3 h | [ ] |
-| BE-03 | Seed no destructivo | Henry | P0 | 1 h | [ ] |
-| BE-04 | Papelera genérica y unificada | Juan | P0 | 4 h | [ ] |
-| BE-05 | Fábrica de publicaciones (Abstract Factory) | Henry | P0 | 4 h | [ ] |
+| BE-00 | Contratos stub y congelar permisos | Henry | P0 | 2 h | [x] Stubs (Henry) y cierre en la API real (Geo) |
+| BE-01 | Catálogo de 32 permisos y roles base | Henry | P0 | 3 h | [x] b6766ff |
+| BE-02 | `ResourcePermission` aplicado a todos los módulos | Henry | P0 | 3 h | [x] 8e6fdda |
+| BE-03 | Seed no destructivo | Henry | P0 | 1 h | [x] fb37457 |
+| BE-04 | Papelera genérica y unificada | Juan | P0 | 4 h | [x] b7a2b1e + registro en la API real |
+| BE-05 | Fábrica de publicaciones (Abstract Factory) | Henry | P0 | 4 h | [x] 9462719 |
 | BE-06 | Límites numéricos y carrera de borradores | Pablo | P0 | 2 h | [x] BE-06a y BE-06b; 24-oct: 122 pruebas backend en verde (SQLite) |
-| BE-07 | Endpoint de Historial y exportación | Juan | P0 | 3 h | [ ] |
-| BE-08 | Editar usuarios y cambiar rol | Pablo | P0 | 3 h | [ ] |
-| BE-09 | Notificador de consultas (correo) | Juan | P0 | 3 h | [ ] |
-| BE-10 | Validar el esquema contra Supabase | Juan | P0 | 1.5 h | [ ] |
-| BE-11 | Docs: RBAC, arquitectura, ADR | Henry | P0 | 2 h | [ ] |
-| BE-12 | Docs: auditoría y papelera | Juan | P0 | 1.5 h | [ ] |
-| BE-13 | Docs: actualizar API de usuarios | Pablo | P0 | 0.5 h | [ ] |
+| BE-07 | Endpoint de Historial y exportación | Juan | P0 | 3 h | [x] bb8b9bf |
+| BE-08 | Editar usuarios y cambiar rol | Pablo | P0 | 3 h | [x] ec8f363 |
+| BE-09 | Notificador de consultas (correo) | Juan | P0 | 3 h | [x] be25ef9 |
+| BE-10 | Validar el esquema contra Supabase | Juan | P0 | 1.5 h | [x] a6d90cf |
+| BE-11 | Docs: RBAC, arquitectura, ADR | Henry | P0 | 2 h | [x] 3f8fd6d |
+| BE-12 | Docs: auditoría y papelera | Juan | P0 | 1.5 h | [x] 7b94bbf |
+| BE-13 | Docs: actualizar API de usuarios | Pablo | P0 | 0.5 h | [x] En `docs/usuarios-api.md` (ec8f363) |
 | BE-14 … BE-22 | Backlog posterior a la entrega | varios | P1/P2 | n/a | [ ] |
 
 ### Frontend (detalle en `PLAN-FRONTEND.md`)
 | ID | Tarea | Resp. | Prioridad | Est. | Estado |
 |---|---|---|---|---|---|
-| FE-01a | Kit UI: esqueletos, botón de carga, vacío, error, confirmación | Leo | P0 | 2 h | [ ] |
-| FE-01b | Subida múltiple de imágenes con progreso | Leo | P0 | 3 h | [ ] |
-| FE-02 | Papelera | Leo | P0 | 4 h | [ ] |
-| FE-03 | Historial | Leo | P0 | 4 h | [ ] |
+| FE-01a | Kit UI: esqueletos, botón de carga, vacío, error, confirmación | Leo | P0 | 2 h | [x] 9a79504 |
+| FE-01b | Subida múltiple de imágenes con progreso | Leo | P0 | 3 h | [x] 9a79504 |
+| FE-02 | Papelera | Leo | P0 | 4 h | [x] 7c659dd |
+| FE-03 | Historial | Leo | P0 | 4 h | [x] 47c8e88 |
 | FE-06 | Rutas, menú y permisos del panel | Jennifer | P0 | 3 h | [x] |
 | FE-07 | Proyectos admin (listado, subir, editar) | Jennifer | P0 | 5 h | [x] |
 | FE-10 | Mensajes, Noticias y Resumen con permisos nuevos | Jennifer | P0 | 2 h | [x] |
-| FE-11 | Bienes Raíces admin: listado y acciones | Geo | P0 | 6 h | [ ] |
-| FE-12 | Bienes Raíces admin: subir y editar | Geo | P0 | 6 h | [ ] |
-| FE-13 | Roles y permisos | Pablo | P0 | 6 h | [x] Interfaz verificada; lectura real con roles.read pendiente de BE-01/02 |
+| FE-11 | Bienes Raíces admin: listado y acciones | Geo | P0 | 6 h | [x] 9c90853 |
+| FE-12 | Bienes Raíces admin: subir y editar | Geo | P0 | 6 h | [x] 8249fcb |
+| FE-13 | Roles y permisos | Pablo | P0 | 6 h | [x] Interfaz verificada; roles.read habilitado por BE-02 |
 | FE-14 | Usuarios: editar y cambiar rol | Pablo | P0 | 3 h | [x] 24-oct: 162 pruebas, lint, build y recorrido con API real/SQLite |
 | FE-04, FE-05, FE-08, FE-09 | Backlog posterior a la entrega | varios | P1 | n/a | [ ] |
 
 ### Integración
 | ID | Tarea | Resp. | Estado |
 |---|---|---|---|
-| INT-01 | Integrar frontend en `develop` | Jennifer | [x] Integración técnica; aceptación conjunta pendiente de INT-02/03/04 |
-| INT-02 | Integrar backend en `develop` | Henry | [ ] |
-| INT-03 | Regenerar OpenAPI | Henry | [ ] |
-| INT-04 | Pruebas por rol | Geo + Leo | [ ] |
-| INT-05 | Documento de estado | Geo | [ ] |
+| INT-01 | Integrar frontend en `develop` | Jennifer | [x] 9c4f706 |
+| INT-02 | Integrar backend en `develop` | Henry | [x] 4ee2e2b |
+| INT-03 | Regenerar OpenAPI | Henry | [x] 238fd1c |
+| INT-04 | Pruebas por rol | Geo + Leo | [x] 25-oct: `docs/INT-04-matriz-roles.md` |
+| INT-05 | Documento de estado | Geo | [x] 25-oct: `docs/estado-proyecto.md` |
 
 ---
 

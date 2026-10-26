@@ -1,5 +1,7 @@
 # Consolidación de la integración en develop
 
+> **Documento histórico.** El estado vigente, con cifras de pruebas y pendientes actualizados al 25 de octubre de 2026, está en [estado-proyecto.md](estado-proyecto.md).
+
 La integración validada de React y Django (`frontend-dev`, `4d3ea14`) se incorpora
 mediante merge a `develop`, conservando commits y autores. `main` no se modifica.
 Las funcionalidades pendientes permanecen descritas en

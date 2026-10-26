@@ -3,6 +3,11 @@
 Esta carpeta reúne los acuerdos compartidos del equipo. Todo está sujeto a cambios:
 las decisiones se revisan gradualmente y se actualizan junto con el código afectado.
 
+**Empieza por [Estado del proyecto](estado-proyecto.md)** (vigente, 25 de octubre de 2026):
+ramas, cifras de pruebas, pendientes y qué documentos son históricos.
+
+- [INT-04: matriz de pruebas por rol](INT-04-matriz-roles.md): qué puede cada rol, probado en la API, Postman y el panel.
+
 - [Reglas de desarrollo y responsables](reglas-desarrollo.md): equipo, contratos,
   ramas, revisiones y criterios de entrega.
 - [Infraestructura](infraestructura.md): PostgreSQL en Supabase como decisión y propuestas

@@ -1,5 +1,7 @@
 # Reporte de revisión del backend administrativo
 
+> **Documento histórico.** El estado vigente, con cifras de pruebas y pendientes actualizados al 25 de octubre de 2026, está en [estado-proyecto.md](estado-proyecto.md).
+
 Fecha: 12 de octubre de 2026. Rama: `develop`.
 Base anterior: `1f8f68d`. Commits revisados: `a2bee15` (modelos/conexión) y
 `795ab6d` (backend administrativo). Estado de los hallazgos: **abiertos**.
