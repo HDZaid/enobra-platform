@@ -16,7 +16,7 @@ Ejemplo (cuando existan las implementaciones):
 
 
 def build_media_storage(local_class):
-    """MEDIA_STORAGE_BACKEND: local (por defecto) o cloudinary."""
+    """MEDIA_STORAGE_BACKEND: local (por defecto), cloudinary o r2."""
     from django.conf import settings
     from django.core.exceptions import ImproperlyConfigured
 
@@ -24,8 +24,11 @@ def build_media_storage(local_class):
     if backend == "cloudinary":
         from persistence.media_cloudinary import CloudinaryMediaStorage
         return CloudinaryMediaStorage()
+    if backend == "r2":
+        from persistence.media_r2 import R2MediaStorage
+        return R2MediaStorage()
     if backend != "local":
-        raise ImproperlyConfigured(f"MEDIA_STORAGE_BACKEND desconocido: {backend!r} (local o cloudinary).")
+        raise ImproperlyConfigured(f"MEDIA_STORAGE_BACKEND desconocido: {backend!r} (local, cloudinary o r2).")
     return local_class()
 
 

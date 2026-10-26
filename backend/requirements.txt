@@ -8,4 +8,5 @@ dj-database-url
 PyJWT>=2.10,<3
 Pillow>=11,<13
 cloudinary>=1.40,<2
+django-storages[s3]>=1.14.4,<2
 gunicorn>=22

@@ -106,8 +106,16 @@ MEDIA_URL = os.getenv("MEDIA_URL", "/media/")
 DATA_UPLOAD_MAX_MEMORY_SIZE = MEDIA_MAX_UPLOAD_BYTES + 1024 * 1024
 
 # --- Proveedores externos (se eligen por variable de entorno) ---------------
-# Imágenes: "local" (disco, desarrollo) o "cloudinary" (producción; usa CLOUDINARY_URL).
+# Imágenes: "local", "cloudinary" o "r2".
 MEDIA_STORAGE_BACKEND = os.getenv("MEDIA_STORAGE_BACKEND", "local").lower()
+# Cloudflare R2 (MEDIA_STORAGE_BACKEND=r2). Las claves se crean en Cloudflare con un
+# token de R2 "Object Read & Write" limitado al bucket. Nunca van al repositorio.
+R2_ACCOUNT_ID = os.getenv("R2_ACCOUNT_ID", "")
+R2_ACCESS_KEY_ID = os.getenv("R2_ACCESS_KEY_ID", "")
+R2_SECRET_ACCESS_KEY = os.getenv("R2_SECRET_ACCESS_KEY", "")
+R2_BUCKET = os.getenv("R2_BUCKET", "")
+# Dominio público del bucket, p. ej. https://media.<dominio>.com.gt (sin barra final).
+R2_PUBLIC_BASE_URL = os.getenv("R2_PUBLIC_BASE_URL", "").rstrip("/")
 # Correo de consultas: "email" (SMTP/consola) o "resend" (API HTTPS; usa RESEND_API_KEY).
 INQUIRY_NOTIFIER = os.getenv("INQUIRY_NOTIFIER", "email").lower()
 RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
