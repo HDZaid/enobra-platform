@@ -98,6 +98,11 @@ Las rutas sin permiso se probaron entrando directo por la URL, no solo ocultando
 | H3 | Corregido | La colección Postman RBAC no corría en Newman (sección 4). | Geo | — |
 | H4 | Pendiente de activar | La **papelera de proyectos** funciona en el backend integrado: `DELETE /projects/{slug}/` → `GET /admin/trash/?type=projects` → `POST .../restore/`, y vuelve publicada. Verificado el 25-oct. En el panel sigue apagada (`PROJECT_TRASH_ENABLED = false` en `admin-projects/utils/projects.js`). Activarla y probarla en pantalla. | Jennifer (FE-07) | No |
 
+**Actualización (25-oct, noche):** H1 se mantiene por decisión y quedó en `RBAC.md`
+(límite 5). H2 se corrigió en `persistence/support.py` con prueba. H4 sigue pendiente de
+Jennifer. Además se cerraron los límites 1 y 3 de `RBAC.md` (nadie otorga permisos que no
+posee, al crear cuentas y al editar roles). Detalle en [estado-proyecto.md](estado-proyecto.md).
+
 ## 6. Qué no cubre esta prueba
 
 - Base real de Supabase, Cloudinary, Resend y Render (prueba de humo del despliegue).

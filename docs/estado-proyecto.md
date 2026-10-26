@@ -57,13 +57,21 @@ Todas sobre SQLite aislada y almacenamiento local. **Ninguna prueba toca Supabas
 |---|---|---|---|---|
 | CF-03 | **P1** | El access token dura 15 min y el frontend nunca llama a `auth/refresh/`. Al vencer, guardar responde 401 y se pierde lo escrito en el formulario. Mitigación para la demo: volver a iniciar sesión antes de cada recorrido largo. | Jennifer (sesión, FE-06) | Lunes, antes de la demo |
 | INT-04/H4 | P1 | Papelera de proyectos **apagada en el frontend** (`PROJECT_TRASH_ENABLED = false`). En el backend integrado ya funciona: `DELETE` → papelera → restaurar, y queda publicada otra vez (verificado el 25-oct). Falta activarla y probarla en la pantalla. | Jennifer (FE-07) | Lunes |
-| INT-04/H1 | P2 | Con sesión, un Empleado solo ve **sus** propiedades en el panel, también las publicadas, y no las de otros. Decidir si es lo deseado y documentarlo en `RBAC.md`. | Henry con Juan | Lunes |
-| INT-04/H2 | P3 | En Historial, las subidas de imágenes muestran "None" en Registro (`audit()` en `persistence/support.py`). Arreglo de una línea. | Juan (BE-07) | Lunes |
+| BE-04 SQL | P2 | Umbral de inactividad de `limpiar_proyectos_inactivos()`: la solicitud de pasar de 3 a 8 meses sigue **sin aplicar**. Requiere acuerdo de Henry, Juan y el Ingeniero y autorización sobre Supabase ([papelera.md](papelera.md)). | Juan con Henry | Antes de usar la papelera en la base real |
 | ADM-01 | P2 | Borrar una imagen (`DELETE admin/media/{id}/`, solo con `media.delete`) no comprueba si alguna publicación la sigue usando. | Backend | Backlog |
 | CF-08 / BE-22 | P3 | El filtro publicada/borrador y la búsqueda de Proyectos se aplican en el cliente, sobre la página cargada (con aviso). | Backend + frontend | Backlog |
 | BE-04 | P2 | La función de Supabase `limpiar_proyectos_inactivos()` podría borrar proyectos que están en la papelera. Ver [BE-04-compatibilidad-limpieza-supabase.md](BE-04-compatibilidad-limpieza-supabase.md). | Juan | Antes de usar la papelera en la base real |
 | DESP | P1 | Despliegue y prueba de humo en la URL real con los tres roles. Las imágenes guardadas en disco local (`/media/...`) no sobreviven al despliegue. | Equipo | Lunes 26 – martes 27 |
 | DATOS | P1 | Cargar roles y cuentas reales en Supabase: `seed_access_control` sin `--sync`, más una cuenta por rol. Solo así la matriz de INT-04 vale para la base real. | Henry | Lunes |
+
+**Cerrados el 25-oct (noche), rama `despliegue/cloudinary`:**
+
+| ID | Qué se hizo |
+|---|---|
+| RBAC límite 1 | `POST admin/users/` pide `users.manage` y el rol asignado no puede superar los permisos de quien crea la cuenta (`403`). El formulario solo ofrece los roles asignables. |
+| RBAC límite 3 | `roles.manage` ya no otorga permisos que no posee, al crear un rol ni al agregar permisos a uno existente (también el propio). Pruebas en `tests/test_privilege_escalation.py`. |
+| RBAC límites 2, 4 y INT-04/H1 | Decisión: se mantienen como están y quedan escritos en [RBAC.md](RBAC.md#decisiones-pendientes-y-límites-conocidos). El Empleado sigue viendo solo sus propiedades en el panel. |
+| INT-04/H2 | Historial ya no escribe "None" para subidas de imágenes (`audit()` en `persistence/support.py`). |
 
 **Resueltos desde los reportes anteriores:**
 
@@ -84,8 +92,8 @@ Estado verificado en `develop` por su commit, no solo por la casilla del issue.
 
 | Persona | Hecho | Pendiente |
 |---|---|---|
-| Henry | BE-00 (stubs), BE-01, BE-02, BE-03, BE-05, BE-11, INT-02, INT-03 | H1 (decisión) y carga de datos reales |
-| Juan | BE-04, BE-07, BE-09, BE-10, BE-12 | H2; respaldo de la base antes de tocar Supabase |
+| Henry | BE-00 (stubs), BE-01, BE-02, BE-03, BE-05, BE-11, INT-02, INT-03 | Carga de datos reales; umbral de la limpieza SQL |
+| Juan | BE-04, BE-07, BE-09, BE-10, BE-12 | Función SQL de limpieza y respaldo de la base antes de tocar Supabase |
 | Pablo | BE-06a/b, BE-08, BE-13 (en `usuarios-api.md`), FE-13, FE-14 | — |
 | Leo | FE-01a/b, FE-02, FE-03 | Repetir con Geo el recorrido de INT-04 sobre la base real |
 | Jennifer | FE-06, FE-07, FE-10, INT-01 | CF-03 y activar la papelera de proyectos |
