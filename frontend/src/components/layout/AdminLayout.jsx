@@ -90,6 +90,7 @@ export function AdminLayout() {
 
   return (
     <AdminShell user={session?.user} preview={preview} onLogout={logout}>
+      {!preview && <p role="status" className="mb-5 rounded-lg border border-[#f4cfae] bg-[#fff1e5] p-4 text-sm text-[#88420d]">La sesión dura 15 minutos y todavía no se renueva automáticamente. Guarda tu trabajo y vuelve a iniciar sesión antes de cada recorrido largo de la demo. Si aparece un error 401 al guardar, el cambio no está confirmado: conserva el contenido antes de salir.</p>}
       {allowed ? <Outlet context={context} /> : <AdminAccessDenied user={session.user} />}
     </AdminShell>
   );

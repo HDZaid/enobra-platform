@@ -104,3 +104,10 @@ Backlog sin cambios: BE-14 a BE-22 y FE-04, FE-05, FE-08, FE-09 y FE-15
 | [plan/](plan/) | Plan de entrega y tablero |
 | [INT-01-integracion-frontend.md](INT-01-integracion-frontend.md) | Integración del frontend (24-oct) |
 | [estado-ramas.md](estado-ramas.md), [integracion-backend-frontend.md](integracion-backend-frontend.md), [frontend-integration.md](frontend-integration.md), [reporte-revision-admin.md](reporte-revision-admin.md), [reporte-contratos-frontend.md](reporte-contratos-frontend.md) | **Históricos** (12–21 de octubre). Sus cifras de pruebas y sus pendientes se actualizan aquí. |
+
+## Decisiones posteriores — issue #17
+
+Para sesión y papelera, consultar [decisiones de Jennifer](decisiones-jennifer-issue-17.md).
+J-01 adopta reingreso para la demo, con aviso en el panel; la renovación automática
+no se da por implementada. J-02 mantiene la papelera de Proyectos desactivada hasta
+resolver P-01 antes de usar Supabase. J-03 y J-04 conservan las propuestas del issue.
