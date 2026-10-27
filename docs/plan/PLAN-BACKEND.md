@@ -392,6 +392,14 @@ de PostgreSQL/Supabase.
 ### BE-13. Documentación: API de usuarios
 **P0 · Q · 0.5 h · Pablo · Depende de BE-08 · Dom 25**
 
+**Estado (25-oct):** completada en `backend-dev`. `docs/usuarios-api.md`
+contrastada con vistas, serializers, repositorio y pruebas: permisos vigentes
+por endpoint tras BE-02, PATCH, PUT, seis reglas de BE-08, errores y auditoría.
+Documentado el guardado parcial entre solicitudes independientes de FE-14.
+Verificación: 189 pruebas backend aprobadas con `config.test_settings`,
+`manage.py check` sin problemas y cuatro ejemplos JSON válidos. Sin cambios
+de código ni de OpenAPI; la prueba local no acredita Supabase.
+
 **Puede editar:** `docs/usuarios-api.md` (agregar `PATCH`, `PUT …/role/`, las 6 reglas y los errores).
 
 ---
