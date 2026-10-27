@@ -26,7 +26,7 @@ export function BusinessAreas() {
           </Link>
           <Link to="/bienes-raices" className="business-card">
             <img
-              src="/assets/enobra/apartamento.jpg"
+              src="/assets/enobra/bienes-raices.jpg"
               alt="Vivienda contemporánea ilustrativa"
               loading="lazy"
             />

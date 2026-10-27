@@ -28,7 +28,7 @@ export function PropertyDetailPage() {
             <>
               <p className="eyebrow">
                 {property.operation} · {property.type}
-                {property.demo && ' · EJEMPLO'}
+                {property.demo && ' · REFERENCIA'}
               </p>
               <h1>{property.title}</h1>
               <p>

@@ -77,14 +77,14 @@ export function AdminUsersPage() {
       created = { id: `preview-${crypto.randomUUID()}`, name: payload.name, email: payload.email,
         active: payload.active, roles: [{ id: role.id, name: role.name }], created_at: new Date().toISOString() };
       if (examples.some((item) => item.email.toLowerCase() === created.email)) {
-        throw { status: 400, message: 'Revisa el correo de la cuenta de ejemplo.', details: { email: ['Este correo ya está en la demostración.'] } };
+        throw { status: 400, message: 'Revisa el correo de la cuenta de referencia.', details: { email: ['Este correo ya está en la demostración.'] } };
       }
       setExamples((previous) => [created, ...previous]);
     } else {
       created = readManagedUser(await usersService.create(payload, token));
     }
     setEditing(false);
-    setNotice(preview ? `Ejemplo creado: ${created.name}. No es una cuenta real.` : `Usuario creado: ${created.name}. ${created.active ? 'La cuenta ya puede iniciar sesión.' : 'La cuenta está inactiva.'}`);
+    setNotice(preview ? `Referencia creado: ${created.name}. No es una cuenta real.` : `Usuario creado: ${created.name}. ${created.active ? 'La cuenta ya puede iniciar sesión.' : 'La cuenta está inactiva.'}`);
     setPage(1);
     setSearch('');
     setQuery('');

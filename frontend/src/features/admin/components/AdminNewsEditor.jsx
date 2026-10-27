@@ -154,7 +154,7 @@ export function AdminNewsEditor({ item, preview, token, canPublish = false, onCl
               </div>
             </div>
           </div>
-          {!preview && <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={draft.demo} onChange={(e) => update('demo', e.target.checked)}/> Marcar como ejemplo</label>}
+          {!preview && <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={draft.demo} onChange={(e) => update('demo', e.target.checked)}/> Marcar como referencia</label>}
           <div className="overflow-hidden rounded-xl border border-[#dfe5ec]">
             <button type="button" onClick={() => setShowPreview((current) => !current)} aria-expanded={showPreview} aria-controls="news-live-preview" className="flex w-full items-center justify-between bg-[#f3f6fa] px-4 py-3 text-sm font-semibold hover:bg-[#e8edf4]">
               <span className="inline-flex items-center gap-2">{showPreview ? <EyeOff size={17}/> : <Eye size={17}/>} Vista previa editorial</span><span className="text-xs text-[#626b79]">{showPreview ? 'Ocultar' : 'Mostrar'}</span>

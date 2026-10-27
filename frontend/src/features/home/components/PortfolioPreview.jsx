@@ -19,7 +19,7 @@ export function PortfolioPreview() {
           <ProjectPreviewCard key={project.id} project={project} />
         ))}
       </div>
-      <p className="small muted">Imágenes y proyectos de ejemplo.</p>
+      <p className="small muted">Imágenes y proyectos de referencia.</p>
     </section>
   );
 }

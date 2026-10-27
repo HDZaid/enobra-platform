@@ -3,7 +3,7 @@ export const reference = [
   {
     id: 'diseno',
     title: 'Diseño',
-    image: '/assets/enobra/estructura.jpg',
+    image: '/assets/enobra/edificio-blanco.png',
     short:
       'Definimos cada detalle de tu proyecto, desde la arquitectura hasta sus especificaciones técnicas.',
     items: [
@@ -49,7 +49,7 @@ export const reference = [
   {
     id: 'preconstruccion',
     title: 'Preconstrucción',
-    image: '/assets/enobra/residencia.jpg',
+    image: '/assets/enobra/edificio-cafe.png',
     short: 'Evaluamos las alternativas y preparamos los programas que guiarán la construcción.',
     items: [
       'Evaluación de opciones constructivas, métodos y equipos',
@@ -69,7 +69,7 @@ export const reference = [
   {
     id: 'construccion',
     title: 'Construcción',
-    image: '/assets/enobra/construccion.jpg',
+    image: '/assets/enobra/casa-blanca.png',
     short: 'Ejecutamos los procesos de obra, coordinando al personal y los subcontratos.',
     items: [
       'Procesos constructivos',

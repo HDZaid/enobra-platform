@@ -25,8 +25,8 @@ export function AboutPage() {
       <section className="section container institutional">
         <aside>
           <img
-            src="/assets/enobra/estructura.jpg"
-            alt="Arquitectura contemporánea de referencia"
+            src="/assets/enobra/casa-lujo.png"
+            alt="Vivienda de arquitectura contemporánea"
             loading="lazy"
           />
           <blockquote>“Más que una construcción, un hogar”.</blockquote>
@@ -44,11 +44,7 @@ export function AboutPage() {
             ))}
           </div>
           <div id="signature" className="signature">
-            <strong>{data.signature}</strong>
-            <br />
-            {data.role}
-            <br />
-            EnObra
+            <strong>Equipo EnObra</strong>
           </div>
         </article>
       </section>

@@ -93,8 +93,8 @@ export const previewUserRoles = Object.freeze([
 ]);
 
 export const previewUsers = Object.freeze([
-  { id: 'demo-engineer', name: 'Administrador de ejemplo', email: 'ingeniero@example.test', active: true,
+  { id: 'demo-engineer', name: 'Administrador de referencia', email: 'ingeniero@example.test', active: true,
     roles: [{ id: 1, name: 'Ingeniero' }], created_at: '2026-10-21T12:00:00Z' },
-  { id: 'demo-employee', name: 'Colaborador de ejemplo', email: 'colaborador@example.test', active: false,
+  { id: 'demo-employee', name: 'Colaborador de referencia', email: 'colaborador@example.test', active: false,
     roles: [{ id: 3, name: 'Empleado' }], created_at: '2026-10-20T12:00:00Z' },
 ]);

@@ -24,7 +24,7 @@ export function filterByStatus(items, status) {
 
 export const statusLabel = (item) => {
   const base = item.published ? 'Publicada' : 'Borrador';
-  return item.demo ? `Ejemplo · ${base}` : base;
+  return item.demo ? `Referencia · ${base}` : base;
 };
 
 export function formatPropertyPrice(item) {

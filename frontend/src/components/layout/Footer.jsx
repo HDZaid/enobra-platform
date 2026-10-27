@@ -12,7 +12,6 @@ export function Footer({ resource }) {
           <div>
             <Brand company={company} footer />
             <div className="contact-info">
-              <p>{company.person}</p>
               <p>{company.address}</p>
               <p>
                 {company.phones.map((phone, index) => (

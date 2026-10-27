@@ -79,7 +79,7 @@ export function SearchDialog({ onClose }) {
         </label>
         <p role="status">{count ? `${count} resultados` : 'Sin coincidencias.'}</p>
         <ContentStatus resource={services} />
-        <p className="small muted">Proyectos, propiedades y noticias de ejemplo.</p>
+        <p className="small muted">Proyectos, propiedades y noticias de referencia.</p>
         <div className="search-results">
           {groups
             .filter((group) => group.items.length)

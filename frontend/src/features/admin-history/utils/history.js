@@ -58,10 +58,10 @@ export function actionColor(action) {
 }
 // Exclusivos del modo de demostración; nunca reemplazan una respuesta real.
 export const previewHistory = Array.from({ length: 15 }, (_, index) => ({
-  id: 15 - index, user: { id: index % 2 + 1, name: index % 2 ? 'Colaborador de ejemplo' : 'Administrador de ejemplo' },
+  id: 15 - index, user: { id: index % 2 + 1, name: index % 2 ? 'Colaborador de referencia' : 'Administrador de referencia' },
   module: index === 0 ? 'modulo_nuevo' : Object.keys(historyModules)[index % 7],
   action: index === 0 ? 'ACCION_NUEVA' : Object.keys(historyActions)[index % 8],
-  record_id: index + 1, record_name: `Publicación de ejemplo ${index + 1}`,
+  record_id: index + 1, record_name: `Publicación de referencia ${index + 1}`,
   description: `Evento ficticio ${index + 1}. Esta descripción completa permite revisar el diálogo del historial sin consultar ni modificar datos del servidor.`,
   date: `2026-10-${String(24 - index).padStart(2, '0')}T12:00:00-06:00`,
 }));

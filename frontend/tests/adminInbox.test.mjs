@@ -38,7 +38,7 @@ test('filtra por tipo y estado usando valores compatibles con la API', () => {
 
 test('busca por nombre, correo, teléfono y asunto sin depender de tildes o mayúsculas', () => {
   assert.equal(filterInquiries(demoInquiries, { query: 'CONSTRUCCION' }).length, 1);
-  assert.equal(filterInquiries(demoInquiries, { query: 'ejemplo06@' }).length, 1);
+  assert.equal(filterInquiries(demoInquiries, { query: 'referencia06@' }).length, 1);
   assert.equal(filterInquiries(demoInquiries, { query: '55550002' }).length, 1);
   assert.equal(filterInquiries(demoInquiries, { query: 'propiedad de demostracion A' }).length, 1);
 });

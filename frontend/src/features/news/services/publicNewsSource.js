@@ -28,7 +28,7 @@ export async function loadNewsPage({ page = 1, pageSize = 12, category = '', sig
       preview: true,
     };
   }
-  // No silenciar datos mal formados del backend con ejemplos.
+  // No silenciar datos mal formados del backend con referencias.
   return { ...readNewsPage(response), preview: false };
 }
 
