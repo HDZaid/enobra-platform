@@ -4,6 +4,7 @@ import { adminMediaService } from '../services/adminMediaService.js';
 import {
   adminNewsImageSrc, makeNewsPayload, newsCategories, validateNewsDraft,
 } from '../utils/newsEditor.js';
+import { fieldErrors } from '../../../components/ui/apiErrors.js';
 import { newsPayloadForPermissions } from '../utils/adminData.js';
 import { formatNewsDate, newsDraftHasChanges, newsPreviewContent } from '../utils/newsWorkflow.js';
 
@@ -96,6 +97,7 @@ export function AdminNewsEditor({ item, preview, token, canPublish = false, onCl
         await onSaveRemote(item, newsPayloadForPermissions(makeNewsPayload(candidate, image), { existing: Boolean(item), canPublish }));
       }
     } catch (error) {
+      setErrors(fieldErrors(error));
       setRequestError(error?.status === 401 || error?.status === 403
         ? 'No tienes una sesión autorizada para guardar noticias.'
         : error?.status === 400

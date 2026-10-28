@@ -111,3 +111,10 @@ Para sesión y papelera, consultar [decisiones de Jennifer](decisiones-jennifer-
 J-01 adopta reingreso para la demo, con aviso en el panel; la renovación automática
 no se da por implementada. J-02 mantiene la papelera de Proyectos desactivada hasta
 resolver P-01 antes de usar Supabase. J-03 y J-04 conservan las propuestas del issue.
+
+## Seguimiento de Jennifer
+
+Ver [cierre de tareas disponibles y pendientes por responsable](PENDIENTES-JENNIFER.md)
+y el [recorrido preparado de demo](demo/recorrido-jennifer.md). Las pruebas nuevas
+son locales; las condiciones de J-01 a J-04 siguen vigentes y P-01 no se certifica
+como cerrado. El cierre funcional sobre Supabase permanece pendiente.
