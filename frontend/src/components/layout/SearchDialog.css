@@ -1,0 +1,161 @@
+.leo-chrome dialog.search-dialog {
+  width: min(920px, calc(100% - 40px));
+  max-height: calc(100dvh - 48px);
+  margin: auto;
+  border: 1px solid rgb(255 255 255 / 75%);
+  border-radius: 24px;
+  background: rgb(248 250 252 / 92%);
+  backdrop-filter: blur(24px);
+  box-shadow: 0 32px 100px rgb(4 16 32 / 35%);
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: #8b9bad transparent;
+}
+
+@supports selector(::-webkit-scrollbar) {
+  .leo-chrome dialog.search-dialog {
+    scrollbar-width: auto;
+    scrollbar-color: auto;
+  }
+
+  .leo-chrome .search-dialog::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  .leo-chrome .search-dialog::-webkit-scrollbar-track {
+    background: transparent;
+    margin-block: 24px;
+  }
+
+  .leo-chrome .search-dialog::-webkit-scrollbar-thumb {
+    min-height: 48px;
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background: #8b9bad;
+    background-clip: padding-box;
+  }
+
+  .leo-chrome .search-dialog::-webkit-scrollbar-thumb:hover {
+    background-color: #5e7289;
+  }
+
+  .leo-chrome .search-dialog::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}
+
+.leo-chrome .search-dialog::backdrop {
+  background: rgb(9 23 43 / 65%);
+  backdrop-filter: blur(6px);
+}
+
+.leo-chrome .search-dialog .modal-body {
+  padding: 40px;
+}
+
+.leo-chrome .search-dialog .eyebrow {
+  margin: 0 48px 12px 0;
+}
+
+.leo-chrome .search-dialog h2 {
+  padding-right: 40px;
+  font-size: clamp(26px, 4vw, 36px);
+  line-height: 1.2;
+  margin: 0 0 12px;
+}
+
+.leo-chrome .search-dialog .search-intro {
+  color: var(--text-secondary);
+  margin: 0 0 28px;
+  line-height: 1.6;
+}
+
+.leo-chrome .search-dialog .modal-close {
+  top: 18px;
+  right: 18px;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+}
+
+.leo-chrome .search-dialog label {
+  display: grid;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.leo-chrome .search-dialog input {
+  width: 100%;
+  min-width: 0;
+  min-height: 56px;
+  padding: 14px 18px;
+  border: 1px solid #aebbc8;
+  border-radius: 12px;
+  background: rgb(255 255 255 / 85%);
+  color: var(--navy);
+  font: inherit;
+  font-size: 16px;
+}
+
+.leo-chrome .search-dialog :is(input, button, a):focus-visible {
+  outline: 3px solid var(--orange-text);
+  outline-offset: 3px;
+}
+
+.leo-chrome .search-dialog .search-count {
+  margin: 18px 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.leo-chrome .search-dialog .leo-content-status {
+  padding: 12px 16px;
+  border: 1px solid #d4dee7;
+  border-radius: 10px;
+  background: rgb(235 241 246 / 75%);
+}
+
+.leo-chrome .search-dialog .search-results h3 {
+  margin: 24px 0 12px;
+}
+
+.leo-chrome .search-dialog .search-result {
+  align-items: center;
+  min-height: 58px;
+  margin-top: 8px;
+  padding: 16px 18px;
+  border: 1px solid rgb(191 204 216 / 60%);
+  border-radius: 12px;
+  background: rgb(255 255 255 / 65%);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+
+.leo-chrome .search-dialog .search-result:hover {
+  background: #fff;
+  border-color: var(--orange-text);
+}
+
+.leo-chrome .search-dialog .search-result > span:last-child {
+  flex-shrink: 0;
+  color: var(--orange-text);
+}
+
+@media (max-width: 600px) {
+  .leo-chrome dialog.search-dialog {
+    width: calc(100% - 24px);
+    max-height: calc(100dvh - 24px);
+    border-radius: 18px;
+  }
+
+  .leo-chrome .search-dialog .modal-body {
+    padding: 28px 20px;
+  }
+
+  .leo-chrome .search-dialog .search-intro {
+    margin-bottom: 22px;
+    font-size: 14px;
+  }
+}
