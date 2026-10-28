@@ -13,7 +13,7 @@ export const reference = {
       ],
       year: 2026,
       description:
-        'Ficha de ejemplo para organizar el portafolio. Sustituir por la descripción verificada de los trabajos ejecutados, su alcance y las características del proyecto.',
+        'Propuesta residencial de referencia con espacios para la convivencia y el descanso. El alcance y los detalles de ejecución están pendientes de confirmación.',
       renders: [],
       video: '',
       demo: true,
@@ -30,7 +30,7 @@ export const reference = {
       ],
       year: 2026,
       description:
-        'Ficha de ejemplo para organizar el portafolio. Sustituir por la descripción verificada de los trabajos ejecutados, su alcance y las características del proyecto.',
+        'Propuesta comercial de referencia orientada a la organización de espacios de trabajo y atención. El alcance y los detalles de ejecución están pendientes de confirmación.',
       renders: [],
       video: '',
       demo: true,
@@ -47,7 +47,7 @@ export const reference = {
       ],
       year: 2025,
       description:
-        'Ficha de ejemplo para organizar el portafolio. Sustituir por la descripción verificada de los trabajos ejecutados, su alcance y las características del proyecto.',
+        'Propuesta de referencia para renovar espacios de oficina y mejorar su distribución. El alcance y los detalles de ejecución están pendientes de confirmación.',
       renders: [],
       video: '',
       demo: true,
@@ -60,7 +60,7 @@ export const reference = {
       category: 'Anuncios',
       date: '2026-09-01',
       description:
-        'Publicación de ejemplo. Aquí se presentarán los nuevos proyectos cuando se reciban su información, imágenes y fechas confirmadas.',
+        'Conoce las próximas novedades de nuestros proyectos. Compartiremos su alcance, imágenes y fechas una vez confirmados.',
       image: '/assets/enobra/estructura.jpg',
       demo: true,
     },
@@ -70,7 +70,7 @@ export const reference = {
       category: 'Eventos',
       date: '2026-09-01',
       description:
-        'Publicación de ejemplo. Esta sección permitirá informar sobre eventos comerciales. Todavía no hay un evento confirmado ni una convocatoria real.',
+        'Consulta las novedades y actividades de EnObra. Las fechas y los detalles de cada encuentro se publicarán cuando estén confirmados.',
       image: '/assets/enobra/local.jpg',
       demo: true,
     },

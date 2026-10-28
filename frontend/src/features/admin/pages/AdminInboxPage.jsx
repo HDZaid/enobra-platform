@@ -142,7 +142,7 @@ export function AdminInboxPage() {
                   <div className="flex flex-wrap items-start gap-3">
                     <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[#f3f6fa] text-[#304e7d]"><MessageSquareText size={19} aria-hidden="true"/></span>
                     <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-2"><h4 className="font-semibold">{item.name}</h4><span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${statusClass[item.status]}`}>{inquiryStatuses[item.status]}</span>{preview && <span className="text-[11px] text-[#88420d]">Ejemplo</span>}</div>
+                      <div className="flex flex-wrap items-center gap-2"><h4 className="font-semibold">{item.name}</h4><span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${statusClass[item.status]}`}>{inquiryStatuses[item.status]}</span>{preview && <span className="text-[11px] text-[#88420d]">Referencia</span>}</div>
                       <p className="mt-1 text-xs text-[#626b79]">{kinds[item.kind]} · {formatInquiryDate(item.created_at)}</p>
                       <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[#626b79]">{item.subject || item.property_title || item.message || 'Sin asunto'}{item.subject && item.message ? ` · ${item.message}` : ''}</p>
                     </div>
@@ -166,7 +166,7 @@ export function AdminInboxPage() {
                 </article>;
               })}</div>}
       </div>
-      {!loading && (!data.error || preview) && <p className="mt-3 text-right text-xs text-[#626b79]">{preview ? `Mostrando ${items.length} de ${count} ejemplos` : `Mostrando ${items.length} de ${count} solicitudes (búsqueda local a esta página)`}</p>}
+      {!loading && (!data.error || preview) && <p className="mt-3 text-right text-xs text-[#626b79]">{preview ? `Mostrando ${items.length} de ${count} referencias` : `Mostrando ${items.length} de ${count} solicitudes (búsqueda local a esta página)`}</p>}
       {!loading && (!data.error || preview) && totalPages > 1 && <nav aria-label="Paginación de solicitudes" className="mt-5 flex items-center justify-end gap-3"><button type="button" aria-label="Página anterior" disabled={page <= 1} onClick={() => { if (!preview) setData((previous) => ({ ...previous, loading: true })); setExpandedId(null); setPage((current) => current - 1); }} className="rounded-lg border border-[#dfe5ec] bg-white p-2 disabled:opacity-40"><ChevronLeft size={18}/></button><span className="text-sm">Página {page} de {totalPages}</span><button type="button" aria-label="Página siguiente" disabled={page >= totalPages} onClick={() => { if (!preview) setData((previous) => ({ ...previous, loading: true })); setExpandedId(null); setPage((current) => current + 1); }} className="rounded-lg border border-[#dfe5ec] bg-white p-2 disabled:opacity-40"><ChevronRight size={18}/></button></nav>}
     </section>
   );

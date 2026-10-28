@@ -4,6 +4,7 @@ import { adminMediaService } from '../services/adminMediaService.js';
 import {
   adminNewsImageSrc, makeNewsPayload, newsCategories, validateNewsDraft,
 } from '../utils/newsEditor.js';
+import { fieldErrors } from '../../../components/ui/apiErrors.js';
 import { newsPayloadForPermissions } from '../utils/adminData.js';
 import { formatNewsDate, newsDraftHasChanges, newsPreviewContent } from '../utils/newsWorkflow.js';
 
@@ -96,6 +97,7 @@ export function AdminNewsEditor({ item, preview, token, canPublish = false, onCl
         await onSaveRemote(item, newsPayloadForPermissions(makeNewsPayload(candidate, image), { existing: Boolean(item), canPublish }));
       }
     } catch (error) {
+      setErrors(fieldErrors(error));
       setRequestError(error?.status === 401 || error?.status === 403
         ? 'No tienes una sesión autorizada para guardar noticias.'
         : error?.status === 400
@@ -154,7 +156,7 @@ export function AdminNewsEditor({ item, preview, token, canPublish = false, onCl
               </div>
             </div>
           </div>
-          {!preview && <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={draft.demo} onChange={(e) => update('demo', e.target.checked)}/> Marcar como ejemplo</label>}
+          {!preview && <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={draft.demo} onChange={(e) => update('demo', e.target.checked)}/> Marcar como referencia</label>}
           <div className="overflow-hidden rounded-xl border border-[#dfe5ec]">
             <button type="button" onClick={() => setShowPreview((current) => !current)} aria-expanded={showPreview} aria-controls="news-live-preview" className="flex w-full items-center justify-between bg-[#f3f6fa] px-4 py-3 text-sm font-semibold hover:bg-[#e8edf4]">
               <span className="inline-flex items-center gap-2">{showPreview ? <EyeOff size={17}/> : <Eye size={17}/>} Vista previa editorial</span><span className="text-xs text-[#626b79]">{showPreview ? 'Ocultar' : 'Mostrar'}</span>

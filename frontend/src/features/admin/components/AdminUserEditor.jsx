@@ -93,7 +93,7 @@ export function AdminUserEditor({ roles, preview, onClose, onCreate }) {
       {preview && <p className="mt-5 rounded-lg bg-[#fff1e5] p-3 text-xs text-[#88420d]">Demostración: no se creará una cuenta real ni se conservará la contraseña.</p>}
       <div className="mt-6 flex justify-end gap-3 border-t border-[#dfe5ec] pt-5">
         <button type="button" disabled={busy} onClick={onClose} className="rounded-lg border border-[#dfe5ec] px-5 py-2.5 text-sm font-semibold disabled:opacity-40">Cancelar</button>
-        <button type="submit" disabled={busy} className="inline-flex items-center gap-2 rounded-lg bg-[#ff6a1f] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#b94308] disabled:opacity-50"><UserPlus size={17}/>{busy ? 'Creando…' : preview ? 'Crear ejemplo' : 'Crear usuario'}</button>
+        <button type="submit" disabled={busy} className="inline-flex items-center gap-2 rounded-lg bg-[#ff6a1f] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#b94308] disabled:opacity-50"><UserPlus size={17}/>{busy ? 'Creando…' : preview ? 'Crear referencia' : 'Crear usuario'}</button>
       </div>
     </form>
   </dialog>;

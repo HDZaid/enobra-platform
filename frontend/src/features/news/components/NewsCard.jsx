@@ -20,7 +20,7 @@ export function NewsCard({ item }) {
       <NewsImage key={image || item.id} src={image} alt={item.title} className="aspect-[2/1] w-full" />
       <div className="p-6 sm:p-8">
         <p className="mb-4 text-xs font-bold tracking-[0.19em] text-[#b94308] uppercase">
-          {item.category} · {formatNewsDate(item.date)}{item.demo ? ' · EJEMPLO' : ''}
+          {item.category} · {formatNewsDate(item.date)}{item.demo ? ' · REFERENCIA' : ''}
         </p>
         <h2 className="font-['Outfit',Arial,sans-serif] text-[25px] leading-[1.16] font-semibold tracking-[-0.035em]">
           {item.title}

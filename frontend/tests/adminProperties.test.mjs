@@ -78,7 +78,7 @@ test('formatea precio, fecha, estado y páginas', () => {
   assert.equal(formatPropertyDate('no es fecha'), '—');
   assert.match(formatPropertyDate('2026-10-23'), /2026/);
   assert.equal(statusLabel({ published: false, demo: false }), 'Borrador');
-  assert.equal(statusLabel({ published: true, demo: true }), 'Ejemplo · Publicada');
+  assert.equal(statusLabel({ published: true, demo: true }), 'Referencia · Publicada');
   assert.equal(totalPages(0), 1);
   assert.equal(totalPages(25), 3);
 });

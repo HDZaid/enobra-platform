@@ -55,7 +55,7 @@ export function NewsDetailPage() {
               <p role="status" className="mb-5 text-[13px] text-[#626b79]">Publicación de demostración. El contenido real está pendiente.</p>
             )}
             <p className="mb-4 text-xs font-bold tracking-[0.19em] text-[#b94308] uppercase">
-              {state.item.category} · {formatNewsDate(state.item.date)}{state.item.demo ? ' · EJEMPLO' : ''}
+              {state.item.category} · {formatNewsDate(state.item.date)}{state.item.demo ? ' · REFERENCIA' : ''}
             </p>
             <h1 className="max-w-[950px] font-['Outfit',Arial,sans-serif] text-[clamp(36px,5vw,64px)] leading-[1.1] font-bold tracking-[-0.035em]">
               {state.item.title}

@@ -26,7 +26,7 @@ export function ProjectDetailPage() {
               <h1>{project.title}</h1>
               <p>
                 {project.country}
-                {project.demo && ' · Proyecto e imágenes de ejemplo'}
+                {project.demo && ' · Proyecto e imágenes de referencia'}
               </p>
               <MediaGallery key={project.id} item={project} />
               <div className="geo-description">

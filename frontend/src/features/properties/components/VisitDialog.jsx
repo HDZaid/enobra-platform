@@ -82,7 +82,7 @@ export function VisitDialog({ property, onClose }) {
       </button>
       <p className="eyebrow">SOLICITUD DE VISITA</p>
       <h2 id="visit-title">{property.title}</h2>
-      {property.demo && <p className="small muted">Esta propiedad está marcada como ejemplo.</p>}
+      {property.demo && <p className="small muted">Esta propiedad está marcada como referencia.</p>}
       {status === 'success' ? (
         <>
           <p role="status">{message}</p>

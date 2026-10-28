@@ -30,7 +30,7 @@ export function PropertyCard({ property, favorite, onFavorite, contactUrl }) {
       <div className="geo-property-photo">
         <CatalogImage
           src={property.images[0]}
-          alt={`${property.title}${property.demo ? ' · imagen de ejemplo' : ''}`}
+          alt={`${property.title}${property.demo ? ' · imagen de referencia' : ''}`}
           loading="lazy"
         />
         <span className={`geo-badge ${property.operation === 'Alquiler' ? 'geo-rental' : ''}`}>
@@ -52,7 +52,7 @@ export function PropertyCard({ property, favorite, onFavorite, contactUrl }) {
           <MapPin aria-hidden="true" />
           {property.zone} · {property.location}
         </p>
-        {property.demo && <p className="small muted">Propiedad de ejemplo</p>}
+        {property.demo && <p className="small muted">Propiedad de referencia</p>}
         <PropertyFeatures property={property} />
         <Link className="geo-detail-link" to={`/bienes-raices/${property.id}`}>
           Ver detalles →

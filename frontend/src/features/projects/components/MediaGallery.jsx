@@ -22,7 +22,7 @@ export function MediaGallery({ item }) {
       <div className="geo-gallery-main">
         <CatalogImage
           src={slides[active].src}
-          alt={`${item.title} · ${slides[active].kind.toLowerCase()} ${active + 1}${item.demo ? ' de ejemplo' : ''}`}
+          alt={`${item.title} · ${slides[active].kind.toLowerCase()} ${active + 1}${item.demo ? ' de referencia' : ''}`}
         />
         <div className="geo-gallery-controls">
           <button

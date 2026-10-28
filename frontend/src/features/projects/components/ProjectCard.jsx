@@ -8,7 +8,7 @@ export function ProjectCard({ project }) {
       <div className="project-image">
         <CatalogImage
           src={project.images[0]}
-          alt={`${project.title}${project.demo ? ' · imagen de ejemplo' : ''}`}
+          alt={`${project.title}${project.demo ? ' · imagen de referencia' : ''}`}
           loading="lazy"
         />
         <span>
@@ -18,7 +18,7 @@ export function ProjectCard({ project }) {
       <h3>{project.title}</h3>
       <p>
         {project.category} · {project.year}
-        {project.demo && ' · Ejemplo'}
+        {project.demo && ' · Referencia'}
       </p>
     </Link>
   );
