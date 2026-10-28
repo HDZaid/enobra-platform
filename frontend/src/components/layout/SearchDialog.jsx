@@ -5,6 +5,7 @@ import { reference } from '../../features/services/data/reference.js';
 import { servicesService } from '../../features/services/services/servicesService.js';
 import { useReferenceResource } from '../ui/useReferenceResource.js';
 import { ContentStatus } from '../ui/ContentStatus.jsx';
+import './SearchDialog.css';
 
 const normalize = (value) =>
   value
@@ -47,6 +48,7 @@ export function SearchDialog({ onClose }) {
     <dialog
       ref={dialog}
       id="modal"
+      className="search-dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
       onCancel={onClose}
@@ -68,6 +70,7 @@ export function SearchDialog({ onClose }) {
       <div className="modal-body">
         <p className="eyebrow">EXPLORA ENOBRA</p>
         <h2 id="modal-title">¿Qué estás buscando?</h2>
+        <p className="search-intro">Encuentra el espacio o la solución para tu próximo proyecto.</p>
         <label>
           Buscar
           <input
@@ -77,7 +80,7 @@ export function SearchDialog({ onClose }) {
             onChange={(event) => setQuery(event.target.value)}
           />
         </label>
-        <p role="status">{count ? `${count} resultados` : 'Sin coincidencias.'}</p>
+        <p className="search-count" role="status">{count ? `${count} ${count === 1 ? 'resultado' : 'resultados'}` : 'Sin coincidencias. Prueba con otra palabra.'}</p>
         <ContentStatus resource={services} />
         <p className="small muted">Proyectos, propiedades y noticias de ejemplo.</p>
         <div className="search-results">
@@ -93,8 +96,8 @@ export function SearchDialog({ onClose }) {
                     to={group.url(item)}
                     onClick={onClose}
                   >
-                    {item.title}
-                    <span>↗</span>
+                    <span>{item.title}</span>
+                    <span aria-hidden="true">↗</span>
                   </Link>
                 ))}
               </section>
