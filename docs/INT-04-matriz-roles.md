@@ -1,5 +1,7 @@
 # INT-04 — Matriz de pruebas por rol
 
+> Seguimiento del 28 de octubre de 2026: roles creados en Supabase y P-01 integrado en `develop`; comprobación de solo lectura encontró cero cuentas activas en Ingeniero, Arquitecta y Empleado. La matriz real aún no se ejecutó. Antes de usar `scripts/matriz_roles.py`, confirmar un entorno apto para sus escrituras y cuatro cuentas ficticias (Ingeniero, Arquitecta y dos Empleados). El script existente crea datos, publica contenido y elimina registros; no limpia todo lo generado y solo está previsto para una base desechable. Las pruebas que se describen a continuación conservan su alcance original sobre SQLite.
+
 **Responsables:** Geo y Leo · **Fecha:** domingo 25 de octubre de 2026 ·
 **Código probado:** `develop` en `238fd1c` (tras INT-01, INT-02 e INT-03).
 
