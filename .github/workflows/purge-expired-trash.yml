@@ -28,7 +28,7 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           # Versión del backend revisada y probada; no ejecutar código de PRs.
-          ref: 3b126aa
+          ref: 3b126aa3935defe6e79f24c47d1630366408ac6d
           persist-credentials: false
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
