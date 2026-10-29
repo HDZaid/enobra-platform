@@ -1,5 +1,7 @@
 # Dependencias de las tareas de Juan
 
+> Acuerdo vigente del 29-oct: [responsables y cierres](responsables-y-cierres.md) sustituye las exclusividades y dependencias personales de Henry de este documento. Pablo puede integrar backend, modificar configuración y generar OpenAPI; Jenny integra frontend y Juan verifica despliegue, con los respaldos indicados. P-01 está cerrado. P-02 pasa a limpieza desde el backend tras más de 90 días en papelera; consultar su informe antes de dar por activada la ejecución automática.
+
 Corte: 28 de octubre de 2026, Guatemala. Fuentes: [issue #8](https://github.com/HDZaid/enobra-platform/issues/8), [issue #15](https://github.com/HDZaid/enobra-platform/issues/15), [issue #16](https://github.com/HDZaid/enobra-platform/issues/16), [issue #18](https://github.com/HDZaid/enobra-platform/issues/18), planes y evidencia de `develop` y `backend-dev`. Este documento registra coordinación; no acredita acciones no realizadas ni cambia decisiones del equipo.
 
 La issue #8 está cerrada: BE-04, BE-07, BE-09, BE-10 y BE-12 tienen commits. La #18 continúa abierta para seguimiento de integración y validación. El plan original denomina BE-12 documentación de auditoría y papelera; la #18 usa BE-12 para imágenes: confirmar esa diferencia al actualizar el tablero.

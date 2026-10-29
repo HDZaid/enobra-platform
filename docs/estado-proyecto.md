@@ -1,5 +1,7 @@
 # Estado del proyecto EnObra
 
+> Acuerdo vigente del 29-oct: [responsables y cierres](responsables-y-cierres.md) sustituye las exclusividades y dependencias personales de Henry de este documento. Pablo puede integrar backend, modificar configuración y generar OpenAPI; Jenny integra frontend y Juan verifica despliegue, con los respaldos indicados. P-01 está cerrado. P-02 pasa a limpieza desde el backend tras más de 90 días en papelera; consultar su informe antes de dar por activada la ejecución automática.
+
 > Actualización del 28 de octubre de 2026: P-01 integrado en `develop` (`7c6488f`) y roles reales creados. La matriz HTTP se repitió sobre Supabase: **70/70 aprobadas**; también se comprobaron menús, pantallas restringidas y guardado con foto desde los tres roles en Chromium. P-01 pasó editar/papelera/restaurar con un proyecto ficticio. [Informe y alcance](INT-04-supabase-2026-10-28.md). API y panel locales con base real; despliegue público, imágenes persistentes y P-02 continúan pendientes. Las cifras y estados del corte del 25-oct que siguen son históricos.
 
 **Corte:** domingo 25 de octubre de 2026 (America/Guatemala) · **Rama:** `develop` en

@@ -1,5 +1,7 @@
 # Jennifer: cierre de tareas disponibles y pendientes
 
+> Acuerdo vigente del 29-oct: [responsables y cierres](responsables-y-cierres.md) sustituye las exclusividades y dependencias personales de Henry de este documento. Pablo puede integrar backend, modificar configuración y generar OpenAPI; Jenny integra frontend y Juan verifica despliegue, con los respaldos indicados. P-01 está cerrado. P-02 pasa a limpieza desde el backend tras más de 90 días en papelera; consultar su informe antes de dar por activada la ejecución automática.
+
 Revisión basada en los remotos develop `da28d5a` y frontend-dev `9c6f0a0`, y las
 condiciones J-01 a J-04 del issue #17 aportadas por Jennifer. No se acredita aquí el
 estado actual de los issues: la API de GitHub rechazó su lectura/escritura.

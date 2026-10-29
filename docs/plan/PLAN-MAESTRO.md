@@ -1,5 +1,7 @@
 # EnObra Platform: Plan maestro hacia la entrega del 25 de octubre
 
+> Acuerdo vigente del 29-oct: [responsables y cierres](../responsables-y-cierres.md) sustituye las exclusividades y dependencias personales de Henry de este documento. Pablo puede integrar backend, modificar configuración y generar OpenAPI; Jenny integra frontend y Juan verifica despliegue, con los respaldos indicados. P-01 está cerrado. P-02 pasa a limpieza desde el backend tras más de 90 días en papelera; consultar su informe antes de dar por activada la ejecución automática.
+
 > **Documentos del plan:** este archivo (maestro) + [`PLAN-BACKEND.md`](PLAN-BACKEND.md) + [`PLAN-FRONTEND.md`](PLAN-FRONTEND.md).
 > **Base:** la auditoría `auditoria-enobra-platform.md` (los códigos `§` remiten a ella) y el historial real de `git` (43 commits, 5–21 de octubre de 2026).
 > **Estado:** borrador generado el jue 22-oct-2026 (22:51, Guatemala). Todo lo marcado **(confirmar)** es una suposición con valor por defecto, no una decisión tomada.
@@ -97,14 +99,14 @@ El total (~86 h) queda a la par de 6 × 2 días × 7 h = 84 h: **sin holgura**. 
 
 ### Zonas de conflicto y responsable de cada archivo compartido
 
-Como todos trabajan en la misma rama, estos archivos son donde chocan los cambios. **Solo el responsable los edita; los demás le piden el cambio o lo coordinan antes.**
+Como todos trabajan en la misma rama, estos archivos son donde chocan los cambios. **El responsable o su respaldo puede editarlos; coordinar modificaciones simultáneas, sin esperar aprobación exclusiva de Henry.**
 
 | Archivo(s) | Responsable | Por qué |
 |---|---|---|
-| `backend/config/settings.py`, `config/urls.py`, `config/bindings.py` | **Henry** | Cada módulo nuevo se registra ahí |
-| `backend/apps/accounts/access_policy.py` | **Henry** | Catálogo de permisos y roles |
+| `backend/config/settings.py`, `config/urls.py`, `config/bindings.py` | **Pablo; Henry de respaldo** | Cada módulo nuevo se registra ahí |
+| `backend/apps/accounts/access_policy.py` | **Pablo; Henry de respaldo** | Catálogo de permisos y roles |
 | `backend/persistence/catalog.py` | **Juan** (BE-04), luego Henry (BE-05) | Papelera genérica y fábrica tocan el mismo archivo; **orden fijo** |
-| `docs/openapi.yaml` | **Henry (solo él lo regenera)** | Es un archivo generado; si varios lo editan, siempre hay conflicto |
+| `docs/openapi.yaml` | **Pablo; Henry de respaldo** | Es un archivo generado; si varios lo editan, siempre hay conflicto |
 | `frontend/src/app/router.jsx`, `routePaths.js` | **Jennifer** | Rutas del panel |
 | `frontend/src/features/admin/components/AdminShell.jsx`, `utils/adminData.js`, `components/layout/AdminLayout.jsx` | **Jennifer** | Menú y permisos |
 | `frontend/src/services/apiClient.js`, `package.json` | **Jennifer** | Cliente HTTP y dependencias compartidas |
@@ -175,7 +177,7 @@ Cada una se ejecuta con el valor por defecto **a menos que el ingeniero indique 
 | DEC-07 | ¿Proyectos distingue propio/cualquiera como Propiedades? | **Sí** (espejo de propiedades) | BE-01 | Ingeniero |
 | DEC-08 | Permisos de Arquitecta/Empleado sobre Proyectos y Mensajes | **Ninguno** por ahora; sí reciben `media.upload` | BE-01 | Ingeniero |
 | DEC-09 | Almacenamiento de imágenes | Disco local para la entrega; almacenamiento persistente antes de producción | Backlog | Ingeniero |
-| DEC-10 | Quién integra a `develop` | Jennifer (front) y Henry (back) | INT-01, INT-02 | Equipo |
+| DEC-10 | Quién integra a `develop` | Jennifer (front; respaldo Geo) y Pablo (back; respaldo Henry) | INT-01, INT-02 | Equipo |
 
 ---
 
