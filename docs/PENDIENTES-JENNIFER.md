@@ -1,79 +1,65 @@
-# Jennifer: cierre de tareas disponibles y pendientes
+# Jennifer: tareas completas y pendientes externos
 
-> Estado final del 29-oct: [limpieza diaria activa](P02-limpieza-activa.md) en GitHub Actions, gratuita para este repo público. Simulación y ejecución real aprobadas (0 publicaciones vencidas). P-02 y su automatización están completas. El pendiente de activar un Cron Job en Render que aparezca abajo es histórico y queda sustituido; no crear un servicio duplicado. Mantenimiento: Pablo, respaldo Juan.
+Corte de código: integración `3c1cf9d`, implementación frontend `2a69c3e`.
+Este documento sustituye sus listas previas: J-02 ya no está bloqueado.
 
-> Estado vigente, 29-oct: [P-02 y papelera de 90 días](P02-papelera-90-dias.md). P-01 cerrado; función SQL antigua retirada de Supabase y ausencia verificada. La nueva limpieza corre desde el backend después de más de 90 días en papelera. Código y pruebas listos; falta activar/verificar el Cron Job en Render (Juan, respaldo Pablo). Los bloqueos anteriores por decidir P-01/P-02 y las políticas de inactividad de 3/8 meses quedan sustituidos. Jenny puede validar la habilitación del frontend con la versión integrada; no requiere otro OK de Henry.
+## Tareas de entrega terminadas
 
-> Acuerdo vigente del 29-oct: [responsables y cierres](responsables-y-cierres.md) sustituye las exclusividades y dependencias personales de Henry de este documento. Pablo puede integrar backend, modificar configuración y generar OpenAPI; Jenny integra frontend y Juan verifica despliegue, con los respaldos indicados. P-01 está cerrado. P-02 pasa a limpieza desde el backend tras más de 90 días en papelera; consultar su informe antes de dar por activada la ejecución automática.
+| Tarea | Resultado y evidencia |
+| --- | --- |
+| FE-06: rutas, menú y permisos | Rutas y menús por permisos, `refreshUser()` y protección de formularios. Las vistas no autorizadas redirigen al Resumen sin montarse; sus botones no se muestran. Ver `docs/visibilidad-panel.md`. |
+| FE-10: Noticias, Mensajes y Resumen | Acciones por permiso, Mensajes de lectura sin gestión, conteos reales y fallos parciales; errores de Noticias por campo y contenido conservado al rechazar el guardado. |
+| FE-07: administración de Proyectos | Crear/editar, fotos/renders, orden y portada, YouTube, validación, slug estable, publicación explícita y aviso de cambios. |
+| INT-01: integración frontend | Cambios publicados e incorporados a develop conservando los avances del equipo. |
+| J-01: mitigación de sesión | Aviso de 15 minutos y reingreso antes del recorrido largo de demo. No se presenta como renovación automática. |
+| J-02: papelera de Proyectos | `PROJECT_TRASH_ENABLED=true` con P-01/P-02 integrados. Envío y restauración comprobados desde UI; cancelar no envía, conserva imágenes/slug y estado anterior. |
+| Preparación de demo | Recorrido en `docs/demo/recorrido-jennifer.md`, incluidos errores y restricciones sobre datos reales. |
 
-Evidencia histórica de Jennifer tras sincronizar frontend-dev con develop `8dc4016`.
-En ese corte P-01 estaba integrado y P-02 seguía pendiente; el informe del 29-oct lo sustituye. Evidencia del equipo sobre Supabase en
-[INT-04 Supabase](INT-04-supabase-2026-10-28.md). Las pruebas nuevas de Jennifer
-son locales; no se ejecutaron operaciones adicionales sobre Supabase ni se acredita
-con este documento el estado remoto de los issues.
+## Evidencia ya ejecutada
 
-## Cierre actual de J-02
+- Frontend integrado: lint, **182 pruebas** y build aprobados (advertencia conocida
+  de bundle mayor de 500 kB; no bloqueó el build).
+- Chromium con Django/SQLite/archivos temporales: crear con dos fotos, reordenar,
+  publicar y verificar detalle público, editar, despublicar, editar borrador y móvil.
+  Enviar a papelera y restaurar desde UI tanto publicado como borrador; cancelar
+  no borra. Permisos propios/ajenos, retención y restauración: **27 pruebas backend**.
+- Chromium con API simulada: visibilidad de secciones/acciones según cinco perfiles;
+  además ocho perfiles de acciones/conteos y fallos 400/401/403/501/503/sin red en
+  Noticias, sin falso éxito ni pérdida del contenido del editor.
+- P-01/P-02 y automatización de limpieza cerrados por el equipo: referencia
+  `docs/P02-limpieza-activa.md`. No hay que solicitar otro OK de Henry ni configurar
+  un Cron Job duplicado. Mantenimiento de limpieza: Pablo, respaldo Juan.
+- Pruebas del equipo contra Supabase: `docs/INT-04-supabase-2026-10-28.md` registra
+  70/70 comprobaciones y panel contra API local/Supabase. No equivale a desplegar.
 
-Papelera de Proyectos habilitada con el backend integrado de P-01/P-02. Cancelar,
-enviar y restaurar se probaron desde la interfaz con proyectos publicados y
-borradores, conservando imágenes/slug y estado previo. Lint, 182 pruebas frontend,
-build, 27 pruebas backend de papelera/retención y Chromium aprobados. Todo en
-SQLite/archivos temporales, sin tocar Supabase. No acredita despliegue web nuevo.
-El bloqueo de J-02 descrito en informes históricos queda cerrado.
+No se repitieron estas suites para esta actualización documental. Las pruebas nuevas
+de Jennifer anteriores fueron locales; no se hicieron escrituras adicionales sobre
+Supabase, ni cambios a los secretos, limpieza programada o servicios de despliegue.
 
-## Completado en esta entrega
+## Únicos pendientes externos para cerrar el recorrido real
 
-- Sincronización de las imágenes/textos nuevos y el aviso de sesión de frontend-dev
-  con los ajustes de búsqueda/encabezado de develop, conservando ambas contribuciones.
-- Validación de frontend: lint, 181 pruebas y build aprobados; aviso de bundle >500 kB
-  sin impedir la compilación. Referencias estáticas /assets/ comprobadas sin faltantes.
-- Validación local del backend integrado: check correcto y 191 pruebas aprobadas
-  usando config.test_settings (SQLite aislada).
-- Proyectos: Chromium con Django real/SQLite y medios temporales. Crear con dos
-  fotos, reordenar, publicar, verificar detalle público, editar, mantener slug,
-  despublicar, editar borrador, confirmación de salida y formulario móvil.
-- Noticias/Mensajes/Resumen: Chromium con API simulada y ocho perfiles de permisos.
-  Se verificaron botones, conteos y guardado. Formularios de Noticias conservados
-  ante 400/401/403/501/503/sin red, sin aviso de éxito falso. Corregida la presentación
-  de errores 400 por campo en Noticias.
-- P-01 revalidado: crear/editar renuevan actividad; restaurar conserva publicación
-  previa y deja ACTIVO/sin fecha de eliminación; rollback restaura marcas anteriores.
-  Chromium comprobó restauración desde Papelera de un proyecto enviado por API
-  aislada, conservando imágenes, slug y borrador. El botón de Proyectos sigue apagado.
-- Preparado [recorrido de demo](demo/recorrido-jennifer.md), incluidos reingreso de
-  sesión, errores y restricciones sobre datos reales.
-
-Esto acredita pruebas locales; no una demo en producción, SMTP ni validación nueva
-sobre Supabase. No se modificó la función SQL, la retención ni el almacenamiento.
-
-## Lo que sigue bloqueado y a quién avisar
-
-| Pendiente | Por qué no se completa ahora | A quién avisar y qué solicitar |
+| Pendiente | Información o acceso que falta | A quién avisar |
 | --- | --- | --- |
-| Recorrido de tus módulos en la URL desplegada | Geo/Leo ya documentaron 70/70 comprobaciones y panel por rol contra Supabase mediante API local; eso no acredita el despliegue público. Las cuentas del ensayo quedaron desactivadas. | **Henry**: confirmar URL y cuentas autorizadas; **Geo y Leo**: acompañar validación en el despliegue. No pedir repetir sin motivo la matriz local/Supabase ya documentada. |
-| Demo en URL real con imágenes persistentes | Los medios locales temporales no acreditan persistencia tras despliegue. | **Responsable de despliegue y Henry**: confirmar proveedor/dominio, backend desplegado y persistencia de medios; luego ensayar el recorrido de demo. |
-| Comentarios/casillas de issues #17/#18 | La API devuelve Forbidden; los intentos previos no publicaron nada. | **Jennifer o administrador del repositorio**: publicar manualmente las decisiones del documento y la respuesta a Juan, o restablecer el acceso de la integración a issues. No se enviaron mensajes nuevos al equipo. |
+| Recorrido en la URL desplegada | URL del frontend/API, revisión desplegada que incluya la papelera y cuentas de prueba autorizadas. No se encontró una URL operativa registrada en el checkout revisado. Las cuentas temporales del ensayo Supabase se desactivaron. | **Juan**, respaldo **Pablo**, confirman despliegue; **Pablo**, respaldo Juan, prepara cuentas identificadas por Geovanny. **Geovanny y Leo** llevan QA; Jenny acompaña interfaz. |
+| Verificar imágenes persistentes | Proveedor/entorno realmente desplegados y evidencia de imagen recuperable tras reinicio o nuevo despliegue. El runner local no lo acredita. | **Juan**, respaldo **Pablo**. Jenny verifica el resultado visible cuando exista ese entorno. |
+| Publicar comentario/casillas del issue #17 | La API REST sigue devolviendo Forbidden al leer el issue. No se modificó su cuerpo sin poder conocer la versión actual. | **Jenny** puede publicar manualmente; **Geovanny** es respaldo. Para el acceso de la integración, **HDZaid/administrador de GitHub**. Texto listo en `docs/comentario-issue-17-jennifer.md`. |
 
-## Aplazado por acuerdo, no bloqueado por código
+## Aplazado por decisiones vigentes, no bloqueo técnico
 
-- **J-01/FE-08:** renovación automática después de la entrega; para la demo se usa
-  reingreso con aviso. CF-03 no se declara corregido como renovación automática.
-- **J-03:** persistencia posterior: sessionStorage solo para el refresh token,
-  manteniendo el access token en memoria. No se implementó persistencia ahora.
-- **J-04/BE-22:** filtros de Proyectos en backend al backlog, con **Pablo**; se mantiene
-  el filtro local con su aviso.
-- **FE-09:** editor de Empresa/Nosotros continúa en el backlog posterior a la entrega;
-  ajustar textos/imagenes estáticos no equivale a implementar ese editor.
+- J-01/FE-08: renovación automática después de la entrega. La mitigación está hecha;
+  no se declara resuelto CF-03 como renovación automática.
+- J-03: persistencia posterior; sessionStorage solo para el refresh token. Los tokens
+  actuales permanecen en memoria, sin localStorage.
+- J-04/BE-22: conservar filtros en cliente con aviso de página cargada; filtros de
+  backend en backlog con Pablo.
+- FE-09: editor de Empresa/Nosotros en backlog posterior a la entrega. Cambiar textos
+  estáticos no equivale a implementar el editor. No se adelantó este alcance.
 
-Estos aplazamientos no se sustituyen por nuevas funcionalidades bajo el título de
-cerrar tareas disponibles. Se mantienen las ramas compartidas, sin ramas alternas.
+## Mensaje preparado de coordinación
 
-## Mensaje preparado para coordinación
+«Mis tareas de entrega y J-02 ya están implementadas, probadas localmente e integradas.
+Para acompañar el recorrido real necesito URL, revisión desplegada y cuentas de prueba
+por rol. Juan/Pablo: confirmen también imágenes persistentes. Geovanny/Leo: coordinemos
+el recorrido sobre ese entorno. P-01/P-02 ya no son bloqueos para mi frontend».
 
-Para Juan y Pablo: «P-01/P-02 están cerrados y ya habilité la papelera de Proyectos
-en frontend con pruebas locales de envío/restauración y conservación de datos.
-Para cerrar el recorrido desplegado necesito confirmar URL, versión y cuentas
-permanentes autorizadas; coordinaré la comprobación de interfaz con Geovanny y Leo».
-
-Es texto preparado: este documento no implica que se haya enviado por GitHub, correo
-o mensajería.
+Texto preparado, no enviado por correo, mensajería ni comentario remoto.
