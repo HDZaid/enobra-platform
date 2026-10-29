@@ -1,5 +1,7 @@
 # Responsables y condiciones de cierre
 
+> Estado final del 29-oct: [limpieza diaria activa](P02-limpieza-activa.md) en GitHub Actions, gratuita para este repo público. Simulación y ejecución real aprobadas (0 publicaciones vencidas). P-02 y su automatización están completas. El pendiente de activar un Cron Job en Render que aparezca abajo es histórico y queda sustituido; no crear un servicio duplicado. Mantenimiento: Pablo, respaldo Juan.
+
 Acuerdo solicitado por Geovanny el 29 de octubre de 2026. Sustituye las restricciones
 de responsable único de los planes anteriores; conserva autoría histórica, ramas
 compartidas y decisiones funcionales.
@@ -16,7 +18,7 @@ acceso, registrar servicio, permiso y quién puede concederlo; no escribir solam
 | --- | --- | --- | --- |
 | Integrar backend; configuración, permisos y OpenAPI | Pablo | Henry; Juan para datos y pruebas | Revisar commits y consumidores, check y pruebas backend; si cambia el contrato, generar OpenAPI con validación. P-01 ya está integrado. |
 | Integrar frontend y habilitar papelera de Proyectos | Jenny | Geovanny | Lint, pruebas y build; para habilitar papelera sobre Supabase, cierre técnico P-02 y prueba del recorrido. |
-| Limpieza de papelera P-02 tras más de 90 días | Pablo; el agente de Geovanny ejecuta el cambio autorizado | Juan | Retirar función SQL antigua, implementar limpieza en backend con historial y probarla; documentar por separado la programación en el hosting. Véase [P-02](P02-papelera-90-dias.md). |
+| Limpieza de papelera P-02 tras más de 90 días | Pablo; el agente de Geovanny ejecuta el cambio autorizado | Juan | Retirar función SQL antigua, implementar limpieza en backend con historial y probarla; Programación y ejecución verificadas en GitHub Actions; mantener la cuenta técnica y los secretos. Véase [P-02](P02-papelera-90-dias.md). |
 | Cuentas permanentes de la aplicación | Pablo | Juan | Geovanny identifica titulares y roles; quien tenga acceso crea cuentas y verifica login/permisos. Los roles ya existen. |
 | Despliegue, imágenes persistentes y correo | Juan | Pablo | Geovanny confirma destino/proveedor y acceso; registrar URL, versión, imagen recuperable tras reinicio/despliegue y prueba de correo. Cerrar cada comprobación por separado. |
 | Pruebas en URL desplegada | Geovanny y Leo | Jenny para interfaz; Juan para API | Resultado por rol y versión. Las 70/70 pruebas previas usaron API local y Supabase real: no acreditan despliegue ni participación de Leo. |

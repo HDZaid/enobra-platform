@@ -1,5 +1,7 @@
 # P-02: papelera de 90 días desde el backend
 
+> Estado final del 29-oct: [limpieza diaria activa](P02-limpieza-activa.md) en GitHub Actions, gratuita para este repo público. Simulación y ejecución real aprobadas (0 publicaciones vencidas). P-02 y su automatización están completas. El pendiente de activar un Cron Job en Render que aparezca abajo es histórico y queda sustituido; no crear un servicio duplicado. Mantenimiento: Pablo, respaldo Juan.
+
 Decisión de Geovanny, 29-oct-2026: retirar la limpieza SQL de Supabase y eliminar
 desde el código del backend las publicaciones con **más de 90 días en papelera**.
 Sustituye la suspensión temporal y la política anterior de 8 meses de inactividad.

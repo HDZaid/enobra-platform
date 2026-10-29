@@ -1,5 +1,8 @@
 # Trabajo del equipo EnObra
 
+P-02 y la limpieza diaria están completas: leer [docs/P02-limpieza-activa.md](docs/P02-limpieza-activa.md).
+GitHub Actions sustituye el Cron Job de Render; no duplicar programadores ni reintroducir la función SQL antigua.
+
 Leer [docs/TRABAJO-EN-EQUIPO.md](docs/TRABAJO-EN-EQUIPO.md) antes de modificar código.
 Leer [docs/responsables-y-cierres.md](docs/responsables-y-cierres.md): desde el 29-oct,
 Henry no es un aprobador obligatorio. Ese reparto sustituye las exclusividades y
