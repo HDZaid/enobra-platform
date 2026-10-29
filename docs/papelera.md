@@ -129,7 +129,13 @@ un borrado del padre. La adaptación del ORM y sus pruebas son una tarea posteri
 
 Hay dos ciclos independientes. La papelera usa JSON; la limpieza SQL usa
 `estado_limpieza`, `fecha_ultima_actividad` y `fecha_marcado_eliminacion`.
-BE-04 no modifica ni reconcilia esos campos.
+Desde P-01 de la issue #16 (26 de octubre de 2026), crear, editar y restaurar
+proyectos actualiza `fecha_ultima_actividad`. Restaurar además cambia
+`estado_limpieza` a `ACTIVO` y limpia `fecha_marcado_eliminacion`; enviar a papelera
+conserva esos campos. Editar no elimina marcas SQL previas.
+Según P-02, la función debe permanecer sin ejecutar durante la entrega hasta
+resolver su compatibilidad. No se ha verificado ni desactivado su programación
+real desde este cambio. Véase [decisiones de Pablo](decisiones-pablo-issue-16.md).
 
 Según la descripción del solicitante recogida en el
 [informe de compatibilidad](BE-04-compatibilidad-limpieza-supabase.md), la función
@@ -142,8 +148,8 @@ constituyen una validación nueva de la función ni de su programación.
 | --- | --- |
 | SQL marca un borrador sin JSON | No aparece automáticamente en la papelera manual |
 | Se envía un proyecto antiguo a papelera | Queda despublicado y podría ser candidato SQL; el plazo no parte necesariamente de `trashed_at` |
-| Se restaura un borrador antiguo | Conserva actividad/marca SQL y podría borrarse en una ejecución posterior |
-| Se restaura una publicación | Recupera publicación, pero no limpia las marcas SQL |
+| Se restaura un borrador antiguo | Renueva actividad, vuelve a `ACTIVO` y limpia la fecha de marcado; sigue pendiente validar la función real |
+| Se restaura una publicación | Recupera publicación, renueva actividad y reinicia las marcas SQL |
 | SQL elimina una fila en papelera | Puede dejar JSON huérfano; el listado lo omite y restaurar devuelve 404 |
 
 La API no garantiza los mismos eventos de auditoría para un DELETE externo. Las
@@ -162,7 +168,7 @@ resuelve la falta de coordinación entre SQL y JSON.
 Henry, Juan y el Ingeniero deben acordar el umbral, si la limpieza excluye la
 papelera o comparte su retención, qué ocurre al restaurar, las marcas de actividad,
 el actor de auditoría, las relaciones y la limpieza de huérfanos. Cambiar función,
-campos nativos o programación requiere autorización y una tarea posterior; BE-12
+esquema nativo o programación requiere autorización y una tarea posterior; BE-12
 no ejecuta cambios en Supabase. La coexistencia segura sigue pendiente.
 
 ## Evidencia y evolución pendiente

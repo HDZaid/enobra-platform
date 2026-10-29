@@ -1,5 +1,12 @@
 # BE-04: papelera y limpieza SQL de proyectos
 
+> Actualización del 26 de octubre de 2026: P-01/P-02 de la issue #16 sustituyen
+> la propuesta de conservar actividad y marcas al restaurar descrita en este
+> informe histórico. Crear, editar y restaurar actualizan actividad; restaurar
+> reinicia las marcas SQL. La función debe permanecer sin ejecutar hasta resolver
+> su compatibilidad. Véase [decisiones de Pablo](decisiones-pablo-issue-16.md).
+> Esto no acredita desactivación ni validación de la función real en Supabase.
+
 Fecha: 23 de octubre de 2026 (Guatemala). Rama: `backend-dev`.
 Estado: lógica local implementada y probada; integración y convivencia SQL pendientes.
 

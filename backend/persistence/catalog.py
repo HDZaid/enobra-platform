@@ -121,12 +121,16 @@ class CatalogRepository:
                     for api, field in (("rooms", "habitaciones"), ("baths", "banos"), ("parking", "parqueos"))):
                 raise ValidationError("Un terreno no puede tener habitaciones, baños ni parqueos.")
 
+    def _activity_values(self, now, *, restored=False):
+        return {}
+
     @transaction.atomic
     def create(self, data, *, created_by):
         self._validate(data)
         values = self._values(data)
         values.update(creado_por_id=created_by, actualizado_por_id=created_by,
                       fecha_actualizacion=timezone.now())
+        values.update(self._activity_values(values["fecha_actualizacion"]))
         for attempt in range(5):
             try:
                 with transaction.atomic():
@@ -151,6 +155,8 @@ class CatalogRepository:
         for field, value in self._values(data).items():
             setattr(obj, field, value)
         obj.actualizado_por_id, obj.fecha_actualizacion = updated_by, timezone.now()
+        for field, value in self._activity_values(obj.fecha_actualizacion).items():
+            setattr(obj, field, value)
         obj.save()
         self._extras(obj, data, updated_by)
         audit(self.module, "EDITAR", obj, updated_by)
@@ -242,7 +248,10 @@ class CatalogRepository:
         obj.publicado = bool(trash.get("was_published", False))
         obj.actualizado_por_id = restored_by
         obj.fecha_actualizacion = timezone.now()
-        obj.save(update_fields=["publicado", "actualizado_por", "fecha_actualizacion"])
+        activity = self._activity_values(obj.fecha_actualizacion, restored=True)
+        for field, value in activity.items():
+            setattr(obj, field, value)
+        obj.save(update_fields=["publicado", "actualizado_por", "fecha_actualizacion", *activity])
         extra.pop("trash", None)
         write_data(key, extra, restored_by)
         audit(self.module, "RESTAURAR", obj, restored_by)
@@ -272,6 +281,12 @@ class DjangoProjectRepository(CatalogRepository, ProjectRepository):
     video_model, video_fk = ProyectoVideo, "proyecto"
     fields = {"title": "titulo", "description": "descripcion", "country": "pais", "year": "anio"}
     categories = {"category": (CategoriaProyecto, "categoria")}
+
+    def _activity_values(self, now, *, restored=False):
+        values = {"fecha_ultima_actividad": now}
+        if restored:
+            values.update(estado_limpieza="ACTIVO", fecha_marcado_eliminacion=None)
+        return values
 
     def list(self, *, year, include_unpublished, page, page_size):
         qs = self._query(include_unpublished)
