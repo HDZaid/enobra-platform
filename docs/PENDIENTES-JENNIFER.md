@@ -1,7 +1,11 @@
 # Jennifer: cierre de tareas disponibles y pendientes
 
-Revisión actualizada tras sincronizar frontend-dev con develop `8dc4016`.
-P-01 está integrado; P-02 sigue pendiente. Evidencia del equipo sobre Supabase en
+> Estado vigente, 29-oct: [P-02 y papelera de 90 días](P02-papelera-90-dias.md). P-01 cerrado; función SQL antigua retirada de Supabase y ausencia verificada. La nueva limpieza corre desde el backend después de más de 90 días en papelera. Código y pruebas listos; falta activar/verificar el Cron Job en Render (Juan, respaldo Pablo). Los bloqueos anteriores por decidir P-01/P-02 y las políticas de inactividad de 3/8 meses quedan sustituidos. Jenny puede validar la habilitación del frontend con la versión integrada; no requiere otro OK de Henry.
+
+> Acuerdo vigente del 29-oct: [responsables y cierres](responsables-y-cierres.md) sustituye las exclusividades y dependencias personales de Henry de este documento. Pablo puede integrar backend, modificar configuración y generar OpenAPI; Jenny integra frontend y Juan verifica despliegue, con los respaldos indicados. P-01 está cerrado. P-02 pasa a limpieza desde el backend tras más de 90 días en papelera; consultar su informe antes de dar por activada la ejecución automática.
+
+Evidencia histórica de Jennifer tras sincronizar frontend-dev con develop `8dc4016`.
+En ese corte P-01 estaba integrado y P-02 seguía pendiente; el informe del 29-oct lo sustituye. Evidencia del equipo sobre Supabase en
 [INT-04 Supabase](INT-04-supabase-2026-10-28.md). Las pruebas nuevas de Jennifer
 son locales; no se ejecutaron operaciones adicionales sobre Supabase ni se acredita
 con este documento el estado remoto de los issues.

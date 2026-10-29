@@ -1,6 +1,9 @@
 # Trabajo del equipo EnObra
 
 Leer [docs/TRABAJO-EN-EQUIPO.md](docs/TRABAJO-EN-EQUIPO.md) antes de modificar código.
+Leer [docs/responsables-y-cierres.md](docs/responsables-y-cierres.md): desde el 29-oct,
+Henry no es un aprobador obligatorio. Ese reparto sustituye las exclusividades y
+dependencias personales de los planes anteriores; conservar requisitos técnicos.
 Para pendientes de Juan que requieren coordinación, consultar [docs/dependencias-juan.md](docs/dependencias-juan.md) y actualizar la evidencia al completar cada acción.
 Estas reglas sustituyen recomendaciones antiguas de crear ramas por módulo.
 

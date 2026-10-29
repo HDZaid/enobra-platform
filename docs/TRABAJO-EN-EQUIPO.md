@@ -1,5 +1,7 @@
 # Reglas obligatorias de trabajo compartido
 
+> Acuerdo vigente del 29-oct: [responsables y cierres](responsables-y-cierres.md) sustituye las exclusividades y dependencias personales de Henry de este documento. Pablo puede integrar backend, modificar configuración y generar OpenAPI; Jenny integra frontend y Juan verifica despliegue, con los respaldos indicados. P-01 está cerrado. P-02 pasa a limpieza desde el backend tras más de 90 días en papelera; consultar su informe antes de dar por activada la ejecución automática.
+
 Acuerdo del equipo, actualizado el 21 de octubre de 2026. Se mantienen solamente dos
 ramas de trabajo, ambas creadas desde el develop con la integración actual.
 

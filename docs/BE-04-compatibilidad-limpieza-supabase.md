@@ -1,5 +1,7 @@
 # BE-04: papelera y limpieza SQL de proyectos
 
+> Estado vigente, 29-oct: [P-02 y papelera de 90 días](P02-papelera-90-dias.md). P-01 cerrado; función SQL antigua retirada de Supabase y ausencia verificada. La nueva limpieza corre desde el backend después de más de 90 días en papelera. Código y pruebas listos; falta activar/verificar el Cron Job en Render (Juan, respaldo Pablo). Los bloqueos anteriores por decidir P-01/P-02 y las políticas de inactividad de 3/8 meses quedan sustituidos. Jenny puede validar la habilitación del frontend con la versión integrada; no requiere otro OK de Henry.
+
 > Actualización del 26 de octubre de 2026: P-01/P-02 de la issue #16 sustituyen
 > la propuesta de conservar actividad y marcas al restaurar descrita en este
 > informe histórico. Crear, editar y restaurar actualizan actividad; restaurar

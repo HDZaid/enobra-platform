@@ -1,0 +1,25 @@
+# Blueprint separado: importar solo al activar el Cron Job de limpieza.
+# Render cobra por este servicio. No contiene credenciales.
+services:
+  - type: cron
+    name: enobra-trash-cleanup
+    runtime: python
+    plan: 0.5c-512mb
+    branch: develop
+    rootDir: backend
+    schedule: "0 9 * * *" # 03:00 de Guatemala, todos los días (09:00 UTC)
+    buildCommand: pip install -r requirements.txt
+    startCommand: 'python manage.py purge_expired_trash --execute --actor-id "$TRASH_CLEANUP_ACTOR_ID"'
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.8"
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings
+      - key: DJANGO_DEBUG
+        value: "false"
+      - key: DATABASE_URL
+        sync: false
+      - key: DJANGO_SECRET_KEY
+        sync: false
+      - key: TRASH_CLEANUP_ACTOR_ID
+        sync: false

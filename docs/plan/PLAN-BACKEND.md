@@ -1,5 +1,7 @@
 # Plan de Backend (Django + DRF) hacia la entrega del 25 de octubre
 
+> Acuerdo vigente del 29-oct: [responsables y cierres](../responsables-y-cierres.md) sustituye las exclusividades y dependencias personales de Henry de este documento. Pablo puede integrar backend, modificar configuración y generar OpenAPI; Jenny integra frontend y Juan verifica despliegue, con los respaldos indicados. P-01 está cerrado. P-02 pasa a limpieza desde el backend tras más de 90 días en papelera; consultar su informe antes de dar por activada la ejecución automática.
+
 > Equipo y rama: **Henry, Juan y Pablo → `backend-dev`**. Reglas, calendario, contratos de API (§6 del maestro) y decisiones: ver [`PLAN-MAESTRO.md`](PLAN-MAESTRO.md).
 > Este plan no toca `frontend/`. Si una tarea exige un cambio ahí, se le pasa a quien corresponda en `PLAN-FRONTEND.md`.
 > Los `§` remiten a la auditoría `auditoria-enobra-platform.md`.
@@ -169,7 +171,7 @@ class ResourcePermission(BasePermission):
 
 **Puede editar:** `persistence/catalog.py`, `apps/projects/{interfaces,views,urls}.py`, `apps/publications/{views,urls}.py`, `persistence/support.py` (solo `audit`), `tests/test_trash.py` (nuevo) y las pruebas existentes que asuman borrado definitivo de proyectos.
 
-**No tocar:** `config/*` (Henry), `access_policy.py` (Henry).
+**Archivos compartidos:** `config/*` y `access_policy.py`; Pablo o Henry coordinan cambios y revisan consumidores. No requieren autorización exclusiva de Henry.
 
 **Qué hacer:**
 1. Subir a `CatalogRepository` los métodos `delete` (que pasa a ser **a papelera**), `list_trash`, `restore`, `delete_permanently` e `is_own_draft`. Se activan con un atributo `supports_trash` (`True` en propiedades y proyectos; `False` en noticias, por DEC-04).
@@ -275,7 +277,7 @@ de PostgreSQL/Supabase.
 
 **Leer primero:** `persistence/models/audit.py` (`HistorialActividad`: `usuario`, `accion`, `modulo`, `id_registro`, `nombre_registro`, `descripcion`, `fecha`); `persistence/support.py` (`audit`, `page_of`); `apps/common/pagination.py`; el contrato en `PLAN-MAESTRO.md §6.2`.
 
-**Puede editar:** `apps/audit/*`, `persistence/audit.py` (nuevo), `config/bindings.py` (solo la línea de registro, avisando a Henry), `tests/test_audit_api.py` (nuevo).
+**Puede editar:** `apps/audit/*`, `persistence/audit.py` (nuevo), `config/bindings.py` (solo la línea de registro, coordinando con Pablo o Henry), `tests/test_audit_api.py` (nuevo).
 
 **Qué hacer:**
 - `AuditRepository.list(filters, page, page_size)` con `select_related("usuario")`, filtros `user_id`, `module`, `action`, `date_from`, `date_to` (en la zona horaria `America/Guatemala`), búsqueda `q` sobre nombre del registro y descripción; orden por `-fecha`.
@@ -324,7 +326,7 @@ de PostgreSQL/Supabase.
 
 **Leer primero:** `apps/inquiries/{interfaces,views}.py`; `persistence/inquiries.py` (`create_contact`, `create_visit`); `config/settings.py`; `config/bindings.py`.
 
-**Puede editar:** `apps/inquiries/notifiers.py` (nuevo), `persistence/notifiers.py` (nuevo), `persistence/inquiries.py`, `backend/.env.example`, `tests/test_inquiry_notifier.py` (nuevo). Para `config/settings.py` y `config/bindings.py`: **solo el bloque de correo y una línea de registro, avisando a Henry**.
+**Puede editar:** `apps/inquiries/notifiers.py` (nuevo), `persistence/notifiers.py` (nuevo), `persistence/inquiries.py`, `backend/.env.example`, `tests/test_inquiry_notifier.py` (nuevo). Para `config/settings.py` y `config/bindings.py`: **solo el bloque de correo y una línea de registro, coordinando con Pablo o Henry**.
 
 **Diseño:**
 - `InquiryNotifier` (interfaz) con `notify_created(inquiry: dict)`, registrada en `bindings.py` igual que los demás repositorios.
