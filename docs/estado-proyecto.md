@@ -120,3 +120,15 @@ Ver [cierre de tareas disponibles y pendientes por responsable](PENDIENTES-JENNI
 y el [recorrido preparado de demo](demo/recorrido-jennifer.md). Las pruebas nuevas
 son locales; las condiciones de J-01 a J-04 siguen vigentes y P-01 no se certifica
 como cerrado. El cierre funcional sobre Supabase permanece pendiente.
+
+## Revalidación de Jennifer tras P-01
+
+Frontend-dev sincronizada con develop `8dc4016`. Check y 191 pruebas backend,
+lint/181 pruebas/build frontend y Chromium con Django/SQLite temporal aprobados.
+Se verificaron creación, edición y restauración de Proyectos; las pruebas backend
+cubren reinicio de marcas y rollback. La evidencia de Supabase del equipo está en
+[INT-04 Supabase](INT-04-supabase-2026-10-28.md), no en las pruebas locales nuevas.
+P-01 ya está integrado. El bloqueo para activar papelera sobre Supabase es **P-02**,
+control de la función SQL y sus invocadores; la constante continúa false.
+La tabla histórica anterior y los reportes iniciales no sustituyen este seguimiento.
+Responsables y solicitudes en [pendientes de Jennifer](PENDIENTES-JENNIFER.md).

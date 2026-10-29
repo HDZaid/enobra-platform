@@ -8,8 +8,10 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
     const errors = [];
     const bodies = [];
     let slug;
+    let authorization;
     page.on('pageerror', (error) => errors.push(error.message));
     page.on('request', (request) => {
+      if (request.headers().authorization) authorization = request.headers().authorization;
       if (/\/api\/v1\/projects\/(?:[^/?]+\/)?$/.test(request.url()) && ['POST', 'PATCH'].includes(request.method())) bodies.push(request.postDataJSON());
     });
     const base = process.env.INTEGRATION_BASE_URL;
@@ -69,6 +71,24 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
     assert.equal(await page.getByRole('checkbox', { name: 'Publicar proyecto', exact: true }).isChecked(), false);
     await page.setViewportSize({ width: 390, height: 844 });
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
+    // Solo el runner aislado: no activa el DELETE de la pantalla de Proyectos.
+    const headers = { Authorization: authorization };
+    const trashed = await page.request.delete(`${base}/api/v1/projects/${slug}/`, { headers });
+    assert.equal(trashed.status(), 204);
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.getByRole('navigation', { name: 'Secciones del panel' }).getByRole('link', { name: 'Papelera', exact: true }).click();
+    await page.getByRole('tab', { name: 'Proyectos', exact: true }).click();
+    await page.getByRole('button', { name: 'Restaurar Proyecto actualizado FE07', exact: true }).click();
+    const restoreDialog = page.getByRole('dialog', { name: 'Restaurar publicación' });
+    await restoreDialog.getByRole('button', { name: 'Restaurar', exact: true }).click();
+    await restoreDialog.waitFor({ state: 'hidden' });
+    const restoredResponse = await page.request.get(`${base}/api/v1/projects/${slug}/`, { headers });
+    assert.equal(restoredResponse.status(), 200);
+    const restored = await restoredResponse.json();
+    assert.equal(restored.published, false);
+    assert.deepEqual(restored.images, after);
+    assert.equal(restored.id, slug);
+    console.log('PASS: API aislada -> papelera -> restauración desde la pantalla; borrador, slug e imágenes conservados.');
     assert.deepEqual(errors, []);
     console.log('PASS: Django real/SQLite temporal: crear con subida múltiple, reordenar, publicación pública, editar, slug estable, despublicar, editar borrador, aviso de cambios y móvil.');
   } finally { await browser.close(); }

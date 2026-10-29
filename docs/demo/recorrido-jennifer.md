@@ -12,7 +12,7 @@ ficticios ni ejecutar pruebas de borrado sobre Supabase real.
 - Para un recorrido largo, terminar el bloque actual, conservar cualquier contenido
   no guardado, salir y reingresar. La sesión no se renueva automáticamente (J-01).
 - La papelera de Proyectos permanece apagada: no cambiar la constante para la demo
-  sobre Supabase. P-01 debe cerrarse primero. En entorno aislado puede prepararse una
+  sobre Supabase. P-01 ya está integrado; falta acreditar P-02 y sus invocadores. En entorno aislado puede prepararse una
   activación futura separada; no se activó en esta entrega.
 
 ## Recorrido

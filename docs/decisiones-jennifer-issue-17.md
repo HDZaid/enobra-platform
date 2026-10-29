@@ -35,3 +35,12 @@ Procedimiento para la demo:
 El cierre de CF-03 como renovación automática sigue pendiente; solo su mitigación
 para demo se considera realizada. P-01 pertenece al equipo backend y no se certifica
 como cerrado con este documento. No se realizaron cambios sobre Supabase.
+
+## Seguimiento posterior de J-02
+
+P-01 ya está integrado en develop (merge `7c6488f`) y fue revalidado localmente por
+Jennifer tras sincronizar `8dc4016`. Este avance cumple la parte de restauración de
+actividad/marcas, pero no acredita P-02: control de la función SQL y sus invocadores.
+Se mantiene PROJECT_TRASH_ENABLED=false hasta resolver ese bloqueo operativo.
+Ver [pendientes actualizados](PENDIENTES-JENNIFER.md). No se reescriben las decisiones
+originales del issue ni se presume cerrado #15.
