@@ -36,6 +36,8 @@ en Propiedades y 0 en Proyectos**. No se borraron publicaciones reales para prob
 Esto no acredita carreras simultáneas en PostgreSQL ni ejecución desde Render.
 
 Geovanny confirmó **Render**. Juan activa y verifica el Cron Job; Pablo es respaldo.
+Seguimiento: [issue #19](https://github.com/HDZaid/enobra-platform/issues/19), asignada
+a Juan y Pablo. P-02 no requiere otra decisión de Henry.
 No hace falta esperar a Henry si cualquiera de ellos tiene acceso a Render y a las
 variables del servicio. Admin de GitHub no concede esos accesos automáticamente.
 
@@ -78,6 +80,13 @@ y sus pruebas se registran en este informe. El cierre operativo de la ejecución
 automática requiere la primera ejecución acreditada en Render; no marcarla como
 activa solo porque exista un YAML. Jenny puede probar la papelera con el backend
 integrado y el nuevo aviso, sin esperar otra decisión de Henry sobre P-01/P-02.
+
+Frontend: aviso permanente en la página de Papelera con el plazo, la pérdida
+definitiva y la recomendación de restaurar o pedir ayuda si falta ese permiso.
+Lint, **182 pruebas** y build aprobados; se conserva el aviso previo de bundle
+mayor de 500 kB, sin impedir compilación. Comprobado visualmente en el navegador,
+en la vista previa local: visible, legible y sin depender de que existan registros.
+No es una prueba de sesión real ni de despliegue.
 
 No reintroducir la función antigua con scripts de esquema o restauraciones. Los
 invocadores externos antiguos deben retirarse: llamarla ahora falla sin borrar datos.

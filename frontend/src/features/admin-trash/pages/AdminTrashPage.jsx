@@ -21,6 +21,11 @@ export function AdminTrashPage() {
   return <section>
     <h2 className="text-3xl font-semibold text-[#12233f]">Papelera</h2>
     <p className="mt-2 text-sm text-[#626b79]">Restaura publicaciones o elimínalas definitivamente. Restaurar devuelve cada publicación a su estado anterior: publicada o borrador.</p>
+    <div className="mt-5 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950" role="note" aria-label="Plazo de conservación en papelera">
+      <p className="font-semibold">Conserva lo que necesites antes de 90 días</p>
+      <p className="mt-1">Las publicaciones que lleven más de 90 días en la papelera se eliminarán definitivamente. Restáuralas antes de ese plazo si quieres conservarlas.</p>
+      <p className="mt-1">El plazo empieza cuando envías la publicación a la papelera. Si no tienes permiso para restaurarla, solicita ayuda a un administrador.</p>
+    </div>
     {preview ? <div className="mt-5"><Notice>La papelera requiere iniciar sesión con una cuenta real. Esta vista previa no consulta ni modifica publicaciones.</Notice></div>
       : !type ? <div className="mt-5"><Notice type="error">No tienes permiso para consultar la papelera.</Notice></div>
         : <>
