@@ -1,0 +1,53 @@
+name: Limpieza diaria de papelera
+
+on:
+  schedule:
+    - cron: '0 9 * * *' # 03:00 Guatemala (UTC-6); GitHub puede retrasar el inicio.
+  workflow_dispatch:
+    inputs:
+      execute:
+        description: 'Aplicar borrado; false solo simula'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: enobra-trash-cleanup
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          # Versión del backend revisada y probada; no ejecutar código de PRs.
+          ref: 3b126aa
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+      - name: Limpiar o simular
+        env:
+          DATABASE_URL: ${{ secrets.ENOBRA_DATABASE_URL }}
+          TRASH_CLEANUP_ACTOR_ID: ${{ secrets.ENOBRA_CLEANUP_ACTOR_ID }}
+          DJANGO_DEBUG: 'false'
+          DJANGO_SETTINGS_MODULE: config.settings
+          APPLY_CLEANUP: ${{ github.event_name == 'schedule' || inputs.execute }}
+        run: |
+          test -n "$DATABASE_URL" || { echo 'Falta ENOBRA_DATABASE_URL'; exit 1; }
+          test -n "$TRASH_CLEANUP_ACTOR_ID" || { echo 'Falta ENOBRA_CLEANUP_ACTOR_ID'; exit 1; }
+          export DJANGO_SECRET_KEY="$(python -c 'import secrets; print(secrets.token_urlsafe(48))')"
+          if [ "$APPLY_CLEANUP" = 'true' ]; then
+            python manage.py purge_expired_trash --execute --actor-id "$TRASH_CLEANUP_ACTOR_ID"
+          else
+            python manage.py purge_expired_trash
+          fi
