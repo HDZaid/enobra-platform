@@ -3,6 +3,8 @@
 Esta carpeta reúne los acuerdos compartidos del equipo. Todo está sujeto a cambios:
 las decisiones se revisan gradualmente y se actualizan junto con el código afectado.
 
+- [Dependencias de las tareas de Juan](dependencias-juan.md): acciones pendientes de Geo y Henry, evidencia y coordinación.
+
 - [Reglas de desarrollo y responsables](reglas-desarrollo.md): equipo, contratos,
   ramas, revisiones y criterios de entrega.
 - [Infraestructura](infraestructura.md): PostgreSQL en Supabase como decisión y propuestas
