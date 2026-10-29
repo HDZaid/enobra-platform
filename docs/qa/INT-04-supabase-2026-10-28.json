@@ -1,0 +1,663 @@
+[
+  {
+    "role": "Ingeniero",
+    "area": "Sesión",
+    "action": "GET /auth/me/",
+    "expected": 200,
+    "got": 200,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Arquitecta",
+    "area": "Sesión",
+    "action": "GET /auth/me/",
+    "expected": 200,
+    "got": 200,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Sesión",
+    "action": "GET /auth/me/",
+    "expected": 200,
+    "got": 200,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Ingeniero",
+    "area": "Subir",
+    "action": "POST /admin/media/ (foto)",
+    "expected": 201,
+    "got": 201,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Arquitecta",
+    "area": "Subir",
+    "action": "POST /admin/media/ (foto)",
+    "expected": 201,
+    "got": 201,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Subir",
+    "action": "POST /admin/media/ (foto)",
+    "expected": 201,
+    "got": 201,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Sin sesión",
+    "area": "Subir",
+    "action": "POST /admin/media/",
+    "expected": 401,
+    "got": 401,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Ingeniero",
+    "area": "Crear",
+    "action": "POST /properties/ borrador",
+    "expected": 201,
+    "got": 201,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Ingeniero",
+    "area": "Publicar",
+    "action": "POST /properties/ publicada",
+    "expected": 201,
+    "got": 201,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Arquitecta",
+    "area": "Crear",
+    "action": "POST /properties/ borrador",
+    "expected": 201,
+    "got": 201,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Arquitecta",
+    "area": "Publicar",
+    "action": "POST /properties/ publicada",
+    "expected": 201,
+    "got": 201,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Crear",
+    "action": "POST /properties/ borrador",
+    "expected": 201,
+    "got": 201,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Publicar",
+    "action": "POST /properties/ publicada",
+    "expected": 403,
+    "got": 403,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Sin sesión",
+    "area": "Ver",
+    "action": "GET borrador ajeno sin token",
+    "expected": 404,
+    "got": 404,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Ver",
+    "action": "Listado: solo sus borradores",
+    "expected": "solo propios",
+    "got": [
+      12
+    ],
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Ver",
+    "action": "GET borrador de otro empleado",
+    "expected": [
+      403,
+      404
+    ],
+    "got": 404,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Arquitecta",
+    "area": "Ver",
+    "action": "GET borrador de un empleado",
+    "expected": 200,
+    "got": 200,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Ingeniero",
+    "area": "Editar",
+    "action": "PATCH borrador propio",
+    "expected": 200,
+    "got": 200,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Arquitecta",
+    "area": "Editar",
+    "action": "PATCH borrador propio",
+    "expected": 200,
+    "got": 200,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Editar",
+    "action": "PATCH borrador propio",
+    "expected": 200,
+    "got": 200,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Editar",
+    "action": "PATCH borrador de otro empleado",
+    "expected": [
+      403,
+      404
+    ],
+    "got": 403,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Editar",
+    "action": "PATCH publicada de la Arquitecta",
+    "expected": [
+      403,
+      404
+    ],
+    "got": 403,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Arquitecta",
+    "area": "Editar",
+    "action": "PATCH borrador de un empleado",
+    "expected": 200,
+    "got": 200,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Ingeniero",
+    "area": "Editar",
+    "action": "PATCH publicada de la Arquitecta",
+    "expected": 200,
+    "got": 200,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Publicar",
+    "action": "PATCH published=true en su borrador",
+    "expected": 403,
+    "got": 403,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Arquitecta",
+    "area": "Publicar",
+    "action": "PATCH published=true en borrador ajeno",
+    "expected": 200,
+    "got": 200,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Arquitecta",
+    "area": "Publicar",
+    "action": "PATCH published=false (retirar)",
+    "expected": 200,
+    "got": 200,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Ingeniero",
+    "area": "Publicar",
+    "action": "PATCH published=true",
+    "expected": 200,
+    "got": 200,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Papelera",
+    "action": "DELETE publicada ajena",
+    "expected": [
+      403,
+      404
+    ],
+    "got": 403,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Papelera",
+    "action": "DELETE borrador de otro empleado",
+    "expected": [
+      403,
+      404
+    ],
+    "got": 403,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Ingeniero",
+    "area": "Papelera",
+    "action": "DELETE borrador propio → papelera",
+    "expected": 204,
+    "got": 204,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Arquitecta",
+    "area": "Papelera",
+    "action": "DELETE borrador propio → papelera",
+    "expected": 204,
+    "got": 204,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Papelera",
+    "action": "DELETE borrador propio → papelera",
+    "expected": 204,
+    "got": 204,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Arquitecta",
+    "area": "Papelera",
+    "action": "DELETE publicada propia → papelera",
+    "expected": 204,
+    "got": 204,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Ingeniero",
+    "area": "Papelera",
+    "action": "GET /admin/trash/?type=properties",
+    "expected": 200,
+    "got": 200,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Ingeniero",
+    "area": "Papelera",
+    "action": "Contenido visible en papelera",
+    "expected": "Empleado: solo lo suyo",
+    "got": [
+      "Casa con Acabados de Lujo",
+      "QA-fb79fee6 editado Arquitecta",
+      "QA-fb79fee6 editado Empleado",
+      "QA-fb79fee6 editado Ingeniero",
+      "QA-fb79fee6 editado por Ingeniero"
+    ],
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Arquitecta",
+    "area": "Papelera",
+    "action": "GET /admin/trash/?type=properties",
+    "expected": 200,
+    "got": 200,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Arquitecta",
+    "area": "Papelera",
+    "action": "Contenido visible en papelera",
+    "expected": "Empleado: solo lo suyo",
+    "got": [
+      "Casa con Acabados de Lujo",
+      "QA-fb79fee6 editado Arquitecta",
+      "QA-fb79fee6 editado Empleado",
+      "QA-fb79fee6 editado Ingeniero",
+      "QA-fb79fee6 editado por Ingeniero"
+    ],
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Papelera",
+    "action": "GET /admin/trash/?type=properties",
+    "expected": 200,
+    "got": 200,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Papelera",
+    "action": "Contenido visible en papelera",
+    "expected": "Empleado: solo lo suyo",
+    "got": [
+      "QA-fb79fee6 editado Empleado"
+    ],
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Restaurar",
+    "action": "POST restore (su borrador)",
+    "expected": 403,
+    "got": 403,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Arquitecta",
+    "area": "Restaurar",
+    "action": "POST restore (borrador de empleado)",
+    "expected": 204,
+    "got": 204,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Ingeniero",
+    "area": "Restaurar",
+    "action": "POST restore (publicada de Arquitecta)",
+    "expected": 204,
+    "got": 204,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Ingeniero",
+    "area": "Restaurar",
+    "action": "Restaurar conserva el estado previo (publicada)",
+    "expected": true,
+    "got": true,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Arquitecta",
+    "area": "Eliminar definitivo",
+    "action": "DELETE /permanent/",
+    "expected": 403,
+    "got": 403,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Eliminar definitivo",
+    "action": "DELETE /permanent/",
+    "expected": 403,
+    "got": 403,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Ingeniero",
+    "area": "Eliminar definitivo",
+    "action": "DELETE /permanent/ (en papelera)",
+    "expected": 204,
+    "got": 204,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Ingeniero",
+    "area": "Historial",
+    "action": "GET /admin/audit/",
+    "expected": 200,
+    "got": 200,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Ingeniero",
+    "area": "Historial",
+    "action": "GET /admin/audit/export/",
+    "expected": 200,
+    "got": 200,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Arquitecta",
+    "area": "Historial",
+    "action": "GET /admin/audit/",
+    "expected": 403,
+    "got": 403,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Arquitecta",
+    "area": "Historial",
+    "action": "GET /admin/audit/export/",
+    "expected": 403,
+    "got": 403,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Historial",
+    "action": "GET /admin/audit/",
+    "expected": 403,
+    "got": 403,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Historial",
+    "action": "GET /admin/audit/export/",
+    "expected": 403,
+    "got": 403,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Ingeniero",
+    "area": "Roles",
+    "action": "GET /admin/roles/",
+    "expected": 200,
+    "got": 200,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Ingeniero",
+    "area": "Roles",
+    "action": "POST /admin/roles/",
+    "expected": 201,
+    "got": 201,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Ingeniero",
+    "area": "Usuarios",
+    "action": "GET /admin/users/",
+    "expected": 200,
+    "got": 200,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Arquitecta",
+    "area": "Roles",
+    "action": "GET /admin/roles/",
+    "expected": 403,
+    "got": 403,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Arquitecta",
+    "area": "Roles",
+    "action": "POST /admin/roles/",
+    "expected": 403,
+    "got": 403,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Arquitecta",
+    "area": "Usuarios",
+    "action": "GET /admin/users/",
+    "expected": 403,
+    "got": 403,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Roles",
+    "action": "GET /admin/roles/",
+    "expected": 403,
+    "got": 403,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Roles",
+    "action": "POST /admin/roles/",
+    "expected": 403,
+    "got": 403,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Usuarios",
+    "action": "GET /admin/users/",
+    "expected": 403,
+    "got": 403,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Ingeniero",
+    "area": "Proyectos",
+    "action": "POST /projects/",
+    "expected": 201,
+    "got": 201,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Ingeniero",
+    "area": "Noticias",
+    "action": "POST /news/",
+    "expected": 201,
+    "got": 201,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Arquitecta",
+    "area": "Proyectos",
+    "action": "POST /projects/",
+    "expected": 403,
+    "got": 403,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Arquitecta",
+    "area": "Noticias",
+    "action": "POST /news/",
+    "expected": 403,
+    "got": 403,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Proyectos",
+    "action": "POST /projects/",
+    "expected": 403,
+    "got": 403,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Noticias",
+    "action": "POST /news/",
+    "expected": 403,
+    "got": 403,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Sesión",
+    "action": "POST /auth/logout/",
+    "expected": 204,
+    "got": 204,
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "role": "Empleado",
+    "area": "Sesión",
+    "action": "Access tras logout",
+    "expected": 401,
+    "got": 401,
+    "ok": true,
+    "detail": ""
+  }
+]

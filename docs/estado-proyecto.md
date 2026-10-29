@@ -1,6 +1,6 @@
 # Estado del proyecto EnObra
 
-> Actualización del 28 de octubre de 2026: P-01 está integrado en `develop` (`7c6488f`); Django check y 191 pruebas SQLite aprobados. Se crearon y verificaron en Supabase los roles Ingeniero (32 permisos), Arquitecta (6) y Empleado (4). La consulta posterior encontró **cero cuentas activas asignadas a cada uno**. La repetición real de INT-04 sigue pendiente: requiere cuentas de prueba y confirmar el entorno que permite crear, publicar y eliminar datos ficticios. El script existente requiere cuatro cuentas (dos Empleados para comprobar acceso a datos ajenos) y está diseñado para una base desechable; no se ejecutó contra Supabase. Véase [el informe de integración y roles](integracion-p01-roles-2026-10-28.md). Las cifras y estados del corte del 25-oct que siguen corresponden a esa revisión histórica.
+> Actualización del 28 de octubre de 2026: P-01 integrado en `develop` (`7c6488f`) y roles reales creados. La matriz HTTP se repitió sobre Supabase: **70/70 aprobadas**; también se comprobaron menús, pantallas restringidas y guardado con foto desde los tres roles en Chromium. P-01 pasó editar/papelera/restaurar con un proyecto ficticio. [Informe y alcance](INT-04-supabase-2026-10-28.md). API y panel locales con base real; despliegue público, imágenes persistentes y P-02 continúan pendientes. Las cifras y estados del corte del 25-oct que siguen son históricos.
 
 **Corte:** domingo 25 de octubre de 2026 (America/Guatemala) · **Rama:** `develop` en
 `238fd1c` · **Responsable del documento:** Geo (INT-05).

@@ -140,7 +140,8 @@ for role, c in users.items():
 r = check("Empleado", "Sesión", "POST /auth/logout/", 204, emp.post("auth/logout/", json={"refresh": emp.refresh}))
 check("Empleado", "Sesión", "Access tras logout", 401, emp.get("auth/me/"))
 
-json.dump(ROWS, open(sys.argv[2] if len(sys.argv) > 2 else "matrix.json", "w"), ensure_ascii=False, indent=1, default=str)
+with open(sys.argv[2] if len(sys.argv) > 2 else "matrix.json", "w", encoding="utf-8") as output:
+    json.dump(ROWS, output, ensure_ascii=False, indent=1, default=str)
 fails = [r for r in ROWS if not r["ok"]]
 print(f"{len(ROWS)} comprobaciones, {len(ROWS)-len(fails)} OK, {len(fails)} fallos")
 for f in fails: print("FALLO", f)
