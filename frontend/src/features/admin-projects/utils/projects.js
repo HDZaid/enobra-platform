@@ -2,9 +2,9 @@ import { hasAdminPermission } from '../../admin/utils/adminData.js';
 import { validUploadedImageUrl } from '../../../components/ui/imageUpload.js';
 import { parseYoutube } from '../../projects/services/catalogMapper.js';
 
-// Activar solo después de verificar BE-04 en el backend que sirve este frontend.
-// El backend anterior usa DELETE definitivo con la misma URL.
-export const PROJECT_TRASH_ENABLED = false;
+// P-01/P-02 integrados: DELETE envía a papelera; limpieza tras más de 90 días.
+// Usar junto con el backend integrado, nunca con el DELETE definitivo anterior.
+export const PROJECT_TRASH_ENABLED = true;
 export const canCreateProject = (user) => hasAdminPermission(user, 'projects.create');
 export const canPublishProject = (user) => hasAdminPermission(user, 'projects.publish');
 export function canEditProject(user, item) {

@@ -18,8 +18,8 @@ todas las acciones conocidas.
 - La propiedad del registro y la autorización final siguen siendo responsabilidad
   de Django. No se elimina ni debilita la protección de la API.
 
-PROJECT_TRASH_ENABLED sigue false por el bloqueo P-02; un botón autorizado puede
-estar deshabilitado por esa condición operativa. La vista previa de desarrollo
+PROJECT_TRASH_ENABLED está habilitado tras el cierre de P-02. Solo los usuarios
+con permisos de papelera ven su acción; el backend confirma la autorización. La vista previa de desarrollo
 continúa siendo una demostración sin identidad real.
 
 Verificación: lint, 182 pruebas y build aprobados. Chromium con API simulada:

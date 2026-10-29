@@ -11,9 +11,10 @@ ficticios ni ejecutar pruebas de borrado sobre Supabase real.
 - Revisar el aviso de sesión. Guardar y confirmar cada operación antes de salir.
 - Para un recorrido largo, terminar el bloque actual, conservar cualquier contenido
   no guardado, salir y reingresar. La sesión no se renueva automáticamente (J-01).
-- La papelera de Proyectos permanece apagada: no cambiar la constante para la demo
-  sobre Supabase. P-01 ya está integrado; falta acreditar P-02 y sus invocadores. En entorno aislado puede prepararse una
-  activación futura separada; no se activó en esta entrega.
+- La papelera de Proyectos está habilitada con P-01/P-02 integrados. Verificar que
+  la API desplegada sea esa versión. La limpieza definitiva ocurre después de más
+  de 90 días en papelera; no activar el viejo SQL ni un segundo programador.
+
 
 ## Recorrido
 
@@ -27,12 +28,16 @@ ficticios ni ejecutar pruebas de borrado sobre Supabase real.
    públicamente, pero sigue accesible para edición administrativa.
 5. Cambiar un campo y cancelar la salida del formulario cuando aparezca la
    confirmación; comprobar que el texto sigue presente.
-6. Noticias: crear o editar con los permisos correspondientes. Comprobar que un error
+6. Papelera de Proyectos: enviar un registro desechable con confirmación, comprobar
+   que desaparece del catálogo público y restaurarlo desde la pestaña Proyectos.
+   Verificar imágenes y estado publicado/borrador previos. No probar eliminación
+   definitiva sobre datos reales sin autorización específica.
+7. Noticias: crear o editar con los permisos correspondientes. Comprobar que un error
    de guardado conserva el editor abierto; los errores 400 aparecen por campo.
-7. Mensajes: consultar detalles. `inquiries.read` no permite cambiar estado;
+8. Mensajes: consultar detalles. `inquiries.read` no permite cambiar estado;
    `inquiries.manage` permite marcar atendido o archivar. No enviar mensajes reales
    ni atribuir a esta demo la validación de SMTP.
-8. Repetir los listados/formularios en móvil. Los casos completos de roles,
+9. Repetir los listados/formularios en móvil. Los casos completos de roles,
    propiedades, usuarios, historial y papelera corresponden a INT-04 (Geo y Leo).
 
 ## Si falla una operación
