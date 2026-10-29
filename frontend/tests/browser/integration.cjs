@@ -240,10 +240,7 @@ const assert = require('node:assert/strict');
     history.pushState({}, '', '/admin/noticias');
     dispatchEvent(new PopStateEvent('popstate'));
   });
-  await page
-    .getByRole('alert')
-    .filter({ hasText: 'Esta sección no está disponible para tu rol' })
-    .waitFor();
+  await page.waitForURL('**/admin');
   console.log(
     'PASS filters, contact payload, visit dialog, empty/error/retry/404, login errors, admin editor/inbox navigation and RBAC',
   );

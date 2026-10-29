@@ -163,10 +163,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
       history.pushState({}, '', '/admin/noticias');
       dispatchEvent(new PopStateEvent('popstate'));
     });
-    await page
-      .getByRole('alert')
-      .filter({ hasText: 'Esta sección no está disponible para tu rol' })
-      .waitFor();
+    await page.waitForURL('**/admin');
     await page.getByRole('button', { name: 'Salir del panel' }).click();
     await page.waitForURL('**/admin/login');
     await page.locator('#admin-email').fill(process.env.INTEGRATION_EMAIL);

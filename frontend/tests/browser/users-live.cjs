@@ -57,7 +57,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
     await page.waitForURL('**/admin');
     assert.equal(await page.getByRole('link', { name: 'Usuarios', exact: true }).count(), 0);
     await page.evaluate(() => { history.pushState({}, '', '/admin/usuarios'); dispatchEvent(new PopStateEvent('popstate')); });
-    await page.getByRole('heading', { name: 'Esta sección no está disponible para tu rol' }).waitFor();
+    await page.waitForURL('**/admin');
     assert.deepEqual(errors, []);
     console.log('PASS React -> Django -> base configurada: creación activa/inactiva, duplicados, rol efectivo, nuevo login y acceso restringido');
   } finally {

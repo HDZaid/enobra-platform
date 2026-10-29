@@ -48,6 +48,21 @@ export function sectionForPath(pathname) {
   return sections.slice(1).find(([, path]) => matchPath({ path: `${path}/*`, end: true }, pathname))?.[0] ?? null;
 }
 
+// Las rutas de formularios también requieren el permiso de la acción.
+export function canAccessAdminPath(user, pathname) {
+  const section = sectionForPath(pathname);
+  if (!section || !canAccessAdminSection(user, section)) return false;
+  const actions = [
+    [routePaths.adminPropertyNew, ['properties.create']],
+    [routePaths.adminPropertyEdit, ['properties.edit.any', 'properties.edit.own']],
+    [routePaths.adminProjectNew, ['projects.create']],
+    [routePaths.adminProjectEdit, ['projects.edit.any', 'projects.edit.own']],
+    [routePaths.adminRoleNew, ['roles.manage']],
+  ];
+  const action = actions.find(([path]) => matchPath({ path, end: true }, pathname));
+  return !action || action[1].some((permission) => hasAdminPermission(user, permission));
+}
+
 export function refreshedAdminSession(session, user) {
   const next = readAdminSession({ ...session, user });
   if (next.user.id !== session.user.id) throw new TypeError('La cuenta de la sesión ha cambiado.');

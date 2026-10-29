@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { adminSectionPermissions, refreshedAdminSession, sectionForPath, adminRoleProfile, canAccessAdminSection, displayAdminCount, hasAdminPermission, inquiryStatuses, readAdminCollection, readAdminSession, validInquiryStatus } from '../src/features/admin/utils/adminData.js';
+import { canAccessAdminPath, adminSectionPermissions, refreshedAdminSession, sectionForPath, adminRoleProfile, canAccessAdminSection, displayAdminCount, hasAdminPermission, inquiryStatuses, readAdminCollection, readAdminSession, validInquiryStatus } from '../src/features/admin/utils/adminData.js';
 
 // Respuestas con la forma real de UserSerializer (role, roles, permissions).
 const ARCHITECT_PERMISSIONS = ['properties.create', 'properties.edit.any', 'properties.publish', 'properties.trash.any', 'properties.restore'];
@@ -132,4 +132,16 @@ test('actualizar usuario reemplaza permisos sin cambiar tokens ni aceptar otra i
   assert.equal(canAccessAdminSection(next.user, 'users'), false);
   assert.throws(() => refreshedAdminSession(session, { ...session.user, id: '2' }), TypeError);
   assert.throws(() => refreshedAdminSession(session, { ...session.user, permissions: [] }), /permisos/);
+});
+
+test('las rutas de formularios exigen permiso de acción aunque el módulo sea visible', () => {
+  const reader = { permissions: ['roles.read', 'properties.publish', 'projects.restore'] };
+  assert.equal(canAccessAdminPath(reader, '/admin/roles'), true);
+  assert.equal(canAccessAdminPath(reader, '/admin/roles/2'), true);
+  for (const path of ['/admin/roles/nuevo', '/admin/bienes-raices/nuevo', '/admin/bienes-raices/3/editar', '/admin/proyectos/nuevo', '/admin/proyectos/casa/editar', '/admin/historial']) assert.equal(canAccessAdminPath(reader, path), false, path);
+  assert.equal(canAccessAdminPath({ permissions: ['properties.create'] }, '/admin/bienes-raices/nuevo'), true);
+  assert.equal(canAccessAdminPath({ permissions: ['projects.edit.own'] }, '/admin/proyectos/casa/editar'), true);
+  assert.equal(canAccessAdminPath({ permissions: ['users.read'] }, '/admin/usuarios'), true);
+  assert.equal(canAccessAdminPath({ permissions: ['admin.all'] }, '/admin/roles/nuevo'), true);
+  assert.equal(canAccessAdminPath({ permissions: ['admin.all'] }, '/admin/desconocido'), false);
 });

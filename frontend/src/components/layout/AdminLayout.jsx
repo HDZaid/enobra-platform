@@ -1,9 +1,8 @@
 import { useRef, useState } from 'react';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { authService } from '../../features/admin/services/authService.js';
-import { canAccessAdminSection, readAdminSession, refreshedAdminSession, sectionForPath } from '../../features/admin/utils/adminData.js';
+import { canAccessAdminPath, readAdminSession, refreshedAdminSession } from '../../features/admin/utils/adminData.js';
 import { AdminShell } from '../../features/admin/components/AdminShell.jsx';
-import { AdminAccessDenied } from '../../features/admin/components/AdminAccessDenied.jsx';
 import { routePaths } from '../../app/routePaths.js';
 import { demoNews } from '../../features/news/data/demoNews.js';
 import { demoInquiries } from '../../features/admin/utils/inbox.js';
@@ -85,13 +84,14 @@ export function AdminLayout() {
   if (!session && !preview) return <Navigate to={routePaths.adminLogin} replace />;
 
   // Se ocultan las secciones que Django rechazaría con 403 para el rol actual.
-  const section = sectionForPath(location.pathname);
-  const allowed = preview || Boolean(section && canAccessAdminSection(session.user, section));
+  const allowed = preview || canAccessAdminPath(session.user, location.pathname);
+  // No se monta la vista restringida ni se hacen sus peticiones HTTP.
+  if (!allowed) return <Navigate to={routePaths.admin} replace />;
 
   return (
     <AdminShell user={session?.user} preview={preview} onLogout={logout}>
       {!preview && <p role="status" className="mb-5 rounded-lg border border-[#f4cfae] bg-[#fff1e5] p-4 text-sm text-[#88420d]">La sesión dura 15 minutos y todavía no se renueva automáticamente. Guarda tu trabajo y vuelve a iniciar sesión antes de cada recorrido largo de la demo. Si aparece un error 401 al guardar, el cambio no está confirmado: conserva el contenido antes de salir.</p>}
-      {allowed ? <Outlet context={context} /> : <AdminAccessDenied user={session.user} />}
+      <Outlet context={context} />
     </AdminShell>
   );
 }

@@ -131,7 +131,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
       await login();
       assert.equal(await page.getByRole('link', { name: 'Usuarios', exact: true }).count(), 0);
       await page.evaluate(() => { history.pushState({}, '', '/admin/usuarios'); dispatchEvent(new PopStateEvent('popstate')); });
-      await page.getByRole('heading', { name: 'Esta sección no está disponible para tu rol' }).waitFor();
+      await page.waitForURL('**/admin');
       assert.equal(await page.getByRole('button', { name: 'Añadir usuario' }).count(), 0);
     }
     assert.deepEqual(errors, []);
