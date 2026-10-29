@@ -52,7 +52,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
     await row.waitFor();
     assert.equal(bodies[0].demo, false); assert.equal(bodies[0].published, true);
     assert.deepEqual(bodies[0].images, after);
-    assert.equal(await row.getByRole('button', { name: 'Enviar a papelera' }).isDisabled(), true);
+    assert.equal(await row.getByRole('button', { name: 'Enviar a papelera' }).isEnabled(), true);
     const publicPage = await browser.newPage();
     await publicPage.goto(`${base}/proyectos/${slug}`);
     await publicPage.getByRole('heading', { name: 'Proyecto prueba FE07', exact: true }).waitFor();
@@ -71,24 +71,42 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
     assert.equal(await page.getByRole('checkbox', { name: 'Publicar proyecto', exact: true }).isChecked(), false);
     await page.setViewportSize({ width: 390, height: 844 });
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
-    // Solo el runner aislado: no activa el DELETE de la pantalla de Proyectos.
     const headers = { Authorization: authorization };
-    const trashed = await page.request.delete(`${base}/api/v1/projects/${slug}/`, { headers });
-    assert.equal(trashed.status(), 204);
     await page.setViewportSize({ width: 1280, height: 900 });
-    await page.getByRole('navigation', { name: 'Secciones del panel' }).getByRole('link', { name: 'Papelera', exact: true }).click();
-    await page.getByRole('tab', { name: 'Proyectos', exact: true }).click();
-    await page.getByRole('button', { name: 'Restaurar Proyecto actualizado FE07', exact: true }).click();
-    const restoreDialog = page.getByRole('dialog', { name: 'Restaurar publicación' });
-    await restoreDialog.getByRole('button', { name: 'Restaurar', exact: true }).click();
-    await restoreDialog.waitFor({ state: 'hidden' });
-    const restoredResponse = await page.request.get(`${base}/api/v1/projects/${slug}/`, { headers });
-    assert.equal(restoredResponse.status(), 200);
-    const restored = await restoredResponse.json();
-    assert.equal(restored.published, false);
-    assert.deepEqual(restored.images, after);
-    assert.equal(restored.id, slug);
-    console.log('PASS: API aislada -> papelera -> restauración desde la pantalla; borrador, slug e imágenes conservados.');
+    for (const published of [false, true]) {
+      const nav = page.getByRole('navigation', { name: 'Secciones del panel' });
+      await nav.getByRole('link', { name: 'Proyectos', exact: true }).click();
+      const current = page.getByRole('row').filter({ hasText: 'Proyecto actualizado FE07' });
+      await current.waitFor();
+      if (published) {
+        await current.getByRole('button', { name: 'Publicar', exact: true }).click();
+        await current.getByRole('button', { name: 'Pasar a borrador', exact: true }).waitFor();
+      }
+      await current.getByRole('button', { name: 'Enviar a papelera', exact: true }).click();
+      const dialog = page.getByRole('dialog', { name: 'Enviar proyecto a papelera' });
+      await dialog.getByRole('button', { name: 'Cancelar', exact: true }).click();
+      await dialog.waitFor({ state: 'hidden' });
+      assert.equal((await page.request.get(`${base}/api/v1/projects/${slug}/`, { headers })).status(), 200);
+      await current.getByRole('button', { name: 'Enviar a papelera', exact: true }).click();
+      const deleted = page.waitForResponse((r) => r.url().endsWith(`/projects/${slug}/`) && r.request().method() === 'DELETE');
+      await dialog.getByRole('button', { name: 'Enviar a papelera', exact: true }).click();
+      assert.equal((await deleted).status(), 204);
+      await current.waitFor({ state: 'hidden' });
+      assert.equal((await page.request.get(`${base}/api/v1/projects/${slug}/`)).status(), 404);
+      await nav.getByRole('link', { name: 'Papelera', exact: true }).click();
+      await page.getByRole('tab', { name: 'Proyectos', exact: true }).click();
+      await page.getByRole('button', { name: 'Restaurar Proyecto actualizado FE07', exact: true }).click();
+      const restoreDialog = page.getByRole('dialog', { name: 'Restaurar publicación' });
+      await restoreDialog.getByRole('button', { name: 'Restaurar', exact: true }).click();
+      await restoreDialog.waitFor({ state: 'hidden' });
+      const restoredResponse = await page.request.get(`${base}/api/v1/projects/${slug}/`, { headers });
+      assert.equal(restoredResponse.status(), 200);
+      const restored = await restoredResponse.json();
+      assert.equal(restored.published, published);
+      assert.deepEqual(restored.images, after);
+      assert.equal(restored.id, slug);
+    }
+    console.log('PASS: envío y restauración desde UI, cancelar no borra, estado publicado/borrador, imágenes y slug conservados.');
     assert.deepEqual(errors, []);
     console.log('PASS: Django real/SQLite temporal: crear con subida múltiple, reordenar, publicación pública, editar, slug estable, despublicar, editar borrador, aviso de cambios y móvil.');
   } finally { await browser.close(); }

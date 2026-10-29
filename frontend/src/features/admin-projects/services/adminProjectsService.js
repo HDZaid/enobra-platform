@@ -25,6 +25,7 @@ export const adminProjectsService = {
   },
   async trash(slug, token) {
     if (!PROJECT_TRASH_ENABLED) throw new Error('La papelera de proyectos aún no está habilitada en este frontend.');
-    return apiRequest(detail(slug), { method: 'DELETE', token });
+    const result = await apiRequest(detail(slug), { method: 'DELETE', token });
+    if (result !== null) throw new Error('El servidor no confirmó el envío a papelera.');
   },
 };

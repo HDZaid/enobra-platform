@@ -138,3 +138,14 @@ P-01 ya está integrado. El bloqueo para activar papelera sobre Supabase es **P-
 control de la función SQL y sus invocadores; la constante continúa false.
 La tabla histórica anterior y los reportes iniciales no sustituyen este seguimiento.
 Responsables y solicitudes en [pendientes de Jennifer](PENDIENTES-JENNIFER.md).
+
+## Cierre de habilitación frontend J-02
+
+Tras el cierre P-01/P-02 acreditado en `docs/P02-limpieza-activa.md`, se habilitó
+PROJECT_TRASH_ENABLED. Verificados envío y restauración desde UI con proyectos
+publicados/borradores, imágenes y slug conservados. Lint, 182 pruebas frontend,
+build y 27 pruebas backend de papelera/retención aprobados; Chromium sobre
+Django/SQLite desechables. Sin escrituras a Supabase ni despliegue web nuevo.
+Los textos anteriores que mantienen J-02 bloqueado quedan como antecedentes.
+La revisión en URL desplegada sigue con Geovanny/Leo, Jenny como respaldo y Juan
+para API/despliegue (Pablo de respaldo). No se modificó la automatización activa.

@@ -27,13 +27,24 @@ test('crear y editar envían demo false y publicación explícita sin enviar slu
   await adminProjectsService.create(body, 'token'); await adminProjectsService.update('casa', body, 'token');
   assert.deepEqual(methods, ['POST', 'PATCH']);
 });
-test('publicación es PATCH parcial y papelera desactivada nunca envía DELETE', async () => {
-  let calls = 0;
-  globalThis.fetch = async (url, options) => { calls++; assert.equal(options.method, 'PATCH'); assert.deepEqual(JSON.parse(options.body), { published: false }); return reply(item()); };
+test('publicación es PATCH parcial y papelera usa DELETE autenticado con confirmación vacía', async () => {
+  const calls = [];
+  globalThis.fetch = async (url, options) => {
+    calls.push({ url, ...options });
+    if (options.method === 'DELETE') return new Response(null, { status: 204 });
+    assert.deepEqual(JSON.parse(options.body), { published: false });
+    return reply(item());
+  };
   await adminProjectsService.setPublished('casa', false, 'token');
-  assert.equal(PROJECT_TRASH_ENABLED, false);
-  await assert.rejects(adminProjectsService.trash('casa', 'token'), /no está habilitada/);
-  assert.equal(calls, 1);
+  assert.equal(PROJECT_TRASH_ENABLED, true);
+  await adminProjectsService.trash('casa', 'token');
+  assert.deepEqual(calls.map((call) => call.method), ['PATCH', 'DELETE']);
+  assert.equal(calls[1].headers.Authorization, 'Bearer token');
+  assert.match(calls[1].url, /projects\/casa\/$/);
+  await assert.rejects(adminProjectsService.trash('../otro', 'token'), /Identificador/);
+  assert.equal(calls.length, 2);
+  globalThis.fetch = async () => reply({ unexpected: true });
+  await assert.rejects(adminProjectsService.trash('casa', 'token'), /no confirmó/);
 });
 test('valida límites de texto, año, galerías y video antes de guardar', () => {
   const draft = projectDraft(item()); assert.deepEqual(validateProject(draft), {});
