@@ -16,7 +16,7 @@ acceso, registrar servicio, permiso y quién puede concederlo; no escribir solam
 | --- | --- | --- | --- |
 | Integrar backend; configuración, permisos y OpenAPI | Pablo | Henry; Juan para datos y pruebas | Revisar commits y consumidores, check y pruebas backend; si cambia el contrato, generar OpenAPI con validación. P-01 ya está integrado. |
 | Integrar frontend y habilitar papelera de Proyectos | Jenny | Geovanny | Lint, pruebas y build; para habilitar papelera sobre Supabase, cierre técnico P-02 y prueba del recorrido. |
-| Limpieza de papelera P-02 tras más de 90 días | Pablo; el agente de Geovanny ejecuta el cambio autorizado | Juan | Retirar función SQL antigua, implementar limpieza en backend con historial y probarla; documentar por separado la programación en el hosting. Véase el informe P-02. |
+| Limpieza de papelera P-02 tras más de 90 días | Pablo; el agente de Geovanny ejecuta el cambio autorizado | Juan | Retirar función SQL antigua, implementar limpieza en backend con historial y probarla; documentar por separado la programación en el hosting. Véase [P-02](P02-papelera-90-dias.md). |
 | Cuentas permanentes de la aplicación | Pablo | Juan | Geovanny identifica titulares y roles; quien tenga acceso crea cuentas y verifica login/permisos. Los roles ya existen. |
 | Despliegue, imágenes persistentes y correo | Juan | Pablo | Geovanny confirma destino/proveedor y acceso; registrar URL, versión, imagen recuperable tras reinicio/despliegue y prueba de correo. Cerrar cada comprobación por separado. |
 | Pruebas en URL desplegada | Geovanny y Leo | Jenny para interfaz; Juan para API | Resultado por rol y versión. Las 70/70 pruebas previas usaron API local y Supabase real: no acreditan despliegue ni participación de Leo. |
@@ -34,7 +34,7 @@ dependencia técnica concreta. No reabrir BE-00/01/02/03/05/11 ni P-01 por texto
 
 - Cuentas: nombres de titulares y rol de cada persona, proporcionados por Geovanny
   por un canal privado; nunca contraseñas ni datos personales en este repo público.
-- Despliegue: proveedor, URL y persona con acceso para configurar el servicio.
+- Backend: Render confirmado por Geovanny. Falta URL y acceso para activar/verificar el Cron Job; imágenes y correo requieren su configuración propia.
 - Correo: buzón receptor y servicio que enviará las consultas.
 
 No bloquean edición de código, pruebas locales, integración revisada ni documentación.

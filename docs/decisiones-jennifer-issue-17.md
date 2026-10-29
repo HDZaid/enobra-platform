@@ -1,5 +1,7 @@
 # Decisiones de Jennifer — issue #17
 
+> Estado vigente, 29-oct: [P-02 y papelera de 90 días](P02-papelera-90-dias.md). P-01 cerrado; función SQL antigua retirada de Supabase y ausencia verificada. La nueva limpieza corre desde el backend después de más de 90 días en papelera. Código y pruebas listos; falta activar/verificar el Cron Job en Render (Juan, respaldo Pablo). Los bloqueos anteriores por decidir P-01/P-02 y las políticas de inactividad de 3/8 meses quedan sustituidos. Jenny puede validar la habilitación del frontend con la versión integrada; no requiere otro OK de Henry.
+
 Registro de las decisiones aplicadas para la entrega, según las propuestas del
 issue aportado por Jennifer. Fecha de adopción: la fecha ISO 8601 del commit que
 incorpora este registro (`git log -1 --format=%aI -- docs/decisiones-jennifer-issue-17.md`).

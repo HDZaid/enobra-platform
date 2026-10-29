@@ -1,5 +1,7 @@
 # Dependencias de las tareas de Juan
 
+> Estado vigente, 29-oct: [P-02 y papelera de 90 días](P02-papelera-90-dias.md). P-01 cerrado; función SQL antigua retirada de Supabase y ausencia verificada. La nueva limpieza corre desde el backend después de más de 90 días en papelera. Código y pruebas listos; falta activar/verificar el Cron Job en Render (Juan, respaldo Pablo). Los bloqueos anteriores por decidir P-01/P-02 y las políticas de inactividad de 3/8 meses quedan sustituidos. Jenny puede validar la habilitación del frontend con la versión integrada; no requiere otro OK de Henry.
+
 > Acuerdo vigente del 29-oct: [responsables y cierres](responsables-y-cierres.md) sustituye las exclusividades y dependencias personales de Henry de este documento. Pablo puede integrar backend, modificar configuración y generar OpenAPI; Jenny integra frontend y Juan verifica despliegue, con los respaldos indicados. P-01 está cerrado. P-02 pasa a limpieza desde el backend tras más de 90 días en papelera; consultar su informe antes de dar por activada la ejecución automática.
 
 Corte: 28 de octubre de 2026, Guatemala. Fuentes: [issue #8](https://github.com/HDZaid/enobra-platform/issues/8), [issue #15](https://github.com/HDZaid/enobra-platform/issues/15), [issue #16](https://github.com/HDZaid/enobra-platform/issues/16), [issue #18](https://github.com/HDZaid/enobra-platform/issues/18), planes y evidencia de `develop` y `backend-dev`. Este documento registra coordinación; no acredita acciones no realizadas ni cambia decisiones del equipo.

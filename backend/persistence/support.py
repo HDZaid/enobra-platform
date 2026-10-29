@@ -24,11 +24,12 @@ def write_data(key, data, actor=None):
     })
 
 
-def audit(module, action, obj, actor=None):
+def audit(module, action, obj, actor=None, *, description=None):
     actor = actor or getattr(obj, "actualizado_por_id", None) or getattr(obj, "creado_por_id", None)
     if actor:
         HistorialActividad.objects.create(usuario_id=actor, accion=action, modulo=module,
-            id_registro=obj.pk, nombre_registro=str(getattr(obj, "titulo", ""))[:250])
+            id_registro=obj.pk, nombre_registro=str(getattr(obj, "titulo", ""))[:250],
+            descripcion=description)
 
 
 def page_of(qs, page, page_size, serialize):

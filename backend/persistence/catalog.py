@@ -1,9 +1,11 @@
 """CRUD del panel: tablas de negocio y metadatos del mockup en contenido_pagina."""
 import json
+from datetime import timedelta
 
 from django.db import IntegrityError, transaction
 from django.db.models import Max, Min
 from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from apps.projects.interfaces import ProjectRepository
@@ -20,6 +22,34 @@ from .support import read_data, write_data, audit, page_of, unique_slug, publica
 
 class CatalogRepository:
     supports_trash = False
+    trash_retention_days = 90
+
+    @staticmethod
+    def _expired_trash(extra, cutoff):
+        trash = extra.get("trash") if isinstance(extra, dict) else None
+        value = trash.get("trashed_at") if isinstance(trash, dict) else None
+        if not isinstance(value, str):
+            return False
+        try:
+            sent_at = parse_datetime(value)
+        except (ValueError, OverflowError):
+            return False
+        # No adivinar zonas horarias ni borrar metadatos incompletos.
+        return sent_at is not None and timezone.is_aware(sent_at) and sent_at < cutoff
+
+    def purge_expired_trash(self, *, deleted_by=None, dry_run=True, limit=500):
+        """Una tanda; cada fila se vuelve a comprobar bajo el bloqueo de restaurar."""
+        if not self.supports_trash:
+            return 0
+        if not dry_run and deleted_by is None:
+            raise ValueError("La limpieza requiere un actor para el historial.")
+        cutoff = timezone.now() - timedelta(days=self.trash_retention_days)
+        metadata = self._trash_metadata()
+        candidates = [pk for pk, extra in metadata.items() if self._expired_trash(extra, cutoff)]
+        keys = self.model.objects.filter(pk__in=candidates, publicado=False).order_by("pk").values_list(
+            self.identifier, flat=True)[:limit]
+        return sum(self.delete_permanently(key, deleted_by=deleted_by,
+            expired_before=cutoff, dry_run=dry_run) for key in list(keys))
 
     def _query(self, include_unpublished=True):
         qs = self.model.objects.select_related(*self.related).prefetch_related(*self.prefetch)
@@ -258,18 +288,32 @@ class CatalogRepository:
         return True
 
     @transaction.atomic
-    def delete_permanently(self, key, *, deleted_by):
+    def delete_permanently(self, key, *, deleted_by, expired_before=None, dry_run=False):
         if not self.supports_trash:
             return False
-        obj = self.model.objects.select_for_update().filter(**{self.identifier: key}).first()
+        qs = self.model.objects.all()
+        if not dry_run:
+            qs = qs.select_for_update()
+        obj = qs.filter(**{self.identifier: key}).first()
         if obj is None:
             return False
         key = self._meta_key(obj)
-        extra = read_data(key, {})
+        try:
+            extra = read_data(key, {})
+        except (ValueError, TypeError):
+            if expired_before is not None:
+                return False
+            raise
+        if expired_before is not None and (obj.publicado or not self._expired_trash(extra, expired_before)):
+            return False
         trash = extra.get("trash")
         if not isinstance(trash, dict) or not trash.get("trashed_at"):
             return False
-        audit(self.module, "ELIMINAR_PERMANENTE", obj, deleted_by)
+        if dry_run:
+            return True
+        description = ("Limpieza automática: más de 90 días en papelera."
+                       if expired_before is not None else None)
+        audit(self.module, "ELIMINAR_PERMANENTE", obj, deleted_by, description=description)
         ContenidoPagina.objects.filter(clave=key).delete()
         obj.delete()
         return True

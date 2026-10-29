@@ -1,5 +1,7 @@
 # Papelera de publicaciones (BE-12)
 
+> Estado vigente, 29-oct: [P-02 y papelera de 90 días](P02-papelera-90-dias.md). P-01 cerrado; función SQL antigua retirada de Supabase y ausencia verificada. La nueva limpieza corre desde el backend después de más de 90 días en papelera. Código y pruebas listos; falta activar/verificar el Cron Job en Render (Juan, respaldo Pablo). Los bloqueos anteriores por decidir P-01/P-02 y las políticas de inactividad de 3/8 meses quedan sustituidos. Jenny puede validar la habilitación del frontend con la versión integrada; no requiere otro OK de Henry.
+
 Estado al 24 de octubre de 2026, sobre `backend-dev` (`ec8f363`).
 Referencias: [plan maestro, DEC-04/05 y contratos §6](plan/PLAN-MAESTRO.md),
 [BE-04, BE-12 y BE-20](plan/PLAN-BACKEND.md) y

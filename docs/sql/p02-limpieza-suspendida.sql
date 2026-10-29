@@ -1,4 +1,5 @@
--- Aplicada por autorizacion explicita de Geovanny el 29-oct-2026.
+-- HISTORICO: NO EJECUTAR. La funcion se retiro despues por orden de Geovanny.
+-- Suspension temporal aplicada el 29-oct-2026, sustituida por limpieza desde backend.
 CREATE OR REPLACE FUNCTION public.limpiar_proyectos_inactivos()
  RETURNS TABLE(marcados bigint, eliminados bigint)
  LANGUAGE plpgsql
