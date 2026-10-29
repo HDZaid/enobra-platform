@@ -1,6 +1,7 @@
 # Trabajo del equipo EnObra
 
 Leer [docs/TRABAJO-EN-EQUIPO.md](docs/TRABAJO-EN-EQUIPO.md) antes de modificar código.
+Para pendientes de Juan que requieren coordinación, consultar [docs/dependencias-juan.md](docs/dependencias-juan.md) y actualizar la evidencia al completar cada acción.
 Estas reglas sustituyen recomendaciones antiguas de crear ramas por módulo.
 
 - Frontend: Leo, Geo y Jennifer (solicitante), en `frontend-dev`.

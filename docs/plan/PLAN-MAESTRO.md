@@ -313,12 +313,12 @@ Actualizado el 25 de octubre de 2026 (INT-05), verificado por commit en `develop
 | BE-05 | Fábrica de publicaciones (Abstract Factory) | Henry | P0 | 4 h | [x] 9462719 |
 | BE-06 | Límites numéricos y carrera de borradores | Pablo | P0 | 2 h | [x] BE-06a y BE-06b; 24-oct: 122 pruebas backend en verde (SQLite) |
 | BE-07 | Endpoint de Historial y exportación | Juan | P0 | 3 h | [x] bb8b9bf |
-| BE-08 | Editar usuarios y cambiar rol | Pablo | P0 | 3 h | [x] ec8f363 |
+| BE-08 | Editar usuarios y cambiar rol | Pablo | P0 | 3 h | [x] ec8f363; reglas verificadas al cerrar BE-13 el 25-oct |
 | BE-09 | Notificador de consultas (correo) | Juan | P0 | 3 h | [x] be25ef9 |
 | BE-10 | Validar el esquema contra Supabase | Juan | P0 | 1.5 h | [x] a6d90cf |
 | BE-11 | Docs: RBAC, arquitectura, ADR | Henry | P0 | 2 h | [x] 3f8fd6d |
 | BE-12 | Docs: auditoría y papelera | Juan | P0 | 1.5 h | [x] 7b94bbf |
-| BE-13 | Docs: actualizar API de usuarios | Pablo | P0 | 0.5 h | [x] En `docs/usuarios-api.md` (ec8f363) |
+| BE-13 | Docs: actualizar API de usuarios | Pablo | P0 | 0.5 h | [x] En `docs/usuarios-api.md` (ec8f363); cierre 25-oct: permisos, seis reglas, errores y guardados parciales; 189 pruebas SQLite |
 | BE-14 … BE-22 | Backlog posterior a la entrega | varios | P1/P2 | n/a | [ ] |
 
 ### Frontend (detalle en `PLAN-FRONTEND.md`)

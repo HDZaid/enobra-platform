@@ -7,6 +7,7 @@ las decisiones se revisan gradualmente y se actualizan junto con el código afec
 ramas, cifras de pruebas, pendientes y qué documentos son históricos.
 
 - [INT-04: matriz de pruebas por rol](INT-04-matriz-roles.md): qué puede cada rol, probado en la API, Postman y el panel.
+- [Dependencias de las tareas de Juan](dependencias-juan.md): acciones pendientes de Geo y Henry, evidencia y coordinación.
 
 - [Reglas de desarrollo y responsables](reglas-desarrollo.md): equipo, contratos,
   ramas, revisiones y criterios de entrega.

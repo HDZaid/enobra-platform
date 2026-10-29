@@ -209,8 +209,26 @@ class TrashTests(TestCase):
         repo.delete(item["id"], deleted_by=self.user.pk)
         self.assertFalse(repo.is_own_draft(item["id"], self.user.pk))
 
-    def test_trash_and_restore_do_not_reconcile_sql_cleanup_state(self):
-        # DEC-05: SQL cleanup is a separate lifecycle, pending coordination.
+    def test_project_create_and_edit_refresh_activity(self):
+        item = self.create("projects", published=False)
+        obj = Proyecto.objects.get(slug=item["id"])
+        self.assertEqual(obj.fecha_ultima_actividad, obj.fecha_actualizacion)
+        old_activity = timezone.now() - timedelta(days=150)
+        marked = timezone.now() - timedelta(days=31)
+        Proyecto.objects.filter(pk=obj.pk).update(
+            fecha_ultima_actividad=old_activity,
+            estado_limpieza="PENDIENTE_ELIMINACION", fecha_marcado_eliminacion=marked)
+        response = self.client.patch(API + f"projects/{item['id']}/",
+                                     {"title": "Actividad renovada"}, format="json")
+        self.assertEqual(response.status_code, 200)
+        obj.refresh_from_db()
+        self.assertGreater(obj.fecha_ultima_actividad, old_activity)
+        self.assertEqual(obj.fecha_ultima_actividad, obj.fecha_actualizacion)
+        # P-01 resets cleanup marks on restoration; editing only refreshes activity.
+        self.assertEqual(obj.estado_limpieza, "PENDIENTE_ELIMINACION")
+        self.assertEqual(obj.fecha_marcado_eliminacion, marked)
+
+    def test_restore_refreshes_activity_and_clears_sql_cleanup_state(self):
         for published in (False, True):
             item = self.create("projects", published=published)
             obj = Proyecto.objects.get(slug=item["id"])
@@ -222,12 +240,34 @@ class TrashTests(TestCase):
                 fecha_marcado_eliminacion=marked)
             repo = self.repo("projects")
             self.assertTrue(repo.delete(item["id"], deleted_by=self.user.pk))
+            obj.refresh_from_db()
+            self.assertEqual(obj.fecha_ultima_actividad, activity)
+            self.assertEqual(obj.estado_limpieza, "PENDIENTE_ELIMINACION")
             self.assertTrue(repo.restore(item["id"], restored_by=self.user.pk))
             obj.refresh_from_db()
             self.assertEqual(obj.publicado, published)
-            self.assertEqual(obj.fecha_ultima_actividad, activity)
-            self.assertEqual(obj.estado_limpieza, "PENDIENTE_ELIMINACION")
-            self.assertEqual(obj.fecha_marcado_eliminacion, marked)
+            self.assertGreater(obj.fecha_ultima_actividad, activity)
+            self.assertEqual(obj.fecha_ultima_actividad, obj.fecha_actualizacion)
+            self.assertEqual(obj.estado_limpieza, "ACTIVO")
+            self.assertIsNone(obj.fecha_marcado_eliminacion)
+
+    def test_failed_restore_rolls_back_activity_and_cleanup_marks(self):
+        item = self.create("projects", published=False)
+        obj = Proyecto.objects.get(slug=item["id"])
+        activity = timezone.now() - timedelta(days=150)
+        marked = timezone.now() - timedelta(days=31)
+        Proyecto.objects.filter(pk=obj.pk).update(fecha_ultima_actividad=activity,
+            estado_limpieza="PENDIENTE_ELIMINACION", fecha_marcado_eliminacion=marked)
+        repo = self.repo("projects")
+        repo.delete(item["id"], deleted_by=self.user.pk)
+        with patch("persistence.catalog.audit", side_effect=RuntimeError("audit failed")):
+            with self.assertRaises(RuntimeError):
+                repo.restore(item["id"], restored_by=self.user.pk)
+        obj.refresh_from_db()
+        self.assertEqual(obj.fecha_ultima_actividad, activity)
+        self.assertEqual(obj.estado_limpieza, "PENDIENTE_ELIMINACION")
+        self.assertEqual(obj.fecha_marcado_eliminacion, marked)
+        self.assertEqual(repo.list_trash(page=1, page_size=12).total, 1)
 
     def test_permanent_delete_preserves_messages_and_audit_but_removes_videos(self):
         item = self.create("projects")
