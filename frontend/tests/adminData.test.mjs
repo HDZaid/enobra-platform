@@ -60,8 +60,8 @@ test('las secciones se habilitan con los permisos efectivos, no con el nombre de
 });
 
 test('muestra el rol sin depender de mayúsculas o tildes', () => {
-  assert.equal(adminRoleProfile({ role: 'ingeniero' }).label, 'Ingeniero');
-  assert.equal(adminRoleProfile({ role: 'ARQUITECTA' }).description, 'Publicaciones de bienes raíces');
+  assert.equal(adminRoleProfile({ role: 'ingeniero' }).label, 'Administrador');
+  assert.equal(adminRoleProfile({ role: 'ARQUITECTA' }).label, 'Arquitecto');
   assert.equal(adminRoleProfile({ role: 'Empleado' }).label, 'Empleado');
   assert.deepEqual(adminRoleProfile({ role: 'Supervisor', permissions: [] }), { label: 'Supervisor', description: 'Permisos personalizados' });
   assert.equal(adminRoleProfile(undefined).label, 'Sin rol');
@@ -93,7 +93,7 @@ test('cada permiso fino habilita solo su sección y la papelera correspondiente'
     properties: ARCHITECT_PERMISSIONS.concat(['properties.edit.own', 'properties.trash.own', 'properties.delete_permanently']),
     news: ['news.create', 'news.edit', 'news.publish', 'news.delete'],
     inbox: ['inquiries.read', 'inquiries.manage'],
-    users: ['users.read', 'users.manage'], roles: ['roles.read', 'roles.manage'], history: ['audit.read'],
+    users: ['users.read', 'users.manage'], history: ['audit.read'],
   };
   for (const [section, permissions] of Object.entries(groups)) {
     for (const permission of permissions) {
@@ -115,7 +115,7 @@ test('cada permiso fino habilita solo su sección y la papelera correspondiente'
 test('las rutas dinámicas y barras finales mantienen la sección sin confundir prefijos', () => {
   for (const path of ['/admin/bienes-raices', '/admin/bienes-raices/', '/admin/bienes-raices/nuevo', '/admin/bienes-raices/12/editar']) assert.equal(sectionForPath(path), 'properties');
   for (const path of ['/admin/proyectos', '/admin/proyectos/nuevo', '/admin/proyectos/casa-nueva/editar']) assert.equal(sectionForPath(path), 'projects');
-  for (const path of ['/admin/roles', '/admin/roles/nuevo', '/admin/roles/12']) assert.equal(sectionForPath(path), 'roles');
+  for (const path of ['/admin/roles', '/admin/roles/nuevo', '/admin/roles/12']) assert.equal(sectionForPath(path), null);
   assert.equal(sectionForPath('/admin/'), 'dashboard');
   assert.equal(sectionForPath('/admin/papelera'), 'trash');
   assert.equal(sectionForPath('/admin/historial'), 'history');
@@ -136,12 +136,12 @@ test('actualizar usuario reemplaza permisos sin cambiar tokens ni aceptar otra i
 
 test('las rutas de formularios exigen permiso de acción aunque el módulo sea visible', () => {
   const reader = { permissions: ['roles.read', 'properties.publish', 'projects.restore'] };
-  assert.equal(canAccessAdminPath(reader, '/admin/roles'), true);
-  assert.equal(canAccessAdminPath(reader, '/admin/roles/2'), true);
+  assert.equal(canAccessAdminPath(reader, '/admin/roles'), false);
+  assert.equal(canAccessAdminPath(reader, '/admin/roles/2'), false);
   for (const path of ['/admin/roles/nuevo', '/admin/bienes-raices/nuevo', '/admin/bienes-raices/3/editar', '/admin/proyectos/nuevo', '/admin/proyectos/casa/editar', '/admin/historial']) assert.equal(canAccessAdminPath(reader, path), false, path);
   assert.equal(canAccessAdminPath({ permissions: ['properties.create'] }, '/admin/bienes-raices/nuevo'), true);
   assert.equal(canAccessAdminPath({ permissions: ['projects.edit.own'] }, '/admin/proyectos/casa/editar'), true);
   assert.equal(canAccessAdminPath({ permissions: ['users.read'] }, '/admin/usuarios'), true);
-  assert.equal(canAccessAdminPath({ permissions: ['admin.all'] }, '/admin/roles/nuevo'), true);
+  assert.equal(canAccessAdminPath({ permissions: ['admin.all'] }, '/admin/roles/nuevo'), false);
   assert.equal(canAccessAdminPath({ permissions: ['admin.all'] }, '/admin/desconocido'), false);
 });

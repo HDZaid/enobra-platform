@@ -13,7 +13,6 @@ const navigation = [
   { label: 'Papelera', to: routePaths.adminTrash, icon: Trash2, section: 'trash', group: 'Contenido' },
   { label: 'Mensajes', to: routePaths.adminInbox, icon: Mail, section: 'inbox', group: 'Comunicación' },
   { label: 'Usuarios', to: routePaths.adminUsers, icon: Users, section: 'users', group: 'Administración' },
-  { label: 'Roles', to: routePaths.adminRoles, icon: ShieldCheck, section: 'roles', group: 'Administración' },
   { label: 'Historial', to: routePaths.adminHistory, icon: History, section: 'history', group: 'Administración' },
 ];
 

@@ -1,3 +1,4 @@
+import { fixedRoleLabel, fixedRoleDescriptions } from './fixedRoles.js';
 export const emptyUserDraft = () => ({ name: '', email: '', password: '', confirmation: '', role_id: '', active: true });
 
 export function validateUserDraft(draft, roles) {
@@ -33,8 +34,7 @@ export function userEditChanges(draft, user) {
 
 export function canAssignUserRole(role, actor) {
   const permissions = actor?.permissions || [];
-  return role.active && (permissions.includes('admin.all') ||
-    role.permissions.every((permission) => permissions.includes(permission)));
+  return role.active && Boolean(fixedRoleLabel(role.name)) && permissions.includes('admin.all');
 }
 
 export function validateUserEditDraft(draft, user, roles, actor) {
@@ -57,7 +57,12 @@ export function readUserRoles(payload) {
       typeof role.name !== 'string' || typeof role.active !== 'boolean' || !Array.isArray(role.permissions))) {
     throw new TypeError('No se pudieron leer los roles del servidor.');
   }
-  return payload.filter((role) => role.active);
+  const found = new Map();
+  for (const role of payload) {
+    const name = fixedRoleLabel(role.name);
+    if (name && role.active && !found.has(name)) found.set(name, { ...role, name, description: fixedRoleDescriptions[name] });
+  }
+  return Object.keys(fixedRoleDescriptions).filter((name) => found.has(name)).map((name) => found.get(name));
 }
 
 export function readManagedUser(item) {
@@ -68,7 +73,7 @@ export function readManagedUser(item) {
     throw new TypeError('El servidor devolvió un usuario con formato inválido.');
   }
   return { id: String(item.id), name: item.name, email: item.email, active: item.active,
-    roles: item.roles.map((role) => ({ id: role.id, name: role.name })), created_at: item.created_at };
+    roles: item.roles.map((role) => ({ id: role.id, name: fixedRoleLabel(role.name) || role.name })), created_at: item.created_at };
 }
 
 export function userRequestError(error) {
@@ -87,9 +92,9 @@ export function userFieldErrors(error) {
 }
 
 export const previewUserRoles = Object.freeze([
-  { id: 1, name: 'Ingeniero', description: 'Acceso administrativo completo.', active: true, permissions: ['admin.all'] },
-  { id: 2, name: 'Arquitecta', description: 'Publicaciones de bienes raíces.', active: true, permissions: ['properties.publish'] },
-  { id: 3, name: 'Empleado', description: 'Preparación de borradores propios.', active: true, permissions: ['properties.create'] },
+  { id: 1, name: 'Administrador', description: fixedRoleDescriptions.Administrador, active: true, permissions: ['admin.all'] },
+  { id: 2, name: 'Arquitecto', description: fixedRoleDescriptions.Arquitecto, active: true, permissions: ['properties.publish'] },
+  { id: 3, name: 'Empleado', description: fixedRoleDescriptions.Empleado, active: true, permissions: ['properties.create'] },
 ]);
 
 export const previewUsers = Object.freeze([
