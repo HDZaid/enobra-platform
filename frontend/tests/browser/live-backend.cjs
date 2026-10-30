@@ -158,9 +158,16 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
     await page.locator('#admin-password').fill(process.env.INTEGRATION_PASSWORD);
     await page.getByRole('button', { name: 'Ingresar al panel' }).click();
     await page.waitForURL('**/admin');
-    assert.equal(await page.getByRole('link', { name: 'Noticias', exact: true }).count(), 0);
+    assert.equal(await page.getByRole('link', { name: 'Noticias', exact: true }).count(), 1);
+    await page.getByRole('button', { name: 'Salir del panel' }).click();
+    await page.waitForURL('**/admin/login');
+    await page.locator('#admin-email').fill('employee@example.test');
+    await page.locator('#admin-password').fill(process.env.INTEGRATION_PASSWORD);
+    await page.getByRole('button', { name: 'Ingresar al panel' }).click();
+    await page.waitForURL('**/admin');
+    assert.equal(await page.getByRole('link', { name: 'Usuarios', exact: true }).count(), 0);
     await page.evaluate(() => {
-      history.pushState({}, '', '/admin/noticias');
+      history.pushState({}, '', '/admin/usuarios');
       dispatchEvent(new PopStateEvent('popstate'));
     });
     await page.waitForURL('**/admin');
