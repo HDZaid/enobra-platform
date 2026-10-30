@@ -1,5 +1,7 @@
 Decisiones y ejecución de Jennifer — issue #17
 
+> Actualización del 29-oct: renovación por actividad implementada; tarjeta con contador y reingreso que conserva el formulario. Sustituye la mitigación antigua de J-01/CF-03. [Comportamiento y pruebas](FE-08-renovacion-por-actividad.md). Persistencia tras recarga (J-03) sigue aplazada.
+
 - [x] J-01: para la entrega se mitiga reingresando antes de cada recorrido largo. El
   panel avisa del vencimiento de 15 minutos. La renovación automática queda para
   después de la entrega; no se declara implementada.

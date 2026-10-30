@@ -1,5 +1,7 @@
 # Estado del proyecto EnObra
 
+> Actualización del 29-oct: renovación por actividad implementada; tarjeta con contador y reingreso que conserva el formulario. Sustituye la mitigación antigua de J-01/CF-03. [Comportamiento y pruebas](FE-08-renovacion-por-actividad.md). Persistencia tras recarga (J-03) sigue aplazada.
+
 > Seguimiento de Jenny: tareas de entrega y habilitación J-02 completas. Lista
 > consolidada de cierres y únicos pendientes externos en [PENDIENTES-JENNIFER.md](PENDIENTES-JENNIFER.md).
 > Las listas históricas de bloqueo por P-01/P-02 o botón apagado quedan sustituidas.

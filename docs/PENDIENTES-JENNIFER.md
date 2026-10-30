@@ -11,7 +11,7 @@ Este documento sustituye sus listas previas: J-02 ya no está bloqueado.
 | FE-10: Noticias, Mensajes y Resumen | Acciones por permiso, Mensajes de lectura sin gestión, conteos reales y fallos parciales; errores de Noticias por campo y contenido conservado al rechazar el guardado. |
 | FE-07: administración de Proyectos | Crear/editar, fotos/renders, orden y portada, YouTube, validación, slug estable, publicación explícita y aviso de cambios. |
 | INT-01: integración frontend | Cambios publicados e incorporados a develop conservando los avances del equipo. |
-| J-01: mitigación de sesión | Aviso de 15 minutos y reingreso antes del recorrido largo de demo. No se presenta como renovación automática. |
+| J-01/CF-03: renovación por actividad | Implementada por solicitud de Geovanny: renovación mientras se usa el panel, límite de 15 minutos sin actividad, tarjeta con contador y reingreso sin desmontar borradores. Ver FE-08-renovacion-por-actividad.md. |
 | J-02: papelera de Proyectos | `PROJECT_TRASH_ENABLED=true` con P-01/P-02 integrados. Envío y restauración comprobados desde UI; cancelar no envía, conserva imágenes/slug y estado anterior. |
 | Preparación de demo | Recorrido en `docs/demo/recorrido-jennifer.md`, incluidos errores y restricciones sobre datos reales. |
 
@@ -46,8 +46,7 @@ Supabase, ni cambios a los secretos, limpieza programada o servicios de desplieg
 
 ## Aplazado por decisiones vigentes, no bloqueo técnico
 
-- J-01/FE-08: renovación automática después de la entrega. La mitigación está hecha;
-  no se declara resuelto CF-03 como renovación automática.
+- J-01/CF-03: renovación por actividad resuelta; falta incluir su recorrido con Django desplegado en el QA final. FE-08 no implica persistencia tras recarga: esa parte sigue aplazada en J-03.
 - J-03: persistencia posterior; sessionStorage solo para el refresh token. Los tokens
   actuales permanecen en memoria, sin localStorage.
 - J-04/BE-22: conservar filtros en cliente con aviso de página cargada; filtros de

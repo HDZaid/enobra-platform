@@ -1,4 +1,5 @@
 import { ApiError } from './apiClient.js';
+import { resolveAdminToken, reportUnauthorized } from './adminTransport.js';
 import { validateImageFile, validUploadedImageUrl } from '../components/ui/imageUpload.js';
 
 const baseUrl = (import.meta.env?.VITE_API_BASE_URL || '/api/v1').replace(/\/+$/, '');
@@ -10,6 +11,7 @@ export function uploadMedia(file, { kind = 'photo', token, onProgress, signal } 
     const invalid = validateImageFile(file);
     if (invalid) { reject(new ApiError(invalid, 400, 'invalid_image', { file: [invalid] })); return; }
     if (!['photo', 'render', 'news', 'logo'].includes(kind)) { reject(new ApiError('Tipo de medio inválido.', 400, 'invalid_kind')); return; }
+    const access = resolveAdminToken(token);
     const xhr = new XMLHttpRequest();
     const abort = () => xhr.abort();
     function finish(callback, value) {
@@ -22,6 +24,7 @@ export function uploadMedia(file, { kind = 'photo', token, onProgress, signal } 
       let payload;
       try { payload = JSON.parse(xhr.responseText); } catch { payload = null; }
       if (xhr.status !== 201) {
+        if (xhr.status === 401) reportUnauthorized(access);
         const error = payload?.error;
         finish(reject, new ApiError(error?.message || `Error HTTP ${xhr.status}`, xhr.status, error?.code || 'http_error', error?.details));
         return;
@@ -42,7 +45,7 @@ export function uploadMedia(file, { kind = 'photo', token, onProgress, signal } 
       xhr.open('POST', `${baseUrl}/admin/media/`);
       xhr.timeout = 120000;
       xhr.setRequestHeader('Accept', 'application/json');
-      if (token) xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+      if (access) xhr.setRequestHeader('Authorization', `Bearer ${access}`);
       const body = new FormData();
       body.append('file', file);
       body.append('kind', kind);

@@ -1,5 +1,7 @@
 # Recorrido de demo — Jennifer
 
+> Sesión actual: [renovación por actividad](../FE-08-renovacion-por-actividad.md). El aviso permanente ya no existe; las instrucciones de reingreso preventivo que sigan abajo son históricas. Comprobar tarjeta/contador, actividad que permite continuar e inactividad que bloquea con reingreso en la misma pestaña.
+
 Usar el código integrado de frontend-dev/develop y una base aislada con medios
 temporales. Las credenciales se configuran fuera del repositorio. No cargar datos
 ficticios ni ejecutar pruebas de borrado sobre Supabase real.

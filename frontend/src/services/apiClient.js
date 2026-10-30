@@ -1,5 +1,7 @@
 const baseUrl = (import.meta.env?.VITE_API_BASE_URL || '/api/v1').replace(/\/+$/, '');
 
+import { resolveAdminToken, reportUnauthorized } from './adminTransport.js';
+
 export class ApiError extends Error {
   constructor(message, status, code, details) {
     super(message);
@@ -15,7 +17,8 @@ export async function apiRequest(path, { method = 'GET', body, token, signal } =
   const headers = { Accept: 'application/json' };
 
   if (body !== undefined && !isFormData) headers['Content-Type'] = 'application/json';
-  if (token) headers.Authorization = `Bearer ${token}`;
+  const access = resolveAdminToken(token);
+  if (access) headers.Authorization = `Bearer ${access}`;
 
   const response = await fetch(`${baseUrl}/${path.replace(/^\/+/, '')}`, {
     method,
@@ -32,6 +35,7 @@ export async function apiRequest(path, { method = 'GET', body, token, signal } =
       : await response.text();
 
   if (!response.ok) {
+    if (response.status === 401) reportUnauthorized(access);
     const error = payload && typeof payload === 'object' ? payload.error : null;
     throw new ApiError(
       error?.message || `Error HTTP ${response.status}`,
