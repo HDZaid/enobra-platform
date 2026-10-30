@@ -73,7 +73,7 @@ class UserDetailView(APIView):
 
 class UserRoleView(APIView):
     permission_classes = [HasAnyPermission]
-    required_permissions = ('users.manage',)
+    required_permissions = ('admin.all',)
 
     @extend_schema(request=UserRoleUpdateSerializer, responses={200: ManagedUserSerializer, **USER_ERRORS},
         tags=['Usuarios (admin)'], summary='Reemplazar el rol de un usuario',

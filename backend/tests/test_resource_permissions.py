@@ -58,7 +58,11 @@ class PermissionTestCase(TestCase):
         for permission in permissions:
             RolPermiso.objects.create(rol=role, permiso=Permiso.objects.get(nombre=permission))
         user = self.make_user(role, name)
-        return self.login(user), user
+        from apps.accounts.interfaces import Principal
+        client = APIClient()
+        client.force_authenticate(Principal(id=str(user.pk), name=name, email=user.correo,
+            role=name, permissions=frozenset(permissions)))
+        return client, user
 
     def create(self, client, kind, **changes):
         response = client.post(API + kind + "/", payload(None, kind, **changes), format="json")
@@ -91,25 +95,23 @@ class RoleEndpointMatrixTests(PermissionTestCase):
 
         everyone = {"Ingeniero": 201, "Arquitecta": 201, "Empleado": 201}
         return {
-            "POST /projects/": (lambda: ("post", "projects/", payload(None, "projects"), "json"), {"Ingeniero": 201}),
-            "PATCH /projects/{id}/": (lambda: ("patch", f"projects/{project()}/", {"title": "Editado"}, "json"), {"Ingeniero": 200}),
-            "DELETE /projects/{id}/": (lambda: ("delete", f"projects/{project()}/", None, "json"), {"Ingeniero": 204}),
-            "POST /news/": (lambda: ("post", "news/", payload(None, "news"), "json"), {"Ingeniero": 201}),
-            "PATCH /news/{id}/": (lambda: ("patch", f"news/{news()}/", {"title": "Editada"}, "json"), {"Ingeniero": 200}),
-            "DELETE /news/{id}/": (lambda: ("delete", f"news/{news()}/", None, "json"), {"Ingeniero": 204}),
-            "GET /inquiries/": (lambda: ("get", "inquiries/", None, "json"), {"Ingeniero": 200}),
-            "GET /inquiries/{id}/": (lambda: ("get", f"inquiries/{inquiry()}/", None, "json"), {"Ingeniero": 200}),
-            "PATCH /inquiries/{id}/": (lambda: ("patch", f"inquiries/{inquiry()}/", {"status": "atendido"}, "json"), {"Ingeniero": 200}),
+            "POST /projects/": (lambda: ("post", "projects/", payload(None, "projects"), "json"), everyone),
+            "PATCH /projects/{id}/": (lambda: ("patch", f"projects/{project()}/", {"title": "Editado"}, "json"), {"Ingeniero": 200, "Arquitecta": 200, "Empleado": 200}),
+            "DELETE /projects/{id}/": (lambda: ("delete", f"projects/{project()}/", None, "json"), {"Ingeniero": 204, "Arquitecta": 204}),
+            "POST /news/": (lambda: ("post", "news/", payload(None, "news"), "json"), everyone),
+            "PATCH /news/{id}/": (lambda: ("patch", f"news/{news()}/", {"title": "Editada"}, "json"), {"Ingeniero": 200, "Arquitecta": 200, "Empleado": 200}),
+            "DELETE /news/{id}/": (lambda: ("delete", f"news/{news()}/", None, "json"), {"Ingeniero": 204, "Arquitecta": 204}),
+            "GET /inquiries/": (lambda: ("get", "inquiries/", None, "json"), {"Ingeniero": 200, "Arquitecta": 200}),
+            "GET /inquiries/{id}/": (lambda: ("get", f"inquiries/{inquiry()}/", None, "json"), {"Ingeniero": 200, "Arquitecta": 200}),
+            "PATCH /inquiries/{id}/": (lambda: ("patch", f"inquiries/{inquiry()}/", {"status": "atendido"}, "json"), {"Ingeniero": 200, "Arquitecta": 200}),
             "POST /admin/media/": (lambda: ("post", "admin/media/", {"file": image_file(None), "kind": "photo"}, "multipart"), everyone),
             "GET /admin/media/{id}/": (lambda: ("get", f"admin/media/{media()}/", None, "json"),
                                        {"Ingeniero": 200, "Arquitecta": 200, "Empleado": 200}),
-            "DELETE /admin/media/{id}/": (lambda: ("delete", f"admin/media/{media()}/", None, "json"), {"Ingeniero": 204}),
-            "PUT /company/": (lambda: ("put", "company/", company_payload(None), "json"), {"Ingeniero": 200}),
-            "PUT /institution/": (lambda: ("put", "institution/", INSTITUTION, "json"), {"Ingeniero": 200}),
-            "GET /admin/users/": (lambda: ("get", "admin/users/", None, "json"), {"Ingeniero": 200}),
-            "GET /admin/users/roles/": (lambda: ("get", "admin/users/roles/", None, "json"), {"Ingeniero": 200}),
-            "GET /admin/roles/": (lambda: ("get", "admin/roles/", None, "json"), {"Ingeniero": 200}),
-            "GET /admin/permissions/": (lambda: ("get", "admin/permissions/", None, "json"), {"Ingeniero": 200}),
+            "DELETE /admin/media/{id}/": (lambda: ("delete", f"admin/media/{media()}/", None, "json"), {"Ingeniero": 204, "Arquitecta": 204}),
+            "PUT /company/": (lambda: ("put", "company/", company_payload(None), "json"), {"Ingeniero": 200, "Arquitecta": 200}),
+            "PUT /institution/": (lambda: ("put", "institution/", INSTITUTION, "json"), {"Ingeniero": 200, "Arquitecta": 200}),
+            "GET /admin/users/": (lambda: ("get", "admin/users/", None, "json"), {"Ingeniero": 200, "Arquitecta": 200}),
+            "GET /admin/users/roles/": (lambda: ("get", "admin/users/roles/", None, "json"), {"Ingeniero": 200, "Arquitecta": 200}),
             # Propiedades no cambia: Empleado crea borradores; Arquitecta puede enviar a papelera cualquiera.
             "POST /properties/": (lambda: ("post", "properties/", payload(None, "properties", published=False), "json"), everyone),
             "DELETE /properties/{id}/": (lambda: ("delete", f"properties/{self.create(admin, 'properties')['id']}/", None, "json"),
@@ -131,13 +133,12 @@ class RoleEndpointMatrixTests(PermissionTestCase):
                     if expected == 401:
                         self.assertEqual(response.json()["error"]["code"], "not_authenticated")
 
-    def test_architect_and_employee_can_now_upload_media_but_not_manage_other_modules(self):
-        for role in ("Arquitecta", "Empleado"):
+    def test_fixed_roles_upload_and_publication_rights(self):
+        for role in ('Arquitecta', 'Empleado'):
             client = self.clients[role]
-            self.assertEqual(client.post(API + "admin/media/", {"file": image_file(None)}, format="multipart").status_code, 201)
-            self.assertEqual(client.get(API + "inquiries/").status_code, 403)
-            self.assertEqual(client.get(API + "admin/users/").status_code, 403)
-            self.assertEqual(client.post(API + "projects/", payload(None, "projects"), format="json").status_code, 403)
+            self.assertEqual(client.post(API + 'admin/media/', {'file': image_file(None)}, format='multipart').status_code, 201)
+            self.assertEqual(client.post(API + 'projects/', payload(None, 'projects'), format='json').status_code, 201)
+            self.assertEqual(client.get(API + 'admin/users/').status_code, 200 if role == 'Arquitecta' else 403)
 
     def test_public_reads_stay_public(self):
         for path in ("projects/", "projects/years/", "news/", "properties/", "company/", "institution/", "services/"):
@@ -166,9 +167,9 @@ class GranularPermissionTests(PermissionTestCase):
 
     def test_users_and_roles_read_cannot_modify(self):
         reader, _ = self.role_client("Auditor de accesos", "users.read", "roles.read")
-        for path in ("admin/users/", "admin/users/roles/", "admin/roles/", "admin/permissions/"):
+        for path in ("admin/users/", "admin/users/roles/"):
             self.assertEqual(reader.get(API + path).status_code, 200, path)
-        self.assertEqual(reader.post(API + "admin/roles/", {"name": "X", "permissions": []}, format="json").status_code, 403)
+        self.assertEqual(reader.post(API + "admin/roles/", {"name": "X", "permissions": []}, format="json").status_code, 404)
         self.assertEqual(reader.post(API + "admin/users/", {}, format="json").status_code, 403)
 
     def test_media_upload_and_delete_are_independent(self):

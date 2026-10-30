@@ -67,7 +67,7 @@ class AdminAPITests(TestCase):
 
     def test_login_me_refresh_and_logout(self):
         self.assertEqual(set(self.tokens), {"access", "refresh", "expires_in", "user"})
-        self.assertEqual(self.tokens["user"]["role"], "admin")
+        self.assertEqual(self.tokens["user"]["role"], "Administrador")
         self.assertNotIn("password_hash", self.tokens["user"])
         self.assertEqual(self.client.get(API + "auth/me/").json()["id"], str(self.user.pk))
         renewed = self.public.post(API + "auth/refresh/", {"refresh": self.tokens["refresh"]}, format="json")
@@ -424,66 +424,17 @@ class AdminAPITests(TestCase):
         self.assertEqual(RolPermiso.objects.count(), 42)
         self.assertEqual(Usuario.objects.count(), 2)
 
-        roles = {
-            role["name"]: set(role["permissions"])
-            for role in self.client.get(API + "admin/roles/").json()
-        }
-        self.assertEqual(roles["Ingeniero"], set(Permiso.objects.values_list("nombre", flat=True)))
-        self.assertEqual(roles["Arquitecta"], {
-            "properties.create", "properties.edit.any", "properties.publish",
-            "properties.trash.any", "properties.restore", "media.upload",
-        })
-        self.assertEqual(roles["Empleado"], {
-            "properties.create", "properties.edit.own", "properties.trash.own", "media.upload",
-        })
+        roles = {role['name']: set(role['permissions']) for role in self.client.get(API + 'admin/users/roles/').json()}
+        self.assertEqual(set(roles), {'Administrador', 'Arquitecto', 'Empleado'})
+        self.assertIn('projects.publish', roles['Empleado'])
+        self.assertNotIn('admin.all', roles['Arquitecto'])
 
     def test_role_and_permission_endpoints_create_read_update_and_audit(self):
-        call_command("seed_access_control", stdout=io.StringIO())
-
-        permissions = self.client.get(API + "admin/permissions/")
-        self.assertEqual(permissions.status_code, 200)
-        self.assertIn("roles.manage", {item["name"] for item in permissions.json()})
-
-        created = self.client.post(API + "admin/roles/", {
-            "name": "Contratista",
-            "description": "Rol temporal de prueba.",
-            "permissions": ["properties.create", "properties.edit.own"],
-        }, format="json")
-        self.assertEqual(created.status_code, 201, created.content)
-        role_id = created.json()["id"]
-        self.assertEqual(set(created.json()["permissions"]), {
-            "properties.create", "properties.edit.own",
-        })
-
-        detail = self.client.get(API + f"admin/roles/{role_id}/")
-        self.assertEqual(detail.status_code, 200)
-        self.assertEqual(detail.json()["name"], "Contratista")
-
-        updated = self.client.patch(API + f"admin/roles/{role_id}/", {
-            "description": "Permisos retirados.",
-            "permissions": [],
-        }, format="json")
-        self.assertEqual(updated.status_code, 200, updated.content)
-        self.assertEqual(updated.json()["permissions"], [])
-        self.assertFalse(RolPermiso.objects.filter(rol_id=role_id).exists())
-        self.assertEqual(
-            HistorialActividad.objects.filter(
-                usuario=self.user, modulo="roles", id_registro=role_id,
-            ).count(),
-            2,
-        )
-
-        invalid = self.client.post(API + "admin/roles/", {
-            "name": "Rol inválido",
-            "permissions": ["permissions.not-real"],
-        }, format="json")
-        self.assertEqual(invalid.status_code, 400)
-
-        engineer = Rol.objects.get(nombre="Ingeniero")
-        cannot_disable_engineer = self.client.patch(
-            API + f"admin/roles/{engineer.pk}/", {"active": False}, format="json"
-        )
-        self.assertEqual(cannot_disable_engineer.status_code, 400)
+        before = (Rol.objects.count(), RolPermiso.objects.count())
+        for path in ('admin/roles/', 'admin/roles/1/', 'admin/permissions/'):
+            for method in ('get', 'post', 'patch', 'put', 'delete'):
+                self.assertEqual(getattr(self.client, method)(API + path, {}, format='json').status_code, 404)
+        self.assertEqual(before, (Rol.objects.count(), RolPermiso.objects.count()))
 
     def _user_with_role(self, name, email, role_name, password="test-password"):
         user = Usuario.objects.create(
@@ -505,53 +456,14 @@ class AdminAPITests(TestCase):
         return client
 
     def test_employee_can_manage_only_own_drafts_and_trash_them(self):
-        call_command("seed_access_control", stdout=io.StringIO())
-        employee, password = self._user_with_role(
-            "Empleado de prueba", "employee@example.com", "Empleado"
-        )
-        employee_client = self._client_for_role_user(employee, password)
-
-        self.assertEqual(employee_client.get(API + "admin/roles/").status_code, 403)
-
-        draft = employee_client.post(
-            API + "properties/", self.payload("properties", published=False), format="json"
-        )
-        self.assertEqual(draft.status_code, 201, draft.content)
-        property_id = draft.json()["id"]
-        self.assertFalse(draft.json()["published"])
-
-        publish_attempt = employee_client.post(
-            API + "properties/", self.payload("properties", published=True), format="json"
-        )
-        self.assertEqual(publish_attempt.status_code, 403)
-
-        self.assertEqual(employee_client.get(API + f"properties/{property_id}/").status_code, 200)
-        edit = employee_client.patch(
-            API + f"properties/{property_id}/", {"title": "Borrador actualizado"}, format="json"
-        )
-        self.assertEqual(edit.status_code, 200, edit.content)
-        self.assertEqual(edit.json()["title"], "Borrador actualizado")
-
-        another_draft = self.create("properties", published=False)
-        forbidden_edit = employee_client.patch(
-            API + f"properties/{another_draft['id']}/", {"title": "No autorizado"}, format="json"
-        )
-        self.assertEqual(forbidden_edit.status_code, 403)
-
-        self.assertEqual(employee_client.delete(API + f"properties/{property_id}/").status_code, 204)
-        self.assertTrue(Propiedad.objects.filter(pk=property_id).exists())
-        trash = employee_client.get(API + "admin/properties/trash/")
-        self.assertEqual(trash.status_code, 200, trash.content)
-        self.assertEqual([item["id"] for item in trash.json()["results"]], [property_id])
-        self.assertEqual(employee_client.get(API + f"properties/{property_id}/").status_code, 404)
-        self.assertEqual(
-            employee_client.post(API + f"admin/properties/{property_id}/restore/").status_code,
-            403,
-        )
-        self.assertEqual(
-            employee_client.delete(API + f"admin/properties/{property_id}/permanent/").status_code,
-            403,
-        )
+        call_command('seed_access_control', stdout=io.StringIO())
+        user, password = self._user_with_role('Empleado', 'employee@example.com', 'Empleado')
+        client = self._client_for_role_user(user, password)
+        for kind in ('projects', 'properties', 'news'):
+            item = self.create(kind)
+            response = client.patch(API + f"{kind}/{item['id']}/", {'published': True}, format='json')
+            self.assertEqual(response.status_code, 200, response.content)
+            self.assertEqual(client.delete(API + f"{kind}/{item['id']}/").status_code, 403)
 
     def test_architect_can_restore_but_cannot_permanently_delete(self):
         call_command("seed_access_control", stdout=io.StringIO())

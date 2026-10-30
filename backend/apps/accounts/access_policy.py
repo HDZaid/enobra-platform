@@ -73,3 +73,28 @@ class _LiveMapping(Mapping):
 
 PERMISSION_CATALOG = _LiveMapping(permission_catalog)
 BUILTIN_ROLES = _LiveMapping(builtin_roles)
+
+# Política fija de aplicación; no modifica registros ni relaciones persistidas.
+import unicodedata
+
+FIXED_ROLE_DESCRIPTIONS = {
+    'Administrador': 'Acceso completo; crea usuarios y elimina definitivamente. Roles no personalizables.',
+    'Arquitecto': 'Gestiona contenido, envía a papelera y restaura. No crea usuarios, asigna roles ni elimina definitivamente.',
+    'Empleado': 'Crea, edita y publica noticias, proyectos y bienes raíces de cualquier usuario; carga imágenes. Sin papelera ni administración.',
+}
+def fixed_role_name(name):
+    key = ''.join(c for c in unicodedata.normalize('NFD', name or '') if not unicodedata.combining(c)).casefold().strip()
+    return {'ingeniero': 'Administrador', 'admin': 'Administrador', 'administrador': 'Administrador',
+            'arquitecta': 'Arquitecto', 'arquitecto': 'Arquitecto', 'empleado': 'Empleado'}.get(key)
+
+def fixed_permissions(name):
+    role = fixed_role_name(name)
+    catalog = set(permission_catalog()) - {'roles.read', 'roles.manage'}
+    if role == 'Administrador':
+        return frozenset(catalog | {'admin.all'})
+    if role == 'Arquitecto':
+        return frozenset(catalog - {'admin.all', 'projects.delete_permanently', 'properties.delete_permanently'})
+    if role == 'Empleado':
+        return frozenset({'media.upload'} | {f'{module}.{action}' for module in ('projects', 'properties', 'news')
+            for action in (('create', 'edit', 'publish') if module == 'news' else ('create', 'edit.any', 'publish'))})
+    return frozenset()

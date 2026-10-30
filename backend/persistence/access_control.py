@@ -1,7 +1,8 @@
 """Repositorio ORM para la administración de permisos y roles."""
 from django.db import IntegrityError, transaction
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, PermissionDenied
 
+from apps.accounts.access_policy import fixed_role_name, fixed_permissions, FIXED_ROLE_DESCRIPTIONS
 from apps.accounts.interfaces import AccessControlRepository
 from .models.access import Permiso, Rol, RolPermiso
 from .models.audit import HistorialActividad
@@ -17,10 +18,10 @@ class DjangoAccessControlRepository(AccessControlRepository):
     def _serialize_role(self, role):
         return {
             "id": role.pk,
-            "name": role.nombre,
-            "description": role.descripcion or "",
+            "name": fixed_role_name(role.nombre) or role.nombre,
+            "description": FIXED_ROLE_DESCRIPTIONS.get(fixed_role_name(role.nombre), role.descripcion or ""),
             "active": role.estado,
-            "permissions": list(role.permisos.order_by("nombre").values_list("nombre", flat=True)),
+            "permissions": sorted(fixed_permissions(role.nombre)),
         }
 
     def list_roles(self):
@@ -55,62 +56,8 @@ class DjangoAccessControlRepository(AccessControlRepository):
             )[:450],
         )
 
-    @transaction.atomic
     def create_role(self, data, *, actor_id):
-        name = data["name"].strip()
-        if name.casefold() in {"admin", "administrador"}:
-            raise ValidationError({"name": "Este nombre está reservado para compatibilidad con roles existentes."})
-        permissions = self._permissions(data["permissions"])
-        try:
-            role = Rol.objects.create(
-                nombre=name,
-                descripcion=data.get("description", "").strip() or None,
-                estado=data.get("active", True),
-            )
-        except IntegrityError:
-            raise ValidationError({"name": "Ya existe un rol con este nombre."}) from None
-        for permission in permissions:
-            RolPermiso.objects.create(rol=role, permiso=permission)
-        self._audit(role, "CREAR", actor_id)
-        return self._serialize_role(role)
+        raise PermissionDenied('Los roles predeterminados no se pueden crear.')
 
-    @transaction.atomic
     def update_role(self, role_id, data, *, actor_id):
-        role = Rol.objects.select_for_update().filter(pk=role_id).first()
-        if role is None:
-            return None
-        permission_objects = None
-        if "permissions" in data:
-            permission_objects = self._permissions(data["permissions"])
-            if role.nombre == "Ingeniero" and not any(p.nombre == "admin.all" for p in permission_objects):
-                raise ValidationError({"permissions": "El rol Ingeniero debe conservar admin.all."})
-        if role.nombre == "Ingeniero" and data.get("active") is False:
-            raise ValidationError({"active": "El rol Ingeniero no puede desactivarse."})
-        if "name" in data:
-            new_name = data["name"].strip()
-            if new_name.casefold() in {"admin", "administrador"} and new_name != role.nombre:
-                raise ValidationError({"name": "Este nombre está reservado para compatibilidad con roles existentes."})
-            if role.nombre == "Ingeniero" and new_name != role.nombre:
-                raise ValidationError({"name": "El rol Ingeniero no puede renombrarse."})
-            role.nombre = new_name
-        if "description" in data:
-            role.descripcion = data["description"].strip() or None
-        if "active" in data:
-            role.estado = data["active"]
-        try:
-            role.save()
-        except IntegrityError:
-            raise ValidationError({"name": "Ya existe un rol con este nombre."}) from None
-        if permission_objects is not None:
-            wanted_ids = [permission.pk for permission in permission_objects]
-            links = RolPermiso.objects.filter(rol=role)
-            if wanted_ids:
-                links.exclude(permiso_id__in=wanted_ids).delete()
-            else:
-                links.delete()
-            existing_ids = set(RolPermiso.objects.filter(rol=role).values_list("permiso_id", flat=True))
-            for permission in permission_objects:
-                if permission.pk not in existing_ids:
-                    RolPermiso.objects.create(rol=role, permiso=permission)
-        self._audit(role, "EDITAR", actor_id)
-        return self._serialize_role(role)
+        raise PermissionDenied('Los roles predeterminados no se pueden modificar.')

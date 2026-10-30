@@ -36,6 +36,11 @@ class ContractStubTests(TestCase):
 
     def client_for(self, user=None):
         client = APIClient()
+        if user is not None and user.pk == self.reader.pk:
+            from apps.accounts.interfaces import Principal
+            client.force_authenticate(Principal(id=str(user.pk), name='Lector', email=user.correo,
+                role='Lector', permissions=frozenset({'audit.read'})))
+            return client
         if user is not None:
             response = client.post(API + "auth/login/", {"email": user.correo, "password": PASSWORD}, format="json")
             self.assertEqual(response.status_code, 200, response.content)

@@ -5,10 +5,11 @@ from datetime import timedelta
 
 import jwt
 from django.conf import settings
-from django.contrib.auth.hashers import check_password, make_password
+from django.contrib.auth.hashers import check_password, make_password, is_password_usable
 from django.db import transaction
 from django.utils import timezone
 
+from apps.accounts.access_policy import fixed_role_name, fixed_permissions
 from apps.accounts.interfaces import AuthService, Principal
 from apps.common.enums import Role
 from .models.access import Permiso, Usuario
@@ -21,7 +22,7 @@ class DjangoAuthService(AuthService):
     refresh_seconds = 7 * 24 * 3600
     issuer = "enobra"
 
-    def _principal(self, user_id):
+    def _principal(self, user_id, *, allow_service=False):
         user = Usuario.objects.filter(pk=user_id, estado="ACTIVO").first()
         if user is None:
             return None
@@ -29,16 +30,17 @@ class DjangoAuthService(AuthService):
         role_names = tuple(active_roles.values_list("nombre", flat=True))
         if not role_names:
             return None
-        permissions = set(
-            Permiso.objects.filter(roles__in=active_roles)
-            .values_list("nombre", flat=True)
-            .distinct()
-        )
-        # Conserva las cuentas del esquema anterior mientras se migren a los permisos nuevos.
-        legacy_admin = any(normalized(name) in ("admin", "administrador") for name in role_names)
-        if legacy_admin:
-            permissions.add("admin.all")
-        primary_role = Role.ADMIN if legacy_admin else role_names[0]
+        recognized = [(fixed_role_name(name), fixed_permissions(name)) for name in role_names if fixed_role_name(name)]
+        if recognized:
+            permissions = set.intersection(*(set(perms) for _, perms in recognized))
+            primary_role = min((name for name, _ in recognized), key=lambda name: ('Empleado', 'Arquitecto', 'Administrador').index(name))
+            role_names = (primary_role,)
+        elif allow_service and not is_password_usable(user.password_hash):
+            # P-02: cuenta no interactiva con sus permisos originales de BD.
+            permissions = set(Permiso.objects.filter(roles__in=active_roles).values_list('nombre', flat=True).distinct())
+            primary_role = role_names[0]
+        else:
+            return None
         return Principal(
             id=str(user.pk),
             name=user.nombre,

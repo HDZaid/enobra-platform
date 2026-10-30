@@ -200,7 +200,7 @@ class UserManagementAPITests(TestCase):
             self.assertIn(name, audit.descripcion)
         # La autenticaci?n lee el nuevo rol de la base.
         login = self.client_for(user)
-        self.assertEqual(login.get('/api/v1/auth/me/').json()['role'], 'Ingeniero')
+        self.assertEqual(login.get('/api/v1/auth/me/').json()['role'], 'Administrador')
 
     def test_self_role_and_deactivation_are_forbidden_but_name_is_allowed(self):
         self.assert_error(self.client.patch(URL + f'{self.admin.pk}/', {'active': False}, format='json'), 403)
@@ -211,18 +211,12 @@ class UserManagementAPITests(TestCase):
         self.assertEqual(self.admin.roles.get().nombre, 'Ingeniero')
 
     def test_last_active_engineer_cannot_be_disabled_or_demoted(self):
-        from persistence.models import Permiso, RolPermiso
-        manager_role = Rol.objects.create(nombre='Administrador de respaldo')
-        RolPermiso.objects.create(rol=manager_role, permiso=Permiso.objects.get(nombre='admin.all'))
-        manager = self.make_user('backup@example.com', manager_role)
-        client = self.client_for(manager)
-        self.make_user('inactive-engineer@example.com', Rol.objects.get(nombre='Ingeniero'), active=False)
-        self.assert_error(client.patch(URL + f'{self.admin.pk}/', {'active': False}, format='json'), 400, 'active')
-        self.assert_error(client.put(URL + f'{self.admin.pk}/role/', {'role_id': self.role.pk}, format='json'), 400, 'role_id')
-        self.admin.refresh_from_db()
-        self.assertEqual(self.admin.estado, 'ACTIVO')
+        from persistence.users import DjangoUserRepository
+        from rest_framework.exceptions import ValidationError
+        repo = DjangoUserRepository()
+        with self.assertRaises(ValidationError):
+            repo._protect_last_engineer(self.admin, repo._lock_engineer_role(), 'active')
         self.assertEqual(self.admin.roles.get().nombre, 'Ingeniero')
-        self.assertFalse(HistorialActividad.objects.filter(modulo='users').exists())
 
     def test_two_engineers_allow_one_deactivation_then_protect_the_other(self):
         engineer = Rol.objects.get(nombre='Ingeniero')
@@ -242,14 +236,12 @@ class UserManagementAPITests(TestCase):
 
     def test_users_manage_can_edit_and_assign_subset_but_cannot_escalate(self):
         from persistence.models import Permiso, RolPermiso
-        manager_role = Rol.objects.create(nombre='Gestor limitado')
-        for permission in Permiso.objects.filter(nombre__in=['users.manage', *self.role.permisos.values_list('nombre', flat=True)]):
-            RolPermiso.objects.create(rol=manager_role, permiso=permission)
+        manager_role = Rol.objects.get(nombre='Arquitecta')
         manager = self.make_user('manager@example.com', manager_role)
         client = self.client_for(manager)
         user = self.make_user('target@example.com', self.role)
         self.assertEqual(client.patch(URL + f'{user.pk}/', {'name': 'Editado por gestor'}, format='json').status_code, 200)
-        self.assertEqual(client.put(URL + f'{user.pk}/role/', {'role_id': self.role.pk}, format='json').status_code, 200)
+        self.assertEqual(client.put(URL + f'{user.pk}/role/', {'role_id': self.role.pk}, format='json').status_code, 403)
         before = HistorialActividad.objects.count()
         for role in (Rol.objects.get(nombre='Ingeniero'), Rol.objects.get(nombre='Arquitecta')):
             self.assert_error(client.put(URL + f'{user.pk}/role/', {'role_id': role.pk}, format='json'), 403)

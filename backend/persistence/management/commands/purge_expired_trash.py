@@ -18,7 +18,7 @@ class Command(BaseCommand):
             raise CommandError("--limit debe estar entre 1 y 5000.")
         kits = publication_registry.trash_kits()
         if options["execute"]:
-            principal = DjangoAuthService()._principal(options["actor_id"])
+            principal = DjangoAuthService()._principal(options["actor_id"], allow_service=True)
             if principal is None or not all(
                     principal.has_permission(f"{kit.key}.delete_permanently") for kit in kits):
                 raise CommandError("Usa --actor-id de un usuario activo con permiso de borrado definitivo en cada tipo.")
