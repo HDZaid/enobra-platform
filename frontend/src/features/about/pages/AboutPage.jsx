@@ -4,11 +4,13 @@ import { MotionPage } from '../../../components/ui/MotionPage.jsx';
 import { ContentStatus } from '../../../components/ui/ContentStatus.jsx';
 import { useReferenceResource } from '../../../components/ui/useReferenceResource.js';
 import { institutionService } from '../services/institutionService.js';
-import { reference } from '../data/reference.js';
+import { parseYoutube } from '../../projects/services/catalogMapper.js';
+import { reference, aboutVideo } from '../data/reference.js';
 import { AshlarRule, HeaderOrnament, ImageLines } from '../../../components/ui/ColonialOrnaments.jsx';
 export function AboutPage() {
   const resource = useReferenceResource(institutionService.get, reference);
   const { data } = resource;
+  const video = parseYoutube(aboutVideo.url);
   return (
     <MotionPage title="Quiénes somos">
       <section className="page-intro enobra-intro">
@@ -24,6 +26,15 @@ export function AboutPage() {
         </div>
         <HeaderOrnament variant="fachada" />
       </section>
+      {video && <figure className="container about-video-reference mb-0 mt-0">
+        <div className="aspect-video overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--navy)]">
+          <iframe className="h-full w-full border-0" src={video.embedUrl} title={aboutVideo.title}
+            loading="lazy" allow="encrypted-media; picture-in-picture" allowFullScreen
+            referrerPolicy="strict-origin-when-cross-origin"
+            sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox" />
+        </div>
+        <figcaption className="mt-3 text-sm text-[var(--text-secondary)]">Video de referencia · Próximamente, el video institucional de EnObra.</figcaption>
+      </figure>}
       <section className="section container institutional">
         <aside>
           <div className="image-lines-host">

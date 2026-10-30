@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { SafeImage } from '../../../components/ui/SafeImage.jsx';
+import { ParallaxImage } from '../../../components/ui/ParallaxImage.jsx';
 import { ImageLines } from '../../../components/ui/ColonialOrnaments.jsx';
 
 export function BusinessAreas() {
@@ -14,7 +14,7 @@ export function BusinessAreas() {
         </div>
         <div className="business-grid">
           <Link to="/servicios" className="business-card">
-            <SafeImage
+            <ParallaxImage adaptive factor={0}
               src="/assets/enobra/construccion.jpg"
               alt="Trabajo de construcción"
               loading="lazy"
@@ -28,7 +28,7 @@ export function BusinessAreas() {
             </div>
           </Link>
           <Link to="/bienes-raices" className="business-card">
-            <img
+            <ParallaxImage adaptive factor={0}
               src="/assets/enobra/bienes-raices.jpg"
               alt="Vivienda contemporánea ilustrativa"
               loading="lazy"

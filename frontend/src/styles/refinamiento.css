@@ -566,3 +566,28 @@
     font-size: clamp(40px, 10.5vw, 56px);
   }
 }
+
+/* Ajustes puntuales: conservan el grid, tipografías y colores del diseño aprobado. */
+.leo-page .service-index-nav .container:has(.service-index-administration) {
+  grid-template-columns: 1fr 1.4fr 1fr 1fr;
+}
+.leo-page .service-index-nav a.service-index-administration {
+  justify-content: center;
+  text-align: center;
+  text-wrap: balance;
+}
+.leo-page .service-scope li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.leo-page .service-scope li::before { display: none; }
+.leo-page .service-item-icon { flex: 0 0 18px; margin-top: 3px; color: var(--orange-text); }
+.leo-site[data-page='index'] .hero { aspect-ratio: 16 / 9; }
+.leo-site[data-page='index'] .home-about-visual .image-frame { aspect-ratio: 3 / 4; }
+@media (max-width: 760px) {
+  .leo-page .service-index-nav .container:has(.service-index-administration) {
+    grid-template-columns: minmax(150px, 1fr) minmax(210px, 1.4fr) repeat(2, minmax(150px, 1fr));
+  }
+  .leo-page .service-index-nav a.service-index-administration { white-space: normal; }
+}

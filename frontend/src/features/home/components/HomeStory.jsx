@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { SafeImage } from '../../../components/ui/SafeImage.jsx';
+import { ParallaxImage } from '../../../components/ui/ParallaxImage.jsx';
 import { ImageLines } from '../../../components/ui/ColonialOrnaments.jsx';
 
 export function HomeStory() {
@@ -36,7 +36,7 @@ export function HomeStory() {
       </div>
       <figure className="home-about-visual">
         <div className="image-frame">
-          <SafeImage
+          <ParallaxImage adaptive factor={0}
             src="/assets/enobra/IMG-20260910-WA0082.jpg"
             alt="Referencia fotográfica de vivienda y obra"
             loading="lazy"
