@@ -72,10 +72,10 @@
   font-size: 11px;
 }
 
-/* Lectura: alineación a la izquierda en lugar de justificado. */
+/* Conserva la justificación aprobada también sobre los estilos de refinamiento. */
 .leo-site :is(.prose, .principles-grid p, .service-feature p, .services-opening > p, .services-intro-copy > p) {
-  text-align: left;
-  hyphens: manual;
+  text-align: justify;
+  hyphens: auto;
 }
 
 /* Encabezados internos: el arco sustituye las diagonales. */
