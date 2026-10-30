@@ -1,5 +1,9 @@
 # Estado del proyecto EnObra
 
+> 29-oct: Geovanny descarta transferir el repo a una organización para la entrega.
+> Producción: perfil y pruebas preparados; validación de URLs aplazada hasta el
+> despliegue, mientras continúa el frontend. Véase [BE-14-produccion.md](BE-14-produccion.md).
+
 > Seguimiento de Jenny: tareas de entrega y habilitación J-02 completas. Lista
 > consolidada de cierres y únicos pendientes externos en [PENDIENTES-JENNIFER.md](PENDIENTES-JENNIFER.md).
 > Las listas históricas de bloqueo por P-01/P-02 o botón apagado quedan sustituidas.

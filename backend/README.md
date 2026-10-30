@@ -294,6 +294,10 @@ Los datos generales aceptan valores pendientes; las redes deben exponerse como u
 
 ## Seguridad (a respetar al implementar)
 
+Perfil preparado para hosting: `DJANGO_SETTINGS_MODULE=config.production`.
+Variables, pruebas y límites en [BE-14: producción](../docs/BE-14-produccion.md).
+La revisión HTTP sobre las URL reales se completa después del despliegue.
+
 - Secretos solo en variables de entorno (`.env` está en `.gitignore`); nunca en código ni en el frontend.
 - HTTPS en producción, `DJANGO_DEBUG=false`, `ALLOWED_HOSTS` y `CORS_ALLOWED_ORIGINS` restringidos.
 - Autorización siempre en servidor (el rol viene del token verificado, no del cliente).
