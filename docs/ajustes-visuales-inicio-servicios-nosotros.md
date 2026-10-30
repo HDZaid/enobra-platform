@@ -40,3 +40,11 @@ El navegador/YouTube pueden bloquear la reproducción; no se promete autoplay co
 sonido. Regresión: frontend/tests/browser/about-history.cjs, con respuesta vacía,
 espacios y contenido real a 1440/390 px; se verifica configuración del iframe, no
 reproducción externa. Lint, 185 pruebas, build y Chromium aprobados.
+
+## Presentación pública de la historia
+
+Se retiró ContentStatus de Nosotros: el visitante ve la historia disponible sin
+mensajes técnicos de API, referencia o reintento. Se conserva el mecanismo de
+contenido alternativo y su validación; no se alteraron respuestas ni datos del
+backend. La regresión de Chromium verifica texto visible y ausencia de aviso/botón
+en el bloque institucional, con historias vacías, en blanco y válidas.
