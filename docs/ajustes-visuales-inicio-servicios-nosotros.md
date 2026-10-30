@@ -13,8 +13,8 @@ ornamentos y estructura de secciones. Los cambios se limitan a los puntos solici
   Administración de proyectos gana peso relativo y muestra su título completo.
 - Viñetas de Servicios: Lucide según significado, con tamaño/espaciado uniformes y
   el acento existente. Los iconos decorativos se ocultan a lectores de pantalla.
-- Nosotros: iframe responsive 16:9 con dominio youtube-nocookie, sin reproducción
-  automática. Se utiliza el video de referencia proporcionado por Jennifer:
+- Nosotros: iframe responsive 16:9 con dominio youtube-nocookie, con reproducción
+  automática silenciada y carga inmediata. Se utiliza el video de referencia proporcionado por Jennifer:
   https://youtu.be/AJFkU1bC3C0. Cambiar `aboutVideo` en
   `frontend/src/features/about/data/reference.js` cuando exista el institucional.
   El texto visible identifica que es de referencia.
@@ -27,3 +27,16 @@ La reproducción de YouTube no se acreditó: se bloqueó la carga externa del if
 para validar la maquetación de forma aislada. Depende de disponibilidad y permisos
 de inserción del video en YouTube. Advertencia de bundle >500 kB aún presente.
 Sin cambios de backend, permisos, base de datos ni almacenamiento.
+
+## Corrección posterior de historia y autoplay
+
+La validación de institution/ aceptaba presentation vacío o compuesto solo por
+espacios. Ahora lo rechaza para conservar el contenido de referencia con su aviso,
+en lugar de mostrar Nuestra historia sin párrafos. El contenido válido de la API
+se mantiene; no se modificaron registros de la base. Las líneas vacías se omiten.
+
+El iframe solicita autoplay=1, mute=1 y playsinline=1, permite autoplay y usa eager.
+El navegador/YouTube pueden bloquear la reproducción; no se promete autoplay con
+sonido. Regresión: frontend/tests/browser/about-history.cjs, con respuesta vacía,
+espacios y contenido real a 1440/390 px; se verifica configuración del iframe, no
+reproducción externa. Lint, 185 pruebas, build y Chromium aprobados.

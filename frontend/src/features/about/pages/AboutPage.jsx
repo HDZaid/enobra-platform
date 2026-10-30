@@ -28,8 +28,8 @@ export function AboutPage() {
       </section>
       {video && <figure className="container about-video-reference mb-0 mt-0">
         <div className="aspect-video overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--navy)]">
-          <iframe className="h-full w-full border-0" src={video.embedUrl} title={aboutVideo.title}
-            loading="lazy" allow="encrypted-media; picture-in-picture" allowFullScreen
+          <iframe className="h-full w-full border-0" src={`${video.embedUrl}?autoplay=1&mute=1&playsinline=1`} title={aboutVideo.title}
+            loading="eager" allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen
             referrerPolicy="strict-origin-when-cross-origin"
             sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox" />
         </div>
@@ -55,7 +55,7 @@ export function AboutPage() {
           <p className="eyebrow">PRESENTACIÓN</p>
           <h2>Nuestra historia.</h2>
           <div id="presentation" className="prose">
-            {data.presentation.map((text, i) => (
+            {data.presentation.filter((text) => text.trim()).map((text, i) => (
               <p key={i}>{text}</p>
             ))}
           </div>
