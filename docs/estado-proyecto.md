@@ -1,3 +1,5 @@
+> Política actual: [tres roles fijos en código](politica-roles-fijos.md). Sustituye las secciones históricas de roles personalizables. Sin cambios a la base real.
+
 # Estado del proyecto EnObra
 
 > 29-oct: Geovanny descarta transferir el repo a una organización para la entrega.

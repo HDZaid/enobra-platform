@@ -1,3 +1,5 @@
+> Política actual: [tres roles fijos en código](politica-roles-fijos.md). Sustituye las secciones históricas de roles personalizables. Sin cambios a la base real.
+
 # Roles y permisos (RBAC) (BE-11)
 
 Estado al 25 de octubre de 2026, sobre `backend-dev`.

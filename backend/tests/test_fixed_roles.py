@@ -2,6 +2,8 @@
 from django.test import TestCase
 from django.contrib.auth.hashers import make_password
 from django.core.cache import cache
+from django.core.management import call_command
+import io
 from rest_framework.test import APIClient
 from persistence.models import Rol, Permiso, RolPermiso, Usuario, UsuarioRol
 from persistence.accounts import DjangoAuthService
@@ -105,3 +107,30 @@ class FixedRolesTests(TestCase):
         self.assertIsNone(auth._principal(user.pk))
         self.assertEqual(auth._principal(user.pk, allow_service=True).permissions, wanted)
         self.assertIsNone(auth.login(user.correo, 'anything'))
+        output = io.StringIO()
+        call_command('purge_expired_trash', execute=True, actor_id=user.pk, stdout=output)
+        self.assertIn('0', output.getvalue())
+        self.assertEqual(set(role.permisos.values_list('nombre', flat=True)), wanted)
+
+    def test_legacy_aliases_and_combined_roles_cannot_escalate(self):
+        user = self.users['Arquitecta']
+        admin_role = self.users['Ingeniero'].roles.get()
+        UsuarioRol.objects.create(usuario=user, rol=admin_role)
+        principal = DjangoAuthService()._principal(user.pk)
+        self.assertEqual(principal.role, 'Arquitecto')
+        self.assertNotIn('admin.all', principal.permissions)
+        self.assertFalse(principal.has_permission('properties.delete_permanently'))
+        for name in ('admin', 'Administrador'):
+            role = Rol.objects.create(nombre=name)
+            legacy = Usuario.objects.create(nombre='Legado', correo=name+'@example.test', password_hash=make_password(PASSWORD))
+            UsuarioRol.objects.create(usuario=legacy, rol=role)
+            principal = DjangoAuthService()._principal(legacy.pk)
+            self.assertEqual(principal.role, 'Administrador')
+            self.assertTrue(principal.has_permission('admin.all'))
+
+    def test_unknown_human_roles_cannot_login_even_with_stored_admin_all(self):
+        role = Rol.objects.create(nombre='Personalizado antiguo')
+        RolPermiso.objects.create(rol=role, permiso=Permiso.objects.get(nombre='admin.all'))
+        user = Usuario.objects.create(nombre='Desconocido', correo='custom@example.test', password_hash=make_password(PASSWORD))
+        UsuarioRol.objects.create(usuario=user, rol=role)
+        self.assertIsNone(DjangoAuthService().login(user.correo, PASSWORD))
