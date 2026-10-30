@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { companyService } from '../../../components/layout/services/companyService.js';
 import { reference } from '../../../components/layout/data/reference.js';
 import { useReferenceResource } from '../../../components/ui/useReferenceResource.js';
-import { ContentStatus } from '../../../components/ui/ContentStatus.jsx';
 import { HeaderOrnament } from '../../../components/ui/ColonialOrnaments.jsx';
 import { ContactForm } from '../components/ContactForm.jsx';
 import '../styles/contact-fonts.css';
@@ -47,7 +46,7 @@ export function ContactPage() {
                 <p>{details.phones.map((phone, index) => <span key={phone}>{index > 0 && ' · '}<a className="hover:underline focus-visible:outline-2" href={`tel:+502${phone.replace(/\D/g, '')}`}>{phone}</a></span>)}</p>
               </div>
               <p className="text-xs text-[#626b79]">{details.email ? <a href={`mailto:${details.email}`}>{details.email}</a> : 'Correo institucional: pendiente de confirmar.'}</p>
-              <ContentStatus resource={company} />
+
               {details.whatsapp && <a className="inline-flex items-center gap-2 font-bold text-[#b94308] hover:underline focus-visible:outline-2 focus-visible:outline-offset-4"
                 href={`https://wa.me/${details.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent('Hola, quisiera información sobre los servicios de EnObra.')}`}
                 target="_blank" rel="noopener noreferrer">

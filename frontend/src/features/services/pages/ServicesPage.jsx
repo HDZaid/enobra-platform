@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { MotionPage } from '../../../components/ui/MotionPage.jsx';
 import { HeaderOrnament } from '../../../components/ui/ColonialOrnaments.jsx';
-import { ContentStatus } from '../../../components/ui/ContentStatus.jsx';
 import { useReferenceResource } from '../../../components/ui/useReferenceResource.js';
 import { servicesService } from '../services/servicesService.js';
 import { reference } from '../data/reference.js';
@@ -73,7 +72,7 @@ export function ServicesPage() {
               <ServiceFeature key={service.id} service={service} index={index} />
             ))}
           </div>
-          <ContentStatus resource={resource} />
+
           {data.length === 0 && <p>No hay servicios disponibles por el momento.</p>}
         </div>
       </section>

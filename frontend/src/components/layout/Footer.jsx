@@ -1,6 +1,5 @@
 import { Brand } from './Brand.jsx';
 import { Navbar } from './Navbar.jsx';
-import { ContentStatus } from '../ui/ContentStatus.jsx';
 import { AshlarRule } from '../ui/ColonialOrnaments.jsx';
 import { externalUrl } from '../ui/resourceValidation.js';
 
@@ -50,7 +49,7 @@ export function Footer({ resource }) {
                   </p>
                 ))}
             </div>
-            <ContentStatus resource={resource} />
+
           </div>
           <div className="footer-motto">
             Ad maiorem Dei gloriam

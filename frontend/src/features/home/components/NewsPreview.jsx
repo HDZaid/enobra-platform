@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { reference } from '../data/reference.js';
 import { useReferenceResource } from '../../../components/ui/useReferenceResource.js';
-import { ContentStatus } from '../../../components/ui/ContentStatus.jsx';
 import { newsService } from '../../news/services/newsService.js';
 import { readNewsPage } from '../../news/services/newsMapper.js';
 import { NewsPreviewCard } from './PreviewCards.jsx';
@@ -23,7 +22,7 @@ export function NewsPreview() {
             Ver novedades →
           </Link>
         </div>
-        <ContentStatus resource={news} />
+
         {news.status === 'ready' && news.data.length === 0 && <p>No hay noticias publicadas por el momento.</p>}
         <div id="home-news" className="news-grid">
           {news.data.map((news) => (
