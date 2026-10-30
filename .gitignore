@@ -24,6 +24,7 @@ ENV/
 .env
 .env.*
 !.env.example
+!backend/.env.production.example
 *.pem
 *.key
 secrets.json

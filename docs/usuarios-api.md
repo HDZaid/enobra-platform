@@ -1,3 +1,5 @@
+> Política actual: [tres roles fijos en código](politica-roles-fijos.md). Sustituye las secciones históricas de roles personalizables. Sin cambios a la base real.
+
 # Administración de usuarios del panel
 
 ## Contrato implementado en backend-dev

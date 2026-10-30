@@ -1,6 +1,12 @@
+> Política actual: [tres roles fijos en código](politica-roles-fijos.md). Sustituye las secciones históricas de roles personalizables. Sin cambios a la base real.
+
 # Estado del proyecto EnObra
 
 > Actualización del 29-oct: renovación por actividad implementada; tarjeta con contador y reingreso que conserva el formulario. Sustituye la mitigación antigua de J-01/CF-03. [Comportamiento y pruebas](FE-08-renovacion-por-actividad.md). Persistencia tras recarga (J-03) sigue aplazada.
+
+> 29-oct: Geovanny descarta transferir el repo a una organización para la entrega.
+> Producción: perfil y pruebas preparados; validación de URLs aplazada hasta el
+> despliegue, mientras continúa el frontend. Véase [BE-14-produccion.md](BE-14-produccion.md).
 
 > Seguimiento de Jenny: tareas de entrega y habilitación J-02 completas. Lista
 > consolidada de cierres y únicos pendientes externos en [PENDIENTES-JENNIFER.md](PENDIENTES-JENNIFER.md).

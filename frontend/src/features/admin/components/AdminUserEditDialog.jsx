@@ -93,7 +93,7 @@ export function AdminUserEditDialog({ user, roles, actor, token, onSaved, onClos
             <input id="edit-user-name" required maxLength={120} value={draft.name} onChange={(event) => update('name', event.target.value)} className={inputClass}
               aria-invalid={Boolean(errors.name)} aria-describedby={errors.name ? 'edit-user-name-error' : undefined}/>
             {errors.name && <p id="edit-user-name-error" className="mt-2 text-sm text-[#a62b2b]">{errors.name}</p>}</div>
-          <div><label htmlFor="edit-user-role_id" className="text-sm font-semibold">Rol asignado</label>
+          {actor.permissions.includes('admin.all') ? <div><label htmlFor="edit-user-role_id" className="text-sm font-semibold">Rol asignado</label>
             <select id="edit-user-role_id" disabled={own} value={draft.role_id} onChange={(event) => update('role_id', event.target.value)} className={inputClass}
               aria-invalid={Boolean(errors.role_id)} aria-describedby="edit-user-role-help edit-user-role-error">
               <option value="">Conservar roles actuales: {baseline.roles.map((role) => role.name).join(', ') || 'Sin rol'}</option>
@@ -101,8 +101,8 @@ export function AdminUserEditDialog({ user, roles, actor, token, onSaved, onClos
                 <option value={baseline.roles[0].id} disabled>{baseline.roles[0].name} (no disponible)</option>}
               {roles.filter((role) => role.active).map((role) => <option key={role.id} value={role.id} disabled={!canAssignUserRole(role, actor)}>{role.name}</option>)}
             </select>
-            <p id="edit-user-role-help" className="mt-2 text-xs text-[#626b79]">Elegir otro rol reemplaza todas las asignaciones anteriores. Solo puedes asignar permisos que posees.</p>
-            <p id="edit-user-role-error" className="mt-2 text-sm text-[#a62b2b]">{errors.role_id}</p></div>
+            <p id="edit-user-role-help" className="mt-2 text-xs text-[#626b79]">Elegir otro rol reemplaza todas las asignaciones anteriores. Solo Administrador puede asignar uno de los tres roles predeterminados.</p>
+            <p id="edit-user-role-error" className="mt-2 text-sm text-[#a62b2b]">{errors.role_id}</p></div> : <p className="text-sm">Rol asignado: {baseline.roles.map((role) => role.name).join(', ')}. Solo Administrador puede cambiarlo.</p>}
           <div><label className="flex items-center gap-3 text-sm font-semibold"><input id="edit-user-active" type="checkbox" disabled={own} checked={draft.active} onChange={(event) => update('active', event.target.checked)}
             aria-invalid={Boolean(errors.active)} aria-describedby={errors.active ? 'edit-user-active-error' : undefined}/> Cuenta activa</label>
             {errors.active && <p id="edit-user-active-error" className="mt-2 text-sm text-[#a62b2b]">{errors.active}</p>}</div>

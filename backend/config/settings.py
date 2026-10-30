@@ -7,6 +7,8 @@ tablas existentes se incorporará detrás de las interfaces de repositorio.
 import os
 from pathlib import Path
 
+from django.core.exceptions import ImproperlyConfigured
+
 import dj_database_url
 from dotenv import load_dotenv
 
@@ -20,8 +22,18 @@ def env_list(name: str, default: str = "") -> list[str]:
     return [v.strip() for v in os.getenv(name, default).split(",") if v.strip()]
 
 
+def require_production_secret(value):
+    if (not value or len(value) < 50 or len(set(value)) < 5
+            or value.startswith(("django-insecure-", "dev-only-"))):
+        raise ImproperlyConfigured(
+            "Producción requiere DJANGO_SECRET_KEY propia, aleatoria y de al menos 50 caracteres."
+        )
+
+
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-only-insecure-key")
-DEBUG = os.getenv("DJANGO_DEBUG", "true").lower() == "true"
+DEBUG = os.getenv("DJANGO_DEBUG", "true").strip().lower() == "true"
+if not DEBUG:
+    require_production_secret(SECRET_KEY)
 ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1")
 
 INSTALLED_APPS = [

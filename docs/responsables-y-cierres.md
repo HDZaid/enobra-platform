@@ -23,7 +23,7 @@ acceso, registrar servicio, permiso y quién puede concederlo; no escribir solam
 | Despliegue, imágenes persistentes y correo | Juan | Pablo | Geovanny confirma destino/proveedor y acceso; registrar URL, versión, imagen recuperable tras reinicio/despliegue y prueba de correo. Cerrar cada comprobación por separado. |
 | Pruebas en URL desplegada | Geovanny y Leo | Jenny para interfaz; Juan para API | Resultado por rol y versión. Las 70/70 pruebas previas usaron API local y Supabase real: no acreditan despliegue ni participación de Leo. |
 | Actualizar estado e issues | Autor de cada tarea o su agente | Geovanny | Fecha, commit/URL, resultado y límites; no requiere esperar a Henry. |
-| Administración de GitHub | HDZaid para transferencia inicial | Administradores de la organización, cuando existan | Transferencia y verificación de Admin para Jenny y Pablo. Aún no realizadas. |
+| Preparación de producción BE-14 | Pablo y Juan | Henry | Perfil y pruebas locales listos; validar las URL reales al desplegar. Ver [informe](BE-14-produccion.md). |
 
 `config/*`, `access_policy.py` y `docs/openapi.yaml` dejan de ser exclusivos de Henry.
 Los cambios funcionales respetan RBAC; delegar trabajo no concede privilegios a
@@ -36,27 +36,15 @@ dependencia técnica concreta. No reabrir BE-00/01/02/03/05/11 ni P-01 por texto
 
 - Cuentas: nombres de titulares y rol de cada persona, proporcionados por Geovanny
   por un canal privado; nunca contraseñas ni datos personales en este repo público.
-- Backend: Render confirmado por Geovanny. Falta URL y acceso para activar/verificar el Cron Job; imágenes y correo requieren su configuración propia.
+- Backend: pendiente la URL de la API web y del frontend cuando terminen sus mejoras. La limpieza ya está activa en GitHub Actions; no crear Cron Job de Render. Imágenes y correo requieren su configuración propia.
 - Correo: buzón receptor y servicio que enviará las consultas.
 
 No bloquean edición de código, pruebas locales, integración revisada ni documentación.
 Una aprobación para P-02 no autoriza borrar otros datos reales o desactivar cuentas.
 
-## Dar administración a Jenny y Pablo
+## Transferencia a una organización: descartada para la entrega
 
-HDZaid es una cuenta personal. GitHub permite propietario y colaboradores en estos
-repositorios, no múltiples administradores. La cuenta conectada tiene escritura,
-pero no administración. Para compartir administración:
-
-1. Crear una organización del equipo e invitar a los integrantes. Aceptar antes
-   del traslado ayuda a conservar las asignaciones de issues.
-2. Henry, con HDZaid y permiso para crear repositorios en esa organización, abre
-   Settings > General > Danger Zone > Transfer y selecciona la organización.
-3. En el repositorio transferido: Settings > Collaborators & teams / Manage access;
-   asignar Admin a `Jeidy25Saquic` (Jenny) y `PabloZ7-425` (Pablo).
-4. Verificar accesos, asignaciones e integraciones y actualizar origin en los clones.
-   Admin de GitHub no concede acceso a Supabase ni al hosting.
-
-Fuentes: [permisos de GitHub](https://docs.github.com/en/get-started/learning-about-github/access-permissions-on-github),
-[transferencia](https://docs.github.com/en/repositories/creating-and-managing-repositories/transferring-a-repository),
-[roles de organización](https://docs.github.com/en/organizations/managing-user-access-to-your-organizations-repositories/managing-repository-roles/repository-roles-for-an-organization).
+Geovanny retiró esta tarea el 29-oct. Se conserva el repositorio personal actual y
+los accesos existentes. No pedir una organización ni nuevos Admin para trabajar,
+integrar o completar producción. Esto sustituye las instrucciones anteriores de
+transferencia. No hubo cambios de propietario ni permisos en esta sesión.

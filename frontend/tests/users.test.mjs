@@ -112,7 +112,7 @@ test('edición impide autobloqueo, roles inactivos y escalada; permite editar da
   assert.ok(validateUserEditDraft({ ...draft, role_id: '2' }, original, previewUserRoles, actor()).role_id);
   assert.ok(validateUserEditDraft({ ...draft, role_id: '99' }, original, previewUserRoles, actor()).role_id);
   assert.equal(canAssignUserRole(previewUserRoles[0], actor()), false);
-  assert.equal(canAssignUserRole(previewUserRoles[2], actor()), true);
+  assert.equal(canAssignUserRole(previewUserRoles[2], actor()), false);
   assert.equal(canAssignUserRole(previewUserRoles[0], { permissions: ['admin.all'] }), true);
   assert.equal(canAssignUserRole({ ...previewUserRoles[0], active: false }, { permissions: ['admin.all'] }), false);
   assert.ok(validateUserEditDraft({ ...draft, name: '  ' }, original, [], actor()).name);

@@ -1,3 +1,4 @@
+import { fixedRoleDescriptions, fixedRoleLabel } from './fixedRoles.js';
 import { matchPath } from 'react-router-dom';
 import { routePaths } from '../../../app/routePaths.js';
 
@@ -10,8 +11,8 @@ export const FULL_ACCESS_PERMISSION = 'admin.all';
 // Roles iniciales definidos en backend/apps/accounts/access_policy.py.
 // `admin`/`Administrador` son cuentas del esquema anterior que Django sigue aceptando.
 export const adminRoleProfiles = Object.freeze({
-  ingeniero: Object.freeze({ label: 'Ingeniero', description: 'Administrador principal' }),
-  arquitecta: Object.freeze({ label: 'Arquitecta', description: 'Publicaciones de bienes raíces' }),
+  ingeniero: Object.freeze({ label: 'Administrador', description: 'Administrador principal' }),
+  arquitecta: Object.freeze({ label: 'Arquitecto', description: 'Publicaciones de bienes raíces' }),
   empleado: Object.freeze({ label: 'Empleado', description: 'Borradores de bienes raíces' }),
   admin: Object.freeze({ label: 'Administrador', description: 'Acceso completo' }),
   administrador: Object.freeze({ label: 'Administrador', description: 'Acceso completo' }),
@@ -31,7 +32,6 @@ export const adminSectionPermissions = Object.freeze({
   trash: Object.freeze([...PROPERTY_PERMISSIONS, ...PROJECT_PERMISSIONS].filter((permission) =>
     /\.(trash\.(any|own)|restore|delete_permanently)$/.test(permission))),
   history: Object.freeze(['audit.read']),
-  roles: Object.freeze(['roles.manage', 'roles.read']),
   users: Object.freeze(['users.manage', 'users.read']),
   news: Object.freeze(['news.create', 'news.edit', 'news.publish', 'news.delete']),
   inbox: Object.freeze(['inquiries.read', 'inquiries.manage']),
@@ -41,7 +41,7 @@ export function sectionForPath(pathname) {
   const sections = [
     ['dashboard', routePaths.admin], ['properties', routePaths.adminProperties],
     ['projects', routePaths.adminProjects], ['trash', routePaths.adminTrash],
-    ['history', routePaths.adminHistory], ['roles', routePaths.adminRoles],
+    ['history', routePaths.adminHistory],
     ['users', routePaths.adminUsers], ['news', routePaths.adminNews], ['inbox', routePaths.adminInbox],
   ];
   if (matchPath({ path: routePaths.admin, end: true }, pathname)) return 'dashboard';
@@ -57,7 +57,6 @@ export function canAccessAdminPath(user, pathname) {
     [routePaths.adminPropertyEdit, ['properties.edit.any', 'properties.edit.own']],
     [routePaths.adminProjectNew, ['projects.create']],
     [routePaths.adminProjectEdit, ['projects.edit.any', 'projects.edit.own']],
-    [routePaths.adminRoleNew, ['roles.manage']],
   ];
   const action = actions.find(([path]) => matchPath({ path, end: true }, pathname));
   return !action || action[1].some((permission) => hasAdminPermission(user, permission));
@@ -89,7 +88,7 @@ export function readAdminSession(response) {
   }
   const permissions = [...new Set(user.permissions.filter(isText))];
   if (!permissions.length) {
-    throw invalidSession('Tu cuenta no tiene permisos asignados para el panel. Pide a un Ingeniero que revise tu rol.', 'no_panel_permissions');
+    throw invalidSession('Tu cuenta no tiene permisos asignados para el panel. Pide a un Administrador que revise tu rol.', 'no_panel_permissions');
   }
   return {
     access: response.access,
@@ -117,6 +116,8 @@ export function canAccessAdminSection(user, section) {
 }
 
 export function adminRoleProfile(user) {
+  const fixed = fixedRoleLabel(user?.role);
+  if (fixed) return { label: fixed, description: fixedRoleDescriptions[fixed] };
   const known = adminRoleProfiles[fold(user?.role)];
   if (known) return known;
   return {

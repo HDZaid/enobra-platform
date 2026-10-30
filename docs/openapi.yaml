@@ -262,23 +262,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: ''
-  /api/v1/admin/permissions/:
-    get:
-      operationId: v1_admin_permissions_list
-      summary: Permisos configurados para asignar a roles
-      tags:
-      - Roles y permisos
-      security:
-      - bearerAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Permission'
-          description: ''
   /api/v1/admin/projects/{project_id}/permanent/:
     delete:
       operationId: v1_admin_projects_permanent_destroy
@@ -567,131 +550,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaginatedPropertyList'
           description: ''
-  /api/v1/admin/roles/:
-    get:
-      operationId: v1_admin_roles_list
-      summary: Listar roles y permisos asignados
-      tags:
-      - Roles y permisos
-      security:
-      - bearerAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Role'
-          description: ''
-    post:
-      operationId: v1_admin_roles_create
-      summary: Crear un rol a partir de permisos existentes
-      tags:
-      - Roles y permisos
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RoleWriteRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/RoleWriteRequest'
-        required: true
-      security:
-      - bearerAuth: []
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Role'
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ''
-        '401':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ''
-        '403':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ''
-  /api/v1/admin/roles/{role_id}/:
-    get:
-      operationId: v1_admin_roles_retrieve
-      summary: Consultar un rol
-      parameters:
-      - in: path
-        name: role_id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Roles y permisos
-      security:
-      - bearerAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Role'
-          description: ''
-        '404':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ''
-    patch:
-      operationId: v1_admin_roles_partial_update
-      summary: Actualizar nombre, estado o permisos de un rol
-      parameters:
-      - in: path
-        name: role_id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Roles y permisos
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedRoleWriteRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedRoleWriteRequest'
-      security:
-      - bearerAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Role'
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ''
-        '404':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ''
   /api/v1/admin/trash/:
     get:
       operationId: v1_admin_trash_retrieve
@@ -824,7 +682,8 @@ paths:
     patch:
       operationId: v1_admin_users_partial_update
       description: Requiere `users.manage`. Nadie puede desactivarse a sí mismo ni
-        desactivar al último Ingeniero activo.
+        desactivar al último Administrador activo. Arquitecto no puede modificar cuentas
+        administradoras ni técnicas.
       summary: Editar nombre o estado de un usuario
       parameters:
       - in: path
@@ -878,9 +737,9 @@ paths:
   /api/v1/admin/users/{user_id}/role/:
     put:
       operationId: v1_admin_users_role_update
-      description: Requiere `users.manage`. Reemplaza el rol actual por `role_id`
-        (un usuario, un rol). El rol debe estar activo y no puede otorgar permisos
-        que quien lo asigna no tenga.
+      description: Requiere `admin.all` (Administrador). Reemplaza el rol actual por
+        un rol fijo existente. No permite roles técnicos o personalizados ni reasignar
+        la cuenta técnica. No se puede cambiar el propio rol.
       summary: Reemplazar el rol de un usuario
       parameters:
       - in: path
@@ -3137,24 +2996,6 @@ components:
         published:
           type: boolean
           default: true
-    PatchedRoleWriteRequest:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 60
-        description:
-          type: string
-          maxLength: 250
-        active:
-          type: boolean
-        permissions:
-          type: array
-          items:
-            type: string
-            minLength: 1
-            maxLength: 100
     PatchedUserUpdateRequest:
       type: object
       properties:
@@ -3164,17 +3005,6 @@ components:
           maxLength: 120
         active:
           type: boolean
-    Permission:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-          nullable: true
-      required:
-      - description
-      - name
     Principle:
       type: object
       properties:
@@ -3581,27 +3411,6 @@ components:
       - active
       - description
       - id
-      - name
-      - permissions
-    RoleWriteRequest:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 60
-        description:
-          type: string
-          maxLength: 250
-        active:
-          type: boolean
-        permissions:
-          type: array
-          items:
-            type: string
-            minLength: 1
-            maxLength: 100
-      required:
       - name
       - permissions
     SearchHit:
