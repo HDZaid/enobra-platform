@@ -38,15 +38,15 @@ export function ServiceFeature({ service, index }) {
         </div>
         <h2>{service.title}</h2>
         <p className="service-lead">{service.short}</p>
-        <div className="service-scope">
+        {service.items.some((item) => item.trim()) && <div className="service-scope">
           <p>ALCANCE DEL SERVICIO</p>
           <ul>
-            {service.items.map((item, index) => {
+            {service.items.filter((item) => item.trim()).map((item, index) => {
               const Icon = icons[serviceIconName(item)];
               return <li key={index}><Icon size={18} strokeWidth={1.75} aria-hidden="true" className="service-item-icon shrink-0" /><span>{item}</span></li>;
             })}
           </ul>
-        </div>
+        </div>}
         <Link
           className="service-cta"
           to={`/contacto?asunto=${encodeURIComponent(service.subject)}`}

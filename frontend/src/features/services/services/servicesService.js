@@ -7,6 +7,7 @@ import {
 
 const isService = (value) =>
   hasTextFields(value, ['id', 'title', 'image', 'short', 'description', 'subject']) &&
+  ['id', 'title', 'short', 'description', 'subject'].every((field) => value[field].trim()) &&
   isTextArray(value.items);
 export const servicesService = {
   async list(options) {

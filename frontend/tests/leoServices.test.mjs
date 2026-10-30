@@ -62,12 +62,32 @@ test('un catálogo vacío válido no se sustituye por servicios de demostración
   assert.deepEqual(await servicesService.list(), []);
 });
 
-test('una historia vacía no borra el contenido de referencia de Nosotros', async () => {
+test('una historia vacía conserva referencia sin borrar los demás datos válidos', async () => {
   for (const presentation of [[], [''], ['  ', '\n']]) {
-    globalThis.fetch = async () => json({ ...institution, presentation });
-    await assert.rejects(institutionService.get(), /contrato de contenido/);
+    globalThis.fetch = async () => json({ ...institution, mission: 'Misión real.', presentation });
+    const result = await institutionService.get();
+    assert.deepEqual(result.presentation, institution.presentation);
+    assert.equal(result.mission, 'Misión real.');
   }
   const content = { ...institution, presentation: ['Historia real de la empresa.'] };
   globalThis.fetch = async () => json(content);
   assert.deepEqual(await institutionService.get(), content);
+});
+
+test('contacto y pie conservan campos publicados cuando company llega parcialmente vacío', async () => {
+  globalThis.fetch = async () => json({ ...company, name: '  ', person: '', address: '', phones: [' ', ''], whatsapp: '', email: '' });
+  assert.deepEqual(await companyService.get(), company);
+  const real = { ...company, name: 'Nombre real', address: 'Dirección real', phones: ['55551234'], whatsapp: '50255551234', email: 'contacto@example.test' };
+  globalThis.fetch = async () => json(real);
+  assert.deepEqual(await companyService.get(), real);
+});
+test('Nosotros recupera misión, visión y principios vacíos sin sustituir la historia real', async () => {
+  globalThis.fetch = async () => json({ ...institution, presentation: ['Historia real.'], mission: ' ', vision: '', principles: [{ title: '', description: ' ' }] });
+  assert.deepEqual(await institutionService.get(), { ...institution, presentation: ['Historia real.'] });
+});
+test('un servicio sin texto obligatorio se rechaza, un catálogo sin servicios sigue vacío', async () => {
+  globalThis.fetch = async () => json([{ ...services[0], title: ' ' }]);
+  await assert.rejects(servicesService.list(), /contrato de contenido/);
+  globalThis.fetch = async () => json([]);
+  assert.deepEqual(await servicesService.list(), []);
 });

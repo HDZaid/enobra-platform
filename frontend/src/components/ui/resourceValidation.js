@@ -18,3 +18,13 @@ export function mediaUrl(value) {
 export function externalUrl(value) {
   return typeof value === 'string' && /^https?:\/\//.test(value) ? value : undefined;
 }
+
+// Los campos editoriales vacíos no deben borrar el contenido disponible del sitio.
+// Solo se usa para campos con referencia aprobada; los datos opcionales siguen vacíos.
+export function textOrReference(value, reference) {
+  return typeof value === 'string' && value.trim() ? value.trim() : reference;
+}
+export function textListOrReference(value, reference) {
+  const items = Array.isArray(value) ? value.filter((text) => typeof text === 'string' && text.trim()).map((text) => text.trim()) : [];
+  return items.length ? items : [...reference];
+}

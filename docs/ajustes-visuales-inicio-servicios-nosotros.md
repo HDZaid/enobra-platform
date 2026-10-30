@@ -60,3 +60,24 @@ una operación fallida en éxito ni se borran las etiquetas de contenido de mues
 Prueba Chromium reproducible: frontend/tests/browser/public-content.cjs. Siete rutas
 públicas y buscador, a 1440/390 px, con API 501 y sin red: sin avisos técnicos ni
 desbordamiento, y con contenido alternativo. Lint, 185 pruebas y build aprobados.
+
+## Respuestas 200 con contenido vacío o parcial
+
+La revisión anterior cubría 501/sin red, pero no company/ con person/address vacíos
+y phones sin elementos. Ahora companyService aplica la referencia existente por
+campo a nombre, persona, dirección, teléfonos y WhatsApp vacíos. Los valores
+válidos del servidor se conservan. Correos y redes opcionales no se inventan;
+se oculta la fila de correo sin configurar en Contacto y Footer.
+
+institutionService aplica lo mismo a presentación, firma, cargo, misión, visión y
+principios. Esta normalización sustituye la comprobación anterior que rechazaba
+la respuesta entera cuando la historia estaba vacía: conserva secciones válidas.
+Servicios rechaza registros sin textos obligatorios y no dibuja el bloque de alcance
+si sus elementos están vacíos. Un catálogo [] sigue vacío: no inventa servicios.
+Noticias/Proyectos/Propiedades conservan sus estados vacíos y la validación de datos.
+No se hicieron escrituras ni cambios al contrato del backend.
+
+Lint, 188 pruebas y build aprobados. Chromium con respuestas 200 vacías/parciales:
+Contacto, Footer, Nosotros, Servicios e Inicio en 1440/390 px; textos visibles,
+valores válidos conservados y sin avisos técnicos. Regresión reproducible en
+frontend/tests/browser/empty-public-content.cjs.

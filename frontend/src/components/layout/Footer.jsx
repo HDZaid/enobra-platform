@@ -22,13 +22,7 @@ export function Footer({ resource }) {
                   </span>
                 ))}
               </p>
-              <p>
-                {company.email ? (
-                  <a href={`mailto:${company.email}`}>{company.email}</a>
-                ) : (
-                  'Correo institucional: pendiente de confirmar.'
-                )}
-              </p>
+              {company.email.trim() && <p><a href={`mailto:${company.email}`}>{company.email}</a></p>}
               {company.whatsapp && (
                 <a
                   className="text-link"
