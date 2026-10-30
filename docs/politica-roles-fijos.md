@@ -71,6 +71,14 @@ selector de reasignación para Arquitecto, subida por los tres roles y edición 
 proyecto ajeno por Empleado. Endpoints de Roles rechazados también desde la API.
 El runner genera fixtures solo en SQLite; no lee ni escribe filas reales.
 
+Para repetir la comprobación, con Playwright y Chromium instalados:
+
+```bash
+.venv/bin/python backend/scripts/verify_frontend_integration.py --fixed-roles
+```
+
+`PLAYWRIGHT_MODULE` y `CHROMIUM_PATH` permiten indicar las instalaciones locales.
+
 OpenAPI regenerado con test_settings, --validate y --fail-on-warn. No se ejecutaron
 SQL, migraciones, seeds ni sincronizaciones contra la base del proyecto. Las suites
 históricas conservan sus fixtures/seed únicamente dentro de bases SQLite de prueba;

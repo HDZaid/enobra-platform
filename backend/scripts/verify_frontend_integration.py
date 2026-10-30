@@ -25,7 +25,7 @@ class QuietHandler(WSGIRequestHandler):
         pass
 
 
-def run():
+def run(*, fixed_roles=False):
     with tempfile.TemporaryDirectory(prefix='enobra-integration-') as directory:
         temporary = Path(directory)
         # Select test settings before Django loads backend/.env; override all persistence.
@@ -42,7 +42,6 @@ def run():
         django.setup()
         from django.apps import apps
         from django.contrib.auth.hashers import make_password
-        from django.core.management import call_command
         from django.db import connection, connections
         from django.utils import timezone
         from django.core.files.uploadedfile import SimpleUploadedFile
@@ -55,10 +54,13 @@ def run():
         with connection.schema_editor() as editor:
             for model in apps.get_app_config('persistence').get_models():
                 editor.create_model(model)
-        call_command('seed_access_control', stdout=io.StringIO())
+        # Fixtures locales: la política fija no depende de seeds ni permisos guardados.
+        for name in ('Ingeniero', 'Arquitecta', 'Empleado'):
+            Rol.objects.create(nombre=name)
         password = secrets.token_urlsafe(24)
         for email, role in [('integration@example.test', 'Ingeniero'),
-                            ('architect@example.test', 'Arquitecta')]:
+                            ('architect@example.test', 'Arquitecta'),
+                            ('employee@example.test', 'Empleado')]:
             user = Usuario.objects.create(nombre='Cuenta de integración', correo=email,
                                            password_hash=make_password(password))
             UsuarioRol.objects.create(usuario=user, rol=Rol.objects.get(nombre=role))
@@ -134,7 +136,8 @@ def run():
                         time.sleep(0.1)
                 else:
                     raise RuntimeError('Timed out waiting for React/Django proxy')
-                return subprocess.run(['node', str(ROOT / 'frontend/tests/browser/live-backend.cjs')],
+                browser_test = 'fixed-roles.cjs' if fixed_roles else 'live-backend.cjs'
+                return subprocess.run(['node', str(ROOT / 'frontend/tests/browser' / browser_test)],
                                       cwd=ROOT, env=environment).returncode
         finally:
             if vite is not None and vite.poll() is None:
@@ -148,4 +151,7 @@ def run():
 
 
 if __name__ == '__main__':
-    sys.exit(run())
+    import argparse
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--fixed-roles', action='store_true', help='Verifica la política de los tres roles fijos.')
+    sys.exit(run(fixed_roles=parser.parse_args().fixed_roles))
