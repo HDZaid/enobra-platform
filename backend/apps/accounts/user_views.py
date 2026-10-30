@@ -61,7 +61,7 @@ class UserDetailView(APIView):
     @extend_schema(request=UserUpdateSerializer, responses={200: ManagedUserSerializer, **USER_ERRORS},
         tags=['Usuarios (admin)'], summary='Editar nombre o estado de un usuario',
         description='Requiere `users.manage`. Nadie puede desactivarse a sí mismo ni desactivar '
-                    'al último Ingeniero activo.')
+                    'al último Administrador activo. Arquitecto no puede modificar cuentas administradoras ni técnicas.')
     def patch(self, request, user_id: int):
         serializer = UserUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -77,8 +77,8 @@ class UserRoleView(APIView):
 
     @extend_schema(request=UserRoleUpdateSerializer, responses={200: ManagedUserSerializer, **USER_ERRORS},
         tags=['Usuarios (admin)'], summary='Reemplazar el rol de un usuario',
-        description='Requiere `users.manage`. Reemplaza el rol actual por `role_id` (un usuario, un rol). '
-                    'El rol debe estar activo y no puede otorgar permisos que quien lo asigna no tenga.')
+        description='Requiere `admin.all` (Administrador). Reemplaza el rol actual por un rol fijo existente. '
+                    'No permite roles técnicos o personalizados ni reasignar la cuenta técnica. No se puede cambiar el propio rol.')
     def put(self, request, user_id: int):
         serializer = UserRoleUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
