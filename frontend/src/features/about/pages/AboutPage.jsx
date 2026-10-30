@@ -1,34 +1,39 @@
 import { Link } from 'react-router-dom';
+import { SafeImage } from '../../../components/ui/SafeImage.jsx';
 import { MotionPage } from '../../../components/ui/MotionPage.jsx';
 import { ContentStatus } from '../../../components/ui/ContentStatus.jsx';
 import { useReferenceResource } from '../../../components/ui/useReferenceResource.js';
 import { institutionService } from '../services/institutionService.js';
 import { reference } from '../data/reference.js';
+import { AshlarRule, HeaderOrnament, ImageLines } from '../../../components/ui/ColonialOrnaments.jsx';
 export function AboutPage() {
   const resource = useReferenceResource(institutionService.get, reference);
   const { data } = resource;
   return (
     <MotionPage title="Quiénes somos">
-      <section className="page-intro">
-        <div className="container">
+      <section className="page-intro enobra-intro">
+        <div className="container enobra-intro-copy">
           <Link to="/" className="breadcrumb">
-            Inicio / NOSOTROS
+            Inicio / Nosotros
           </Link>
-          <p className="eyebrow">NOSOTROS</p>
           <h1>
             Profesionalismo que
             <br />
             construye confianza.
           </h1>
         </div>
+        <HeaderOrnament variant="fachada" />
       </section>
       <section className="section container institutional">
         <aside>
-          <img
-            src="/assets/enobra/casa-lujo.png"
-            alt="Vivienda de arquitectura contemporánea"
-            loading="lazy"
-          />
+          <div className="image-lines-host">
+            <SafeImage
+              src="/assets/enobra/casa-lujo.png"
+              alt="Vivienda de arquitectura contemporánea"
+              loading="lazy"
+            />
+            <ImageLines variant="frame" />
+          </div>
           <blockquote>“Más que una construcción, un hogar”.</blockquote>
           <Link className="text-link" to="/contacto">
             Conversemos →
@@ -71,6 +76,7 @@ export function AboutPage() {
       <section className="section container">
         <p className="eyebrow">PRINCIPIOS CORPORATIVOS</p>
         <h2>Lo que guía nuestro trabajo.</h2>
+        <AshlarRule className="principles-rule" />
         <div id="principles" className="principles-grid">
           {data.principles.map((principle, i) => (
             <article key={i}>

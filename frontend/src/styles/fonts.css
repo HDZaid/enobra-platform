@@ -55,3 +55,11 @@
   font-display: swap;
   src: url('/assets/enobra/outfit-700.ttf') format('truetype');
 }
+/* Brand display face (Montserrat, SIL OFL 1.1), Latin subset with variable weight. */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 500 900;
+  font-display: swap;
+  src: url('/assets/enobra/montserrat-latin-variable.woff2') format('woff2');
+}

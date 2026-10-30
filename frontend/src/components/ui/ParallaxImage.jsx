@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
+import { ImageFallback } from './SafeImage.jsx';
 
 export function ParallaxImage({ factor = 0.035, ...props }) {
   const ref = useRef(null);
   const [offset, setOffset] = useState(0);
+  const [failed, setFailed] = useState(null);
   useEffect(() => {
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let frame;
@@ -33,12 +35,19 @@ export function ParallaxImage({ factor = 0.035, ...props }) {
       motion.removeEventListener('change', update);
     };
   }, [factor]);
+  if (failed === props.src)
+    return (
+      <div ref={ref} className="parallax-fallback">
+        <ImageFallback alt={props.alt} />
+      </div>
+    );
   return (
     <img
       {...props}
       ref={ref}
       className="parallax-media"
       style={{ '--parallax-y': `${offset}px` }}
+      onError={() => setFailed(props.src)}
     />
   );
 }

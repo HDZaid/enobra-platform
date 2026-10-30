@@ -1,6 +1,7 @@
 import { Brand } from './Brand.jsx';
 import { Navbar } from './Navbar.jsx';
 import { ContentStatus } from '../ui/ContentStatus.jsx';
+import { AshlarRule } from '../ui/ColonialOrnaments.jsx';
 import { externalUrl } from '../ui/resourceValidation.js';
 
 export function Footer({ resource }) {
@@ -8,6 +9,7 @@ export function Footer({ resource }) {
   return (
     <div className="leo-chrome">
       <footer>
+        <AshlarRule className="ashlar-brand" brand />
         <div className="container footer-top">
           <div>
             <Brand company={company} footer />
@@ -53,15 +55,6 @@ export function Footer({ resource }) {
           <div className="footer-motto">
             Ad maiorem Dei gloriam
             <i />
-          </div>
-          <div className="footer-manifesto">
-            CONSTRUIMOS
-            <br />
-            HOY
-            <br />
-            MEJORES
-            <br />
-            <span>MAÑANAS.</span>
           </div>
         </div>
         <div className="container footer-bottom">

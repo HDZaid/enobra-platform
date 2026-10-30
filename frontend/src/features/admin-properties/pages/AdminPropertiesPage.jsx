@@ -108,7 +108,7 @@ export function AdminPropertiesPage() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-sm text-[#626b79]">Contenido del sitio</p>
-          <h2 className="mt-1 font-['Outfit',Arial,sans-serif] text-[30px] font-semibold">Bienes raíces</h2>
+          <h2 className="mt-1 font-['Montserrat',Arial,sans-serif] text-[30px] font-semibold">Bienes raíces</h2>
           <p className="mt-2 max-w-[640px] text-sm text-[#626b79]">Consulta las propiedades, publícalas o regrésalas a borrador y envíalas a la papelera.</p>
         </div>
         {newButton}

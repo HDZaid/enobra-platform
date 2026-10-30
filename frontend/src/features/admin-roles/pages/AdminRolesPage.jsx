@@ -29,7 +29,7 @@ export function AdminRolesPage() {
   return <section>
     <div className="flex flex-wrap items-end justify-between gap-4">
       <div><p className="text-sm text-[#626b79]">Administración de accesos</p>
-        <h2 className="mt-1 font-['Outfit',Arial,sans-serif] text-[30px] font-semibold">Roles y permisos</h2>
+        <h2 className="mt-1 font-['Montserrat',Arial,sans-serif] text-[30px] font-semibold">Roles y permisos</h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#626b79]">Define qué puede hacer cada persona del equipo con permisos organizados por módulo.</p></div>
       {canManage && <Link to={routePaths.adminRoleNew} className="inline-flex items-center gap-2 rounded-lg bg-[#ff6a1f] px-5 py-3 text-sm font-semibold text-white hover:bg-[#b94308]"><Plus size={18}/> Crear rol</Link>}
     </div>

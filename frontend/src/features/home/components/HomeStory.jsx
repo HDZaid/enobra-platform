@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom';
+import { SafeImage } from '../../../components/ui/SafeImage.jsx';
+import { ImageLines } from '../../../components/ui/ColonialOrnaments.jsx';
 
 export function HomeStory() {
   return (
@@ -34,7 +36,7 @@ export function HomeStory() {
       </div>
       <figure className="home-about-visual">
         <div className="image-frame">
-          <img
+          <SafeImage
             src="/assets/enobra/IMG-20260910-WA0082.jpg"
             alt="Referencia fotográfica de vivienda y obra"
             loading="lazy"
@@ -42,6 +44,7 @@ export function HomeStory() {
             width="1200"
             height="1600"
           />
+          <ImageLines variant="frame" />
         </div>
         <figcaption>EN OBRA · QUETZALTENANGO</figcaption>
       </figure>

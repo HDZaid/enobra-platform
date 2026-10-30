@@ -8,7 +8,7 @@ export function AdminAccessDenied({ user }) {
   return (
     <section role="alert" className="mx-auto max-w-[560px] rounded-2xl bg-white p-8 text-center shadow-sm">
       <ShieldAlert size={36} className="mx-auto text-[#b94308]" aria-hidden="true" />
-      <h2 className="mt-4 font-['Outfit',Arial,sans-serif] text-2xl font-semibold">Esta sección no está disponible para tu rol</h2>
+      <h2 className="mt-4 font-['Montserrat',Arial,sans-serif] text-2xl font-semibold">Esta sección no está disponible para tu rol</h2>
       <p className="mt-3 text-sm leading-relaxed text-[#626b79]">
         Tu rol actual es <strong className="text-[#12233f]">{profile.label}</strong> ({profile.description.toLocaleLowerCase('es')}).
         Tu cuenta no tiene los permisos necesarios para esta sección.

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ParallaxImage } from '../../../components/ui/ParallaxImage.jsx';
+import { ImageLines } from '../../../components/ui/ColonialOrnaments.jsx';
 import { mediaUrl } from '../../../components/ui/resourceValidation.js';
 
 export function ServiceFeature({ service, index }) {
@@ -21,6 +22,7 @@ export function ServiceFeature({ service, index }) {
             loading="lazy"
             decoding="async"
           />
+          <ImageLines variant="frame" />
         </div>
         <span className="service-image-caption">ENOBRA · SERVICIO {number}</span>
       </div>

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { MotionPage } from '../../../components/ui/MotionPage.jsx';
+import { HeaderOrnament } from '../../../components/ui/ColonialOrnaments.jsx';
 import { ContentStatus } from '../../../components/ui/ContentStatus.jsx';
 import { useReferenceResource } from '../../../components/ui/useReferenceResource.js';
 import { servicesService } from '../services/servicesService.js';
@@ -30,11 +31,12 @@ export function ServicesPage() {
 
   return (
     <MotionPage title="Servicios">
-      <section className="page-intro services-intro">
+      <section className="page-intro services-intro enobra-intro">
+        <HeaderOrnament variant="trazado" />
         <div className="container services-intro-grid">
-          <div>
+          <div className="enobra-intro-copy">
             <Link to="/" className="breadcrumb">
-              Inicio / SERVICIOS
+              Inicio / Servicios
             </Link>
             <p className="eyebrow">SERVICIOS INTEGRALES</p>
             <h1>
@@ -75,21 +77,6 @@ export function ServicesPage() {
           {data.length === 0 && <p>No hay servicios disponibles por el momento.</p>}
         </div>
       </section>
-      <section className="page-intro services-ending" aria-labelledby="services-ending-title">
-        <div className="container">
-          <Link to="/" className="breadcrumb">
-            Inicio / SERVICIOS
-          </Link>
-          <p className="eyebrow">SERVICIOS</p>
-          <h2 id="services-ending-title">
-            Experiencia en cada
-            <br />
-            etapa de tu proyecto.
-          </h2>
-          <p>Diseño, administración de proyectos, preconstrucción y construcción.</p>
-        </div>
-      </section>
-      <div className="section services-ending-space" aria-hidden="true" />
     </MotionPage>
   );
 }

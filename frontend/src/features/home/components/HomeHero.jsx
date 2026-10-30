@@ -39,10 +39,6 @@ export function HomeHero() {
             HOGARES &nbsp; | &nbsp; EMPRESAS &nbsp; | &nbsp; COMUNIDADES
           </span>
         </div>
-        <a className="scroll-cue" href="#proposito" aria-label="Descubrir más">
-          <span>DESCUBRIR</span>
-          <i></i>
-        </a>
       </div>
     </section>
   );

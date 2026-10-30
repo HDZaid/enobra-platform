@@ -3,7 +3,12 @@ import { mediaUrl } from '../ui/resourceValidation.js';
 
 export function Brand({ company, footer = false }) {
   return (
-    <Link to="/" className={`brand${footer ? ' footer-brand' : ''}`} aria-label="EnObra, inicio">
+    <Link
+      to="/"
+      className={`brand${footer ? ' footer-brand' : ''}`}
+      aria-label="EnObra, inicio"
+      viewTransition
+    >
       {company.logo ? (
         <img className="official-logo" src={mediaUrl(company.logo)} alt={company.name} />
       ) : (
