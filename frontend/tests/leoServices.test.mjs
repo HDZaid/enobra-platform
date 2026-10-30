@@ -61,3 +61,13 @@ test('un catálogo vacío válido no se sustituye por servicios de demostración
   globalThis.fetch = async () => json([]);
   assert.deepEqual(await servicesService.list(), []);
 });
+
+test('una historia vacía no borra el contenido de referencia de Nosotros', async () => {
+  for (const presentation of [[], [''], ['  ', '\n']]) {
+    globalThis.fetch = async () => json({ ...institution, presentation });
+    await assert.rejects(institutionService.get(), /contrato de contenido/);
+  }
+  const content = { ...institution, presentation: ['Historia real de la empresa.'] };
+  globalThis.fetch = async () => json(content);
+  assert.deepEqual(await institutionService.get(), content);
+});

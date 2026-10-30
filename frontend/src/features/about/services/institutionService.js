@@ -12,6 +12,7 @@ export const institutionService = {
       (value) =>
         hasTextFields(value, ['signature', 'role', 'vision', 'mission']) &&
         isTextArray(value.presentation) &&
+        value.presentation.some((paragraph) => paragraph.trim().length > 0) &&
         Array.isArray(value.principles) &&
         value.principles.every((item) => hasTextFields(item, ['title', 'description'])),
     );
