@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { SafeImage } from '../../../components/ui/SafeImage.jsx';
 import { MotionPage } from '../../../components/ui/MotionPage.jsx';
-import { ContentStatus } from '../../../components/ui/ContentStatus.jsx';
 import { useReferenceResource } from '../../../components/ui/useReferenceResource.js';
 import { institutionService } from '../services/institutionService.js';
 import { parseYoutube } from '../../projects/services/catalogMapper.js';
@@ -51,7 +50,6 @@ export function AboutPage() {
           </Link>
         </aside>
         <article>
-          <ContentStatus resource={resource} />
           <p className="eyebrow">PRESENTACIÓN</p>
           <h2>Nuestra historia.</h2>
           <div id="presentation" className="prose">
