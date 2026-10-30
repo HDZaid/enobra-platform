@@ -49,8 +49,11 @@ login/refresh/logout; su autorización y revocación siguen siendo definitivas.
 - 10 pruebas nuevas de lógica y transporte: inactividad, aviso, actividad durante
   aviso, renovación única, reloj al volver, respuestas tardías, revocación, fallos
   de red, token actual y ausencia de repetición de escrituras.
-- Suite frontend: **198 pruebas aprobadas** (incluye los cambios públicos del equipo),
-  lint y build correctos. Se mantiene el aviso de bundle mayor de 500 kB.
+- Primera pasada: 198 pruebas frontend aprobadas. Tras integrar los cambios
+  concurrentes del equipo para roles fijos: **188 pruebas frontend y 215 backend
+  aprobadas**, lint y build correctos. La reducción de frontend proviene de retirar
+  las pruebas de administración dinámica de roles; se conservan las 10 nuevas de
+  sesión. Se mantiene el aviso de bundle mayor de 500 kB.
 - Chromium con API ficticia y reloj acelerado: contador de un minuto, vencimiento
   sin renovar, solicitud de logout, reingreso conservando un proyecto sin guardar,
   petición posterior con token renovado y bloqueo por 401. Sin errores de página.
