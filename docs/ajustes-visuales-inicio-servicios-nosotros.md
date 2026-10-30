@@ -48,3 +48,15 @@ mensajes técnicos de API, referencia o reintento. Se conserva el mecanismo de
 contenido alternativo y su validación; no se alteraron respuestas ni datos del
 backend. La regresión de Chromium verifica texto visible y ausencia de aviso/botón
 en el bloque institucional, con historias vacías, en blanco y válidas.
+
+## Revisión del resto del sitio público
+
+Retirado ContentStatus de Footer, SearchDialog, Servicios, Contacto y NewsPreview.
+Se mantiene el contenido alternativo existente; no se cambian contratos ni datos.
+Los formularios conservan errores de envío y los catálogos estados de carga,
+contenido ausente o consulta fallida, expresados para el visitante. No se convierte
+una operación fallida en éxito ni se borran las etiquetas de contenido de muestra.
+
+Prueba Chromium reproducible: frontend/tests/browser/public-content.cjs. Siete rutas
+públicas y buscador, a 1440/390 px, con API 501 y sin red: sin avisos técnicos ni
+desbordamiento, y con contenido alternativo. Lint, 185 pruebas y build aprobados.

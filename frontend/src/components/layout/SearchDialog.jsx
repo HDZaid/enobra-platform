@@ -4,7 +4,6 @@ import { searchReference } from './data/searchReference.js';
 import { reference } from '../../features/services/data/reference.js';
 import { servicesService } from '../../features/services/services/servicesService.js';
 import { useReferenceResource } from '../ui/useReferenceResource.js';
-import { ContentStatus } from '../ui/ContentStatus.jsx';
 import './SearchDialog.css';
 
 const normalize = (value) =>
@@ -81,7 +80,7 @@ export function SearchDialog({ onClose }) {
           />
         </label>
         <p className="search-count" role="status">{count ? `${count} ${count === 1 ? 'resultado' : 'resultados'}` : 'Sin coincidencias. Prueba con otra palabra.'}</p>
-        <ContentStatus resource={services} />
+
         <p className="small muted">Proyectos, propiedades y noticias de referencia.</p>
         <div className="search-results">
           {groups
