@@ -33,7 +33,7 @@ export function AdminShell({ children, user, preview, onLogout }) {
       {open && <button type="button" className="fixed inset-0 z-30 bg-[#12233f]/50 lg:hidden" onClick={() => setOpen(false)} aria-label="Cerrar menú" />}
       <aside className={`fixed inset-y-0 left-0 z-40 flex w-60 flex-col bg-gradient-to-b from-[#12233f] to-[#304e7d] text-white transition-transform lg:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`} aria-label="Administración">
         <div className="border-b border-white/15 px-5 py-6">
-          <Link to="/" className="font-['Outfit',Arial,sans-serif] text-[26px] font-bold" onClick={() => setOpen(false)}>En<span className="text-[#ff6a1f]">Obra</span></Link>
+          <Link to="/" className="font-['Montserrat',Arial,sans-serif] text-[26px] font-bold" onClick={() => setOpen(false)}>En<span className="text-[#ff6a1f]">Obra</span></Link>
           <p className="mt-1 text-[10px] font-bold tracking-[.16em] text-white/70">CONSTRUYE</p>
           <span className="mt-3 inline-block rounded-full bg-[#ff6a1f] px-3 py-1 text-[10px] font-bold tracking-widest uppercase">{preview ? 'Demo' : profile.label}</span>
         </div>
@@ -64,7 +64,7 @@ export function AdminShell({ children, user, preview, onLogout }) {
       <div className="min-w-0 lg:pl-60">
         <header className="sticky top-0 z-20 flex min-h-16 items-center gap-3 border-b border-[#dfe5ec] bg-white px-5 sm:px-8">
           <button type="button" className="rounded-md p-2 hover:bg-[#f3f6fa] lg:hidden" onClick={() => setOpen(!open)} aria-label={open ? 'Cerrar menú' : 'Abrir menú'}>{open ? <X size={21}/> : <Menu size={21}/>}</button>
-          <div className="min-w-0 flex-1"><p className="text-[10px] font-bold tracking-[.16em] text-[#b94308] uppercase">Administración</p><h1 className="font-['Outfit',Arial,sans-serif] text-xl font-semibold">{navigation.find((item) => item.section === sectionForPath(pathname))?.label || 'Panel'}</h1></div>
+          <div className="min-w-0 flex-1"><p className="text-[10px] font-bold tracking-[.16em] text-[#b94308] uppercase">Administración</p><h1 className="font-['Montserrat',Arial,sans-serif] text-xl font-semibold">{navigation.find((item) => item.section === sectionForPath(pathname))?.label || 'Panel'}</h1></div>
           <ShieldCheck size={19} aria-hidden="true" className="hidden text-[#304e7d] sm:block" />
         </header>
         {preview && <div role="status" className="border-b border-[#f4cfae] bg-[#fff1e5] px-5 py-3 text-sm text-[#88420d] sm:px-8">Vista previa local: Noticias y Mensajes contienen datos de prueba. Los cambios solo existen en memoria y no se envían a Django.</div>}

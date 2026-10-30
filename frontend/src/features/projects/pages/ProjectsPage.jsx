@@ -1,3 +1,4 @@
+import { HeaderOrnament } from '../../../components/ui/ColonialOrnaments.jsx';
 import { Link, useSearchParams } from 'react-router-dom';
 import { CatalogPage as MotionPage } from '../components/CatalogPage.jsx';
 import { projectsService } from '../services/projectsService.js';
@@ -22,12 +23,11 @@ export function ProjectsPage() {
   return (
     <MotionPage title="Portafolio de construcción">
       <div className="geo-catalog">
-        <section className="page-intro">
-          <div className="container">
+        <section className="page-intro enobra-intro">
+          <div className="container enobra-intro-copy">
             <Link className="breadcrumb" to="/">
-              Inicio / PORTAFOLIO
+              Inicio / Portafolio
             </Link>
-            <p className="eyebrow">PORTAFOLIO</p>
             <h1>
               Obras y proyectos
               <br />
@@ -35,6 +35,7 @@ export function ProjectsPage() {
             </h1>
             <p>Explora el portafolio por año y conoce el alcance de cada proyecto.</p>
           </div>
+          <HeaderOrnament variant="volumen" />
         </section>
         <section className="section container">
           <div className="geo-filter-top">

@@ -6,6 +6,7 @@ import { reference } from './data/reference.js';
 import { companyService } from './services/companyService.js';
 import { useReferenceResource } from '../ui/useReferenceResource.js';
 import '../../styles/leo.css';
+import '../../styles/refinamiento.css';
 import { routePaths } from '../../app/routePaths.js';
 
 export function SiteLayout() {

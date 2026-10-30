@@ -22,7 +22,7 @@ export function NewsCard({ item }) {
         <p className="mb-4 text-xs font-bold tracking-[0.19em] text-[#b94308] uppercase">
           {item.category} · {formatNewsDate(item.date)}{item.demo ? ' · REFERENCIA' : ''}
         </p>
-        <h2 className="font-['Outfit',Arial,sans-serif] text-[25px] leading-[1.16] font-semibold tracking-[-0.035em]">
+        <h2 className="font-['Montserrat',Arial,sans-serif] text-[25px] leading-[1.16] font-semibold tracking-[-0.02em]">
           {item.title}
         </h2>
         <p className="mt-4 leading-[1.8] text-[#626b79]">{summary}</p>

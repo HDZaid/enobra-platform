@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom';
+import { ParallaxImage } from '../../../components/ui/ParallaxImage.jsx';
+import { ImageLines } from '../../../components/ui/ColonialOrnaments.jsx';
 
 export function BusinessAreas() {
   return (
@@ -12,11 +14,12 @@ export function BusinessAreas() {
         </div>
         <div className="business-grid">
           <Link to="/servicios" className="business-card">
-            <img
+            <ParallaxImage adaptive factor={0}
               src="/assets/enobra/construccion.jpg"
               alt="Trabajo de construcción"
               loading="lazy"
             />
+            <ImageLines variant="card" />
             <div>
               <p className="eyebrow">CONSTRUCTORA</p>
               <h3>Diseñamos y construimos.</h3>
@@ -25,7 +28,7 @@ export function BusinessAreas() {
             </div>
           </Link>
           <Link to="/bienes-raices" className="business-card">
-            <img
+            <ParallaxImage adaptive factor={0}
               src="/assets/enobra/bienes-raices.jpg"
               alt="Vivienda contemporánea ilustrativa"
               loading="lazy"

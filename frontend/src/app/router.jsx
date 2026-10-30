@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import { AdminLayout } from '../components/layout/AdminLayout.jsx';
 import { SiteLayout } from '../components/layout/SiteLayout.jsx';
 import { PendingPage } from '../features/shared/pages/PendingPage.jsx';
+import { NotFoundPage } from '../features/shared/pages/NotFoundPage.jsx';
 import { routePaths } from './routePaths.js';
 import { HomePage } from '../features/home/pages/HomePage.jsx';
 import { AboutPage } from '../features/about/pages/AboutPage.jsx';
@@ -64,7 +65,7 @@ export const router = createBrowserRouter([
         path,
         element: element ?? <PendingPage title={title} owner={owner} />,
       })),
-      { path: '*', element: <PendingPage title="Página no encontrada" /> },
+      { path: '*', element: <NotFoundPage /> },
     ],
   },
   {

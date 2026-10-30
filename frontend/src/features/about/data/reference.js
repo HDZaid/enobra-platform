@@ -33,3 +33,9 @@ export const reference = {
     },
   ],
 };
+
+// Video externo de muestra, sustituible por el institucional cuando esté disponible.
+export const aboutVideo = {
+  url: 'https://youtu.be/AJFkU1bC3C0',
+  title: 'Video de referencia para Nosotros',
+};

@@ -134,7 +134,7 @@ export function AdminNewsPage() {
   return (
     <section>
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <div><p className="text-sm text-[#626b79]">Contenido del sitio</p><h2 className="mt-1 font-['Outfit',Arial,sans-serif] text-[30px] font-semibold">Noticias y eventos</h2><p className="mt-2 max-w-[640px] text-sm text-[#626b79]">Crea, edita y organiza publicaciones. Puedes publicar una noticia o regresarla a borrador sin abrir el editor.</p></div>
+        <div><p className="text-sm text-[#626b79]">Contenido del sitio</p><h2 className="mt-1 font-['Montserrat',Arial,sans-serif] text-[30px] font-semibold">Noticias y eventos</h2><p className="mt-2 max-w-[640px] text-sm text-[#626b79]">Crea, edita y organiza publicaciones. Puedes publicar una noticia o regresarla a borrador sin abrir el editor.</p></div>
         {actions.createNews && <button type="button" onClick={() => { setEditing(null); setNotice(''); }} className="inline-flex items-center gap-2 rounded-lg bg-[#ff6a1f] px-5 py-3 text-sm font-semibold text-white hover:bg-[#b94308]"><Plus size={18}/> Añadir noticia</button>}
       </div>
       {preview && <p role="status" className="mt-5 rounded-lg border border-[#f4cfae] bg-[#fff1e5] p-4 text-sm text-[#88420d]">Modo de prueba: puedes crear, editar y eliminar noticias ficticias en memoria. No se publicarán en el sitio y los cambios desaparecerán al recargar.</p>}

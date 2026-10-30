@@ -66,7 +66,7 @@ export function AdminUserEditor({ roles, preview, onClose, onCreate }) {
     className="fixed inset-0 m-auto max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-[680px] overflow-y-auto rounded-2xl border-0 bg-white p-0 text-[#12233f] shadow-2xl backdrop:bg-[#09172b]/70">
     <div className="flex items-start justify-between gap-4 border-b border-[#dfe5ec] px-6 py-5 sm:px-8">
       <div><span className="text-[10px] font-bold tracking-[.16em] text-[#b94308] uppercase">Administración de accesos</span>
-        <h2 id="user-editor-title" className="mt-1 font-['Outfit',Arial,sans-serif] text-2xl font-semibold">Crear usuario</h2>
+        <h2 id="user-editor-title" className="mt-1 font-['Montserrat',Arial,sans-serif] text-2xl font-semibold">Crear usuario</h2>
         <p id="user-editor-description" className="mt-2 text-sm text-[#626b79]">Completa los datos y asigna un rol a la nueva cuenta.</p></div>
       <button type="button" disabled={busy} onClick={onClose} aria-label="Cerrar formulario" className="rounded-lg p-2 text-[#626b79] hover:bg-[#f3f6fa] disabled:opacity-40"><X size={20}/></button>
     </div>

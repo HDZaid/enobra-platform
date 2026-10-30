@@ -53,7 +53,7 @@ export function AdminDashboardPage() {
     <div>
       <section className="rounded-2xl bg-gradient-to-br from-[#12233f] to-[#304e7d] p-7 text-white sm:p-9">
         <p className="text-[11px] font-bold tracking-[.17em] text-[#ffab7d] uppercase">EnObra · Panel de control{!preview && ` · ${profile.label}`}</p>
-        <h2 className="mt-4 font-['Outfit',Arial,sans-serif] text-[clamp(30px,4vw,44px)] font-semibold leading-tight">Tu contenido,<br/>en un solo lugar.</h2>
+        <h2 className="mt-4 font-['Montserrat',Arial,sans-serif] text-[clamp(30px,4vw,44px)] font-semibold leading-tight">Tu contenido,<br/>en un solo lugar.</h2>
         <p className="mt-4 max-w-[640px] text-sm leading-relaxed text-white/75">{intro}</p>
         {(canNews || canInbox) && <div className="mt-7 flex flex-wrap gap-3">
           {canNews && <Link to={routePaths.adminNews} className="inline-flex items-center gap-2 rounded-lg bg-[#ff6a1f] px-5 py-3 text-sm font-semibold text-white hover:bg-[#b94308]"><Newspaper size={17}/> Gestionar noticias</Link>}
@@ -63,13 +63,13 @@ export function AdminDashboardPage() {
       {warning && <p role="status" className="mt-5 rounded-lg border border-[#f4cfae] bg-[#fff1e5] px-4 py-3 text-sm text-[#88420d]">{warning}</p>}
       <section aria-label="Indicadores" className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
         {visibleStats.map(({ key, label, icon: Icon, link }, index) => {
-          const content = <><Icon size={23} className="text-[#304e7d]" aria-hidden="true"/><span className="mt-3 block font-['Outfit',Arial,sans-serif] text-[30px] font-semibold">{displayAdminCount(values[key])}</span><span className="block text-xs text-[#626b79]">{label}</span></>;
+          const content = <><Icon size={23} className="text-[#304e7d]" aria-hidden="true"/><span className="mt-3 block font-['Montserrat',Arial,sans-serif] text-[30px] font-semibold">{displayAdminCount(values[key])}</span><span className="block text-xs text-[#626b79]">{label}</span></>;
           const cls = `rounded-xl border-l-4 bg-white p-5 text-left shadow-sm ${index % 2 ? 'border-[#ff6a1f]' : 'border-[#304e7d]'}`;
           return link ? <Link key={key} to={link} className={`${cls} transition-shadow hover:shadow-md`}>{content}</Link> : <div key={key} className={cls}>{content}</div>;
         })}
       </section>
       {visibleSteps.length > 0 && <section className="mt-6 rounded-xl bg-white p-6 shadow-sm">
-        <h3 className="font-['Outfit',Arial,sans-serif] text-xl font-semibold">Próximos pasos</h3>
+        <h3 className="font-['Montserrat',Arial,sans-serif] text-xl font-semibold">Próximos pasos</h3>
         <div className="mt-5 grid gap-4 md:grid-cols-3">
           {visibleSteps.map(({ title, description, link }, index) => <div key={title} className="rounded-lg bg-[#f3f6fa] p-5"><span className="flex size-8 items-center justify-center rounded-full bg-[#ff6a1f] text-xs font-bold text-white">{String(index + 1).padStart(2, '0')}</span><h4 className="mt-4 font-semibold">{title}</h4><p className="mt-2 text-sm leading-relaxed text-[#626b79]">{description}</p>{link && <Link to={link} className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-[#b94308]">Abrir <ArrowRight size={15}/></Link>}</div>)}
         </div>

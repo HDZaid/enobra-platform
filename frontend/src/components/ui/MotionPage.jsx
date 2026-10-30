@@ -14,20 +14,24 @@ export function MotionPage({ title, children }) {
       return;
     const animations = [];
     const observer = new IntersectionObserver(
-      (entries) =>
+      (entries) => {
+        // Elements revealed in the same pass cascade 60 ms apart instead of landing at once.
+        let order = 0;
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
+          const delay = Math.min(order++, 4) * 60;
           animations.push(
             entry.target.animate(
               [
-                { opacity: 0, transform: 'translateY(24px)' },
+                { opacity: 0, transform: 'translateY(20px)' },
                 { opacity: 1, transform: 'translateY(0)' },
               ],
-              { duration: 700, easing: 'cubic-bezier(.2,.7,.2,1)' },
+              { duration: 600, delay, easing: 'cubic-bezier(.23,1,.32,1)', fill: 'backwards' },
             ),
           );
           observer.unobserve(entry.target);
-        }),
+        });
+      },
       { threshold: 0.12 },
     );
     ref.current

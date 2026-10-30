@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { ImageOff } from 'lucide-react';
+import { ImageFallback } from '../../../components/ui/SafeImage.jsx';
 
 // Receives a resolved image URL, independent of the Storage provider.
 // The parent supplies key={url || item.id} so a changed image can be retried.
-export function NewsImage({ src, alt, className = '' }) {
+export function NewsImage({ src, alt, className = '', children }) {
   const [failed, setFailed] = useState(false);
 
   return (
@@ -18,14 +18,13 @@ export function NewsImage({ src, alt, className = '' }) {
           className="h-full w-full object-cover"
         />
       ) : (
-        <div
-          role="img"
-          aria-label={`Imagen no disponible: ${alt}`}
-          className="flex h-full min-h-[140px] w-full items-center justify-center text-[#626b79]"
-        >
-          <ImageOff size={38} strokeWidth={1.5} aria-hidden="true" />
-        </div>
+        <ImageFallback
+          alt={alt}
+          className="flex h-full min-h-[140px] w-full flex-col items-center justify-center gap-2 text-[13px] text-[#626b79]"
+          message={src ? 'No se pudo cargar la imagen' : 'Imagen no disponible'}
+        />
       )}
+      {children}
     </div>
   );
 }

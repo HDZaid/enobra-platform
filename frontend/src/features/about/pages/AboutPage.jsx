@@ -1,34 +1,50 @@
 import { Link } from 'react-router-dom';
+import { SafeImage } from '../../../components/ui/SafeImage.jsx';
 import { MotionPage } from '../../../components/ui/MotionPage.jsx';
 import { ContentStatus } from '../../../components/ui/ContentStatus.jsx';
 import { useReferenceResource } from '../../../components/ui/useReferenceResource.js';
 import { institutionService } from '../services/institutionService.js';
-import { reference } from '../data/reference.js';
+import { parseYoutube } from '../../projects/services/catalogMapper.js';
+import { reference, aboutVideo } from '../data/reference.js';
+import { AshlarRule, HeaderOrnament, ImageLines } from '../../../components/ui/ColonialOrnaments.jsx';
 export function AboutPage() {
   const resource = useReferenceResource(institutionService.get, reference);
   const { data } = resource;
+  const video = parseYoutube(aboutVideo.url);
   return (
     <MotionPage title="Quiénes somos">
-      <section className="page-intro">
-        <div className="container">
+      <section className="page-intro enobra-intro">
+        <div className="container enobra-intro-copy">
           <Link to="/" className="breadcrumb">
-            Inicio / NOSOTROS
+            Inicio / Nosotros
           </Link>
-          <p className="eyebrow">NOSOTROS</p>
           <h1>
             Profesionalismo que
             <br />
             construye confianza.
           </h1>
         </div>
+        <HeaderOrnament variant="fachada" />
       </section>
+      {video && <figure className="container about-video-reference mb-0 mt-0">
+        <div className="aspect-video overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--navy)]">
+          <iframe className="h-full w-full border-0" src={video.embedUrl} title={aboutVideo.title}
+            loading="lazy" allow="encrypted-media; picture-in-picture" allowFullScreen
+            referrerPolicy="strict-origin-when-cross-origin"
+            sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox" />
+        </div>
+        <figcaption className="mt-3 text-sm text-[var(--text-secondary)]">Video de referencia · Próximamente, el video institucional de EnObra.</figcaption>
+      </figure>}
       <section className="section container institutional">
         <aside>
-          <img
-            src="/assets/enobra/casa-lujo.png"
-            alt="Vivienda de arquitectura contemporánea"
-            loading="lazy"
-          />
+          <div className="image-lines-host">
+            <SafeImage
+              src="/assets/enobra/casa-lujo.png"
+              alt="Vivienda de arquitectura contemporánea"
+              loading="lazy"
+            />
+            <ImageLines variant="frame" />
+          </div>
           <blockquote>“Más que una construcción, un hogar”.</blockquote>
           <Link className="text-link" to="/contacto">
             Conversemos →
@@ -71,6 +87,7 @@ export function AboutPage() {
       <section className="section container">
         <p className="eyebrow">PRINCIPIOS CORPORATIVOS</p>
         <h2>Lo que guía nuestro trabajo.</h2>
+        <AshlarRule className="principles-rule" />
         <div id="principles" className="principles-grid">
           {data.principles.map((principle, i) => (
             <article key={i}>

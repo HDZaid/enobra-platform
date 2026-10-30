@@ -36,9 +36,9 @@ export function AdminLoginPage() {
       <div className="w-full max-w-[440px] rounded-2xl bg-white px-6 py-9 text-[#12233f] shadow-[0_30px_80px_#0005] sm:px-10">
         <Link to="/" className="inline-flex items-center gap-2 text-xs text-[#626b79] hover:text-[#b94308]"><ArrowLeft size={15}/> Volver al sitio</Link>
         <div className="mt-6 text-center">
-          <p className="font-['Outfit',Arial,sans-serif] text-[38px] font-bold">En<span className="text-[#ff6a1f]">Obra</span></p>
+          <p className="font-['Montserrat',Arial,sans-serif] text-[38px] font-bold">En<span className="text-[#ff6a1f]">Obra</span></p>
           <p className="mt-3 text-[11px] font-bold tracking-[.16em] text-[#b94308] uppercase">Administración</p>
-          <h1 className="mt-3 font-['Outfit',Arial,sans-serif] text-[28px] font-semibold">Acceso al panel</h1>
+          <h1 className="mt-3 font-['Montserrat',Arial,sans-serif] text-[28px] font-semibold">Acceso al panel</h1>
           <p className="mt-2 text-sm leading-relaxed text-[#626b79]">Ingresa con las credenciales que te proporcione la empresa.</p>
         </div>
         <form onSubmit={submit} className="mt-8 space-y-5">

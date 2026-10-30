@@ -1,18 +1,15 @@
 import { useState } from 'react';
-import { ImageOff } from 'lucide-react';
+import { ImageFallback } from '../../../components/ui/SafeImage.jsx';
 
 export function CatalogImage({ src, alt, ...props }) {
   const [failed, setFailed] = useState(null);
   if (!src || failed === src)
     return (
-      <div
+      <ImageFallback
+        alt={alt}
         className="geo-image-fallback"
-        role="img"
-        aria-label={`${alt || 'Fotografía'}: imagen no disponible`}
-      >
-        <ImageOff aria-hidden="true" />
-        <span>Imagen no disponible</span>
-      </div>
+        message={src ? 'No se pudo cargar la imagen' : 'Imagen no disponible'}
+      />
     );
   return <img {...props} src={src} alt={alt} onError={() => setFailed(src)} />;
 }

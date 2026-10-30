@@ -5,9 +5,9 @@ export function ServiceIndex({ services }) {
     <nav className="service-index-nav" aria-label="Índice de servicios">
       <div className="container">
         {services.map((service, index) => (
-          <a key={service.id} href={`#${encodeURIComponent(service.id)}`}>
+          <a className={service.id === 'administracion' ? 'service-index-administration' : undefined} key={service.id} href={`#${encodeURIComponent(service.id)}`}>
             <span>{String(index + 1).padStart(2, '0')}</span>
-            {service.id === 'administracion' ? 'Administración' : service.title}
+            {service.title}
           </a>
         ))}
       </div>

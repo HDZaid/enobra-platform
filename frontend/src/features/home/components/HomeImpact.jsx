@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { ImageLines } from '../../../components/ui/ColonialOrnaments.jsx';
 import { ParallaxImage } from '../../../components/ui/ParallaxImage.jsx';
 
 export function HomeImpact() {
@@ -14,6 +15,7 @@ export function HomeImpact() {
         height="1200"
       />
       <div className="impact-overlay"></div>
+      <ImageLines variant="arcade" />
       <div className="container impact-content">
         <p className="eyebrow">PROFESIONALISMO · CALIDAD · FUNCIONALIDAD</p>
         <h2>

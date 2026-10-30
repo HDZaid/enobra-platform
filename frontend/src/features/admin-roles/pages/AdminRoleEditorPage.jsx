@@ -97,7 +97,7 @@ function RoleEditor({ id, context }) {
   return <section>
     <Link to={routePaths.adminRoles} className="inline-flex items-center gap-2 text-sm font-semibold text-[#304e7d] hover:underline"><ArrowLeft size={16}/> Volver a roles</Link>
     <div className="mt-4"><p className="text-sm text-[#626b79]">Administración de accesos</p>
-      <h2 className="mt-1 font-['Outfit',Arial,sans-serif] text-[30px] font-semibold">{id ? (canManage ? 'Editar rol' : 'Consultar rol') : 'Crear rol'}</h2>
+      <h2 className="mt-1 font-['Montserrat',Arial,sans-serif] text-[30px] font-semibold">{id ? (canManage ? 'Editar rol' : 'Consultar rol') : 'Crear rol'}</h2>
       <p className="mt-2 text-sm text-[#626b79]">{resource.role?.name || 'Configura el nombre, el estado y los permisos del rol.'}</p></div>
     {preview ? <p role="status" className="mt-6 rounded-lg bg-[#fff1e5] p-5 text-sm text-[#88420d]">Inicia sesión con una cuenta autorizada para consultar y modificar los roles reales.</p> : resource.loading ? <RoleLoading/> : resource.error ? <RoleError message={resource.error} retry={() => setRevision((value) => value + 1)}/> : <>
       {notice && <p role="status" aria-live="polite" className="mt-5 rounded-lg border border-[#bce0ce] bg-[#eaf6ef] p-4 text-sm text-[#1f704a]">{notice}</p>}

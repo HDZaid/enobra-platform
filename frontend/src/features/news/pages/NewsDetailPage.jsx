@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { loadNewsDetail } from '../services/publicNewsSource.js';
 import { newsImageUrl } from '../services/newsMapper.js';
+import { StatusDrawing } from '../../../components/ui/ColonialOrnaments.jsx';
 import { NewsImage } from '../components/NewsImage.jsx';
 import { formatNewsDate } from '../utils/newsDate.js';
 import '../styles/news-fonts.css';
@@ -41,10 +42,11 @@ export function NewsDetailPage() {
         {loading ? (
           <p role="status" aria-live="polite">Cargando publicación…</p>
         ) : state.error ? (
-          <div role="alert" className="rounded-lg border border-[#f0b8b8] bg-[#fff7f7] p-5 text-sm text-[#a22a20]"><p>{state.error}</p><button type="button" onClick={() => { setState((current) => ({ ...current, slug: null })); setRetryIndex((current) => current + 1); }} className="mt-3 border border-[#a22a20] px-4 py-2 font-semibold">Volver a intentar</button></div>
+          <div role="alert" className="flex flex-wrap items-center gap-x-8 gap-y-4 rounded-lg border border-[#f0b8b8] bg-[#fff7f7] p-5 text-sm text-[#a22a20]"><StatusDrawing variant="error" className="text-[#12233f]" /><div><p>{state.error}</p><button type="button" onClick={() => { setState((current) => ({ ...current, slug: null })); setRetryIndex((current) => current + 1); }} className="mt-3 border border-[#a22a20] px-4 py-2 font-semibold">Volver a intentar</button></div></div>
         ) : !state.item ? (
           <>
-            <h1 className="font-['Outfit',Arial,sans-serif] text-4xl font-bold">Publicación no encontrada</h1>
+            <StatusDrawing variant="notfound" className="mb-6 text-[#12233f]" />
+            <h1 className="font-['Montserrat',Arial,sans-serif] text-4xl font-bold">Publicación no encontrada</h1>
             <Link to="/noticias" className="mt-6 inline-flex items-center gap-2 font-bold text-[#b94308]">
               Ver noticias <ArrowRight size={18} aria-hidden="true" />
             </Link>
@@ -57,7 +59,7 @@ export function NewsDetailPage() {
             <p className="mb-4 text-xs font-bold tracking-[0.19em] text-[#b94308] uppercase">
               {state.item.category} · {formatNewsDate(state.item.date)}{state.item.demo ? ' · REFERENCIA' : ''}
             </p>
-            <h1 className="max-w-[950px] font-['Outfit',Arial,sans-serif] text-[clamp(36px,5vw,64px)] leading-[1.1] font-bold tracking-[-0.035em]">
+            <h1 className="max-w-[950px] font-['Montserrat',Arial,sans-serif] text-[clamp(36px,5vw,64px)] leading-[1.1] font-bold tracking-[-0.02em]">
               {state.item.title}
             </h1>
             <NewsImage

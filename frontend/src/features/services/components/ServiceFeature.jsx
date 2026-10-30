@@ -1,6 +1,11 @@
+import { Zap, Droplets, Settings, MapPinned, Ruler, HardHat, Package, Truck, Users, Wallet, CalendarDays, ChartNoAxesCombined, GitCompareArrows, MessageSquare, ClipboardCheck } from 'lucide-react';
+import { serviceIconName } from '../utils/serviceIcons.js';
 import { Link } from 'react-router-dom';
 import { ParallaxImage } from '../../../components/ui/ParallaxImage.jsx';
+import { ImageLines } from '../../../components/ui/ColonialOrnaments.jsx';
 import { mediaUrl } from '../../../components/ui/resourceValidation.js';
+
+const icons = { Zap, Droplets, Settings, MapPinned, Ruler, HardHat, Package, Truck, Users, Wallet, CalendarDays, ChartNoAxesCombined, GitCompareArrows, MessageSquare, ClipboardCheck };
 
 export function ServiceFeature({ service, index }) {
   const number = String(index + 1).padStart(2, '0');
@@ -21,6 +26,7 @@ export function ServiceFeature({ service, index }) {
             loading="lazy"
             decoding="async"
           />
+          <ImageLines variant="frame" />
         </div>
         <span className="service-image-caption">ENOBRA · SERVICIO {number}</span>
       </div>
@@ -35,9 +41,10 @@ export function ServiceFeature({ service, index }) {
         <div className="service-scope">
           <p>ALCANCE DEL SERVICIO</p>
           <ul>
-            {service.items.map((item, index) => (
-              <li key={index}>{item}</li>
-            ))}
+            {service.items.map((item, index) => {
+              const Icon = icons[serviceIconName(item)];
+              return <li key={index}><Icon size={18} strokeWidth={1.75} aria-hidden="true" className="service-item-icon shrink-0" /><span>{item}</span></li>;
+            })}
           </ul>
         </div>
         <Link

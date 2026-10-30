@@ -19,7 +19,13 @@ export function Navbar({ open = false, footer = false, onNavigate }) {
       aria-label={footer ? 'Navegación del pie' : 'Navegación principal'}
     >
       {links.map(([key, title]) => (
-        <NavLink key={key} to={routePaths[key]} end={key === 'home'} onClick={onNavigate}>
+        <NavLink
+          key={key}
+          to={routePaths[key]}
+          end={key === 'home'}
+          onClick={onNavigate}
+          viewTransition
+        >
           {title}
         </NavLink>
       ))}

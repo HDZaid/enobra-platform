@@ -1,10 +1,16 @@
 import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { StatusDrawing } from '../../../components/ui/ColonialOrnaments.jsx';
+import { useSignage } from '../../../components/ui/signage.js';
 
 export function CatalogStatus({ resource, notFound = 'Contenido no encontrado' }) {
+  const signage = useSignage();
   if (resource.status === 'ready') return null;
   const missing = resource.error?.status === 404;
   return (
     <div className="geo-status" role="status" aria-live="polite">
+      {signage && resource.status === 'error' && (
+        <StatusDrawing variant={missing ? 'notfound' : 'error'} />
+      )}
       <h2>
         {resource.status === 'loading'
           ? 'Cargando…'

@@ -113,7 +113,7 @@ export function AdminInboxPage() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-sm text-[#626b79]">Comunicación</p>
-          <h2 className="mt-1 font-['Outfit',Arial,sans-serif] text-[30px] font-semibold">Solicitudes recibidas</h2>
+          <h2 className="mt-1 font-['Montserrat',Arial,sans-serif] text-[30px] font-semibold">Solicitudes recibidas</h2>
           <p className="mt-2 max-w-[670px] text-sm leading-relaxed text-[#626b79]">Consultas de Contacto y solicitudes de visitas. Revisa los detalles y da seguimiento a cada mensaje.</p>
         </div>
         {!preview && <button type="button" onClick={reload} className="rounded-lg border border-[#dfe5ec] bg-white px-4 py-2.5 text-sm font-semibold hover:bg-[#f3f6fa]">Actualizar bandeja</button>}

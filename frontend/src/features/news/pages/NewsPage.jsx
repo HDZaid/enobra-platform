@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { HeaderOrnament, StatusDrawing } from '../../../components/ui/ColonialOrnaments.jsx';
 import { NewsCard } from '../components/NewsCard.jsx';
 import { loadNewsPage } from '../services/publicNewsSource.js';
 import { NEWS_CATEGORIES, nextNewsQuery, validNewsCategory } from '../utils/newsFilters.js';
@@ -40,26 +41,25 @@ export function NewsPage() {
 
   return (
     <div className="min-h-[70vh] bg-white font-['Inter',Arial,sans-serif] text-[#12233f]">
-      <section className="relative overflow-hidden border-b border-[#dfe5ec] bg-[#f6f5f2] py-12 md:py-[70px] lg:pb-[88px]">
-        <div className={`${container} relative z-10`}>
-          <Link to="/" className="text-[13px] text-[#626b79] hover:text-[#b94308] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ff6a1f]">
-            Inicio / NOTICIAS Y EVENTOS
+      <section className="enobra-intro relative overflow-hidden border-b border-[#dfe5ec] bg-[#f6f5f2] py-12 md:py-[70px] lg:pb-[88px]">
+        <div className={`${container} enobra-intro-copy relative z-10`}>
+          <Link to="/" className="inline-block mb-7 text-[13px] text-[#626b79] hover:text-[#b94308] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ff6a1f]">
+            Inicio / Noticias y eventos
           </Link>
-          <p className="mt-7 mb-[18px] text-xs font-bold tracking-[0.19em] text-[#b94308]">NOTICIAS Y EVENTOS</p>
-          <h1 className="max-w-[950px] font-['Outfit',Arial,sans-serif] text-[clamp(37px,7vw,70px)] leading-[1.01] font-bold tracking-[-0.052em]">
+          <h1 className="max-w-[950px] font-['Montserrat',Arial,sans-serif] text-[clamp(32px,4.4vw,60px)] leading-[1.05] font-bold tracking-[-0.03em]">
             Un espacio para<br />las novedades.
           </h1>
           <p className="mt-[22px] max-w-[650px] leading-[1.8] text-[#626b79]">
             Anuncios, nuevos proyectos y eventos comerciales.
           </p>
         </div>
-        <div aria-hidden="true" className="pointer-events-none absolute -top-1/3 -right-[10%] h-[170%] w-1/2 -skew-x-12 border-l border-[#12233f]/10" />
+        <HeaderOrnament variant="roseton" />
       </section>
 
       <section className={`${container} py-15 md:py-18 lg:py-24`} aria-label="Publicaciones">
         <div className="mb-7 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="font-['Outfit',Arial,sans-serif] text-2xl font-semibold">Publicaciones</h2>
+            <h2 className="font-['Montserrat',Arial,sans-serif] text-2xl font-semibold">Publicaciones</h2>
             <p className="mt-1 text-sm text-[#626b79]">Explora las novedades por categoría.</p>
           </div>
           <label className="flex items-center gap-3 text-sm font-semibold text-[#304057]">
@@ -79,7 +79,7 @@ export function NewsPage() {
         {loading ? (
           <p role="status" aria-live="polite" className="text-[#626b79]">Cargando noticias…</p>
         ) : state.error ? (
-          <div role="alert" className="rounded-lg border border-[#f0b8b8] bg-[#fff7f7] p-5 text-sm text-[#a22a20]"><p>{state.error}</p><button type="button" onClick={() => { setState((current) => ({ ...current, page: null })); setRetryIndex((current) => current + 1); }} className="mt-3 border border-[#a22a20] px-4 py-2 font-semibold">Volver a intentar</button></div>
+          <div role="alert" className="flex flex-wrap items-center gap-x-8 gap-y-4 rounded-lg border border-[#f0b8b8] bg-[#fff7f7] p-5 text-sm text-[#a22a20]"><StatusDrawing variant="error" className="text-[#12233f]" /><div><p>{state.error}</p><button type="button" onClick={() => { setState((current) => ({ ...current, page: null })); setRetryIndex((current) => current + 1); }} className="mt-3 border border-[#a22a20] px-4 py-2 font-semibold">Volver a intentar</button></div></div>
         ) : state.items.length === 0 ? (
           <div className="rounded-lg border border-[#dfe5ec] p-6 text-[#626b79]"><p>No hay publicaciones en esta categoría o página por el momento.</p><button type="button" onClick={() => setParams((previous) => nextNewsQuery(previous, { category: '', page: 1 }))} className="mt-3 text-sm font-semibold text-[#b94308] underline">Ver todas las noticias</button></div>
         ) : (

@@ -120,7 +120,7 @@ export function AdminNewsEditor({ item, preview, token, canPublish = false, onCl
         <div className="flex items-start justify-between gap-3 border-b border-[#dfe5ec] px-6 py-5">
           <div>
             <p className="text-xs font-semibold tracking-widest text-[#b94308] uppercase">Administración · Noticias</p>
-            <h3 id="news-editor-title" className="mt-1 font-['Outfit',Arial,sans-serif] text-2xl font-semibold">{item ? 'Editar noticia' : 'Nueva noticia'}</h3>
+            <h3 id="news-editor-title" className="mt-1 font-['Montserrat',Arial,sans-serif] text-2xl font-semibold">{item ? 'Editar noticia' : 'Nueva noticia'}</h3>
             <p className="mt-1 text-xs text-[#626b79]">Los campos marcados con * son obligatorios.</p>
           </div>
           <button type="button" onClick={requestClose} disabled={submitting} aria-label="Cerrar editor" className="rounded-lg p-2 hover:bg-[#f3f6fa] disabled:opacity-50"><X size={21}/></button>
@@ -163,7 +163,7 @@ export function AdminNewsEditor({ item, preview, token, canPublish = false, onCl
             </button>
             {showPreview && <div id="news-live-preview" className="p-4 sm:p-5">
               <p className="text-[11px] font-bold tracking-[.12em] text-[#b94308] uppercase">{previewData.category} · {formatNewsDate(previewData.date)}</p>
-              <h4 className="mt-2 font-['Outfit',Arial,sans-serif] text-[clamp(23px,4vw,32px)] font-semibold leading-tight break-words">{previewData.title}</h4>
+              <h4 className="mt-2 font-['Montserrat',Arial,sans-serif] text-[clamp(23px,4vw,32px)] font-semibold leading-tight break-words">{previewData.title}</h4>
               <div className="mt-4 flex aspect-[2/1] max-h-64 items-center justify-center overflow-hidden rounded-lg bg-[#f3f6fa]">{previewData.image ? <img src={previewData.image} alt="Portada de la publicación" className="h-full w-full object-cover"/> : <ImagePlus size={30} className="text-[#8895a7]"/>}</div>
               <p className="mt-4 max-h-56 overflow-auto whitespace-pre-line break-words text-sm leading-relaxed text-[#626b79]">{previewData.description}</p>
               <p className="mt-3 text-xs text-[#626b79]">Vista de edición. No representa una publicación real hasta que Django confirme el guardado.</p>
