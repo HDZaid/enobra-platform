@@ -583,8 +583,15 @@
 }
 .leo-page .service-scope li::before { display: none; }
 .leo-page .service-item-icon { flex: 0 0 18px; margin-top: 3px; color: var(--orange-text); }
-.leo-site[data-page='index'] .hero { aspect-ratio: 16 / 9; }
+/* La altura mínima del hero no debe convertir el ratio en un ancho mayor al viewport. */
+.leo-site[data-page='index'] .hero { width: 100%; aspect-ratio: 16 / 9; }
 .leo-site[data-page='index'] .home-about-visual .image-frame { aspect-ratio: 3 / 4; }
+@media (max-width: 1024px) {
+  .leo-site[data-page='index'] .hero { aspect-ratio: auto; }
+}
+@media (max-width: 768px) {
+  .leo-site[data-page='index'] .hero > img { object-position: 60% center; }
+}
 @media (max-width: 760px) {
   .leo-page .service-index-nav .container:has(.service-index-administration) {
     grid-template-columns: minmax(150px, 1fr) minmax(210px, 1.4fr) repeat(2, minmax(150px, 1fr));
