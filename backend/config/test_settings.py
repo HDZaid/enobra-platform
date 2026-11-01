@@ -8,3 +8,8 @@ TEST_RUNNER = "tests.runner.ExistingTablesTestRunner"
 ALLOWED_HOSTS = ["testserver", "localhost"]
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 INQUIRY_NOTIFY_EMAILS = []
+# Las pruebas jamás escriben en R2 aunque el desarrollador lo tenga activado.
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+}

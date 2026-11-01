@@ -144,6 +144,7 @@ Consulta [la documentación del backend](backend/README.md),
 Somos seis integrantes (tres de backend y tres de frontend), coordinados mediante
 contratos. Consulta las [reglas y responsables](docs/reglas-desarrollo.md) y la
 [propuesta de infraestructura](docs/infraestructura.md): Cloudflare Pages para el
-frontend con dominio `.gt` y Render para Django. El proveedor de fotos/renders sigue
-pendiente; Cloudflare R2 es solo una propuesta.
+frontend con dominio `.gt` y Render para Django. Cloudflare R2 fue elegido para
+fotos/renders el 1 de noviembre: conexión de lectura comprobada y configuración
+preparada; dominio público y activación pendientes. Véase [configuración R2](docs/R2-configuracion.md).
 Las asignaciones no restringen las contribuciones y todos los acuerdos están sujetos a cambios.

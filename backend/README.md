@@ -312,3 +312,14 @@ transacción PostgreSQL de solo lectura; no crea ni altera tablas y no cambia el
 arranque normal de runserver. Los errores muestran origen de configuración y
 sugerencias sin incluir la contraseña ni DSN. Esta comprobación no valida datos de
 negocio, todos los tipos/constraints ni sustituye las pruebas de la aplicación.
+
+## Imágenes en Cloudflare R2
+
+R2 se configura mediante variables privadas del hosting o `backend/.env.r2`
+(excluido de Git). `R2_ENABLED=false` conserva el almacenamiento local. Para
+activar R2 se requieren credenciales y `R2_PUBLIC_HOST`, el dominio público de
+imágenes ya conectado al bucket. El endpoint `/api/v1/admin/media/` conserva sus
+permisos, validaciones y respuesta. Ver [configuración y pendientes de R2](../docs/R2-configuracion.md).
+
+`python manage.py check_r2` comprueba lectura autenticada sin subir/borrar archivos
+y sin mostrar secretos, incluso antes de configurar el dominio público.

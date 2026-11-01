@@ -14,6 +14,8 @@ ramas, cifras de pruebas, pendientes y qué documentos son históricos.
 - [Infraestructura](infraestructura.md): PostgreSQL en Supabase como decisión y propuestas
   todavía pendientes para despliegue y almacenamiento de imágenes (entre ellas R2).
 - [Contrato OpenAPI](openapi.yaml): referencia HTTP para backend y frontend.
+- [Cloudflare R2](R2-configuracion.md): credenciales privadas, diagnóstico de conexión,
+  activación por dominio y pendientes de persistencia en producción.
 - [Roles y permisos (RBAC)](RBAC.md): los 32 permisos, roles predeterminados, seed, matriz rol × endpoint y cómo agregar un permiso (BE-11).
 - [Arquitectura del backend](arquitectura.md): interfaces, registro, `bindings.py` y la fábrica de publicaciones; cómo agregar un tipo (BE-11).
 - [ADR 0001: roles en la base de datos](adr/0001-rbac-por-datos.md): por qué los roles son datos y la fábrica solo se usa para publicaciones (BE-11).
