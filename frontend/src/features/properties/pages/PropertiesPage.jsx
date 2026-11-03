@@ -173,7 +173,7 @@ export function PropertiesPage() {
               <br />
               para tu próximo capítulo.
             </h1>
-            <p>
+            <p className="informative-copy">
               Compra, venta y alquiler. Un catálogo independiente para encontrar tu próxima
               propiedad.
             </p>

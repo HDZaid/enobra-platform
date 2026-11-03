@@ -6,7 +6,6 @@ export function HomeHero() {
     <section id="inicio" className="hero">
       <ParallaxImage
         factor={0.055}
-        adaptive
         src="/assets/enobra/apartamento.jpg"
         alt="Casa contemporánea con ventanales amplios, jardín e iluminación cálida"
         fetchpriority="high"

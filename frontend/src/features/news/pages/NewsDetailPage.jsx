@@ -68,7 +68,7 @@ export function NewsDetailPage() {
               alt={state.item.title}
               className="my-9 aspect-[2/1] max-h-[550px] w-full"
             />
-            <p className="max-w-[850px] leading-[1.9] whitespace-pre-line text-[#626b79]">{state.item.description}</p>
+            <p className="informative-copy max-w-[850px] leading-[1.9] whitespace-pre-line text-[#626b79]">{state.item.description}</p>
           </>
         )}
       </article>

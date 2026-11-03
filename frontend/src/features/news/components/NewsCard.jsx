@@ -25,7 +25,7 @@ export function NewsCard({ item }) {
         <h2 className="font-['Montserrat',Arial,sans-serif] text-[25px] leading-[1.16] font-semibold tracking-[-0.02em]">
           {item.title}
         </h2>
-        <p className="mt-4 leading-[1.8] text-[#626b79]">{summary}</p>
+        <p className="informative-copy mt-4 leading-[1.8] text-[#626b79]">{summary}</p>
         <span className="mt-5 inline-flex items-center gap-3 text-sm font-bold text-[#b94308]">
           Leer más <ArrowRight size={18} aria-hidden="true" className="transition-transform group-hover:translate-x-1" />
         </span>

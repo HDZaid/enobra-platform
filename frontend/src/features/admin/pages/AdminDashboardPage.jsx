@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
-import { ArrowRight, FileText, Mail, Newspaper, Plus, Building2 } from 'lucide-react';
+import { ArrowRight, FileText, Mail, Newspaper, Building2 } from 'lucide-react';
 import { routePaths } from '../../../app/routePaths.js';
 import { loadDashboardCounts } from '../utils/dashboard.js';
 import { adminRoleProfile, canAccessAdminSection, displayAdminCount } from '../utils/adminData.js';
@@ -73,7 +73,6 @@ export function AdminDashboardPage() {
         <div className="mt-5 grid gap-4 md:grid-cols-3">
           {visibleSteps.map(({ title, description, link }, index) => <div key={title} className="rounded-lg bg-[#f3f6fa] p-5"><span className="flex size-8 items-center justify-center rounded-full bg-[#ff6a1f] text-xs font-bold text-white">{String(index + 1).padStart(2, '0')}</span><h4 className="mt-4 font-semibold">{title}</h4><p className="mt-2 text-sm leading-relaxed text-[#626b79]">{description}</p>{link && <Link to={link} className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-[#b94308]">Abrir <ArrowRight size={15}/></Link>}</div>)}
         </div>
-        {canNews && <p className="mt-5 flex items-center gap-2 text-xs text-[#626b79]"><Plus size={15}/> En vista previa los cambios no se guardan. Las imágenes reales se suben mediante el endpoint de medios de Django.</p>}
       </section>}
     </div>
   );

@@ -49,7 +49,7 @@ export function NewsPage() {
           <h1 className="max-w-[950px] font-['Montserrat',Arial,sans-serif] text-[clamp(32px,4.4vw,60px)] leading-[1.05] font-bold tracking-[-0.03em]">
             Un espacio para<br />las novedades.
           </h1>
-          <p className="mt-[22px] max-w-[650px] leading-[1.8] text-[#626b79]">
+          <p className="informative-copy mt-[22px] max-w-[650px] leading-[1.8] text-[#626b79]">
             Anuncios, nuevos proyectos y eventos comerciales.
           </p>
         </div>
