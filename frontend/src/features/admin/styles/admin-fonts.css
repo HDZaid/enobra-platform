@@ -1,1 +1,13 @@
 @import '../../../styles/fonts.css';
+
+@media (forced-colors: none) {
+  html:has(.admin-shell) {
+    scrollbar-color: #587294 #f3f6fa;
+    scrollbar-width: thin;
+  }
+
+  /* El color se hereda; las barras internas conservan su contraste propio. */
+  html:has(.admin-shell) body {
+    scrollbar-color: auto;
+  }
+}

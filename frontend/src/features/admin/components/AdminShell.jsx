@@ -28,7 +28,7 @@ export function AdminShell({ children, user, preview, onLogout }) {
     : 'border-transparent text-white/70 hover:bg-white/10 hover:text-white'}`;
 
   return (
-    <div className="min-h-screen bg-[#f3f6fa] font-['Inter',Arial,sans-serif] text-[#12233f]">
+    <div className="admin-shell min-h-screen bg-[#f3f6fa] font-['Inter',Arial,sans-serif] text-[#12233f]">
       {open && <button type="button" className="fixed inset-0 z-30 bg-[#12233f]/50 lg:hidden" onClick={() => setOpen(false)} aria-label="Cerrar menú" />}
       <aside className={`fixed inset-y-0 left-0 z-40 flex w-60 flex-col bg-gradient-to-b from-[#12233f] to-[#304e7d] text-white transition-transform lg:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`} aria-label="Administración">
         <div className="border-b border-white/15 px-5 py-6">
