@@ -3290,11 +3290,6 @@
 }
 
 /* Ajustes de lectura sobre la composición aprobada. */
-:where(.leo-page) :is(.prose, .principles-grid p, .service-feature p, .services-opening > p, .services-intro-copy > p) {
-  text-align: justify;
-  hyphens: auto;
-  overflow-wrap: break-word;
-}
 :where(.leo-page) .institutional aside img {
   width: 100%;
   display: block;

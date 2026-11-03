@@ -33,7 +33,7 @@ export function ProjectsPage() {
               <br />
               arquitectónicos.
             </h1>
-            <p>Explora el portafolio por año y conoce el alcance de cada proyecto.</p>
+            <p className="informative-copy">Explora el portafolio por año y conoce el alcance de cada proyecto.</p>
           </div>
           <HeaderOrnament variant="volumen" />
         </section>

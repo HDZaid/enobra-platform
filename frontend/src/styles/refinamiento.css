@@ -72,10 +72,17 @@
   font-size: 11px;
 }
 
-/* Conserva la justificación aprobada también sobre los estilos de refinamiento. */
-.leo-site :is(.prose, .principles-grid p, .service-feature p, .services-opening > p, .services-intro-copy > p) {
+/* Solo párrafos de lectura del sitio público. */
+.leo-site p:is(
+  .home-about-lead, .hero-description, .service-lead, .prose, .geo-prose, .informative-copy,
+  .prose > p, .principles-grid p, .impact-content > p:not([class]),
+  .business-card p:not([class]), .news-card p:not([class]),
+  .services-opening > p:not([class]), .services-intro-copy > p:not([class])
+) {
   text-align: justify;
+  text-justify: inter-word;
   hyphens: auto;
+  overflow-wrap: break-word;
 }
 
 /* Encabezados internos: el arco sustituye las diagonales. */
