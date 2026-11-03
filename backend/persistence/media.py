@@ -1,4 +1,4 @@
-"""Imágenes locales con metadatos en BD. Configurar almacenamiento duradero en despliegue."""
+"""Imágenes en default_storage (local o R2), con metadatos y auditoría en BD."""
 import warnings
 from uuid import uuid4
 

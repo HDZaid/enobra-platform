@@ -12,9 +12,13 @@ from django.core.exceptions import ImproperlyConfigured
 import dj_database_url
 from dotenv import load_dotenv
 
+from .media_storage import media_storage_settings
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 # Las variables del sistema tienen prioridad sobre backend/.env (load_dotenv no las reemplaza).
 _DATABASE_URL_FROM_SYSTEM = bool(os.environ.get("DATABASE_URL", "").strip())
+# Configuración privada de R2 opcional. Prioridad: sistema > .env.r2 > .env.
+load_dotenv(BASE_DIR / ".env.r2")
 load_dotenv(BASE_DIR / ".env")
 
 
@@ -108,6 +112,7 @@ MEDIA_ALLOWED_CONTENT_TYPES = ["image/jpeg", "image/png", "image/webp", "image/g
 MEDIA_ROOT = os.getenv("MEDIA_ROOT", str(BASE_DIR / "media"))
 MEDIA_URL = os.getenv("MEDIA_URL", "/media/")
 DATA_UPLOAD_MAX_MEMORY_SIZE = MEDIA_MAX_UPLOAD_BYTES + 1024 * 1024
+STORAGES = media_storage_settings(os.environ)
 
 # --- Notificación de consultas por correo (BE-09) ----------------------------
 # Sin destinatarios en INQUIRY_NOTIFY_EMAILS no se envía nada. La consola imprime
