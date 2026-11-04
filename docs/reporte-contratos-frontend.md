@@ -1,5 +1,9 @@
 # Reporte de contratos frontend ↔ backend
 
+> Hallazgos por fecha de revisión. La renovación CF-03 está implementada en
+> [FE-08](FE-08-renovacion-por-actividad.md); consultar el
+> [estado vigente](estado-proyecto.md) para despliegue, imágenes y pendientes.
+
 > **Documento histórico.** El estado vigente, con cifras de pruebas y pendientes actualizados al 25 de octubre de 2026, está en [estado-proyecto.md](estado-proyecto.md).
 
 Fecha: 20 de octubre de 2026. Rama: `frontend/news-admin-contact` (base `3cf779a`).

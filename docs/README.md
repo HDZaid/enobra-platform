@@ -1,40 +1,35 @@
 # Documentación de EnObra
 
-Esta carpeta reúne los acuerdos compartidos del equipo. Todo está sujeto a cambios:
-las decisiones se revisan gradualmente y se actualizan junto con el código afectado.
+Empezar por [Estado del proyecto](estado-proyecto.md), actualizado al 3-nov-2026.
+Los informes fechados y las entregas de origen son evidencia histórica; no sustituyen
+el estado actual ni el contrato HTTP. No publicar secretos ni cuentas personales.
 
-**Empieza por [Estado del proyecto](estado-proyecto.md)** (vigente, 25 de octubre de 2026):
-ramas, cifras de pruebas, pendientes y qué documentos son históricos.
+## Operación actual
 
-- [INT-04: matriz de pruebas por rol](INT-04-matriz-roles.md): qué puede cada rol, probado en la API, Postman y el panel.
-- [Dependencias de las tareas de Juan](dependencias-juan.md): acciones pendientes de Geo y Henry, evidencia y coordinación.
+- [Operación, ping de Inicio y diagnóstico](operacion-produccion.md).
+- [Infraestructura vigente](infraestructura.md).
+- [Backend en Render](Render-backend.md) y [evidencia del despliegue/R2](Render-validacion-2026-11-03.md).
+- [R2 privado y fotos mediante API](R2-configuracion.md).
+- [Limpieza diaria P-02 activa](P02-limpieza-activa.md).
+- [Backend](../backend/README.md) y [frontend](../frontend/README.md): instalación y comprobaciones.
 
-- [Reglas de desarrollo y responsables](reglas-desarrollo.md): equipo, contratos,
-  ramas, revisiones y criterios de entrega.
-- [Infraestructura](infraestructura.md): PostgreSQL en Supabase como decisión y propuestas
-  todavía pendientes para despliegue y almacenamiento de imágenes (entre ellas R2).
-- [Contrato OpenAPI](openapi.yaml): referencia HTTP para backend y frontend.
-- [Cloudflare R2](R2-configuracion.md): credenciales privadas, diagnóstico de conexión,
-  activación por dominio y pendientes de persistencia en producción.
-- [Backend en Render](Render-backend.md): Gunicorn, dependencias reproducibles,
-  variables privadas, proxy HTTPS y comprobaciones previas al despliegue.
-- [Roles y permisos (RBAC)](RBAC.md): los 32 permisos, roles predeterminados, seed, matriz rol × endpoint y cómo agregar un permiso (BE-11).
-- [Arquitectura del backend](arquitectura.md): interfaces, registro, `bindings.py` y la fábrica de publicaciones; cómo agregar un tipo (BE-11).
-- [ADR 0001: roles en la base de datos](adr/0001-rbac-por-datos.md): por qué los roles son datos y la fábrica solo se usa para publicaciones (BE-11).
-- [Auditoría administrativa](auditoria.md): API integrada, eventos, permisos, filtros, paginación y exportación CSV protegida (BE-12).
-- [Papelera de publicaciones](papelera.md): rutas reales, restauración, permisos, imágenes en JSON y límites de limpieza SQL (BE-12).
-- [Backend del administrador](admin-backend.md): implementación, mapeo sobre tablas existentes y pruebas aisladas.
-- [Cómo probar el administrador](probar-admin.md): comandos, script HTTP y recorrido manual con Swagger.
-- [Colección de Postman](postman/README.md): todos los endpoints, entorno local y prueba de imágenes.
-- [Reporte de revisión administrativa](reporte-revision-admin.md): hallazgos, evidencia y pasos de reproducción.
-- [Reporte de contratos frontend ↔ backend](reporte-contratos-frontend.md): diferencias entre lo que consume React y lo que implementa Django.
-- [Backend](../backend/README.md) y [frontend](../frontend/README.md): instalación y desarrollo.
+## Contratos y reglas
 
-Los informes de implementación de una rama describen el estado de esa entrega;
-no reemplazan el contrato ni implican que una funcionalidad ya esté integrada en `develop`.
+- [OpenAPI](openapi.yaml), [arquitectura](arquitectura.md), [backend administrativo](admin-backend.md).
+- [Política de roles fijos](politica-roles-fijos.md); [RBAC](RBAC.md) conserva el origen del catálogo.
+- [Sesión por actividad](FE-08-renovacion-por-actividad.md), [Usuarios API](usuarios-api.md), [Usuarios frontend](usuarios-frontend.md).
+- [Auditoría](auditoria.md), [Papelera](papelera.md), [Postman](postman/README.md), [pruebas del administrador](probar-admin.md).
+- [Trabajo compartido](TRABAJO-EN-EQUIPO.md), [responsables](responsables-y-cierres.md), [reglas](reglas-desarrollo.md).
+- [Dependencias de Juan](dependencias-juan.md), [pendientes de Jennifer](PENDIENTES-JENNIFER.md).
 
-- [Integración del frontend](frontend-integration.md): procedencia por rama, conflictos, validación y pendientes.
+## Historial y entrega
 
-- [Integración parcial React–Django y pendientes](integracion-backend-frontend.md): flujos reales verificados, límites de catálogos y pruebas reproducibles.
+- [Estado archivado del 25-oct](estado-proyecto-2026-10-25.md), [historial de ramas](estado-ramas.md).
+- [Matriz INT-04](INT-04-matriz-roles.md), [Supabase 28-oct](INT-04-supabase-2026-10-28.md).
+- [Integración del frontend](frontend-integration.md), [integración React/Django](integracion-backend-frontend.md).
+- [Contratos revisados](reporte-contratos-frontend.md), [revisión administrativa](reporte-revision-admin.md).
+- [Prompt del manual técnico aportado por el equipo](PROMPT-MANUAL-TECNICO-ENOBRA.md).
 
-- [Trabajo en equipo y ramas compartidas](TRABAJO-EN-EQUIPO.md): reparto, Administrador para Pablo, advertencias y Conventional Commits.
+Las cifras de pruebas de informes anteriores corresponden a sus revisiones. Los
+informes ADMIN/NEWS y planes describen su fase de trabajo; no acreditan por sí solos
+un despliegue ni autorizan cambios a datos, permisos o infraestructura.

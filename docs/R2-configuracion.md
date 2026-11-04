@@ -1,5 +1,8 @@
 # Conexión de Django con Cloudflare R2
 
+> Estado operativo y pendientes consolidados en [estado del proyecto](estado-proyecto.md).
+> La configuración pública que aparece como alternativa histórica no está activada.
+
 Fecha: 1 de noviembre de 2026, Guatemala. R2 elegido por Geovanny para imágenes.
 
 > Decisión del 3-nov: Geovanny mantiene el bucket privado y autoriza que la API

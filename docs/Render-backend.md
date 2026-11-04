@@ -1,5 +1,9 @@
 # Backend en Render: despliegue de validación activo
 
+> Configuración y límites vigentes en [operación](operacion-produccion.md). Pages
+> ya está conectado a esta API; health se activa desde Inicio y se comprueba en
+> Actions al publicar develop, sin pinger periódico.
+
 3 de noviembre de 2026, Guatemala. Primer despliegue de validación creado en
 `https://enobra-api.onrender.com`, plan Free y despliegues manuales. Salud,
 empresa, proyectos y noticias: HTTP 200; sin token: 401; HTTPS, cabeceras y CORS

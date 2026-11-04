@@ -1,102 +1,60 @@
-# Propuesta de infraestructura
+# Infraestructura vigente
 
-> 1-nov: Geovanny eligió R2. Configuración de Django y credenciales locales privadas
-> preparadas; dominio público y activación pendientes. Véase [R2](R2-configuracion.md).
-> Las menciones siguientes a R2 como proveedor sin elegir describen la propuesta original.
+Actualizado el 3-nov-2026. Esta página sustituye la propuesta inicial del 12-oct.
+Ver [estado del proyecto](estado-proyecto.md) y [operación](operacion-produccion.md).
 
-> Estado final del 29-oct: [limpieza diaria activa](P02-limpieza-activa.md) en GitHub Actions, gratuita para este repo público. Simulación y ejecución real aprobadas (0 publicaciones vencidas). P-02 y su automatización están completas. El pendiente de activar un Cron Job en Render que aparezca abajo es histórico y queda sustituido; no crear un servicio duplicado. Mantenimiento: Pablo, respaldo Juan.
+| Componente | Proveedor y estado |
+| --- | --- |
+| Frontend | Cloudflare Pages; dominio enobra.com.gt, producción frontend-dev. |
+| Backend | Render Free; API HTTPS con Gunicorn y config.production; despliegue manual de develop. |
+| Base de datos | PostgreSQL en Supabase; tablas existentes con modelos managed=False. |
+| Fotos y renders | Cloudflare R2 privado; Django escribe y entrega bytes mediante la API. |
+| Limpieza de papelera | GitHub Actions diario existente, backend fijado a revisión probada. |
+| Health de API | Al visitar Inicio y al publicar develop; sin programación periódica. |
 
-> Estado vigente, 29-oct: [P-02 y papelera de 90 días](P02-papelera-90-dias.md). P-01 cerrado; función SQL antigua retirada de Supabase y ausencia verificada. La nueva limpieza corre desde el backend después de más de 90 días en papelera. Código y pruebas listos; falta activar/verificar el Cron Job en Render (Juan, respaldo Pablo). Los bloqueos anteriores por decidir P-01/P-02 y las políticas de inactividad de 3/8 meses quedan sustituidos. Jenny puede validar la habilitación del frontend con la versión integrada; no requiere otro OK de Henry.
+## Base y secretos
 
-Estado: propuesta inicial, sujeta a cambios. Fecha: 12 de octubre de 2026.
-Este documento no crea servicios, configura DNS ni activa despliegues.
+`DATABASE_URL` apunta al PostgreSQL existente de Supabase, con pooler de sesión
+5432 y TLS en Render. No crear una base paralela ni ejecutar migraciones/seeds
+para recrear tablas existentes. Mantener respaldos y comprobar restauración.
+Las pruebas unitarias utilizan SQLite desechable; no acreditan Supabase por sí solas.
 
-| Componente | Proveedor propuesto | Responsabilidad |
-| --- | --- | --- |
-| Frontend | Cloudflare Pages | Publicar el build de React/Vite y conectarlo al dominio `.gt` que se elija. |
-| Fotos y renders | Pendiente (R2 es una propuesta) | Almacenar imágenes y servir sus URLs según la política que se acuerde. |
-| Backend | Render | Ejecutar Django y exponer la API HTTPS. |
-| Base de datos | PostgreSQL en Supabase | Persistir las 20 tablas existentes; Django ORM es el acceso oficial. |
+Credenciales y clave Django persistente se guardan como secretos del proveedor.
+No llevar DSN, claves de R2 ni contraseñas a variables públicas VITE, docs o commits.
 
-## Flujo propuesto
+## Sitio y API
 
-El navegador descarga React desde Pages, consulta la API de Django en Render y muestra
-las imágenes usando las URLs devueltas por la API. Django coordina la autorización,
-validación y persistencia mediante su ORM. React nunca usa directamente Supabase/PostgreSQL.
-El proveedor de imágenes se integrará en Django cuando se elija; R2 sigue siendo una opción.
-Los videos se conservan únicamente como enlaces de YouTube.
+- Sitio: [enobra.com.gt](https://enobra.com.gt).
+- API: [enobra-api.onrender.com](https://enobra-api.onrender.com/api/v1/health/).
+- Pages incorpora VITE_API_BASE_URL durante el build; el proxy Vite solo existe
+  en desarrollo. Ver [configuración de producción](operacion-produccion.md).
+- CORS permite los orígenes HTTPS explícitos enobra.com.gt y www.enobra.com.gt.
+- Render usa Gunicorn, dependencias con hashes y comprobaciones de producción.
+  No usar runserver ni el disco efímero para imágenes reales.
 
-## Frontend en Cloudflare Pages
+## Imágenes privadas
 
-- Directorio del proyecto: `frontend/`. Comando de build propuesto: `npm run build`;
-  salida: `dist/`. Instalar dependencias según el lockfile y fijar una versión de Node
-  compatible con `package.json` al configurar el proveedor.
-- Configurar `VITE_API_BASE_URL` con la URL HTTPS de la API terminada en `/api/v1`.
-  Es un valor público incorporado durante la compilación; cambiarlo requiere otro build.
-- Si se prefiere `/api/v1` en el mismo dominio, habrá que implementar explícitamente
-  su proxy. El proxy local de Vite no se ejecuta en el frontend estático de producción.
-- Conectar el dominio `.gt` después de elegirlo y configurar DNS. Para usar el dominio
-  raíz en Pages, Cloudflare requiere que sea una zona de la cuenta y que sus nameservers
-  estén configurados según su documentación de dominios personalizados.
-- Verificar recarga y acceso directo a rutas como `/noticias/...`. Pages ofrece el
-  comportamiento SPA cuando no hay un `404.html` de nivel superior; revisar que la
-  configuración final conserve ese comportamiento.
+Bucket `enobra-media-prod`, sin dominio público ni r2.dev, por decisión de Geovanny.
+No conectar media.enobra.com.gt. El navegador consulta la API, no el endpoint S3.
+Las publicaciones públicas habilitan lectura de sus fotos; borradores y papelera
+conservan protección. Las vistas previas firmadas vencen a los quince minutos.
 
-Referencias oficiales: [configuración de builds](https://developers.cloudflare.com/pages/configuration/build-configuration/),
-[dominios personalizados](https://developers.cloudflare.com/pages/configuration/custom-domains/)
-y [comportamiento SPA](https://developers.cloudflare.com/pages/configuration/serving-pages/).
+El backend valida archivo, tamaño y permiso, conserva metadatos en PostgreSQL y
+protege el borrado de imágenes compartidas. Una imagen original migrada y leída
+tras otro despliegue; cuatro originales de otras PC pendientes. No se borraron
+registros para resolver esa diferencia. Ver [R2](R2-configuracion.md) y
+[evidencia real](Render-validacion-2026-11-03.md).
 
-## Backend en Render
+## Operación y pendientes
 
-- Usar `backend/` como directorio raíz del servicio y `requirements.txt` para las
-  dependencias. Render permite desplegar servicios independientes desde un monorepo.
-- Seleccionar y agregar un servidor WSGI/ASGI de producción. Los puntos de entrada
-  existentes son `config.wsgi:application` y `config.asgi:application`.
-  `manage.py runserver` se usa únicamente durante desarrollo.
-- Configurar secretos en el proveedor, `DJANGO_DEBUG=false`, hosts permitidos y
-  `CORS_ALLOWED_ORIGINS` con los orígenes concretos del frontend. Acordar también
-  cómo se autorizan los entornos de vista previa.
-- Usar `/api/v1/health/` para comprobar el servicio y configurar `DATABASE_URL` con la
-  conexión de Supabase. Las tablas existentes se mapean con Django ORM y `managed=False`;
-  no ejecutar `makemigrations`/`migrate` para crearlas.
-- No usar el disco local del servicio como almacenamiento definitivo de las imágenes.
+- El ping de Inicio adelanta el arranque Free, sin garantizar servicio continuo.
+  Actions reintenta health al publicar develop; no mantiene la API activa periódicamente.
+- P-02 continúa en GitHub Actions; no duplicar Cron Job de Render ni restaurar la
+  función SQL de limpieza retirada. [Evidencia P-02](P02-limpieza-activa.md).
+- Configurar correo, verificar cuentas y recorridos reales por rol, recuperar
+  originales, revisar límites/costos y probar restauración de Supabase.
+- El dominio propio de API es opcional y sigue sin conectarse.
 
-Referencias oficiales: [monorepos en Render](https://render.com/docs/monorepo-support)
-y [despliegue de Django](https://render.com/docs/deploy-django).
-
-## Propuesta de imágenes en Cloudflare R2
-
-- El contrato actual recibe archivos en `POST /api/v1/admin/media/`, protegido para
-  administración. Si se elige R2, se implementaría `MediaStorage` en el backend
-  para guardar en R2 y devolver metadatos y una URL HTTPS utilizable por el frontend.
-- Mantener claves de R2 en el backend. La UI no debe recibir credenciales del proveedor
-  ni subir directamente a un bucket sin un flujo de autorización acordado.
-- Validar contenido real, tamaño y permisos en el backend. Guardar identificadores y
-  metadatos en PostgreSQL cuando corresponda, no el contenido binario ni imágenes en base64.
-- Para imágenes públicas de catálogo, evaluar un dominio personalizado de medios.
-  Habilitarlo hace accesibles los objetos correspondientes: decidir por separado
-  cómo proteger imágenes privadas o borradores. Un nombre de archivo difícil de adivinar
-  no es control de acceso.
-- Acordar sustitución, borrado y archivos huérfanos. No borrar un objeto todavía usado
-  por otros registros. Las URLs entregadas deben funcionar desde Pages y sus vistas previas.
-- Si más adelante se opta por subidas directas mediante URLs firmadas, documentar el
-  cambio de contrato, expiración, validación y CORS. En R2 esas URLs usan el endpoint
-  de la API S3, no el dominio personalizado de lectura.
-
-Referencias oficiales: [buckets públicos y dominios](https://developers.cloudflare.com/r2/buckets/public-buckets/)
-y [URLs firmadas](https://developers.cloudflare.com/r2/api/s3/presigned-urls/).
-
-## Decisiones pendientes
-
-- Dominio `.gt` definitivo y, si procede, subdominios de API e imágenes.
-- Cuentas del equipo, personas que administran cada servicio y acceso compartido.
-- Entornos, respaldos y recuperación de PostgreSQL en Supabase.
-- Proveedor definitivo y política de almacenamiento para fotos y renders.
-- Planes, límites, costos y disponibilidad antes de elegir servicios definitivos.
-- Rama de producción y estrategia de previews. Se propone `main` para releases y
-  `develop` para integración; no se configura despliegue automático con este documento.
-- Implementación de modelos/repositorios, autenticación, servidor de producción y adaptador
-  del proveedor de imágenes que se seleccione.
-
-Los responsables coordinan estas decisiones, pero cualquier integrante puede proponer
-alternativas. Actualizar este documento y los ejemplos de entorno al cambiar la propuesta.
+Referencias: [Render Free](https://render.com/docs/free),
+[Render monorepos](https://render.com/docs/monorepo-support),
+[R2 privado y acceso público](https://developers.cloudflare.com/r2/buckets/public-buckets/).
