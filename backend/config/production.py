@@ -7,6 +7,8 @@ from django.core.exceptions import ImproperlyConfigured
 
 DEBUG = False
 require_production_secret(SECRET_KEY)  # noqa: F405
+# El disco efímero del servicio no debe aceptar imágenes que se perderían al reiniciar.
+MEDIA_UPLOADS_ENABLED = STORAGES["default"]["BACKEND"] != "django.core.files.storage.FileSystemStorage"  # noqa: F405
 
 if (urlsplit(DATABASE_URL).scheme not in ("postgres", "postgresql")  # noqa: F405
         or DATABASES.get("default", {}).get("ENGINE") != "django.db.backends.postgresql"):  # noqa: F405

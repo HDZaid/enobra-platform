@@ -89,6 +89,12 @@ class ProductionSettingsTests(SimpleTestCase):
         self.assertIsNone(self.load_config(DJANGO_TRUST_PROXY_SSL_HEADER="false").SECURE_PROXY_SSL_HEADER)
         self.assertEqual(self.load_config().SECURE_PROXY_SSL_HEADER, ("HTTP_X_FORWARDED_PROTO", "https"))
 
+    def test_production_uploads_require_remote_storage(self):
+        with patch("config.settings.STORAGES", {"default": {"BACKEND": "django.core.files.storage.FileSystemStorage"}}):
+            self.assertFalse(self.load_config().MEDIA_UPLOADS_ENABLED)
+        with patch("config.settings.STORAGES", {"default": {"BACKEND": "storages.backends.s3.S3Storage"}}):
+            self.assertTrue(self.load_config().MEDIA_UPLOADS_ENABLED)
+
     def test_https_headers_hosts_and_cors(self):
         config = self.load_config()
         options = {key: getattr(config, key) for key in (

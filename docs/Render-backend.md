@@ -113,6 +113,8 @@ revisar OpenAPI si cambian Django/DRF/drf-spectacular.
   conserva archivos locales. Elegir un plan adecuado antes del uso continuo.
 - R2 permanece desactivado. Configurar dominio y variables R2 antes de permitir
   subidas persistentes; migración y pruebas de imágenes son otro paso.
+  El perfil de producción devuelve 503 en la subida mientras el proveedor sea
+  local, para evitar guardar archivos en el disco efímero del servicio.
 - El correo sigue sin configurar. Render gratuito bloquea SMTP 25/465/587;
   valorar un adaptador HTTPS. No usar consola con consultas reales.
 - Servicios y búsqueda siguen pendientes. Este cambio no los implementa.

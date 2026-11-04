@@ -358,6 +358,15 @@ class AdminAPITests(TestCase):
             self.assertEqual(self.client.get(url).status_code, 404)
             self.assertEqual(list(Path(directory).rglob("*.png")), [])
 
+    @override_settings(MEDIA_UPLOADS_ENABLED=False)
+    def test_production_without_persistent_storage_rejects_uploads(self):
+        with tempfile.TemporaryDirectory() as directory, override_settings(MEDIA_ROOT=directory):
+            response = self.client.post(API + "admin/media/", {"file": self.image_file()}, format="multipart")
+            self.assertEqual(response.status_code, 503)
+            self.assertEqual(response.json()["error"]["code"], "service_unavailable")
+            self.assertFalse(ContenidoPagina.objects.filter(clave__startswith="admin.media.").exists())
+            self.assertEqual(list(Path(directory).iterdir()), [])
+
     def test_media_rejects_fake_mismatched_and_oversized_files(self):
         for f in (self.image_file(raw=b"not-an-image"), self.image_file(content_type="image/jpeg")):
             response = self.client.post(API + "admin/media/", {"file": f}, format="multipart")

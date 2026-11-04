@@ -1,6 +1,7 @@
 from drf_spectacular.utils import extend_schema
+from django.conf import settings
 from rest_framework import status
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import APIException, NotFound
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -16,6 +17,11 @@ TAG = ["Medios (admin)"]
 ERR = {401: ErrorSerializer, 403: ErrorSerializer}
 
 
+class MediaUploadsUnavailable(APIException):
+    status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+    default_detail = "La carga de imágenes estará disponible al configurar el almacenamiento persistente."
+
+
 class MediaUploadView(APIView):
     permission_classes = [ResourcePermission]
     permission_map = {"POST": ("media.upload",)}
@@ -24,11 +30,13 @@ class MediaUploadView(APIView):
 
     @extend_schema(
         request={"multipart/form-data": MediaUploadSerializer},
-        responses={201: MediaSerializer, 400: ErrorSerializer, **ERR},
+        responses={201: MediaSerializer, 400: ErrorSerializer, 503: ErrorSerializer, **ERR},
         tags=TAG,
         summary="Subir imagen (JPEG/PNG/WebP/GIF)",
     )
     def post(self, request):
+        if not getattr(settings, "MEDIA_UPLOADS_ENABLED", True):
+            raise MediaUploadsUnavailable()
         s = MediaUploadSerializer(data=request.data)
         s.is_valid(raise_exception=True)
         f = s.validated_data["file"]

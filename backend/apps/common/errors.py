@@ -19,6 +19,7 @@ CODES = {
     405: "method_not_allowed",
     415: "unsupported_media_type",
     429: "throttled",
+    503: "service_unavailable",
 }
 
 
