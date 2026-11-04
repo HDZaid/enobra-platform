@@ -90,6 +90,13 @@ la prueba de Gunicorn se ejecuta en Linux, WSL, Docker o GitHub Actions.
 `.github/workflows/backend-production.yml` repite instalación con hashes, pruebas
 aisladas y arranque HTTP en Linux. No usa secretos ni despliega.
 
+Verificación del 3-nov para `bb01cfc`: [GitHub Actions aprobado](https://github.com/HDZaid/enobra-platform/actions/runs/41764835389)
+en Linux con Python 3.12.16, instalación con hashes, dependencias compatibles,
+223 pruebas y ambos arranques HTTP con Gunicorn correctos. En Windows también
+pasaron las 223 pruebas y el esquema OpenAPI siguió equivalente al versionado.
+`render.yaml` validado con el esquema oficial de Render. Estas pruebas simulan
+el proxy y no acreditan las garantías del proxy real ni un despliegue.
+
 Para actualizar dependencias, con uv 0.13.7 desde la raíz del repositorio:
 
 ```sh
