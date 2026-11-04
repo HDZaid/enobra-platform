@@ -366,6 +366,62 @@ class AdminAPITests(TestCase):
             response = self.client.post(API + "admin/media/", {"file": self.image_file()}, format="multipart")
             self.assertEqual(response.status_code, 400)
 
+    def test_shared_media_keeps_file_metadata_and_audit_until_all_references_are_removed(self):
+        with tempfile.TemporaryDirectory() as directory, override_settings(MEDIA_ROOT=directory, MEDIA_URL="/media/"):
+            uploaded = self.client.post(API + "admin/media/", {"file": self.image_file()}, format="multipart").json()
+            project = self.create("projects", images=[uploaded["url"]], renders=[], published=False)
+            prop = self.create("properties", images=[IMAGE], renders=[uploaded["url"]])
+            media_url = API + f"admin/media/{uploaded['id']}/"
+            audit_before = HistorialActividad.objects.filter(modulo="media", accion="ELIMINAR").count()
+            self.assertEqual(self.client.delete(media_url).status_code, 400)
+            self.assertTrue(ContenidoPagina.objects.filter(clave="admin.media." + uploaded["id"]).exists())
+            self.assertEqual(len(list(Path(directory).rglob("*.png"))), 1)
+            self.assertEqual(HistorialActividad.objects.filter(modulo="media", accion="ELIMINAR").count(), audit_before)
+            # La papelera conserva la imagen para poder restaurar la publicación.
+            self.assertEqual(self.client.delete(API + f"projects/{project['id']}/").status_code, 204)
+            self.assertEqual(self.client.patch(API + f"properties/{prop['id']}/", {"renders": []}, format="json").status_code, 200)
+            self.assertEqual(self.client.delete(media_url).status_code, 400)
+            self.assertEqual(self.client.post(API + f"admin/projects/{project['id']}/restore/").status_code, 204)
+            self.assertEqual(self.client.patch(API + f"projects/{project['id']}/", {"images": [IMAGE]}, format="json").status_code, 200)
+            with self.captureOnCommitCallbacks(execute=True):
+                self.assertEqual(self.client.delete(media_url).status_code, 204)
+            self.assertEqual(list(Path(directory).rglob("*.png")), [])
+
+    def test_news_cover_and_company_logo_both_protect_uploaded_media(self):
+        with tempfile.TemporaryDirectory() as directory, override_settings(MEDIA_ROOT=directory, MEDIA_URL="/media/"):
+            uploaded = self.client.post(API + "admin/media/", {"file": self.image_file()}, format="multipart").json()
+            news = self.create("news", image=uploaded["url"], published=False)
+            company = self.company_payload(logo=uploaded["url"])
+            self.assertEqual(self.client.put(API + "company/", company, format="json").status_code, 200)
+            media_url = API + f"admin/media/{uploaded['id']}/"
+            self.assertEqual(self.client.delete(media_url).status_code, 400)
+            self.assertEqual(self.client.delete(API + f"news/{news['id']}/").status_code, 204)
+            self.assertEqual(self.client.delete(media_url).status_code, 400)
+            company["logo"] = ""
+            self.assertEqual(self.client.put(API + "company/", company, format="json").status_code, 200)
+            with self.captureOnCommitCallbacks(execute=True):
+                self.assertEqual(self.client.delete(media_url).status_code, 204)
+
+    def test_deleted_upload_cannot_be_attached_by_a_late_save(self):
+        with tempfile.TemporaryDirectory() as directory, override_settings(MEDIA_ROOT=directory, MEDIA_URL="/media/"):
+            uploaded = self.client.post(API + "admin/media/", {"file": self.image_file()}, format="multipart").json()
+            with self.captureOnCommitCallbacks(execute=True):
+                self.assertEqual(self.client.delete(API + f"admin/media/{uploaded['id']}/").status_code, 204)
+            response = self.client.post(API + "projects/", self.payload("projects", images=[uploaded["url"]]), format="json")
+            self.assertEqual(response.status_code, 400)
+            self.assertFalse(Proyecto.objects.exists())
+
+    def test_r2_reference_with_query_string_is_still_in_use(self):
+        from persistence.support import read_data, write_data
+        with tempfile.TemporaryDirectory() as directory, override_settings(MEDIA_ROOT=directory, MEDIA_URL="/media/"), \
+                patch.dict("os.environ", {"R2_PUBLIC_HOST": "media.example.test"}):
+            uploaded = self.client.post(API + "admin/media/", {"file": self.image_file()}, format="multipart").json()
+            key = "admin.media." + uploaded["id"]
+            metadata = read_data(key)
+            metadata["url"] = "https://media.example.test/" + metadata["path"]
+            write_data(key, metadata, self.user.pk)
+            self.create("news", image=metadata["url"] + "?v=1")
+            self.assertEqual(self.client.delete(API + f"admin/media/{uploaded['id']}/").status_code, 400)
     def test_missing_resources_return_404(self):
         for path in ("projects/missing/", "properties/9999/", "news/missing/", "inquiries/9999/", "admin/media/missing/"):
             self.assertEqual(self.client.get(API + path).status_code, 404)

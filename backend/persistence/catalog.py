@@ -18,6 +18,7 @@ from .models.content import ContenidoPagina
 from .models.access import Usuario
 from apps.common.pagination import Page
 from .support import read_data, write_data, audit, page_of, unique_slug, publication_date, normalized
+from .media_references import lock_media_references
 
 
 class CatalogRepository:
@@ -138,6 +139,7 @@ class CatalogRepository:
     def _extras(self, obj, data, actor):
         extra = read_data(self._meta_key(obj))
         extra.update({k: data[k] for k in ("demo", "images", "renders", "image") if k in data})
+        lock_media_references(extra)
         write_data(self._meta_key(obj), extra, actor)
         if "video" in data and self.video_model:
             obj.videos.all().delete()
