@@ -1,0 +1,38 @@
+# Servicio web de validación. Supabase y R2 se configuran por separado.
+# No importar render-cleanup.yaml: P-02 ya corre en GitHub Actions.
+services:
+  - type: web
+    name: enobra-api
+    runtime: python
+    plan: free
+    branch: develop
+    rootDir: backend
+    autoDeployTrigger: "off"
+    buildCommand: pip install --require-hashes -r requirements.txt && python manage.py check --deploy --settings=config.production
+    startCommand: gunicorn --config gunicorn.conf.py config.wsgi:application
+    healthCheckPath: /api/v1/health/
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.16"
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.production
+      - key: DJANGO_DEBUG
+        value: "false"
+      # Generar una vez con secrets.token_urlsafe(64); Render generateValue
+      # genera 44 caracteres y no cumple nuestra política de al menos 50.
+      - key: DJANGO_SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: DJANGO_ALLOWED_HOSTS
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      - key: FRONTEND_BASE_URL
+        sync: false
+      # Configurar true únicamente tras confirmar que el proxy elimina/sobrescribe
+      # X-Forwarded-Proto del cliente. No inferir confianza por el nombre Render.
+      - key: DJANGO_TRUST_PROXY_SSL_HEADER
+        sync: false
+      - key: R2_ENABLED
+        value: "false"

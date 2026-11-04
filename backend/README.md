@@ -295,6 +295,8 @@ Los datos generales aceptan valores pendientes; las redes deben exponerse como u
 ## Seguridad (a respetar al implementar)
 
 Perfil preparado para hosting: `DJANGO_SETTINGS_MODULE=config.production`.
+Arranque con Gunicorn, dependencias fijadas y servicio web de Render:
+[guía vigente](../docs/Render-backend.md). El despliegue y sus URL siguen pendientes.
 Variables, pruebas y límites en [BE-14: producción](../docs/BE-14-produccion.md).
 La revisión HTTP sobre las URL reales se completa después del despliegue.
 

@@ -1,0 +1,39 @@
+name: Backend de produccion
+
+on:
+  push:
+    branches: [backend-dev, develop]
+    paths: ['backend/**', 'render.yaml', '.github/workflows/backend-production.yml']
+  pull_request:
+    paths: ['backend/**', 'render.yaml', '.github/workflows/backend-production.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      DJANGO_SETTINGS_MODULE: config.test_settings
+      DATABASE_URL: 'sqlite:///:memory:'
+      R2_ENABLED: 'false'
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version-file: backend/.python-version
+      - name: Instalar dependencias verificadas
+        run: pip install --require-hashes -r requirements.txt
+      - name: Comprobar dependencias y backend
+        run: |
+          python -m pip check
+          python manage.py check
+          python manage.py test tests --settings=config.test_settings
+      - name: Verificar arranque HTTP con Gunicorn y produccion
+        run: python scripts/verify_production_startup.py

@@ -1,5 +1,10 @@
 # BE-14: configuración preparada; despliegue pendiente
 
+> Actualización del 3-nov: arranque con Gunicorn, dependencias fijadas, Blueprint
+> y prueba HTTP en Linux preparados en [Backend en Render](Render-backend.md).
+> Esa guía sustituye los pasos históricos sobre elegir/instalar el servidor.
+> La verificación del proxy y de las URL desplegadas sigue pendiente.
+
 Fecha: 29 de octubre de 2026, Guatemala. Solicitado por Geovanny. El frontend sigue
 en mejoras y no hay URL pública de frontend/API facilitada para validar. No se ha
 desplegado ni modificado el entorno real, sus claves o Supabase.
