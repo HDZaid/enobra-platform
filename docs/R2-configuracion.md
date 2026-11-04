@@ -9,6 +9,10 @@ Fecha: 1 de noviembre de 2026, Guatemala. R2 elegido por Geovanny para imágenes
 
 ## Estado
 
+R2 privado activo en Render con `912d916`. Una imagen migrada, sin cambiar su
+identificador ni clave de objeto; cuatro originales pendientes de otras PC.
+[Evidencia y límites](Render-validacion-2026-11-03.md).
+
 Actualización 3-nov: dominio `enobra.com.gt` confirmado en la cuenta de Cloudflare.
 Inventario de solo lectura: 5 registros de medios en Supabase y un archivo en esta
 copia de `backend/media`; faltan cuatro originales por localizar. El archivo local
@@ -124,7 +128,7 @@ obtener todos los rangos de salida en servicio > Connect > Outbound antes de
 restringirlo. Las pruebas locales requieren una credencial o acceso de desarrollo
 adecuado. Este filtro no controla la lectura pública de imágenes por su dominio.
 
-## Verificación y pendientes
+## Verificación histórica del 1-nov
 
 - `manage.py check`: sin incidencias.
 - `manage.py test tests --settings=config.test_settings`: 222 pruebas aprobadas,
@@ -133,8 +137,9 @@ adecuado. Este filtro no controla la lectura pública de imágenes por su domini
   subidas, borrados ni cambios en Supabase.
 - Archivo privado ignorado por Git y credenciales ausentes de archivos versionables.
 
-Siguen pendientes dominio, activación del proveedor, migración si hay archivos
-previos y pruebas de subida/borrado/persistencia en el entorno desplegado.
+En ese corte estaban pendientes la activación y la migración. El modo privado
+actual no requiere dominio del bucket. La evidencia del 3-nov enlazada arriba
+sustituye ese estado; la subida autenticada desde el panel sigue pendiente.
 Cloudflare Pages y el servicio web Django se configuran por separado.
 
 Referencias: [R2 y django-storages](https://django-storages.readthedocs.io/en/latest/backends/s3_compatible/cloudflare-r2.html),
