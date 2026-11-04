@@ -17,6 +17,12 @@ medio ya fue eliminado, un guardado posterior de su URL se rechaza. Las imágene
 externas siguen permitidas. OpenAPI actualizado y 227 pruebas SQLite aprobadas;
 no se ha reproducido concurrencia sobre Supabase real.
 
+Producción devuelve 503 en la subida si todavía usa almacenamiento local; solo
+habilita nuevas imágenes al configurar el almacenamiento remoto. Suite actual:
+229 pruebas aisladas aprobadas. Geovanny confirmó el 3-nov que los cuatro archivos
+faltantes provienen de otras PC y su recuperación se deja para después; no se ha
+autorizado ni realizado aquí el borrado de la base de datos.
+
 Bucket `enobra-media-prod` creado y credencial de objetos limitada al bucket.
 Configuración local privada en `backend/.env.r2`, excluida por `.gitignore`.
 Las claves reales no forman parte del repositorio ni del frontend.
