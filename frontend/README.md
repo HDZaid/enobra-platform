@@ -1,83 +1,72 @@
-# EnObra — Frontend integrado
+# EnObra — Frontend
 
-Proyecto React + Vite en JavaScript/JSX, preparado para conectarse a los contratos de Django REST Framework de este mismo repositorio.
+React + Vite, JavaScript/JSX. Sitio público y panel administrativo conectados a
+Django mediante `/api/v1/`. Estado común y pendientes en
+[Estado del proyecto](../docs/estado-proyecto.md).
 
-> **Estado en `develop`:** integrados los módulos públicos de Leo, Jennifer y Geo, más login, dashboard, noticias y mensajes del panel. Validación de UI con API controlada; la conexión real y persistencia se verifican en la fase de backend. Faltan los formularios administrativos de proyectos, propiedades y contenido institucional.
+## Desarrollo y comprobaciones
 
-## Requisitos
+Node.js compatible con `package.json` (>=20.19 o >=22.12):
 
-Node.js >= 20.19 o >= 22.12 y npm. Desde la raíz del repositorio:
-
-```bash
+```sh
 cd frontend
 npm ci
 npm run dev
-```
-
-Abra `http://localhost:5173/`. Para compilar y ejecutar comprobaciones:
-
-```bash
-npm run test
 npm run lint
+npm test
 npm run build
 ```
 
-El repositorio incluye `package-lock.json` para instalar dependencias con `npm ci`.
-No incorpora `node_modules` ni tokens. Usa `npm install` cuando agregues o actualices
-dependencias y versiona también los cambios del lockfile.
+Vite sirve `http://localhost:5173` y redirige `/api` y `/media` a Django local,
+normalmente `http://127.0.0.1:8000`. Backend y frontend se inician por separado.
+Usar `npm ci` con el lockfile versionado; no publicar node_modules ni archivos .env.
 
-## API
+## Cloudflare Pages y API de Render
 
-- El servidor Django está en [`../backend/`](../backend/README.md); se ejecuta en otra terminal.
-- El contrato compartido está en [`../docs/openapi.yaml`](../docs/openapi.yaml).
-- Prefijo predeterminado: `/api/v1`, configurable con `VITE_API_BASE_URL` en `.env.local`.
-- Vite redirige `/api` y `/media` a Django en `http://127.0.0.1:8000` durante desarrollo.
-- La API responde con `{count,page,page_size,results}` en listados y `{error:{code,message,details}}` en errores.
-- El backend incluido ya registra persistencia para varios módulos, pero necesita su configuración de base de datos. Servicios y búsqueda siguen pendientes; la UI maneja 501. Los modos demo están identificados, limitados a desarrollo y no representan guardados reales.
-- El cliente HTTP se encuentra en `src/services/apiClient.js` y los servicios particulares dentro de `src/features/*/services/`.
-- No subir secretos ni incluir contraseñas o tokens reales en el repositorio. Las peticiones protegidas reciben el token explícitamente; falta acordar sesión y renovación con el backend.
+- Sitio: [enobra.com.gt](https://enobra.com.gt).
+- Panel: [admin/login](https://enobra.com.gt/admin/login).
+- Proyecto Pages: `enobra-platform`; rama de producción `frontend-dev`, raíz
+  `frontend`, build `npm run build`, salida `dist`.
+- Configurar en las variables de producción de Pages:
 
-## Reparto del trabajo
+```dotenv
+VITE_API_BASE_URL=https://enobra-api.onrender.com/api/v1
+```
 
-| Persona | Módulo | Rutas públicas |
-| --- | --- | --- |
-| Leo (@Leonor-Rosales) | Inicio, Nosotros, Servicios, layout visual | `/`, `/nosotros`, `/servicios` |
-| Geo (@g4usSi) | Proyectos y Bienes raíces, detalles | `/proyectos`, `/bienes-raices` |
-| Jennifer (@Jeidy25Saquic) | Noticias, Contacto, panel y auth del frontend | `/noticias`, `/contacto`, `/admin` |
+Vite incorpora el valor al compilar: guardar la variable requiere reconstruir el
+frontend. Usar `/api/v1` en Pages sin un proxy devuelve 405 al enviar el login al
+alojamiento estático. El proxy de Vite solo existe durante desarrollo.
+Las variables `VITE_*` son públicas; no colocar claves, contraseñas ni tokens.
 
-El panel será compartido: **cada persona implementará los formularios de administración de su propio módulo**. Los cambios en archivos compartidos (`src/app/`, `src/components/layout/`, `src/styles/`) se coordinan y revisan entre las personas afectadas. Las asignaciones son orientativas: cualquier integrante puede contribuir a otros módulos.
+Al montar **Inicio (`/`)**, `backendWarmup.js` solicita una sola vez `health/`,
+sin credenciales y sin bloquear el contenido. Tolera hasta 75 segundos; los
+remontajes de React y regresar a Inicio no duplican el ping en esa carga de la
+aplicación. Abrir otra ruta no dispara este ping adicional. No hay intervalos.
+Las consultas normales de cada página siguen llamando a sus propios endpoints.
 
-El equipo completo tiene tres integrantes de frontend y tres de backend. Las
-[reglas compartidas](../docs/reglas-desarrollo.md) identifican responsables, contratos
-y flujo de ramas. Todo está sujeto a cambios por acuerdo del equipo.
+La primera operación todavía puede esperar el arranque de Render Free. El ping
+no garantiza disponibilidad continua ni reemplaza la gestión de errores del panel.
 
-## Rutas y mockup
+## Funcionalidad y contratos
 
-Las rutas de React se definen en `src/app/router.jsx` y `src/app/routePaths.js`. Se usan rutas limpias (`/noticias`) en lugar de archivos `.html`. Para migrar, conservar el contenido y aspecto del mockup original `MockUp---enObra`, sin copiar el `localStorage` como fuente permanente de contenido. El contenido administrable debe provenir de la API.
+Sitio: Inicio, Nosotros, Servicios, Proyectos, Bienes raíces, Noticias y Contacto.
+Panel: sesión, Resumen, Proyectos, Bienes raíces, Noticias, Mensajes, Usuarios,
+Papelera e Historial, según permisos. La política vigente está en
+[roles fijos](../docs/politica-roles-fijos.md); el backend aplica la autorización.
 
-La base inicial no incluía los archivos del mockup ni sus recursos. Las ramas de módulos
-pueden incorporarlos al migrar sus páginas, identificando los recursos de demostración.
-Cloudflare R2 es la [propuesta de almacenamiento](../docs/infraestructura.md), todavía
-sujeta a cambios y pendiente de implementación.
+El [contrato OpenAPI](../docs/openapi.yaml) define listados, errores y permisos.
+Servicios y búsqueda conservan endpoints pendientes (`501`). Los modos demo y
+`VITE_NEWS_PREVIEW` son de desarrollo y no prueban persistencia real.
 
-## Siguiente fase
+Las fotos se entregan por la API desde R2 privado. Las referencias de borradores
+usan vistas previas temporales; las publicaciones públicas reciben URLs estables.
+No se necesitan credenciales R2 en React.
 
-1. Validar el flujo completo contra Django configurado: login/RBAC, expiración, consultas, guardados, medios, contacto y visitas.
-2. Incorporar los formularios administrativos de proyectos, propiedades y contenido institucional cuando sus autores los publiquen.
-3. Confirmar datos del cliente, contenido real y reglas de despliegue, CORS y medios.
-4. La integración validada está en `develop`. `main` permanece sin cambios; los informes de `frontend-dev` conservan la procedencia histórica de esta entrega.
+## Equipo y referencias
 
-## Integración en frontend-dev
-
-El estado unificado, las ramas revisadas, los contratos y las limitaciones se documentan
-en [Integración del frontend](../docs/frontend-integration.md). Los informes ADMIN/NEWS
-describen sus entregas de origen; el reporte de integración indica la validación conjunta.
-
-## Conexión actual con Django
-
-Login, datos institucionales, Noticias, Contacto y Mensajes se verificaron de extremo
-a extremo con Django/ORM y almacenamiento local desechable. Inicio consulta noticias
-y Contacto consulta los datos de empresa. Consulta [integración y pendientes](../docs/integracion-backend-frontend.md)
-para reproducir las pruebas y conocer los límites de catálogos y Supabase.
-La previsualización pública de noticias es opcional: `VITE_NEWS_PREVIEW=true`, solo
-en desarrollo. Sin esa opción, una API de noticias caída muestra error.
+Frontend trabaja en `frontend-dev`, backend en `backend-dev`; `develop` integra.
+Conservar aportaciones de Leo, Geo, Jennifer y la colaboración autorizada de Pablo.
+Consultar [trabajo compartido](../docs/TRABAJO-EN-EQUIPO.md) antes de cambiar archivos
+comunes. Los informes ADMIN/NEWS describen entregas históricas; para producción
+consultar [operación actual](../docs/operacion-produccion.md) y la
+[evidencia de Render y R2](../docs/Render-validacion-2026-11-03.md).
