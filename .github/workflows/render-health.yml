@@ -1,0 +1,25 @@
+name: Disponibilidad de Render
+
+on:
+  push:
+    branches: [develop]
+
+permissions: {}
+
+concurrency:
+  group: enobra-render-health
+  cancel-in-progress: false
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Esperar la API durante el arranque en frio
+        shell: bash
+        run: |
+          curl --fail --silent --show-error --location \
+            --retry 4 --retry-all-errors --retry-delay 15 \
+            --connect-timeout 10 --max-time 75 --retry-max-time 360 \
+            --output /dev/null --write-out 'Render health: HTTP %{http_code}\n' \
+            https://enobra-api.onrender.com/api/v1/health/
