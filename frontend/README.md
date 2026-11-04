@@ -1,5 +1,10 @@
 # EnObra — Frontend
 
+<!-- enobra-documentacion-vigente -->
+> Guía vigente, revisión documental del 3-nov-2026.
+> [Base técnica](../docs/BASE-DOCUMENTACION-TECNICA.md), [inventario](../docs/INVENTARIO-DOCUMENTACION.md) y [estado](../docs/estado-proyecto.md).
+<!-- /enobra-documentacion-vigente -->
+
 React + Vite, JavaScript/JSX. Sitio público y panel administrativo conectados a
 Django mediante `/api/v1/`. Estado común y pendientes en
 [Estado del proyecto](../docs/estado-proyecto.md).
@@ -55,7 +60,8 @@ Papelera e Historial, según permisos. La política vigente está en
 [roles fijos](../docs/politica-roles-fijos.md); el backend aplica la autorización.
 
 El [contrato OpenAPI](../docs/openapi.yaml) define listados, errores y permisos.
-Servicios y búsqueda conservan endpoints pendientes (`501`). Los modos demo y
+Servicios y búsqueda conservan endpoints pendientes (`501`). El editor
+administrativo de Empresa/Nosotros no está implementado en las rutas del panel. Los modos demo y
 `VITE_NEWS_PREVIEW` son de desarrollo y no prueban persistencia real.
 
 Las fotos se entregan por la API desde R2 privado. Las referencias de borradores
@@ -67,6 +73,20 @@ No se necesitan credenciales R2 en React.
 Frontend trabaja en `frontend-dev`, backend en `backend-dev`; `develop` integra.
 Conservar aportaciones de Leo, Geo, Jennifer y la colaboración autorizada de Pablo.
 Consultar [trabajo compartido](../docs/TRABAJO-EN-EQUIPO.md) antes de cambiar archivos
-comunes. Los informes ADMIN/NEWS describen entregas históricas; para producción
-consultar [operación actual](../docs/operacion-produccion.md) y la
+comunes. Las etapas ADMIN/NEWS y notas de implementación sustituidas se retiraron del
+árbol actual; sus versiones se pueden recuperar en Git. Para producción consultar [operación actual](../docs/operacion-produccion.md) y la
 [evidencia de Render y R2](../docs/Render-validacion-2026-11-03.md).
+
+## Preparación del manual y exposición
+
+La base técnica incluye versiones resueltas, API de 38 rutas/55 operaciones y el
+diccionario de veinte modelos de backend. El manual debe separar las pantallas
+integradas de Servicios/búsqueda aún pendientes y de las verificaciones reales
+por rol que no se han completado en el despliegue.
+
+Validación funcional de referencia: 191 pruebas frontend, lint y build correctos;
+esta revisión solo modifica Markdown y no representa una nueva prueba de navegador.
+Las cuentas de Supabase se conservarán para la exposición del 4-nov-2026. La
+posterior depuración pretende dos identidades humanas (Admin e Ingeniero), con
+correos por definir. No se eliminaron cuentas y el manual no incluye credenciales.
+La política actual equipara Ingeniero a Administrador.
