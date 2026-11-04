@@ -1,5 +1,9 @@
-﻿# BE-10: validación real de Supabase
+# BE-10: validación real de Supabase
 
+<!-- enobra-documentacion-vigente -->
+> Evidencia fechada; resultados limitados al entorno y revisión indicados. Revisión documental: 3-nov-2026.
+> [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
+<!-- /enobra-documentacion-vigente -->
 Fecha: viernes 23 de octubre de 2026 (Guatemala).
 Estado: VALIDACIÓN EJECUTADA; esquema coincidente, configuración de roles pendiente.
 

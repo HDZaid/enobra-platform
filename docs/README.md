@@ -1,35 +1,40 @@
 # Documentación de EnObra
 
-Empezar por [Estado del proyecto](estado-proyecto.md), actualizado al 3-nov-2026.
-Los informes fechados y las entregas de origen son evidencia histórica; no sustituyen
-el estado actual ni el contrato HTTP. No publicar secretos ni cuentas personales.
+<!-- enobra-documentacion-vigente -->
+> Índice vigente, revisado el 3-nov-2026. Las guías describen código/operación;
+> los informes fechados conservan únicamente su evidencia original.
+<!-- /enobra-documentacion-vigente -->
 
-## Operación actual
+## Para iniciar el manual técnico
 
-- [Operación, ping de Inicio y diagnóstico](operacion-produccion.md).
-- [Infraestructura vigente](infraestructura.md).
-- [Backend en Render](Render-backend.md) y [evidencia del despliegue/R2](Render-validacion-2026-11-03.md).
-- [R2 privado y fotos mediante API](R2-configuracion.md).
-- [Limpieza diaria P-02 activa](P02-limpieza-activa.md).
-- [Backend](../backend/README.md) y [frontend](../frontend/README.md): instalación y comprobaciones.
+1. [Base técnica y alcance](BASE-DOCUMENTACION-TECNICA.md).
+2. [Inventario y sustituciones](INVENTARIO-DOCUMENTACION.md).
+3. [Diccionario de los veinte modelos/tablas](DICCIONARIO-DATOS.md).
+4. [Plantilla de elaboración del manual](PROMPT-MANUAL-TECNICO-ENOBRA.md).
 
-## Contratos y reglas
+## Sistema y contratos
 
-- [OpenAPI](openapi.yaml), [arquitectura](arquitectura.md), [backend administrativo](admin-backend.md).
-- [Política de roles fijos](politica-roles-fijos.md); [RBAC](RBAC.md) conserva el origen del catálogo.
-- [Sesión por actividad](FE-08-renovacion-por-actividad.md), [Usuarios API](usuarios-api.md), [Usuarios frontend](usuarios-frontend.md).
-- [Auditoría](auditoria.md), [Papelera](papelera.md), [Postman](postman/README.md), [pruebas del administrador](probar-admin.md).
-- [Trabajo compartido](TRABAJO-EN-EQUIPO.md), [responsables](responsables-y-cierres.md), [reglas](reglas-desarrollo.md).
-- [Dependencias de Juan](dependencias-juan.md), [pendientes de Jennifer](PENDIENTES-JENNIFER.md).
+- [Estado del proyecto](estado-proyecto.md), [arquitectura](arquitectura.md), [OpenAPI](openapi.yaml).
+- [Backend](../backend/README.md), [frontend](../frontend/README.md), [panel/API](admin-backend.md).
+- [Roles y permisos](RBAC.md), [política fija](politica-roles-fijos.md), [visibilidad](visibilidad-panel.md).
+- [Usuarios API](usuarios-api.md), [Usuarios frontend](usuarios-frontend.md), [sesión por actividad](FE-08-renovacion-por-actividad.md).
+- [Auditoría](auditoria.md), [papelera](papelera.md), [R2 privado](R2-configuracion.md).
 
-## Historial y entrega
+## Configuración, trabajo y pruebas
 
-- [Estado archivado del 25-oct](estado-proyecto-2026-10-25.md), [historial de ramas](estado-ramas.md).
-- [Matriz INT-04](INT-04-matriz-roles.md), [Supabase 28-oct](INT-04-supabase-2026-10-28.md).
-- [Integración del frontend](frontend-integration.md), [integración React/Django](integracion-backend-frontend.md).
-- [Contratos revisados](reporte-contratos-frontend.md), [revisión administrativa](reporte-revision-admin.md).
-- [Prompt del manual técnico aportado por el equipo](PROMPT-MANUAL-TECNICO-ENOBRA.md).
+- [Infraestructura](infraestructura.md), [Render](Render-backend.md), [operación](operacion-produccion.md).
+- [P-02 y su programación existente](P02-limpieza-activa.md).
+- [Pruebas aisladas y recorrido](probar-admin.md), [Postman y compatibilidad](postman/README.md), [exposición](demo/recorrido-jennifer.md).
+- [Trabajo compartido](TRABAJO-EN-EQUIPO.md), [reglas](reglas-desarrollo.md), [responsables](responsables-y-cierres.md), [coordinación](dependencias-juan.md).
 
-Las cifras de pruebas de informes anteriores corresponden a sus revisiones. Los
-informes ADMIN/NEWS y planes describen su fase de trabajo; no acreditan por sí solos
-un despliegue ni autorizan cambios a datos, permisos o infraestructura.
+## Evidencia fechada conservada
+
+- [Validación de esquema Supabase, BE-10](BE-10-validacion-supabase.md).
+- [P-01 y roles, 28-oct](integracion-p01-roles-2026-10-28.md).
+- [Matriz Supabase, 28-oct](INT-04-supabase-2026-10-28.md).
+- [Render y R2, 3-nov](Render-validacion-2026-11-03.md).
+
+Las etapas/planes/reportes sustituidos se retiraron del árbol actual y pueden
+recuperarse por Git. El inventario enumera reemplazos; no enlazar documentos
+retirados como si fueran instrucciones de operación. No se eliminaron datos,
+cuentas, secretos ni archivos de aplicación al depurar Markdown.

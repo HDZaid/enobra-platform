@@ -1,5 +1,9 @@
 # Reglas de desarrollo
 
+<!-- enobra-documentacion-vigente -->
+> Guía vigente. Revisión documental: 3-nov-2026.
+> [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
+<!-- /enobra-documentacion-vigente -->
 Estado: acuerdos de ramas y equipo actualizados el 21 de octubre de 2026.
 Regla vigente: [Trabajo en equipo](TRABAJO-EN-EQUIPO.md); una rama compartida por área, sin ramas alternas.
 
@@ -140,12 +144,14 @@ autenticación o despliegues completos si solamente existe el contrato o una dem
 - Los favoritos permanecen en el frontend (`localStorage`).
 - La auditoría administrativa se registra en `historial_actividad` y los mensajes atendidos
   conservan su fila en `mensaje_contacto`, actualizando su estado.
-- El proveedor para fotos y renders está pendiente; Cloudflare R2 es una propuesta, no una decisión.
+- Cloudflare R2 privado está activo. Las imágenes públicas se entregan por la API;
+  no habilitar dominio público del bucket ni poner credenciales en el frontend.
 
 ## Cambios en los acuerdos
 
 Todo está sujeto a cambios. Proponer el ajuste en un issue o PR, explicar motivo e impacto,
 coordinar con las personas afectadas y actualizar estos documentos junto con el cambio.
-Completar “Pendiente 1” y “Pendiente 2” cuando se conozcan los usuarios, sin bloquear el
-desarrollo actual. La infraestructura se describe como [propuesta](infraestructura.md),
-no como un despliegue ya realizado.
+Los titulares de las dos cuentas humanas definitivas se decidirán después de la
+exposición del 4-nov-2026. No modificar cuentas por interpretar un plan antiguo.
+La [infraestructura vigente](infraestructura.md) distingue servicios ya desplegados
+de pendientes funcionales y de validación.

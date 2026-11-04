@@ -1,30 +1,29 @@
-# Visibilidad del panel por permisos
+# Visibilidad y autorización del panel
 
-El panel muestra únicamente secciones y acciones autorizadas por los permisos
-que Django devuelve para la cuenta. El nombre del rol no concede acceso por sí
-solo: roles personalizados conservan sus permisos asignados y admin.all permite
-todas las acciones conocidas.
+<!-- enobra-documentacion-vigente -->
+> Guía vigente. Revisión documental: 3-nov-2026.
+> [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
+<!-- /enobra-documentacion-vigente -->
+El frontend usa permisos devueltos por Django para filtrar menú, rutas y acciones.
+La validación definitiva ocurre en el servidor. Consultar [RBAC](RBAC.md),
+[roles fijos](politica-roles-fijos.md) y [Usuarios](usuarios-frontend.md).
 
-- Añadir/editar usuarios requiere users.manage; users.read conserva lectura sin
-  esos botones. Crear roles requiere roles.manage; roles.read permite consultarlos.
-- Noticias, Mensajes, Proyectos y Propiedades muestran sus acciones según permisos.
-  Una acción no autorizada se oculta; los estados temporales (guardando, cargando)
-  pueden deshabilitar botones que sí están autorizados.
-- La papelera de Propiedades ahora se oculta cuando no puede usarse para la fila,
-  en lugar de mostrar un botón deshabilitado por falta de permiso.
-- Entrar por URL o enlace antiguo a una sección sin permiso redirige al Resumen,
-  reemplazando la entrada del historial. La vista rechazada no se monta ni consulta
-  sus datos. Las rutas de alta/edición comprueban además el permiso de acción.
-- La propiedad del registro y la autorización final siguen siendo responsabilidad
-  de Django. No se elimina ni debilita la protección de la API.
+- Administrador tiene acceso a las funciones disponibles y crea/reasigna usuarios.
+- Arquitecto gestiona contenido, papelera e historial y puede editar cuentas no
+  administradoras; no crea usuarios, reasigna roles ni elimina definitivamente.
+- Empleado crea/edita/publica noticias, proyectos y propiedades de otros usuarios,
+  y sube imágenes; no tiene papelera ni administración de cuentas.
+- El módulo de Roles y sus rutas/menu están retirados. No hay personalización.
+- PROJECT_TRASH_ENABLED está habilitado; las acciones exigen permisos de papelera.
+- Una ruta sin autorización redirige al Resumen sin montar ni consultar la vista.
+  Los formularios de alta/edición comprueban también la acción correspondiente.
+- Los botones se ocultan si falta permiso; estados de carga pueden deshabilitar
+  operaciones autorizadas. Esta presentación no concede permisos adicionales.
 
-PROJECT_TRASH_ENABLED está habilitado tras el cierre de P-02. Solo los usuarios
-con permisos de papelera ven su acción; el backend confirma la autorización. La vista previa de desarrollo
-continúa siendo una demostración sin identidad real.
+Sesión en memoria y renovación por actividad: [FE-08](FE-08-renovacion-por-actividad.md).
+Entrar a Inicio dispara un health adicional por carga; entrar directamente a otras
+rutas no dispara ese ping. Las consultas propias de cada pantalla se conservan.
 
-Verificación: lint, 182 pruebas y build aprobados. Chromium con API simulada:
-Arquitecta, Empleado, lectura de usuarios/roles, editor sin papelera e Ingeniero.
-Se comprueba menú filtrado, Añadir usuario solo autorizado, acción de papelera
-oculta y redirección de rutas sin peticiones a módulos no autorizados.
-Script: frontend/tests/browser/admin-visibility.cjs. Las pruebas históricas de
-navegación se actualizaron al comportamiento de redirección. No se usó Supabase.
+Pruebas de permisos, navegación y sesión están en frontend/tests y el runner de
+integración aislado. La evidencia general es 191 pruebas frontend, lint/build y
+238 backend. No equivale a certificar los recorridos de cada titular en Render.

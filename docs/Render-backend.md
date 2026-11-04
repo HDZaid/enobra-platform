@@ -1,5 +1,9 @@
 # Backend en Render: despliegue de validación activo
 
+<!-- enobra-documentacion-vigente -->
+> Guía vigente. Revisión documental: 3-nov-2026.
+> [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
+<!-- /enobra-documentacion-vigente -->
 > Configuración y límites vigentes en [operación](operacion-produccion.md). Pages
 > ya está conectado a esta API; health se activa desde Inicio y se comprueba en
 > Actions al publicar develop, sin pinger periódico.
@@ -74,7 +78,7 @@ reconocer el protocolo original, manteniendo HTTPS obligatorio:
 5. Verificar cabeceras, CORS permitido/ajeno, login y permisos con las URL reales.
    Registrar URL, revisión y resultados antes de dar el despliegue por validado.
 
-`check --deploy` conserva W005/W021 sobre HSTS, ya justificados en BE-14. El
+`check --deploy` conserva W005/W021 sobre HSTS: se conserva una hora, sin includeSubDomains ni preload. El
 health check actual comprueba el proceso HTTP, no la conexión a Supabase; validar
 la base por separado. No ejecutar `makemigrations`, `migrate` ni seeds para recrear
 tablas o modificar permisos existentes. No crear otra base de datos en Render.

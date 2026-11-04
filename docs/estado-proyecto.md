@@ -1,8 +1,13 @@
 # Estado del proyecto EnObra
 
+<!-- enobra-documentacion-vigente -->
+> Guía vigente. Revisión documental: 3-nov-2026.
+> [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
+<!-- /enobra-documentacion-vigente -->
 Actualizado el 3 de noviembre de 2026, Guatemala. Este documento resume el estado
-actual; los informes fechados conservan su evidencia y sus límites. El
-[corte anterior del 25-oct](estado-proyecto-2026-10-25.md) queda archivado.
+actual; los informes fechados conservan su evidencia y sus límites. Los documentos sustituidos se retiran del árbol actual y siguen recuperables en
+Git. La [base técnica](BASE-DOCUMENTACION-TECNICA.md) e
+[inventario](INVENTARIO-DOCUMENTACION.md) preparan el manual técnico.
 
 ## Servicios y ramas
 
@@ -64,6 +69,12 @@ Las pruebas aisladas no sustituyen recorridos con titulares reales en producció
   No se autorizó ni ejecutó una limpieza de la base por esta diferencia.
 - Correo y destinatario: backend dummy en validación; no acredita entrega real.
 - Servicios y buscador global conservan endpoints `501`; no darlos por implementados.
+- Depurar las cuentas de Supabase después de la exposición del 4-nov-2026: objetivo
+  de dos identidades humanas, Admin e Ingeniero, con correos aún por definir.
+  No se han eliminado cuentas; revisar la cuenta técnica de P-02 y sus relaciones
+  antes de preparar ese trabajo. Ingeniero equivale actualmente a Administrador.
+- Revisar colecciones Postman frente a OpenAPI/política fija antes de usarlas como
+  una matriz vigente; esta actualización documental no cambia sus JSON.
 - Datos y contenido definitivo, respaldos y restauración de Supabase, dominio
   propio de API si se decide usarlo, y revisión de límites del plan gratuito.
 - Render puede dormir por inactividad. El ping de Inicio adelanta el arranque;
@@ -73,9 +84,11 @@ Las pruebas aisladas no sustituyen recorridos con titulares reales en producció
 
 - [Operación y solución de problemas](operacion-produccion.md).
 - [Infraestructura vigente](infraestructura.md), [Render](Render-backend.md), [R2](R2-configuracion.md).
-- [Dependencias de Juan](dependencias-juan.md), [pendientes de Jennifer](PENDIENTES-JENNIFER.md).
+- [Coordinación de backend y datos](dependencias-juan.md), [pruebas del panel](probar-admin.md).
 - [Trabajo en equipo](TRABAJO-EN-EQUIPO.md), [OpenAPI](openapi.yaml).
 
-Los informes ADMIN/NEWS/INT y estados con fecha anterior describen su entrega de
-origen. Sus cifras y restricciones se interpretan con su fecha; no reabren tareas
-resueltas por evidencia posterior ni sustituyen el código o los contratos vigentes.
+Los informes fechados conservados acreditan su entorno y fecha, sin sustituir el
+código o contratos vigentes. Las etapas ADMIN/NEWS, planes de entrega de octubre y
+reportes de integración sustituidos se eliminaron del árbol actual; el historial
+Git permite recuperarlos. No se alteraron aplicación, infraestructura ni datos
+para realizar esta revisión documental.

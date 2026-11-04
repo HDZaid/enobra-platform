@@ -1,5 +1,9 @@
 # Infraestructura vigente
 
+<!-- enobra-documentacion-vigente -->
+> Guía vigente. Revisión documental: 3-nov-2026.
+> [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
+<!-- /enobra-documentacion-vigente -->
 Actualizado el 3-nov-2026. Esta página sustituye la propuesta inicial del 12-oct.
 Ver [estado del proyecto](estado-proyecto.md) y [operación](operacion-produccion.md).
 
@@ -58,3 +62,11 @@ registros para resolver esa diferencia. Ver [R2](R2-configuracion.md) y
 Referencias: [Render Free](https://render.com/docs/free),
 [Render monorepos](https://render.com/docs/monorepo-support),
 [R2 privado y acceso público](https://developers.cloudflare.com/r2/buckets/public-buckets/).
+
+## Datos de demostración y cuentas
+
+Conservar el entorno para la exposición del 4-nov-2026. La depuración de cuentas
+queda pospuesta; dos identidades humanas previstas, Admin e Ingeniero, cuyos
+correos se definirán después. No se han eliminado usuarios. La cuenta técnica de
+P-02 y el historial requieren revisión separada. El diccionario de modelos no
+sustituye esa revisión de filas y relaciones reales.

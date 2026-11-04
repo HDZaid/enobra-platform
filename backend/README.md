@@ -1,329 +1,122 @@
 # EnObra · Backend
 
-El panel administrativo ya tiene implementaciones ORM de autenticación, proyectos,
-propiedades, noticias, empresa, textos institucionales, solicitudes e imágenes.
-Consulta [implementación, mapeo y pruebas](../docs/admin-backend.md) para el estado
-actual y los requisitos. Servicios y búsqueda siguen pendientes (`501`).
+<!-- enobra-documentacion-vigente -->
+> Guía vigente. Revisión documental: 3-nov-2026.
+> [Base y límites técnicos](../docs/BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
+<!-- /enobra-documentacion-vigente -->
+Django + DRF, PostgreSQL existente en Supabase y almacenamiento R2 privado. El
+frontend consume la API; no conecta directamente a la base ni recibe claves R2.
+Consultar [base técnica](../docs/BASE-DOCUMENTACION-TECNICA.md),
+[arquitectura](../docs/arquitectura.md) y [estado actual](../docs/estado-proyecto.md).
 
-El equipo se coordina mediante las [reglas de desarrollo](../docs/reglas-desarrollo.md).
-La [infraestructura](../docs/infraestructura.md) fija PostgreSQL en Supabase y contempla
-Render para Django y R2 privado para imágenes, ya activos en validación.
-Consultar [operación actual](../docs/operacion-produccion.md) y
-[evidencia del despliegue](../docs/Render-validacion-2026-11-03.md).
+## Desarrollo local
 
-Backend en **Django + Django REST Framework** para el sitio de **EnObra** (constructora y bienes raíces,
-Quetzaltenango, Guatemala). Está basado en el mockup `MockUp---enObra` (HTML/CSS/JS puro con datos locales)
-y conserva los contratos: endpoints, serializers (entrada/salida/validaciones), permisos,
-errores e interfaces, con implementaciones ORM del panel administrativo.
-
-> **Estado actual**
-> - ✅ Contratos HTTP (rutas, métodos, parámetros, validaciones, códigos de estado, permisos).
-> - ✅ Interfaces abstractas de datos (`interfaces.py` en cada app) donde se acoplará la base de datos.
-> - ✅ Esquema OpenAPI generado: [`docs/openapi.yaml`](../docs/openapi.yaml), compartido desde la raíz del repositorio.
-> - ✅ Conexión a PostgreSQL en Supabase configurable mediante `DATABASE_URL`.
-> - ✅ Modelos no administrados y repositorios concretos del panel sobre las tablas existentes.
-> - ✅ **Frontend separado**: la base React está en [`../frontend/`](../frontend/README.md) y consume este contrato; sitio y panel están integrados; validar recorridos reales por rol en la URL desplegada.
->
-> Mientras una interfaz no tenga implementación registrada, su endpoint responde `501 not_implemented`.
-
----
-
-## Requisitos y arranque
-
-- Python 3.12+
-
-Desde la raíz del repositorio, entra primero a `backend/`. Los comandos siguientes usan
-PowerShell y el Python del entorno local, sin necesidad de activarlo:
+Python 3.12; Render/CI usan la revisión fijada en `.python-version`. PowerShell:
 
 ```powershell
 cd backend
 python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-Copy-Item .env.example .env          # solo la primera vez; ajusta los valores
+.\.venv\Scripts\python.exe -m pip install --require-hashes -r requirements.txt
+Copy-Item .env.example .env  # Solo la primera vez; completar en privado.
 .\.venv\Scripts\python.exe manage.py check
 .\.venv\Scripts\python.exe manage.py runserver
 ```
 
-En macOS/Linux usa `.venv/bin/python` y `cp`. Los settings cargan `backend/.env`
-independientemente del directorio actual, sin sobrescribir variables del sistema.
-En los ejemplos posteriores, `python` se refiere al intérprete de este entorno.
+No sobrescribir un .env operativo ni publicar valores. En macOS/Linux usar
+`.venv/bin/python`. Prioridad de configuración: entorno del proceso, .env.r2, .env.
+Las plantillas .example no se cargan automáticamente.
 
-- Documentación interactiva (Swagger): <http://localhost:8000/api/docs/>
-- Esquema OpenAPI en vivo: <http://localhost:8000/api/schema/>
-- Regenerar el archivo del contrato desde `backend/`: `python manage.py spectacular --file ../docs/openapi.yaml --validate`
-- Salud del servicio: `GET /api/v1/health/`
+## Pruebas aisladas y contrato
 
-> No ejecutar `makemigrations`/`migrate` para crear las tablas de negocio: ya existen en Supabase
-> y se mapearán con modelos `managed=False`. Tampoco se usa `createsuperuser` en esta fase.
+Desde backend:
 
----
-
-## Arquitectura: contrato → interfaz → implementación
-
-```
-Request ─► View (valida con Serializer) ─► resolve(Interface) ─► Implementación ORM
-                                                  ▲
-                                   config/bindings.py  (único punto de acople)
+```powershell
+.\.venv\Scripts\python.exe manage.py check --settings=config.test_settings
+.\.venv\Scripts\python.exe manage.py test tests --settings=config.test_settings
+.\.venv\Scripts\python.exe manage.py spectacular --file ../docs/openapi.yaml --validate --fail-on-warn --settings=config.test_settings
 ```
 
-| Capa | Dónde | Qué hace |
-| --- | --- | --- |
-| Contrato HTTP | `apps/<app>/serializers.py`, `views.py`, `urls.py` | Forma de las peticiones/respuestas, validaciones, permisos y códigos. |
-| Contrato de datos | `apps/<app>/interfaces.py` | Clases abstractas (`ABC`) que la capa de persistencia debe cumplir. |
-| Registro | `apps/common/registry.py` | `register(Interfaz, implementación)` / `resolve(Interfaz)`. |
-| Acople | `config/bindings.py` | Aquí se registran las implementaciones concretas. |
+La evidencia vigente registra 238 pruebas aprobadas. test_settings usa SQLite
+separado; no acredita datos reales ni debe sustituirse por producción para una
+prueba que crea/elimina registros. [Cómo probar](../docs/probar-admin.md).
 
-Las implementaciones devuelven `dict` (o cualquier objeto con los atributos del serializer de salida).
+`requirements.in` expresa rangos; requirements.txt fija versiones/hashes.
+Actualizar el lock requiere revisión y las comprobaciones de la guía Render.
 
+## Arquitectura y persistencia
+
+Vistas/serializers dependen de interfaces; `apps/common/registry.py` resuelve
+implementaciones registradas en `config/bindings.py`. `persistence/` usa ORM y
+modelos managed=False sobre veinte tablas existentes. No ejecutar migraciones
+ni seeds para recrearlas. [Diccionario](../docs/DICCIONARIO-DATOS.md).
+
+La fábrica de publicaciones reúne proyectos, propiedades y noticias. Genera kits
+de repositorio/permisos/papelera; no genera modelos ni define roles de usuarios.
+Las interfaces ServiceRepository y SearchRepository siguen sin implementación
+registrada; sus endpoints devuelven 501 not_implemented.
+
+## API y autenticación
+
+Contrato canónico: [openapi.yaml](../docs/openapi.yaml), 38 rutas y 55 operaciones.
+Swagger `/api/docs/`; esquema `/api/schema/`. Prefijo habitual `/api/v1/`, excepto
+la entrega de archivos privados mediante `/media/r2/{media_id}/`.
+
+- JWT Bearer: auth/login/, auth/me/, auth/refresh/ y auth/logout/.
+- Access de 15 minutos y refresh de 7 días, con sesión revocable en la base.
+- Roles fijos Administrador, Arquitecto y Empleado; alias históricos reconocidos.
+  Ingeniero equivale a Administrador. No hay editor de roles ni rutas de permisos.
+- Usuarios: listado/selector, creación, edición y reemplazo de rol según política.
+- Publicaciones: proyectos, propiedades y noticias; lecturas públicas excluyen
+  borradores/papelera. Las operaciones protegidas requieren permisos efectivos.
+- Empresa/institución, consultas de contacto/visitas, auditoría y papelera integrados.
+- Listados paginados: `{count,page,page_size,results}`; errores:
+  `{error:{code,message,details}}`. Ver serializers/OpenAPI para límites por campo.
+
+El selector de roles usa admin/users/roles/ y no sustituye endpoints retirados.
+[RBAC](../docs/RBAC.md), [Usuarios](../docs/usuarios-api.md),
+[panel](../docs/admin-backend.md), [auditoría](../docs/auditoria.md).
+
+## Producción en Render
+
+Servicio enobra-api; fuente develop, raíz backend, despliegue manual.
+Build e inicio:
+
+```sh
+pip install --require-hashes -r requirements.txt
+python manage.py check --deploy --settings=config.production
+gunicorn --config gunicorn.conf.py config.wsgi:application
 ```
-backend/
-├── config/                  # settings, urls, bindings (punto de acople)
-├── apps/
-│   ├── common/              # enums, errores, permisos, paginación, campos de validación, registro
-│   ├── accounts/            # login / refresh / logout / me  (AuthService)
-│   ├── company/             # contacto y marca + textos de "Nosotros"
-│   ├── services/            # Diseño, Administración, Preconstrucción, Construcción
-│   ├── projects/            # portafolio (filtro por año)
-│   ├── properties/          # bienes raíces (filtros, orden, facets)
-│   ├── news/                # noticias y eventos
-│   ├── inquiries/           # formularios de contacto y visita + bandeja admin
-│   ├── search/              # buscador global
-│   └── media/               # subida de imágenes (panel)
-├── .env.example
-├── manage.py
-├── requirements.txt
-└── README.md
-```
 
-El contrato OpenAPI está en `../docs/openapi.yaml` y las reglas de Git en `../.gitignore`.
+Producción exige PostgreSQL, clave persistente de al menos 50 caracteres y hosts/
+orígenes HTTPS explícitos. Supabase usa pooler de sesión y TLS en el servicio
+validado. HTTPS/CORS/proxy/cabeceras comprobados; falta recorrido real por rol.
+No regenerar la clave en cada arranque. Health comprueba HTTP, no la base.
+[Render](../docs/Render-backend.md), [operación](../docs/operacion-produccion.md).
 
----
+## R2 privado y consultas
 
-## Convenciones del contrato
+R2_ENABLED=true y R2_ACCESS_MODE=private en Render, con MEDIA_API_ORIGIN HTTPS.
+R2_PUBLIC_HOST no es obligatorio en ese modo; el bucket no tiene dominio público
+ni r2.dev. Credenciales solo en el servidor. Django valida imágenes (10 MiB),
+guarda metadatos y entrega bytes según publicación, sesión o vista previa de 15 min.
+Se rechaza borrar un medio usado por contenido. No se migra un archivo al cambiar
+solo una variable; véase [R2](../docs/R2-configuracion.md).
 
-- **Base:** `/api/v1/` · JSON (`application/json`), salvo la subida de imágenes (`multipart/form-data`).
-- **Auth:** `Authorization: Bearer <access_token>`. Lectura pública; escritura solo rol `admin`.
-- **Contenido publicado:** el público solo ve `published=true`; con token admin se ven también borradores.
-- **Paginación** (`?page=1&page_size=12`, máx. 100):
-  ```json
-  { "count": 42, "page": 1, "page_size": 12, "results": [ ... ] }
-  ```
-- **Errores** (uniformes):
-  ```json
-  { "error": { "code": "validation_error", "message": "...", "details": { "phone": ["..."] } } }
-  ```
-  Códigos: `validation_error` (400), `not_authenticated` (401), `permission_denied` (403), `not_found` (404),
-  `throttled` (429), `not_implemented` (501, capa de datos aún no acoplada).
-- **IDs:** propiedades → entero; proyectos, noticias y servicios → *slug* de texto (como en el mockup).
-- **Imágenes:** URL HTTPS o ruta `/media/…` devuelta por `POST /admin/media/`. Se **rechazan** imágenes en base64
-  (el mockup las guardaba así en `localStorage`; en producción se suben como archivo).
-- **Video:** únicamente enlace HTTPS de YouTube; validado en Django y documentado
-  en OpenAPI. No se suben ni alojan archivos de video por la API.
-- **Límite de imagen:** `MEDIA_MAX_UPLOAD_BYTES` (10 MB por defecto; el mockup limitaba a 2 MB por el `localStorage`).
-- **Rate limit:** login `5/min`; formularios públicos `10/hora` por IP.
+`check_r2` comprueba lectura autenticada sin subir/borrar. `check_database`
+comprueba tablas/columnas en una transacción PostgreSQL de solo lectura; no valida
+exhaustivamente tipos, constraints ni recuperación de datos.
 
----
+Las consultas de contacto/visitas se guardan mediante el repositorio. El backend
+de correo desplegado es dummy: configurar proveedor/remitente/destinatario y
+probar recepción antes de declarar notificaciones operativas.
 
-## Endpoints
+## Mantenimiento y límites
 
-Prefijo `/api/v1`. 🔓 = público · 🔒 = requiere token; el permiso requerido depende de la ruta.
+P-02 limpia proyectos/propiedades tras más de 90 días en papelera mediante el
+workflow existente. No crear otro cron en Render ni restaurar el SQL retirado.
+Las publicaciones y sus metadatos/auditoría se modifican transaccionalmente;
+la limpieza de archivos huérfanos es un alcance distinto.
 
-### Sistema y autenticación
-| Método | Ruta | Acceso | Descripción |
-| --- | --- | --- | --- |
-| GET | `/health/` | 🔓 | Estado del servicio. |
-| POST | `/auth/login/` | 🔓 | `{email, password}` → `{access, refresh, expires_in, user}`. |
-| POST | `/auth/refresh/` | 🔓 | `{refresh}` → `{access, expires_in}`. |
-| POST | `/auth/logout/` | 🔓 | `{refresh}` → `204` (revoca el refresh). |
-| GET | `/auth/me/` | 🔒 | Usuario autenticado con roles y permisos efectivos. |
-
-### Roles y permisos
-| Método | Ruta | Acceso | Descripción |
-| --- | --- | --- | --- |
-| GET | `/admin/permissions/` | `roles.manage` | Catálogo de permisos disponibles. |
-| GET / POST | `/admin/roles/` | `roles.manage` | Listar roles o crear uno con permisos existentes. |
-| GET / PATCH | `/admin/roles/{id}/` | `roles.manage` | Consultar o actualizar un rol. |
-
-Los roles iniciales se cargan con `python manage.py seed_access_control`; el comando es
-repetible y no crea cuentas. La política inicial es:
-
-| Rol | Permisos efectivos |
-| --- | --- |
-| Ingeniero | Todos; incluye usuarios, roles, auditoría y borrado permanente. |
-| Arquitecta | Crear/editar cualquier propiedad, publicar, usar papelera y restaurar. |
-| Empleado | Crear borradores propios, editarlos y enviarlos a papelera. |
-
-La tabla `propiedad` solo tiene el indicador `publicado`; aún no contiene estado de revisión.
-Por eso la API puede guardar borradores del empleado, pero el flujo formal de "enviar a revisión"
-requiere acordar cómo representarlo en la base confirmada.
-
-### Empresa
-| Método | Ruta | Acceso | Descripción |
-| --- | --- | --- | --- |
-| GET / PUT | `/company/` | 🔓 / 🔒 | Contacto y marca; las redes se respaldan con filas de `red_social`. |
-| GET / PUT | `/institution/` | 🔓 / 🔒 | "Nosotros": presentación, firma, cargo, visión, misión, principios. |
-
-### Servicios (solo lectura)
-| Método | Ruta | Acceso | Descripción |
-| --- | --- | --- | --- |
-| GET | `/services/` | 🔓 | Los 4 servicios con sus alcances. |
-| GET | `/services/{id}/` | 🔓 | Detalle (`diseno`, `administracion`, `preconstruccion`, `construccion`). |
-
-### Proyectos
-| Método | Ruta | Acceso | Descripción |
-| --- | --- | --- | --- |
-| GET | `/projects/?year=2026` | 🔓 | Portafolio paginado, filtro por año. |
-| GET | `/projects/years/` | 🔓 | Años disponibles (llena el `<select>` de año). |
-| GET | `/projects/{id}/` | 🔓 | Ficha con fotos, renders y video opcional. |
-| POST | `/projects/` | 🔒 | Crear. |
-| PUT / PATCH | `/projects/{id}/` | 🔒 | Reemplazar / editar parcialmente. |
-| DELETE | `/projects/{id}/` | 🔒 | Eliminar. |
-
-### Bienes raíces
-| Método | Ruta | Acceso | Descripción |
-| --- | --- | --- | --- |
-| GET | `/properties/` | 🔓 | Catálogo con filtros combinables (ver abajo). |
-| GET | `/properties/facets/` | 🔓 | Operaciones, tipos, zonas y rango de precio para poblar los filtros. |
-| GET | `/properties/{id}/` | 🔓 | Ficha comercial completa. |
-| POST | `/properties/` | 🔒 | Crear. |
-| PUT / PATCH | `/properties/{id}/` | 🔒 | Reemplazar / editar parcialmente. |
-| DELETE | `/properties/{id}/` | Según permiso | Enviar a papelera (empleado: solo borrador propio). |
-| GET | `/admin/properties/trash/` | Papelera propia o permiso para ver toda | Listar publicaciones en papelera. |
-| POST | `/admin/properties/{id}/restore/` | `properties.restore` | Restaurar una publicación. |
-| DELETE | `/admin/properties/{id}/permanent/` | `properties.delete_permanently` | Eliminar permanentemente desde papelera. |
-
-Filtros de `GET /properties/` (equivalen a los del mockup):
-
-| Parámetro | Valores | Notas |
-| --- | --- | --- |
-| `operation` | `Venta` · `Alquiler` | |
-| `type` | `Casa` · `Apartamento` · `Terreno` · `Local` | |
-| `zone` | texto (ej. `Zona 9`) | Valores desde `/properties/facets/`. |
-| `min_price`, `max_price` | entero (Q) | `min_price ≤ max_price`. |
-| `q` | texto | Sin distinguir mayúsculas/tildes sobre título, zona, ubicación y tipo. |
-| `ids` | `1,4,5` | Vista **Favoritos**: el front guarda los ids (localStorage) y los envía aquí. |
-| `sort` | `recent` (def.) · `price_asc` · `price_desc` | `recent` ordena por `date` descendente. |
-| `page`, `page_size` | enteros | |
-
-### Noticias y eventos
-| Método | Ruta | Acceso | Descripción |
-| --- | --- | --- | --- |
-| GET | `/news/?category=Eventos` | 🔓 | Listado (`Anuncios` · `Eventos` · `Proyectos`), más recientes primero. |
-| GET | `/news/{id}/` | 🔓 | Publicación completa. |
-| POST | `/news/` | 🔒 | Crear. |
-| PUT / PATCH | `/news/{id}/` | 🔒 | Reemplazar / editar parcialmente. |
-| DELETE | `/news/{id}/` | 🔒 | Eliminar. |
-
-### Solicitudes (formularios)
-| Método | Ruta | Acceso | Descripción |
-| --- | --- | --- | --- |
-| POST | `/inquiries/contact/` | 🔓 | Formulario de Contacto / "Solicitar información" → `201 {id, status, created_at}`. |
-| POST | `/inquiries/visits/` | 🔓 | "Solicitar visita" de una propiedad → `201`; `404` si la propiedad no existe. |
-| GET | `/inquiries/?kind=&status=` | 🔒 | Bandeja de solicitudes (paginada). |
-| GET | `/inquiries/{id}/` | 🔒 | Detalle. |
-| PATCH | `/inquiries/{id}/` | 🔒 | Cambiar estado: `nuevo` → `atendido` → `archivado`. |
-
-Validaciones (replican `validate()` de `main.js` y se refuerzan en servidor):
-nombre, correo y mensaje obligatorios · teléfono de Guatemala de **8 dígitos** (acepta espacios y guiones; se
-normaliza) · fecha de visita **hoy o futura** · campo honeypot `website` (debe ir vacío) contra spam.
-
-### Búsqueda y medios
-| Método | Ruta | Acceso | Descripción |
-| --- | --- | --- | --- |
-| GET | `/search/?q=diseño&limit=5` | 🔓 | Buscador global: `{query, total, services[], projects[], properties[], news[]}`. `q` ≥ 2 caracteres. |
-| POST | `/admin/media/` | 🔒 | Sube imagen (`file`, `kind`: `photo`·`render`·`news`·`logo`) → `{id, url, ...}`. JPEG/PNG/WebP/GIF. |
-| GET / DELETE | `/admin/media/{id}/` | 🔒 | Metadatos / eliminar. |
-
----
-
-## Del mockup al backend
-
-| En el mockup | En el backend |
-| --- | --- |
-| `data.js` + `store.js` (`localStorage`) | Repositorios ORM + BD compartida para el panel. |
-| Panel `admin.html` con "perfiles de demostración" (sin contraseña) | `/auth/*` con autorización en servidor y permisos derivados de roles activos. |
-| Alta/edición/baja de propiedades | Permisos diferenciados para Ingeniero, Arquitecta y Empleado. |
-| Fotos en base64 dentro de `localStorage`/`data.js` | `POST /admin/media/` + URLs. |
-| Exportar/importar respaldo JSON y `data.js` | Ya no aplica: la BD es la fuente de verdad (los respaldos son de base de datos). |
-| Formularios con "envío simulado" (`CONECTAR API REAL AQUÍ`) | `POST /inquiries/contact/` y `/inquiries/visits/`. |
-| Favoritos en `localStorage` | Siguen en el cliente; se consultan con `?ids=`. |
-| Filtros en la URL (`?operation=…&sort=…`) | Mismos filtros como query params de `GET /properties/`. |
-| Marca `demo: true` en contenido de ejemplo | Campo `demo` conservado en proyectos, propiedades y noticias. |
-
----
-
-## Cómo acoplar las interfaces que siguen pendientes
-
-PostgreSQL en Supabase es la base definitiva. `config/settings.py` lee `DATABASE_URL`; si está
-vacía deja `DATABASES = {}`. El acceso oficial es Django ORM y React consume solo la API Django.
-
-1. Reutilizar los modelos de `persistence/models/`, con `Meta.managed = False` y
-   `db_table` explícito. No crear estas tablas mediante migraciones.
-2. Mapear relaciones mediante `ForeignKey(..., db_column=...)` de acuerdo con las claves
-   existentes, sin alterar el esquema remoto.
-3. Implementar cada interfaz de `apps/*/interfaces.py`:
-   `AuthService`, `CompanyRepository`, `InstitutionRepository`, `ServiceRepository`, `ProjectRepository`,
-   `PropertyRepository`, `NewsRepository`, `InquiryRepository`, `SearchRepository`, `MediaStorage`.
-4. Registrarlas en `config/bindings.py`:
-   ```python
-   def register_repositories(register):
-       register(PropertyRepository, DjangoPropertyRepository())
-   ```
-5. Añadir `django.contrib.auth`/`contenttypes` solo si la implementación de `AuthService` los necesita
-   (contraseñas con Argon2/PBKDF2; JWT de acceso corto + refresh revocable).
-6. Si algo del contrato debe cambiar, hacerlo en serializers/interfaces y regenerar `../docs/openapi.yaml`.
-
-Las 20 tablas esperadas son: `rol`, `permiso`, `usuario`, `usuario_rol`, `rol_permiso`,
-`servicio`, `contenido_pagina`, `categoria_proyecto`, `proyecto`, `proyecto_video`,
-`tipo_propiedad`, `tipo_operacion`, `propiedad`, `propiedad_video`, `categoria_noticia`,
-`noticia`, `configuracion_sitio`, `red_social`, `mensaje_contacto` e `historial_actividad`.
-`red_social` evita columnas fijas; `historial_actividad` registra auditoría administrativa;
-un mensaje atendido permanece en `mensaje_contacto` y cambia de estado. Los favoritos siguen
-en `localStorage` del frontend.
-
-Responsabilidades que le tocan a la capa de datos: generar `id` (slug único para proyectos/noticias),
-rellenar `created_at`/`updated_at`/`updated_by`, aplicar el filtro `published` según `include_unpublished`,
-búsqueda sin tildes, y notificar a la empresa (correo/WhatsApp) cuando llegue una solicitud.
-
----
-
-## Pendientes del cliente (heredados del mockup)
-
-Logo oficial · correo institucional · URLs de redes sociales · dominio definitivo · nombre y correo de la
-arquitecta (cuenta real) · confirmación de teléfonos/dirección · contenido real de proyectos, propiedades y noticias.
-Los datos generales aceptan valores pendientes; las redes deben exponerse como una colección respaldada por
-`red_social`. El contrato OpenAPI todavía conserva campos fijos y debe corregirse en una fase coordinada.
-
-## Seguridad (a respetar al implementar)
-
-Perfil preparado para hosting: `DJANGO_SETTINGS_MODULE=config.production`.
-Arranque con Gunicorn, dependencias fijadas y servicio web de Render:
-[guía vigente](../docs/Render-backend.md). El despliegue y sus URL siguen pendientes.
-Variables, pruebas y límites en [BE-14: producción](../docs/BE-14-produccion.md).
-La revisión HTTP sobre las URL reales se completa después del despliegue.
-
-- Secretos solo en variables de entorno (`.env` está en `.gitignore`); nunca en código ni en el frontend.
-- HTTPS en producción, `DJANGO_DEBUG=false`, `ALLOWED_HOSTS` y `CORS_ALLOWED_ORIGINS` restringidos.
-- Autorización siempre en servidor (el rol viene del token verificado, no del cliente).
-- Validar tipo real y tamaño de imágenes en `MediaStorage`; no ejecutar ni servir archivos subidos como código.
-- Escapar/sanitizar el texto al renderizar en React (los campos son texto plano, no HTML).
-
-## Diagnóstico manual de conexión
-
-Con DATABASE_URL configurada de forma segura, desde backend ejecutar
-`python manage.py check_database`. Comprueba las tablas y columnas de public en una
-transacción PostgreSQL de solo lectura; no crea ni altera tablas y no cambia el
-arranque normal de runserver. Los errores muestran origen de configuración y
-sugerencias sin incluir la contraseña ni DSN. Esta comprobación no valida datos de
-negocio, todos los tipos/constraints ni sustituye las pruebas de la aplicación.
-
-## Imágenes en Cloudflare R2
-
-R2 se configura mediante variables privadas del hosting o `backend/.env.r2`
-(excluido de Git). `R2_ENABLED=false` conserva el almacenamiento local. Para
-activar R2 se requieren credenciales y `R2_PUBLIC_HOST`, el dominio público de
-imágenes ya conectado al bucket. El endpoint `/api/v1/admin/media/` conserva sus
-permisos, validaciones y respuesta. Ver [configuración y pendientes de R2](../docs/R2-configuracion.md).
-
-`python manage.py check_r2` comprueba lectura autenticada sin subir/borrar archivos
-y sin mostrar secretos, incluso antes de configurar el dominio público.
+El ping de Inicio adelanta el arranque Free; Actions reintenta health al publicar
+develop, sin ping periódico. Cuenta técnica, respaldos, cuentas definitivas y
+pruebas reales se detallan en [estado del proyecto](../docs/estado-proyecto.md).

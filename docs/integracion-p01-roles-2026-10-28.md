@@ -1,5 +1,9 @@
 # P-01 y roles de Supabase
 
+<!-- enobra-documentacion-vigente -->
+> Evidencia fechada; resultados limitados al entorno y revisión indicados. Revisión documental: 3-nov-2026.
+> [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
+<!-- /enobra-documentacion-vigente -->
 Fecha: 28 de octubre de 2026, Guatemala. Acciones solicitadas por Geovanny en esta sesión.
 
 ## Arreglo incorporado

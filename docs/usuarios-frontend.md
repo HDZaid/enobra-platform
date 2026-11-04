@@ -1,98 +1,52 @@
-# Usuarios: creación desde el panel administrador
+# Usuarios en el panel administrativo
 
-Interfaz en `frontend-dev`, ruta `/admin/usuarios`. Conserva el diseño del panel
-existente y añade **Usuarios** a la barra lateral. Reutiliza `AdminShell`, la sesión
-en memoria, `apiClient` y las comprobaciones de permisos del proyecto.
+<!-- enobra-documentacion-vigente -->
+> Guía vigente. Revisión documental: 3-nov-2026.
+> [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
+<!-- /enobra-documentacion-vigente -->
+Ruta /admin/usuarios. La interfaz reutiliza AdminShell, sesión en memoria,
+apiClient y permisos efectivos del backend. [Contrato API](usuarios-api.md),
+[visibilidad](visibilidad-panel.md) y [roles fijos](politica-roles-fijos.md).
 
-Solo las cuentas con `admin.all` ven el enlace y pueden entrar mediante la ruta.
-Arquitecta y Empleado ven el aviso de acceso restringido si intentan abrirla.
-El servidor también debe aplicar esa autorización; ocultar el enlace no la sustituye.
+## Funcionalidad y permisos
 
-## Formulario y listado
+- Administrador lista/crea usuarios y asigna uno de los roles fijos activos existentes.
+- Arquitecto lista y edita nombre/estado de cuentas no administradoras, sin crear
+  cuentas ni reasignar roles. El servidor aplica las mismas restricciones.
+- Empleado no accede a Usuarios. Una ruta rechazada redirige sin consultar la vista.
+- La cuenta propia no puede desactivarse/reasignarse; tampoco puede eliminarse el
+  último Administrador activo ni modificarse la cuenta técnica desde este flujo.
 
-- Nombre, correo, contraseña, confirmación, rol activo y estado de la cuenta.
-- Validación local; los errores de Django aparecen por campo y no cierran el formulario.
-- Listado paginado, búsqueda por nombre/correo, indicadores activo/inactivo y roles.
-- Se desactiva la creación mientras se consulta el catálogo de roles o si no está disponible.
-- Confirmación de éxito únicamente después de la respuesta válida de creación.
-- Prevención de doble envío y contraseña descartada al cerrar el formulario.
-- Diálogo nativo accesible, foco inicial y cierre por Escape; tabla desplazable en móvil.
-- La demostración de desarrollo usa ejemplos en memoria; no guarda contraseñas ni crea cuentas reales.
+Formulario de alta: nombre, correo, contraseña/confirmación, rol y estado. La
+confirmación no se envía; el backend recibe name/email/password/role_id/active.
+El selector consulta admin/users/roles/ y conserva IDs reales. No inventar roles
+faltantes ni mostrar edición de permisos. La respuesta nunca expone hashes.
 
-## Conexión con Supabase
+El listado es paginado y permite q por nombre/correo. Editar datos usa PATCH y
+reasignar usa PUT; son operaciones independientes. Si una termina y la otra falla,
+conservar el éxito parcial confirmado y reintentar únicamente lo pendiente.
+Las validaciones por campo no cierran el formulario ni presentan un falso éxito.
 
-La interfaz envía las peticiones a Django; Django reutiliza la conexión PostgreSQL
-de Supabase ya prevista por el proyecto. No se agregan credenciales al navegador,
-almacenamiento local de usuarios ni otra conexión a la base.
+La contraseña se descarta al cerrar. Los ejemplos de desarrollo no crean usuarios
+reales. React llama a Django, que accede a Supabase; no hay conexión directa de
+usuarios desde el navegador ni credenciales de base en VITE_*.
 
-El contrato complementario se implementó en la rama compartida `backend-dev`:
+## Sesión y datos definitivos
 
-| Método | Ruta | Uso |
-| --- | --- | --- |
-| GET | `/api/v1/admin/users/?q=&page=1&page_size=12` | Listado paginado |
-| GET | `/api/v1/admin/users/roles/` | Roles activos disponibles |
-| POST | `/api/v1/admin/users/` | Crear cuenta y asignar rol |
+La sesión en memoria se renueva por actividad con límite de inactividad; ver FE-08.
+La depuración de Supabase queda para después de la exposición del 4-nov-2026.
+Se pretenden dos cuentas humanas permanentes, Admin e Ingeniero, con correos por
+definir. No se eliminan ni modifican cuentas al actualizar estas guías. El nombre
+Ingeniero es actualmente alias de Administrador; no implica un cuarto rol.
 
-El POST envía `{name, email, password, role_id, active}`. La confirmación de contraseña
-no se envía. La respuesta contiene `{id, name, email, active, roles, created_at}`,
-sin contraseñas ni hashes. El rol se selecciona con IDs del servidor, sin IDs fijos.
-Debe integrarse el PR de backend para usar esta pantalla contra el servidor real.
+## Verificación y capturas
 
-## Pruebas
+Pruebas en frontend/tests/users.test.mjs y runners de integración con datos aislados.
+Las evidencias generales registran 191 pruebas frontend y 238 backend. Falta el
+recorrido con titulares autorizados desde el panel desplegado.
 
-```powershell
-npm --prefix frontend ci
-npm --prefix frontend run lint
-npm --prefix frontend test
-npm --prefix frontend run build
-```
-
-`frontend/tests/users.test.mjs` cubre permisos, validaciones, contrato, errores y
-filtrado de datos privados. `frontend/tests/browser/users.cjs` verifica el recorrido
-visual con respuestas interceptadas: creación, errores, búsqueda, carga de roles,
-acceso restringido y anchos de escritorio/móvil. No usa Supabase.
-
-Para ejecutar los recorridos de navegador, iniciar Vite y configurar Playwright
-y Chrome/Chromium como en las pruebas de integración existentes:
-
-```powershell
-$env:PLAYWRIGHT_MODULE = 'ruta/al/modulo/playwright'
-$env:CHROMIUM_PATH = 'ruta/al/navegador/chrome.exe'
-node frontend/tests/browser/users.cjs
-node frontend/tests/browser/integration.cjs
-```
-
-`users-live.cjs` comprueba React contra Django sin interceptar peticiones, con
-`INTEGRATION_BASE_URL`, `INTEGRATION_EMAIL` e `INTEGRATION_PASSWORD`. Opcionalmente,
-`INTEGRATION_USER_EMAIL` e `INTEGRATION_INACTIVE_EMAIL` permiten usar correos únicos.
-Ese recorrido crea cuentas: ejecutarlo con cuentas y datos de integración.
-
-## Validación real con Supabase — 21 de octubre de 2026
-
-- Se utilizó el `.env` facilitado por el usuario, únicamente como `backend/.env`
-  local e ignorado por Git. No se modificó la conexión del proyecto.
-- `manage.py check_database` confirmó la conexión PostgreSQL y las columnas
-  esperadas en las 20 tablas existentes. No ejecuta migraciones.
-- Se ejecutó el build de React contra Django real y Supabase, sin interceptar
-  las peticiones de `users-live.cjs`. Se cargó el contrato de `backend-dev` para
-  comprobar las dos contribuciones juntas sin mezclar los commits de cada rama.
-- El formulario creó cuentas activa/inactiva, rechazó el correo duplicado y
-  permitió iniciar sesión a la cuenta nueva con el rol Empleado. Esa cuenta no
-  pudo acceder a Usuarios ni vio el enlace en la barra lateral.
-- Se comprobaron en PostgreSQL el hash PBKDF2, la asignación de rol, el estado
-  inactivo y las dos entradas de auditoría, dentro de la transacción de prueba.
-- La prueba se ejecutó en una transacción con rollback. Al terminar se verificó
-  mediante otra conexión que no quedaron usuarios ni auditorías temporales.
-- El catálogo real consultado tenía únicamente el rol activo ADMIN. El rol
-  Empleado usado para la prueba también fue temporal y se revirtió.
-
-También pasaron 84 tests de frontend, lint, build, recorrido de Usuarios a 1440 y
-390 px y el recorrido de regresión de las páginas públicas, login, Noticias y
-Mensajes. El contrato de backend pasó 56 tests aislados, check y OpenAPI estricto.
-
-## Capturas
-
-Capturadas con datos ficticios de las pruebas de navegador:
+Capturas existentes con datos ficticios, anteriores a la política visual actual;
+son apoyo histórico y no una comprobación del entorno publicado:
 
 ![Listado de usuarios](screenshots/usuarios-desktop.png)
 ![Formulario de creación](screenshots/usuarios-formulario.png)

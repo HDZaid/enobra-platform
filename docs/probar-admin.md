@@ -1,129 +1,62 @@
-# Cómo probar el backend antes del commit
+# Comprobar el backend y el panel
 
-## 1. Pruebas automáticas sin tocar Supabase
+<!-- enobra-documentacion-vigente -->
+> Guía vigente. Revisión documental: 3-nov-2026.
+> [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
+<!-- /enobra-documentacion-vigente -->
+Separar pruebas aisladas, diagnósticos de solo lectura y recorridos que escriben.
+La [base técnica](BASE-DOCUMENTACION-TECNICA.md) registra las fuentes y límites;
+[estado actual](estado-proyecto.md) indica lo que aún no se ha validado en producción.
 
-Abre PowerShell y ejecuta:
+## Suite aislada
 
-```powershell
-cd C:\Users\LAPTOP\enobra-platform\backend
-.\.venv\Scripts\python.exe manage.py test --settings=config.test_settings --verbosity 2
-```
-
-Se muestran los nombres y resultados de los **33 tests**. Al final debe aparecer
-`Ran 33 tests` y `OK`. No necesitas cuentas ni un servidor abierto. Las cuentas de
-prueba y los datos solo existen en una base SQLite en memoria que se destruye al
-terminar; sus credenciales no sirven en tu servidor normal.
-
-Para probar solo un flujo:
+Desde backend con las dependencias instaladas:
 
 ```powershell
-# Login, consulta del usuario, renovacion y revocacion al salir.
-.\.venv\Scripts\python.exe manage.py test tests.test_admin_api.AdminAPITests.test_login_me_refresh_and_logout --settings=config.test_settings --verbosity 2
-
-# Crear, consultar, editar, reemplazar y eliminar en las tres colecciones.
-.\.venv\Scripts\python.exe manage.py test tests.test_admin_api.AdminAPITests.test_catalog_crud_and_audit --settings=config.test_settings --verbosity 2
-
-# Ambos administradores editan el mismo contenido.
-.\.venv\Scripts\python.exe manage.py test tests.test_admin_api.AdminAPITests.test_both_administrators_can_edit_shared_content --settings=config.test_settings --verbosity 2
-
-# Subir, consultar y eliminar una imagen real en una carpeta temporal.
-.\.venv\Scripts\python.exe manage.py test tests.test_admin_api.AdminAPITests.test_media_upload_read_delete --settings=config.test_settings --verbosity 2
+.\.venv\Scripts\python.exe manage.py check --settings=config.test_settings
+.\.venv\Scripts\python.exe manage.py test tests --settings=config.test_settings
 ```
 
-## 2. API real: script de prueba
-
-En una terminal, inicia Django con la conexión ya configurada:
+Usa SQLite separado y archivos temporales; no usar settings de producción para
+esta suite. Resultado vigente: 238 pruebas aprobadas. Comprobar contrato:
 
 ```powershell
-cd C:\Users\LAPTOP\enobra-platform\backend
-.\.venv\Scripts\python.exe manage.py runserver
+.\.venv\Scripts\python.exe manage.py spectacular --file ../docs/openapi.yaml --validate --fail-on-warn --settings=config.test_settings
 ```
 
-En otra terminal:
+Frontend, desde raíz: npm --prefix frontend run lint, npm --prefix frontend test
+y npm --prefix frontend run build. Evidencia vigente: 191 pruebas. La actualización
+actual es documental y no convierte esas pruebas previas en una nueva ejecución.
 
-```powershell
-cd C:\Users\LAPTOP\enobra-platform\backend
-.\scripts\probar_admin.ps1
-```
+## Diagnósticos no destructivos
 
-El script te pide correo y contraseña de **una cuenta administradora existente**.
-El usuario debe estar `ACTIVO`, tener rol activo `admin` o `Administrador` y una
-contraseña almacenada como hash compatible con Django. No se han creado cuentas
-nuevas ni cambiado contraseñas. Si aparece `401` al iniciar sesión, comprueba estos
-requisitos; las cuentas de los tests en memoria no son cuentas de Supabase.
+check_database usa una transacción READ ONLY para comprobar tablas/columnas de
+Supabase, sin crear ni alterar; no certifica todos los tipos/índices/datos.
+check_r2 comprueba lectura autenticada del bucket, sin subir/borrar. Credenciales
+solo en entorno privado; no imprimir DSN, contraseñas o URLs firmadas.
 
-El script imprime cada petición y su código, sin imprimir tokens ni contraseñas.
-El recorrido del script se verificó contra un servidor HTTP temporal con SQLite
-aislado: pasaron las peticiones y se comprobó la eliminación de sus tres registros.
-Usa el servidor local por defecto; puedes indicar otra API con
-`-BaseUrl https://tu-servidor/api/v1`.
+Health desplegado: https://enobra-api.onrender.com/api/v1/health/. Es una consulta
+pública HTTP; no prueba la base de datos ni el login. Actions reintenta health al
+publicar develop. No hay health periódico; el cron diario de P-02 es otra tarea.
 
-**Esta segunda prueba sí escribe en la base configurada del servidor.** Crea un
-borrador marcado como ejemplo en proyectos, propiedades y noticias, con un prefijo
-`PRUEBA API` y un identificador aleatorio. Los consulta, edita y elimina al terminar,
-incluso si falla un paso. No modifica la configuración de empresa ni los textos
-institucionales. Permanecen los registros de auditoría y, si faltaban, las categorías
-usadas por las altas. Una interrupción forzada o fallo de conexión puede impedir la
-limpieza; el script informa los IDs que no logró eliminar cuando puede continuar.
-La imagen de `example.com` es una referencia de prueba, no una foto alojada.
+## Recorrido manual del panel
 
-| Comprobación | Resultado esperado |
-| --- | --- |
-| Login | `200`, sesión iniciada |
-| Crear proyecto, propiedad o noticia | `201`, ID generado |
-| Consultar borrador con token | `200` |
-| Consultar ese borrador sin token | `404` |
-| Editar sin token | `401` |
-| Editar con token | `200`, título actualizado |
-| Listar con paginación | `200` |
-| Bandeja de solicitudes sin token | `401` |
-| Renovar sesión | `200`, acceso válido |
-| Eliminar los registros de prueba | `204` |
-| Consultarlos después de eliminar | `404` |
-| Logout | `204` |
-| Usar acceso o refresh después del logout | `401` |
+Usar una base/entorno de pruebas o datos ficticios con alcance autorizado. Las
+cuentas unitarias no existen en Supabase. No adivinar ni copiar contraseñas.
 
-## 3. Explorar las peticiones visualmente en Swagger
+1. Abrir frontend y comprobar que VITE_API_BASE_URL del build apunta a la API.
+2. Iniciar sesión con una cuenta activa y rol reconocido; confirmar auth/me.
+3. Verificar menús/acciones según la política fija. Roles personalizables no existe.
+4. Crear borrador, subir una imagen real permitida y guardar; comprobar respuesta.
+5. Publicar y comprobar catálogo/foto; despublicar y comprobar protección del medio.
+6. Para proyectos/propiedades, enviar a papelera/restaurar con las facultades del rol.
+7. Probar errores por campo y sesión sin perder contenido ni repetir escrituras.
 
-Con el servidor abierto, visita `http://127.0.0.1:8000/api/docs/`.
+Una subida local devuelve /media/uploads/...; R2 privado devuelve la API /media/r2/
+y vistas previas temporales. No confundir ambas configuraciones ni publicar tokens.
+Borrar un medio usado debe rechazarse. No eliminar publicaciones, imágenes o usuarios
+existentes para completar una prueba. El script probar_admin.ps1 escribe datos:
+revisar su alcance y usar un entorno apropiado antes de ejecutarlo.
 
-1. Abre **Autenticación → POST /api/v1/auth/login/** y pulsa **Try it out**.
-   Introduce tu correo y contraseña y pulsa **Execute**.
-2. Copia únicamente el valor `access` de la respuesta.
-3. Pulsa **Authorize** y pega ese valor en `bearerAuth`. Swagger añade `Bearer`.
-4. Consulta **GET /api/v1/auth/me/**. Debe devolver tu usuario con `role: admin`.
-5. Prueba **POST /api/v1/projects/** con el ejemplo de abajo. Copia el `id` devuelto.
-6. Consulta, edita mediante PATCH y elimina mediante DELETE usando ese `id`.
-7. Ejecuta **POST /api/v1/auth/logout/** enviando el valor `refresh` del login.
-
-Ejemplo de proyecto (borrador, para que no aparezca al público):
-
-```json
-{
-  "title": "PRUEBA MANUAL administrador",
-  "category": "Vivienda",
-  "country": "Guatemala",
-  "year": 2026,
-  "description": "Proyecto temporal para comprobar el backend",
-  "images": ["https://example.com/foto-de-prueba.jpg"],
-  "renders": [],
-  "video": "https://youtu.be/dQw4w9WgXcQ",
-  "demo": true,
-  "published": false
-}
-```
-
-Para PATCH basta enviar `{"title": "PRUEBA MANUAL editada"}`. Las otras propiedades
-deben conservarse. Elimina el proyecto al terminar; esta prueba manual no hace
-limpieza automática.
-
-También puedes probar la subida de imágenes desde **Medios (admin)** seleccionando
-un PNG/JPEG/WebP/GIF real. Debe devolver `201` con una URL `/media/uploads/...` que
-puedes abrir en `http://127.0.0.1:8000` seguido de esa ruta. Prueba un archivo de texto
-renombrado como `.png`: debe rechazarlo con `400`. Elimina la imagen usando su ID.
-
-La configuración, solicitudes y textos institucionales se prueban sin afectar datos
-reales mediante la suite del primer paso. Sus PUT/PATCH en Swagger sí modifican la
-base del servidor: úsalos en tu entorno de pruebas si deseas revisar esos flujos
-manualmente. El frontend no se ha modificado; estas pruebas muestran el backend.
-
+El login/recorrido con titulares y subida desde el panel desplegado sigue pendiente.
+Las cuentas definitivas y su depuración se decidirán después de la exposición.

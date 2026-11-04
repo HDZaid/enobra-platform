@@ -1,80 +1,16 @@
-# Conexión de Django con Cloudflare R2
+# Cloudflare R2 privado y entrega de imágenes
 
-> Estado operativo y pendientes consolidados en [estado del proyecto](estado-proyecto.md).
-> La configuración pública que aparece como alternativa histórica no está activada.
+<!-- enobra-documentacion-vigente -->
+> Guía vigente. Revisión documental: 3-nov-2026.
+> [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
+<!-- /enobra-documentacion-vigente -->
+Estado: R2 privado activo en Render. Decisión del 3-nov-2026: los objetos no se
+publican mediante dominio del bucket ni r2.dev; las fotos públicas del catálogo se
+entregan por Django. [Evidencia real](Render-validacion-2026-11-03.md).
 
-Fecha: 1 de noviembre de 2026, Guatemala. R2 elegido por Geovanny para imágenes.
+## Configuración
 
-> Decisión del 3-nov: Geovanny mantiene el bucket privado y autoriza que la API
-> entregue las fotos de contenido público. No conectar `media.enobra.com.gt` ni
-> habilitar `r2.dev`. La propuesta anterior de dominio público es solo alternativa
-> histórica. El modo privado se configura como se indica más abajo.
-
-## Estado
-
-R2 privado activo en Render con `912d916`. Una imagen migrada, sin cambiar su
-identificador ni clave de objeto; cuatro originales pendientes de otras PC.
-[Evidencia y límites](Render-validacion-2026-11-03.md).
-
-Actualización 3-nov: dominio `enobra.com.gt` confirmado en la cuenta de Cloudflare.
-Inventario de solo lectura: 5 registros de medios en Supabase y un archivo en esta
-copia de `backend/media`; faltan cuatro originales por localizar. El archivo local
-disponible no aparece referenciado por publicaciones/contenido. No se han borrado
-registros ni archivos para corregir esa diferencia.
-
-La API rechaza con 400 borrar medios referenciados por proyectos, propiedades,
-noticias o contenido institucional, incluidos borradores y papelera. Los guardados
-de imágenes y el borrado bloquean la misma fila de metadatos en PostgreSQL; si el
-medio ya fue eliminado, un guardado posterior de su URL se rechaza. Las imágenes
-externas siguen permitidas. OpenAPI actualizado y 227 pruebas SQLite aprobadas;
-no se ha reproducido concurrencia sobre Supabase real.
-
-Producción devuelve 503 en la subida si todavía usa almacenamiento local; solo
-habilita nuevas imágenes al configurar el almacenamiento remoto. Suite actual:
-229 pruebas aisladas aprobadas. Geovanny confirmó el 3-nov que los cuatro archivos
-faltantes provienen de otras PC y su recuperación se deja para después; no se ha
-autorizado ni realizado aquí el borrado de la base de datos.
-
-Bucket `enobra-media-prod` creado y credencial de objetos limitada al bucket.
-Configuración local privada en `backend/.env.r2`, excluida por `.gitignore`.
-Las claves reales no forman parte del repositorio ni del frontend.
-
-Geovanny confirmó que el dominio todavía no está configurado. El bucket conserva
-su acceso privado y `R2_ENABLED=false`; las subidas del panel siguen usando disco
-local hasta activar el proveedor. Esto no acredita persistencia en producción.
-
-## Variables
-
-```dotenv
-R2_ENABLED=false
-R2_BUCKET_NAME=enobra-media-prod
-R2_ENDPOINT_URL=https://<ACCOUNT_ID>.r2.cloudflarestorage.com
-R2_ACCESS_KEY_ID=<secreto>
-R2_SECRET_ACCESS_KEY=<secreto>
-R2_PUBLIC_HOST=
-```
-
-Prioridad de carga: variables del sistema, `backend/.env.r2`, `backend/.env`.
-En el hosting configurar los valores como variables privadas; el archivo local
-no se publica. El endpoint S3 no incluye el nombre del bucket. R2_PUBLIC_HOST
-contiene solo el hostname de lectura pública, sin esquema, puerto ni barra final.
-
-## Verificar las credenciales antes de activar las imágenes
-
-Desde backend con su entorno virtual:
-
-```powershell
-.\.venv\Scripts\python.exe manage.py check_r2
-```
-
-Hace una solicitud `ListObjectsV2` limitada a un objeto y no muestra nombres de
-archivos ni secretos. No crea, sube, modifica o borra objetos; funciona con
-`R2_ENABLED=false` y sin dominio público. Comprueba lectura autenticada, no
-escritura, autorización de otros buckets ni acceso público por HTTPS.
-
-## Activación del modo privado elegido
-
-En Render, conservar las credenciales como variables privadas y configurar:
+En Render, guardar credenciales como secretos y estos valores no sensibles:
 
 ```dotenv
 R2_ENABLED=true
@@ -83,68 +19,54 @@ MEDIA_API_ORIGIN=https://enobra-api.onrender.com
 R2_PUBLIC_HOST=
 ```
 
-`MEDIA_API_ORIGIN` debe ser un origen HTTPS de la API, incluido en
-`DJANGO_ALLOWED_HOSTS`. La API abre los objetos con S3 autenticado; no devuelve
-claves ni URLs S3 firmadas. No es necesario configurar CORS del bucket para este
-flujo. El frontend conserva las referencias HTTPS que devuelve Django.
+También son necesarios R2_BUCKET_NAME, R2_ENDPOINT_URL, R2_ACCESS_KEY_ID y
+R2_SECRET_ACCESS_KEY. El endpoint S3 es HTTPS de la cuenta, sin bucket ni rutas.
+No escribir sus valores privados en este documento. Bucket operativo:
+`enobra-media-prod`. MEDIA_API_ORIGIN debe ser un origen HTTPS incluido en hosts.
 
-- La base guarda referencias permanentes `/media/r2/<id>/`, sin tokens.
-- Las fotos de publicaciones públicas y el logo se leen a través de la API.
-  Una publicación en borrador o papelera no abre lectura anónima.
-- El panel puede leer con Bearer y obtiene vistas previas firmadas, limitadas a
-  una imagen y 15 minutos. Al guardar una vista previa, Django retira su token y
-  conserva la referencia permanente. Los logs de acceso omiten query strings.
-- Las respuestas privadas usan `private, no-store`; las públicas permiten cinco
-  minutos de caché. Una vista previa ya emitida vale hasta su vencimiento o hasta
-  borrar el medio, aunque se cierre la sesión del panel.
-- El bloqueo de borrado de imágenes en uso también cubre las referencias privadas.
+R2_PUBLIC_HOST se usa solo en el modo público alternativo soportado por código;
+no es requisito del modo privado activo. No conectar media.enobra.com.gt ni
+activar r2.dev como parte de esta configuración. En desarrollo, R2_ENABLED=false
+conserva almacenamiento local. Prioridad: entorno del proceso, .env.r2 y .env.
 
-OpenAPI mantiene sus operationId anteriores y añade la lectura de imágenes fuera
-de `/api`. El modo privado está cubierto por pruebas aisladas de publicación,
-borradores, papelera, logo, firma alterada/caducada y errores del proveedor.
+## Flujo y autorización
 
-## Opción pública anterior (no elegida)
+1. El panel envía POST admin/media/ con archivo y kind; necesita media.upload.
+2. Django valida contenido real JPEG/PNG/WebP/GIF y límite de 10 MiB, guarda en R2
+   con nombre UUID y metadatos en contenido_pagina.
+3. La base conserva `/media/r2/<id>/`, proveedor r2-private y clave del objeto.
+4. Las fotos vinculadas a publicaciones públicas y el logo pueden leerse por API.
+   Borradores/papelera no habilitan lectura anónima.
+5. La API permite lectura privada con sesión autorizada o capacidad de vista
+   previa firmada para una imagen, válida quince minutos. No devuelve claves ni
+   URLs S3 firmadas al navegador. Al guardar retira el token de la referencia.
 
-1. Conectar el subdominio elegido al bucket desde R2 > Settings > Custom Domains.
-   Los objetos de ese bucket serán accesibles por su URL; destinarlo a imágenes
-   públicas. El dominio debe existir en la misma cuenta de Cloudflare.
-2. Configurar `R2_PUBLIC_HOST` y luego `R2_ENABLED=true` en el entorno que se probará.
-   Django rechaza la activación si faltan credenciales o hostname público.
-3. Reiniciar Django y probar `POST /api/v1/admin/media/` desde el panel con un
-   usuario que tenga `media.upload`. Conservar permisos y validación de 10 MB.
-4. Comprobar la imagen en el catálogo y tras otro despliegue. Verificar también
-   el borrado autorizado y la conservación de objetos compartidos.
-5. Si existen imágenes locales, copiar primero los archivos manteniendo sus claves
-   `uploads/...` y actualizar las URLs guardadas en metadatos y publicaciones.
-   Conservar la copia local hasta verificar todas las referencias. Un cambio de
-   backend no migra archivos ni reescribe las URLs anteriores automáticamente.
+Lecturas privadas: private, no-store; públicas: caché de cinco minutos. No se
+requiere CORS del bucket en este flujo; sí los orígenes CORS explícitos de Django.
+La firma emitida puede valer hasta vencer o borrar el medio aunque se cierre sesión.
+No incluir URLs de vista previa con tokens en capturas, docs o logs.
 
-`default_storage` usa django-storages/S3 en R2. Guarda URLs públicas HTTPS estables,
-sin firmas que caduquen, y nombres UUID sin sobreescritura. El endpoint y la respuesta
-del frontend no cambian. No hacen falta subidas directas del navegador ni una
-política CORS de R2 para este flujo; el CORS de Django sigue siendo necesario.
+## Borrado y persistencia
 
-## Restricciones por IP
+Se rechaza con 400 borrar una imagen referenciada por proyectos, propiedades,
+noticias o contenido institucional, incluidos borradores y papelera. Guardar una
+referencia y borrar el medio bloquean su fila para evitar referencias a un upload
+eliminado. Esta protección no implica limpieza de archivos huérfanos automática.
+Producción devuelve 503 al intentar subir usando disco local efímero.
 
-El filtro del token controla desde dónde se usan las credenciales S3. Para Render,
-obtener todos los rangos de salida en servicio > Connect > Outbound antes de
-restringirlo. Las pruebas locales requieren una credencial o acceso de desarrollo
-adecuado. Este filtro no controla la lectura pública de imágenes por su dominio.
+Inventario del despliegue: cinco registros, un original disponible. Se copió ese
+original conservando clave/ID; el hash coincidió y la API lo recuperó tras otro
+despliegue. Los cuatro originales de otras PC siguen aplazados. No se borraron
+sus registros ni se recreó la base. Falta probar la subida/publicación completa
+desde el panel desplegado con un usuario real.
 
-## Verificación histórica del 1-nov
+## Diagnóstico y fuentes
 
-- `manage.py check`: sin incidencias.
-- `manage.py test tests --settings=config.test_settings`: 222 pruebas aprobadas,
-  incluidas 7 de configuración y diagnóstico R2 con credenciales ficticias.
-- `manage.py check_r2`: lectura autenticada del bucket real autorizada. Sin
-  subidas, borrados ni cambios en Supabase.
-- Archivo privado ignorado por Git y credenciales ausentes de archivos versionables.
+Desde backend: `python manage.py check_r2` verifica lectura autenticada, sin subir
+ni borrar; funciona antes de activar R2. El nombre del archivo local o las claves
+no se imprimen. No equivale a probar escritura, API o persistencia desplegada.
 
-En ese corte estaban pendientes la activación y la migración. El modo privado
-actual no requiere dominio del bucket. La evidencia del 3-nov enlazada arriba
-sustituye ese estado; la subida autenticada desde el panel sigue pendiente.
-Cloudflare Pages y el servicio web Django se configuran por separado.
-
-Referencias: [R2 y django-storages](https://django-storages.readthedocs.io/en/latest/backends/s3_compatible/cloudflare-r2.html),
-[dominios públicos de R2](https://developers.cloudflare.com/r2/buckets/public-buckets/),
-[salida de Render](https://render.com/docs/outbound-ip-addresses).
+Código: config/media_storage.py, apps/media/references.py y views.py,
+persistence/media.py, private_media.py y media_references.py.
+Pruebas: test_r2_storage.py, test_private_media.py y protección de medios en uso.
+La suite completa vigente tiene 238 pruebas; ver [estado](estado-proyecto.md).

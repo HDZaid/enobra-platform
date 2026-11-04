@@ -1,5 +1,9 @@
 # Renovación de sesión por actividad y notificación de vencimiento
 
+<!-- enobra-documentacion-vigente -->
+> Guía vigente. Revisión documental: 3-nov-2026.
+> [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
+<!-- /enobra-documentacion-vigente -->
 Implementado el 29-oct-2026 por solicitud de Geovanny. Sustituye el aviso permanente
 de J-01/CF-03. Abarca la renovación mientras se usa el panel; no implementa la
 persistencia de credenciales tras recargar la pestaña (J-03 sigue aplazada).
@@ -61,7 +65,8 @@ login/refresh/logout; su autorización y revocación siguen siendo definitivas.
   frontend/tests/browser/session-activity.cjs; no usar cuentas reales.
 
 Esto acredita frontend y su contrato con una API simulada. El recorrido con Django
-desplegado se incluye en el QA final (#10/#15), cuando existan las URL. No se
+desplegado se incluye en el QA final (#10/#15), con las URL ya disponibles en
+operacion-produccion.md. No se
 realizaron escrituras en Supabase ni pruebas de carga o varios dispositivos.
 
 Responsable del área: Jenny; Geovanny autorizó y encargó esta implementación.

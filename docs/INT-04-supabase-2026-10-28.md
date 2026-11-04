@@ -1,5 +1,9 @@
 # Pruebas por rol con Supabase — 28 de octubre de 2026
 
+<!-- enobra-documentacion-vigente -->
+> Evidencia fechada; resultados limitados al entorno y revisión indicados. Revisión documental: 3-nov-2026.
+> [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
+<!-- /enobra-documentacion-vigente -->
 Ejecutadas por el agente a solicitud de Geovanny. Se autorizó usar la base actual para crear, publicar temporalmente y eliminar datos ficticios. Código de partida: `develop` en `3aad1c1`, más la corrección UTF-8 del generador del informe. Responsabilidad de seguimiento: Geo y Leo.
 
 ## Resultado de la API

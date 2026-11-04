@@ -1,8 +1,11 @@
 # Auditoría administrativa (BE-12)
 
-Estado al 24 de octubre de 2026, sobre `backend-dev` (`ec8f363`).
-Referencia: [plan maestro, contratos §6](plan/PLAN-MAESTRO.md) y
-[fichas BE-07, BE-12 y BE-19](plan/PLAN-BACKEND.md).
+<!-- enobra-documentacion-vigente -->
+> Guía vigente. Revisión documental: 3-nov-2026.
+> [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
+<!-- /enobra-documentacion-vigente -->
+Estado documental: 3-nov-2026, contrastado con apps.audit y persistence.audit.
+[Contrato HTTP](openapi.yaml), [RBAC vigente](RBAC.md) y [base técnica](BASE-DOCUMENTACION-TECNICA.md).
 
 ## Implementación e integración
 
@@ -13,10 +16,10 @@ suficientes y consultas válidas responden **200**, incluido el CSV en streaming
 `8e0010e` actualizó OpenAPI. El merge `f624461` conservó la implementación original
 de BE-07 (`bb8b9bf`) frente a los stubs paralelos de BE-00.
 
-La integración de rutas y repositorio está completada. Sigue pendiente incorporar
-`audit.export` a `PERMISSION_CATALOG` y acordar su asignación a roles: el seed actual
-no lo crea. `admin.all` permite exportar mediante el mecanismo común, pero no
-sustituye ese catálogo. No se verificaron permisos existentes en Supabase.
+La integración de rutas, repositorio y audit.export está completada. El catálogo
+incluye ese permiso y la política fija lo concede a Administrador y Arquitecto;
+Empleado no consulta/exporta historial. No se necesita modificar roles desde un
+editor de permisos ni ejecutar seeds para describir esa autorización.
 
 ## Eventos registrados
 
@@ -30,7 +33,7 @@ automático de toda petición HTTP ni de toda escritura directa en Supabase.
 | `company`, `institution` | `EDITAR` |
 | `inquiries` | `ESTADO`, al cambiar el estado de una consulta |
 | `media` | `CREAR`, `ELIMINAR` |
-| `roles` | `CREAR`, `EDITAR`, mediante el helper propio de control de acceso |
+| `roles` | Pueden existir eventos históricos; la creación/edición de roles personalizables está retirada. |
 | `users` | `CREAR`, `EDITAR`, `ROL`, mediante la escritura propia del repositorio de usuarios (BE-08 integrado en `ec8f363`) |
 
 El helper general `audit()` usa el actor explícito o el usuario de actualización/
@@ -68,7 +71,7 @@ tablas de imágenes pendientes de uso en Django se detalla en [papelera](papeler
 
 El helper general toma `titulo` como nombre, truncado a 250 caracteres; si el
 objeto no tiene ese atributo, escribe una cadena vacía. No llena `descripcion`.
-Otros productores, como roles, tienen su propia escritura. La salida de BE-07 no
+Otros productores, como usuarios y limpieza de papelera, tienen su propia escritura. La salida de BE-07 no
 expone correo ni hash de contraseña del actor. El historial no permite recuperar
 un objeto eliminado: conserva referencias y texto, no una copia completa.
 
@@ -82,7 +85,7 @@ un objeto eliminado: conserva referencias y texto, no una copia completa.
 Los permisos son independientes: leer no autoriza exportar y exportar no autoriza
 listar. `admin.all` satisface ambos mediante el mecanismo común de permisos.
 Sin autenticación se devuelve 401; autenticado sin permiso, 403; filtros inválidos,
-400. La asignación efectiva a roles y el catálogo definitivo siguen pendientes.
+400. La asignación efectiva se calcula mediante la política fija vigente.
 
 Filtros combinables, compartidos por listado y exportación:
 
@@ -130,9 +133,8 @@ privacidad, filtros combinados, límites diarios de Guatemala, orden, paginació
 nulos, fórmulas, consultas y tope de exportación. Sustituyen el URLConf e inyectan el
 repositorio; usan SQLite en memoria con `config.test_settings`. Las pruebas de
 contratos normales comprueban ahora respuestas 200 en ambas rutas con el binding
-real y 403 al exportar con solo `audit.read`. La revisión local de este mismo
-commit ejecutó las 119 pruebas del backend y
-`check --settings=config.test_settings`, todos satisfactorios. La prueba aislada
+real y 403 al exportar con solo `audit.read`. La suite general vigente registra 238 pruebas aprobadas; este documento no
+representa una nueva ejecución ni sustituye las evidencias fechadas. La prueba aislada
 sin binding conserva 501 como comportamiento de error; no describe el estado
 normal de la API integrada.
 
@@ -140,10 +142,9 @@ No se almacenan valores completos antes/después, IP ni eventos de login mediant
 este mecanismo (BE-19). No se garantiza auditoría de SQL externo, ni se valida con
 SQLite la concurrencia de PostgreSQL, los roles reales o la entrega en producción.
 
-Para completar los pendientes, el equipo debe incorporar `audit.export` al
-catálogo, revisar su asignación y verificar listado/exportación con roles reales.
-El registro del repositorio y la regeneración de OpenAPI ya están realizados.
-Véase también [papelera](papelera.md) para sus eventos y el conflicto SQL.
+Falta verificar listado/exportación con titulares reales desde el panel desplegado.
+El registro, catálogo y OpenAPI ya están integrados. Véase [papelera](papelera.md)
+para retención y eventos; P-02 sustituyó la función SQL antigua.
 
 Fuentes contrastadas: [rutas](../backend/apps/audit/urls.py),
 [vistas y CSV](../backend/apps/audit/views.py),
@@ -152,6 +153,6 @@ Fuentes contrastadas: [rutas](../backend/apps/audit/urls.py),
 [catálogo inicial](../backend/apps/accounts/access_policy.py) y
 [pruebas de integración](../backend/tests/test_contract_stubs.py).
 
-El alcance documental de BE-12 está completo para este estado del backend. Los
-pendientes de permisos y evolución descritos requieren tareas de implementación;
-no son funcionalidades que esta documentación dé por corregidas.
+La ampliación BE-19 (valores completos antes/después, IP y eventos de login) no
+forma parte de este mecanismo. La depuración futura de cuentas debe respetar
+las relaciones del historial y no se ejecuta al actualizar la documentación.

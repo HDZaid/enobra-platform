@@ -1,5 +1,9 @@
 # Trabajo del equipo EnObra
 
+<!-- enobra-documentacion-vigente -->
+> Guía vigente. Revisión documental: 3-nov-2026.
+> [Base y límites técnicos](docs/BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
+<!-- /enobra-documentacion-vigente -->
 > 29-oct: Geovanny descarta transferir el repo a una organización para la entrega.
 > Producción, 3-nov: frontend en Cloudflare Pages, API en Render y R2 privado activos.
 > Estado y límites: [docs/estado-proyecto.md](docs/estado-proyecto.md) y

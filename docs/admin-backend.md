@@ -1,113 +1,68 @@
 # Backend del panel administrativo
 
-> Para despliegue, almacenamiento y pendientes actuales, consultar
-> [estado del proyecto](estado-proyecto.md) y [operación](operacion-produccion.md).
-> Las pruebas y estados de la entrega original que siguen tienen alcance histórico.
+<!-- enobra-documentacion-vigente -->
+> Guía vigente. Revisión documental: 3-nov-2026.
+> [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
+<!-- /enobra-documentacion-vigente -->
+Los adaptadores ORM están registrados en config/bindings.py sobre tablas
+existentes de Supabase. No se crean tablas nuevas para poner en marcha el panel.
+[Arquitectura](arquitectura.md), [diccionario](DICCIONARIO-DATOS.md) y
+[contrato HTTP](openapi.yaml) son las fuentes técnicas complementarias.
 
-Implementación sobre `develop`, basada en `MockUp---enObra/admin.js`, los contratos
-HTTP existentes y los modelos de `backend/persistence/models/`. No modifica el
-frontend, la conexión a Supabase, los modelos existentes ni el esquema de sus tablas.
+## Módulos y persistencia
 
-## Funcionalidades
-
-- `/auth/login/`, `/auth/me/`, `/auth/refresh/`, `/auth/logout/`: JWT con acceso de
-  15 minutos y refresh de 7 días; logout revoca ambos tokens de esa sesión.
-- `/projects/`, `/properties/`, `/news/`: crear, listar, consultar, reemplazar,
-  editar parcialmente y eliminar. Escritura administrativa y borradores privados.
-  Se conservan slugs al editar y se resuelven títulos repetidos con sufijos.
-- Filtros por año y categoría; propiedades por operación, tipo, zona, precio,
-  favoritos y texto sin distinción de mayúsculas/tildes. Orden y paginación existentes.
-- `/company/`: contacto, marca, dos teléfonos y redes sociales; `/institution/`:
-  textos institucionales. Ambos administradores comparten los datos.
-- `/inquiries/`: bandeja protegida y estados `nuevo → atendido → archivado`.
-  Los formularios públicos de contacto y visita alimentan la misma bandeja.
-- `/admin/media/`: subida, consulta de metadatos y eliminación de imágenes.
-  Se comprueban contenido real, MIME y tamaño con Pillow. Los nombres de archivo
-  se generan en el servidor; no se usa la ruta proporcionada por el cliente.
-- Auditoría de altas, cambios, eliminaciones y estados en `historial_actividad`;
-  las eliminaciones registran al administrador que hizo la petición.
-
-Prefijo para todas estas rutas: `/api/v1`. Autorización: `Bearer <access>`.
-Se conserva el formato de respuestas, errores y paginación. El cambio de validación
-de video acepta únicamente enlaces HTTPS de YouTube, confirmado para esta entrega;
-MP4/WebM ya no son válidos. Los teléfonos de empresa admiten como máximo dos valores
-y responsable/correo respetan los 150 caracteres de las columnas existentes.
-
-## Mapeo sin migraciones
-
-Los datos principales usan `proyecto`, `propiedad`, `noticia`, sus categorías y videos,
-`configuracion_sitio`, `red_social`, `mensaje_contacto`, `usuario` y `rol`.
-Las redes se actualizan como filas, preservando otras redes ya registradas.
-
-Los modelos existentes no tienen columnas para todos los campos del mockup.
-`contenido_pagina` permite conservar esos datos sin crear tablas ni columnas,
-con `visible=false` y claves internas reservadas:
-
-| Clave | Contenido JSON |
+| Módulo | Implementación y datos |
 | --- | --- |
-| `admin.projects.<id numérico>` | Fotos, renders y marca `demo` |
-| `admin.properties.<id numérico>` | Fotos, renders y marca `demo` |
-| `admin.news.<id numérico>` | Imagen y marca `demo` |
-| `admin.company` | Logo |
-| `admin.institution` | Presentación, firma, cargo, visión, misión y principios |
-| `admin.media.<uuid>` | Metadatos del archivo subido |
-| `admin.inquiries.<id numérico>` | Estado de archivo y fecha del último cambio |
-| `auth.session.<id aleatorio>` | Usuario, hash SHA-256 del refresh y expiración |
+| Sesión | DjangoAuthService; usuario/roles activos y auth.session.* en contenido_pagina. |
+| Usuarios | DjangoUserRepository; usuario, usuario_rol, rol e historial_actividad. |
+| Proyectos/propiedades/noticias | Adaptadores de CatalogRepository; tablas de negocio y JSON auxiliar en contenido_pagina. |
+| Empresa/institución | Configuración, red_social y JSON de textos/logo; filas existentes. |
+| Contacto/visitas | mensaje_contacto y metadatos de tipo/estado; no se crea un buzón externo. |
+| Imágenes | DjangoMediaStorage; metadatos JSON y bytes en R2 privado. |
+| Papelera | Kits de proyectos/propiedades, metadatos trash y fecha de envío. |
+| Historial | DjangoAuditRepository, lectura/exportación de historial_actividad. |
 
-No se almacenan tokens ni contraseñas en texto plano. No se exponen estas filas
-internas mediante endpoints genéricos. Las sesiones son compartidas entre procesos;
-no dependen de caché local. Desactivar un usuario o su rol bloquea sus tokens.
-`mensaje_contacto` permite únicamente `PENDIENTE` y `RESPONDIDO`: un mensaje archivado
-conserva su fila como `RESPONDIDO` y el estado adicional se guarda en los metadatos.
-Las operaciones compuestas de negocio, metadatos y auditoría usan transacciones.
-Eliminar contenido no elimina los archivos compartidos; sus bajas son explícitas.
+Servicios y búsqueda global conservan interfaces sin repositorio registrado y
+responden 501 not_implemented; no se incluyen como funcionalidad terminada.
 
-## Requisitos de ejecución
+## Sesión, permisos y usuarios
 
-Instalar `backend/requirements.txt`. Las cuentas reales deben existir en `usuario`,
-estar `ACTIVO` y tener un rol activo llamado `admin` o `Administrador` (sin distinguir
-mayúsculas). Ambos perfiles reciben las mismas opciones del panel. No se crean cuentas
-de ejemplo ni se incluyen credenciales. `password_hash` debe usar un formato soportado
-por los hashers de Django; PBKDF2 es el predeterminado. Las claves en texto plano no
-sirven para iniciar sesión.
+Access JWT de quince minutos y refresh revocable de siete días. Sesiones humanas
+usan roles fijos calculados por código, con alias compatibles. Ingeniero equivale
+a Administrador. Los cambios de RolPermiso no conceden facultades adicionales.
+Rutas para personalizar roles/permisos retiradas; selector de usuarios limitado a
+roles predeterminados activos ya existentes. [RBAC](RBAC.md).
 
-Configurar una `DJANGO_SECRET_KEY` privada en producción; cambiarla invalida los JWT.
-Mantener la configuración de conexión ya existente. No ejecutar migraciones para
-estas tablas. No hace falta agregar `django.contrib.auth` ni `contenttypes` para
-verificar hashes.
+Crear usuarios y reemplazar roles requiere Administrador; Arquitecto puede editar
+nombre/estado de cuentas no administradoras con restricciones. Se protegen el
+último Administrador activo, la propia cuenta y la cuenta técnica. No hay cambio
+de contraseña ni auto-registro implementado en estos endpoints.
+[Contrato de Usuarios](usuarios-api.md).
 
-Las imágenes usan el almacenamiento Django predeterminado. En desarrollo se guardan
-en `backend/media/` y se sirven bajo `/media/` con DEBUG. `MEDIA_ROOT` y `MEDIA_URL`
-son opcionales. En producción configurar un directorio duradero y un servidor que
-sirva esa URL, o un backend de almacenamiento Django. El proveedor externo sigue
-pendiente; esta entrega no despliega ni configura un proveedor. El consumidor debe
-poder acceder a `/media/` en el origen del backend o usar una `MEDIA_URL` HTTPS pública.
+## Publicaciones, consultas e imágenes
 
-Limpieza periódica opcional de sesiones vencidas, desde `backend/`:
+Los adaptadores conservan los slug al editar. Lecturas públicas excluyen borradores
+y papelera; la lectura administrativa depende de permisos. Los metadatos auxiliares
+no reemplazan las filas de negocio. Proyectos/propiedades tienen restauración;
+Noticias mantiene eliminación directa. [Papelera](papelera.md).
 
-```powershell
-.\.venv\Scripts\python.exe manage.py cleanup_admin_sessions
-```
+Los estados HTTP de consultas son nuevo, atendido y archivado; el repositorio los
+adapta a las restricciones existentes y sus metadatos. Recibir/guardar una consulta
+no prueba entrega de correo: en validación se utiliza backend dummy.
 
-## Validación reproducible
+El logo y las fotos públicas se entregan por API desde R2 privado; borradores
+requieren autorización o vista previa. No se permiten nuevas subidas en producción
+con disco local. Se bloquea borrar una imagen referenciada. [Medios](R2-configuracion.md).
 
-Desde `backend/`:
+## Comprobaciones y límites
 
-```powershell
-.\.venv\Scripts\python.exe manage.py check
-.\.venv\Scripts\python.exe manage.py test --settings=config.test_settings
-.\.venv\Scripts\python.exe manage.py spectacular --file ../docs/openapi.yaml --validate
-```
+- SQLite aislado: 238 pruebas backend aprobadas, incluidas reglas de autorización,
+  archivos, referencias, papelera, auditoría y producción.
+- Supabase: evidencia fechada en BE-10 e INT-04; no confundir con pruebas de Render.
+- Render: lecturas, HTTPS/CORS y persistencia de un objeto comprobadas.
+- Pendiente: login/recorrido por rol y subida/publicación desde el panel desplegado,
+  correo y respaldo/restauración. [Estado actual](estado-proyecto.md).
 
-Los tests ejercitan peticiones HTTP, permisos y persistencia ORM contra SQLite en
-memoria. El runner reproduce las tablas `managed=False` solo en esa base desechable
-y rechaza una conexión distinta. No escribe datos ni crea tablas en Supabase.
-Incluye hashes PBKDF2 reales, dos administradores, revocación persistente, borradores,
-CRUD, filtros, auditoría, rollback y archivos temporales reales. La concurrencia y
-las particularidades de PostgreSQL requieren validación adicional en un entorno
-PostgreSQL de pruebas; esta entrega no afirma haber probado Supabase en vivo.
-
-Los módulos públicos de servicios y buscador global siguen sin implementación
-registrada (`501`); no forman parte de las operaciones del panel. Las notificaciones
-externas por correo/WhatsApp no se configuran en esta entrega.
-
+No ejecutar migraciones, seeds, pruebas de borrado o scripts que creen usuarios
+sobre la base compartida por seguir una guía de desarrollo. Ver
+[pruebas aisladas](probar-admin.md) y [operación](operacion-produccion.md).

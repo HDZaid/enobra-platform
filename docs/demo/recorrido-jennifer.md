@@ -1,53 +1,50 @@
-# Recorrido de demo — Jennifer
+# Recorrido de exposición y validación del panel
 
-> Sesión actual: [renovación por actividad](../FE-08-renovacion-por-actividad.md). El aviso permanente ya no existe; las instrucciones de reingreso preventivo que sigan abajo son históricas. Comprobar tarjeta/contador, actividad que permite continuar e inactividad que bloquea con reingreso en la misma pestaña.
-
-Usar el código integrado de frontend-dev/develop y una base aislada con medios
-temporales. Las credenciales se configuran fuera del repositorio. No cargar datos
-ficticios ni ejecutar pruebas de borrado sobre Supabase real.
+<!-- enobra-documentacion-vigente -->
+> Guía vigente. Revisión documental: 3-nov-2026.
+> [Base y límites técnicos](../BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
+<!-- /enobra-documentacion-vigente -->
+Exposición prevista: 4-nov-2026, Guatemala. Este recorrido no registra una prueba
+ya realizada. Estado y alcance: [proyecto](../estado-proyecto.md) y
+[operación](../operacion-produccion.md). No eliminar cuentas antes de la exposición.
 
 ## Preparación
 
-- Confirmar con Henry la URL y el backend integrado que se usarán.
-- Iniciar sesión como Ingeniero antes del recorrido; el acceso dura 15 minutos.
-- Revisar el aviso de sesión. Guardar y confirmar cada operación antes de salir.
-- Para un recorrido largo, terminar el bloque actual, conservar cualquier contenido
-  no guardado, salir y reingresar. La sesión no se renueva automáticamente (J-01).
-- La papelera de Proyectos está habilitada con P-01/P-02 integrados. Verificar que
-  la API desplegada sea esa versión. La limpieza definitiva ocurre después de más
-  de 90 días en papelera; no activar el viejo SQL ni un segundo programador.
+- Sitio/panel en enobra.com.gt, API Render ya conectada y R2 privado activo.
+- Inicio dispara health una vez; el primer acceso todavía puede esperar el arranque.
+- Usar una cuenta autorizada existente; sus contraseñas no se documentan ni se
+  deducen de las cuentas ficticias de tests. Correos definitivos se decidirán después.
+- Para escrituras/borrados usar objetos de demostración y un alcance previamente
+  autorizado; no ejecutar una colección destructiva sobre contenido real.
+- Política fija Administrador/Arquitecto/Empleado. Ingeniero es alias Administrador.
+  No mostrar un editor de Roles ni cambiar permisos para eludir una restricción.
 
+## Recorrido propuesto
 
-## Recorrido
+1. Inicio y páginas públicas: diferenciar contenido real, demostración y endpoints
+   pendientes de Servicios/búsqueda. No presentar una respuesta 501 como éxito.
+2. Login, auth/me y Resumen: menú/acciones según permisos; distinguir cero de dato
+   no disponible. El 405 del alojamiento estático se corrigió con la URL de API.
+3. Proyecto: listado, filtro de año y búsqueda sobre la página recibida; crear
+   borrador con imagen y verificar respuesta antes de anunciar guardado.
+4. Publicar si el rol lo permite; comprobar catálogo y foto mediante API. Cambiar
+   a borrador y verificar acceso privado. El slug debe conservarse al editar.
+5. Papelera: en entorno apropiado, enviar/restaurar un objeto de demostración;
+   conservar imágenes y estado previo. No demostrar eliminación de datos reales.
+6. Noticias y Mensajes: comprobar errores por campo y facultades de lectura/gestión.
+   Guardar una consulta no acredita entrega de correo; proveedor aún pendiente.
+7. Sesión: actividad permite renovación; inactividad muestra contador y bloquea.
+   Reingresar con la misma cuenta conserva el formulario montado, no prueba guardado.
+8. Comprobar una pantalla móvil y cerrar sesión. Registrar revisión/URL/resultado
+   para convertir este recorrido en evidencia; no atribuirle pruebas no ejecutadas.
 
-1. Resumen: comprobar totales según los permisos, diferenciando 0 de no disponible.
-2. Proyectos: listar, filtrar por año y buscar. Explicar que la búsqueda solo afecta
-   a la página recibida; no representa una búsqueda global (J-04).
-3. Crear proyecto: título, categoría libre, país, año y descripción. Subir dos fotos,
-   cambiar su orden, opcionalmente añadir renders y enlace YouTube.
-4. Publicar y guardar; comprobar el registro en el catálogo público. Editar el título
-   y verificar que el slug sigue igual. Pasar a borrador y comprobar que deja de verse
-   públicamente, pero sigue accesible para edición administrativa.
-5. Cambiar un campo y cancelar la salida del formulario cuando aparezca la
-   confirmación; comprobar que el texto sigue presente.
-6. Papelera de Proyectos: enviar un registro desechable con confirmación, comprobar
-   que desaparece del catálogo público y restaurarlo desde la pestaña Proyectos.
-   Verificar imágenes y estado publicado/borrador previos. No probar eliminación
-   definitiva sobre datos reales sin autorización específica.
-7. Noticias: crear o editar con los permisos correspondientes. Comprobar que un error
-   de guardado conserva el editor abierto; los errores 400 aparecen por campo.
-8. Mensajes: consultar detalles. `inquiries.read` no permite cambiar estado;
-   `inquiries.manage` permite marcar atendido o archivar. No enviar mensajes reales
-   ni atribuir a esta demo la validación de SMTP.
-9. Repetir los listados/formularios en móvil. Los casos completos de roles,
-   propiedades, usuarios, historial y papelera corresponden a INT-04 (Geo y Leo).
+## Tratamiento de errores
 
-## Si falla una operación
+400: corregir campos. 401: seguir el reingreso y comprobar el registro antes de
+reenviar. 403: revisar permisos, no cambiarlos para forzar acceso. 501/503/sin red:
+conservar contenido y registrar el fallo sin exponer tokens ni credenciales.
+No prometer que un borrador persiste después de recargar/cerrar la pestaña.
 
-- No anunciar éxito si no hay confirmación del servidor.
-- 400: revisar los mensajes por campo y corregir sin cerrar el formulario.
-- 401: conservar el contenido no guardado antes de salir y reingresar; verificar el
-  registro antes de volver a enviar. No prometer recuperación automática del texto.
-- 403: revisar permisos con Henry; no cambiar roles para eludir el rechazo.
-- Sin red, 501 o 503: conservar contenido, reintentar cuando esté disponible y anotar
-  ruta/acción/código; no incluir tokens ni credenciales en capturas o reportes.
+La futura depuración de cuentas requiere identificar qué conservar y revisar
+historial/FK/cuenta técnica de P-02. No se realiza dentro de la exposición ni de
+esta actualización documental.

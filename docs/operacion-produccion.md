@@ -1,5 +1,9 @@
 # Operación de EnObra
 
+<!-- enobra-documentacion-vigente -->
+> Guía vigente. Revisión documental: 3-nov-2026.
+> [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
+<!-- /enobra-documentacion-vigente -->
 Corte del 3-nov-2026. Estado y pendientes globales en
 [estado-proyecto.md](estado-proyecto.md).
 
@@ -98,3 +102,11 @@ petición health y timeout de 75 segundos incorporados.
 
 La comprobación del JavaScript servido acredita publicación y configuración; no
 se forzó una suspensión de Render ni se validó un login real para probar el ping.
+
+## Cuentas después de la exposición
+
+La exposición está prevista el 4-nov-2026. El usuario pospuso la depuración de
+Supabase hasta después; se determinarán más adelante los correos de una cuenta
+Admin y otra del Ingeniero. No se eliminan cuentas ni se publican sus correos aquí.
+Ingeniero es un alias de Administrador en la política actual. Revisar las relaciones
+de auditoría y la cuenta técnica/actor de P-02 antes de preparar el borrado futuro.

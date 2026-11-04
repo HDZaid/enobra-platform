@@ -1,7 +1,11 @@
 # Arquitectura del backend (BE-11)
 
-Estado al 25 de octubre de 2026, sobre `backend-dev`.
-Referencias: [RBAC](RBAC.md), [ADR 0001](adr/0001-rbac-por-datos.md),
+<!-- enobra-documentacion-vigente -->
+> Guía vigente. Revisión documental: 3-nov-2026.
+> [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
+<!-- /enobra-documentacion-vigente -->
+Estado documental del 3-nov-2026, sobre el código integrado del corte 7d0dd21.
+Referencias: [RBAC](RBAC.md), [política fija](politica-roles-fijos.md),
 [papelera](papelera.md), [auditoría](auditoria.md) y
 [backend del administrador](admin-backend.md).
 
@@ -36,9 +40,10 @@ Si una interfaz no tiene implementación registrada, `resolve()` lanza `NotBound
 y el manejador de errores (`apps/common/errors.py`) responde **501 `not_implemented`**.
 Así están hoy Servicios y Búsqueda.
 
-Para cambiar una implementación (por ejemplo, otro almacenamiento de imágenes) basta
-escribir la clase nueva en `persistence/` y cambiar una línea de `bindings.py`. Las
-vistas y las pruebas de API no cambian.
+Para cambiar una implementación se conserva la interfaz y se registra un adaptador
+compatible en bindings.py. La selección local/R2 de default_storage también depende
+de settings y variables. Revisar contrato, autorización y pruebas de integración;
+el registro por sí solo no garantiza compatibilidad ni migra archivos.
 
 ## Fábrica de publicaciones (Abstract Factory)
 
@@ -124,7 +129,8 @@ El registro es la **fuente única** de tres cosas; ninguna se escribe a mano por
 
 ### Validaciones al registrar
 
-`PublicationRegistry.register()` rechaza al iniciar la aplicación, no en producción:
+`PublicationRegistry.register()` valida al registrar cada kit durante el arranque,
+también en producción:
 
 - una clave que no cumpla `^[a-z][a-z0-9_]*$`;
 - una clave repetida (salvo con `replace=True`, que hace el registro idempotente);
@@ -137,8 +143,8 @@ El registro es la **fuente única** de tres cosas; ninguna se escribe a mano por
 
 La fábrica no genera modelos, serializers, vistas ni URLs: cada tipo tiene los suyos,
 porque sus campos y reglas difieren (el terreno no tiene habitaciones, la noticia no
-tiene papelera). Tampoco decide los roles; los roles son datos (ver
-[ADR 0001](adr/0001-rbac-por-datos.md)).
+tiene papelera). Tampoco decide los roles humanos. Los IDs/asignaciones son datos y sus permisos
+efectivos se calculan por la [política fija](politica-roles-fijos.md).
 
 ## Cómo agregar un tipo de publicación
 
@@ -176,10 +182,24 @@ ningún otro archivo.
    `ResourcePermission` y un `permission_map` que use los permisos generados
    (`terrenos.create`, `terrenos.edit.any`, ...). Registrar la app en `settings.py` y sus
    rutas en `config/urls.py`.
-6. **Datos.** `python manage.py seed_access_control` crea los 8 permisos nuevos y se los da
-   al Ingeniero. Para otros roles, asignarlos desde el panel o en `builtin_roles()`.
+6. **Autorización.** Revisar permission_catalog() y fixed_permissions() para el nuevo
+   tipo, con pruebas por rol. No usar un editor de roles ni asignaciones RolPermiso
+   para ampliar sesiones humanas. Evaluar si se requiere un cambio de datos por
+   separado; esta extensión no autoriza ejecutar seed sobre Supabase.
 7. **Pruebas y contrato.** Agregar pruebas de permisos del módulo, actualizar los
    conteos de `tests/test_rbac_catalog.py` y regenerar `docs/openapi.yaml`.
 
-Con esto, `/admin/trash/?type=terrenos` y los permisos del panel de roles funcionan sin
-cambiar la papelera, el catálogo ni el seed.
+El ejemplo es una extensión propuesta, no un tipo de publicación implementado.
+El registro permite integrar la papelera genérica; la API del nuevo módulo y su
+autorización deben validarse expresamente. No existe un panel de roles editable.
+
+## Infraestructura y archivos
+
+Django se ejecuta con Gunicorn/config.production en Render y consulta PostgreSQL.
+Los bytes de imágenes se guardan en R2 privado; MediaStorage conserva metadatos en
+contenido_pagina y la API decide lectura pública/privada. El navegador no recibe
+credenciales S3. Ver R2-configuracion.md y operacion-produccion.md.
+
+Las sesiones revocables, metadatos de catálogos/papelera y medios usan claves JSON
+auxiliares. No inferir tablas nuevas desde esos prefijos. El diccionario de modelos
+existentes está en DICCIONARIO-DATOS.md. Servicios y búsqueda siguen sin binding.

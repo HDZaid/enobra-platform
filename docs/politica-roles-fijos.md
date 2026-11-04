@@ -1,5 +1,9 @@
 # Política fija de roles en código
 
+<!-- enobra-documentacion-vigente -->
+> Guía vigente. Revisión documental: 3-nov-2026.
+> [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
+<!-- /enobra-documentacion-vigente -->
 Esta política sustituye la administración de roles por datos descrita en informes
 anteriores. No requiere migraciones, SQL, seeds ni cambios de registros reales.
 
@@ -44,8 +48,9 @@ Las pruebas aisladas comprueban que el comando conserva ambos permisos de borrad
 
 ## Límites y compatibilidad
 
-No se consultó la base real: no se puede certificar desde esta tarea que estén los
-tres roles activos. Los roles conocidos conservan sus identificadores; no hay
+La implementación original se probó con datos aislados. En la preparación del
+despliegue se consultaron asignaciones activas, sin validar contraseñas ni modificar
+cuentas. Eso no certifica recorridos reales por rol en el entorno publicado. Los roles conocidos conservan sus identificadores; no hay
 renombrado persistente ni IDs inventados. Las cuentas humanas que únicamente tengan
 roles personalizados dejan de autenticar bajo esta política fija. No se reasignan
 automáticamente; debe revisarse su situación por el responsable autorizado de datos
@@ -83,3 +88,12 @@ OpenAPI regenerado con test_settings, --validate y --fail-on-warn. No se ejecuta
 SQL, migraciones, seeds ni sincronizaciones contra la base del proyecto. Las suites
 históricas conservan sus fixtures/seed únicamente dentro de bases SQLite de prueba;
 las pruebas nuevas de política y el runner de navegador no ejecutan seeds.
+
+## Cuentas previstas después de la exposición
+
+El usuario definirá más adelante los correos de una cuenta Admin y otra del
+Ingeniero, después de la exposición del 4-nov-2026. Son dos identidades humanas;
+la política actual considera Ingeniero equivalente a Administrador. No se ha
+solicitado una implementación de permisos distintos ni se modifican cuentas aquí.
+Revisar por separado la cuenta técnica no interactiva y sus relaciones antes de
+preparar cualquier eliminación futura. No publicar identificadores personales.

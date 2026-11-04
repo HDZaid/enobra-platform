@@ -1,6 +1,10 @@
 # Reglas obligatorias de trabajo compartido
 
-> Acuerdo vigente del 29-oct: [responsables y cierres](responsables-y-cierres.md) sustituye las exclusividades y dependencias personales de Henry de este documento. Pablo puede integrar backend, modificar configuración y generar OpenAPI; Jenny integra frontend y Juan verifica despliegue, con los respaldos indicados. P-01 está cerrado. P-02 pasa a limpieza desde el backend tras más de 90 días en papelera; consultar su informe antes de dar por activada la ejecución automática.
+<!-- enobra-documentacion-vigente -->
+> Guía vigente. Revisión documental: 3-nov-2026.
+> [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
+<!-- /enobra-documentacion-vigente -->
+> Acuerdo vigente del 29-oct: [responsables y cierres](responsables-y-cierres.md) sustituye las exclusividades y dependencias personales de Henry de este documento. Pablo puede integrar backend, modificar configuración y generar OpenAPI; Jenny integra frontend y Juan verifica despliegue, con los respaldos indicados. P-01 está cerrado. P-02 y su ejecución diaria en GitHub Actions están comprobados; no crear otro cron.
 
 Acuerdo del equipo, actualizado el 21 de octubre de 2026. Se mantienen solamente dos
 ramas de trabajo, ambas creadas desde el develop con la integración actual.
@@ -102,7 +106,7 @@ compañeros. No crear una rama alterna para esquivar un conflicto.
 - Backend: desde backend, `python manage.py check` y
   `python manage.py test tests --settings=config.test_settings`. Si cambia el contrato,
   regenerar OpenAPI con `--validate --fail-on-warn` y revisar sus consumidores.
-- Integración: seguir [integracion-backend-frontend.md](integracion-backend-frontend.md).
+- Integración: seguir [integracion-backend-frontend.md](operacion-produccion.md).
   No confundir una prueba local con validación de Supabase o de producción.
 - Los catálogos siguen en construcción; mantener documentados los límites reales.
 

@@ -1,5 +1,9 @@
 # EnObra Platform
 
+<!-- enobra-documentacion-vigente -->
+> Guía vigente. Revisión documental: 3-nov-2026.
+> [Base y límites técnicos](docs/BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
+<!-- /enobra-documentacion-vigente -->
 Monorepo con dos aplicaciones independientes: **Django + Django REST Framework** en
 `backend/` y **React + Vite** en `frontend/`. Se comunican por HTTP mediante `/api/v1/`.
 Cada aplicación tiene sus dependencias, configuración y comandos de arranque.
@@ -10,6 +14,13 @@ Frontend: **Leo, Geo y Jennifer en frontend-dev**; Pablo trabaja el **Administra
 también en frontend-dev. Backend: **Juan, Pablo y Henry en backend-dev**. Una sola rama
 por equipo, sin ramas alternas. Antes de trabajar o publicar, revisar y sincronizar
 los cambios de compañeros. Ver [reglas de trabajo](docs/TRABAJO-EN-EQUIPO.md).
+
+## Documentación técnica
+
+La [base técnica](docs/BASE-DOCUMENTACION-TECNICA.md), el
+[diccionario de datos](docs/DICCIONARIO-DATOS.md) y el
+[inventario de fuentes](docs/INVENTARIO-DOCUMENTACION.md) preparan el manual.
+Los planes/etapas sustituidos se retiraron del árbol actual; su historial queda en Git.
 
 ## Estructura
 

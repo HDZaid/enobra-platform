@@ -1,169 +1,77 @@
-# Prompt para generar el Manual Técnico del sistema EnObra
+# Plantilla para elaborar el Manual Técnico de EnObra
 
-> **Cómo usarlo:** abre Codex o Claude Code en la raíz de tu clon del repositorio
-> **Proyecto EnObra**, copia el ejemplo `MANUAL DE USUARIO DEL SISTEMA ENOBRA.docx`
-> dentro de la carpeta `docs/manual-tecnico/referencia/` (créala si no existe) y pega
-> todo el bloque de abajo como mensaje para el agente.
+<!-- enobra-documentacion-vigente -->
+> Plantilla para una próxima tarea; no ejecutada en esta revisión. Revisión documental: 3-nov-2026.
+> [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
+<!-- /enobra-documentacion-vigente -->
+Esta plantilla prepara una próxima tarea de redacción. Leerla como fuente no
+ordena generar Word, ejecutar comandos, cambiar datos ni publicar documentos.
+La actualización actual deja preparada la base Markdown; no genera DOCX/PDF.
 
----
+## Fuentes que debe usar la próxima redacción
 
-```text
-Actúa como redactor técnico senior y como desarrollador del proyecto EnObra. Tu tarea es
-generar el MANUAL TÉCNICO DEL SISTEMA ENOBRA V 1.0, con calidad profesional de entrega
-universitaria, a partir del código y la documentación reales de este repositorio.
+- [Base técnica](BASE-DOCUMENTACION-TECNICA.md): alcance, versiones y límites.
+- [Inventario](INVENTARIO-DOCUMENTACION.md): fuentes vigentes y documentos retirados.
+- [Diccionario de datos](DICCIONARIO-DATOS.md): veinte modelos/tablas, sin filas reales.
+- [Estado](estado-proyecto.md), [operación](operacion-produccion.md), [OpenAPI](openapi.yaml).
+- README de aplicaciones, arquitectura, política fija, usuarios, medios, auditoría,
+  papelera y evidencias fechadas. No usar planes de octubre retirados como estado actual.
 
-## 0. Reglas obligatorias antes de empezar
+## Encargo propuesto
 
-1. Lee primero AGENTS.md, docs/TRABAJO-EN-EQUIPO.md y docs/responsables-y-cierres.md y
-   respétalos. Esta tarea es SOLO de documentación: no modifiques código de backend/ ni
-   de frontend/, no crees ramas nuevas, no hagas commit ni push sin que yo lo pida.
-2. Todo dato técnico debe salir del repositorio (código, README, docs/, openapi.yaml,
-   requirements, package.json, render.yaml, .github/workflows). No inventes versiones,
-   tablas, endpoints, URLs ni cifras. Si algo no se puede verificar, escribe
-   «[PENDIENTE: qué falta y quién debe confirmarlo]» y añádelo a la lista final.
-3. NUNCA copies secretos: ni valores de .env, contraseñas, tokens, claves de Supabase,
-   Cloudflare R2, Render o GitHub. Las variables de entorno se documentan solo por nombre
-   y propósito, tomándolas de los archivos .env.example.
-4. Redacta en español formal, tercera persona e impersonal («se ejecuta», «se configura»),
-   igual que el manual de usuario de referencia.
+Redactar en español el Manual Técnico del sistema EnObra a partir de código y
+fuentes verificadas. Distinguir contratos, funcionalidades implementadas,
+configuración desplegada, resultados probados y pendientes. No inventar versiones,
+endpoints, tablas, responsables, capturas o resultados. Marcar lo no acreditado.
 
-## 1. Formato a imitar (manual de referencia)
+El repositorio contiene Django/DRF y React/Vite; Supabase con veinte tablas
+existentes, R2 privado y Render/Cloudflare Pages activos. La fábrica es de
+publicaciones; los roles humanos siguen una política fija en código. No hay
+personalización de roles. Ingeniero es alias de Administrador.
 
-Analiza docs/manual-tecnico/referencia/MANUAL DE USUARIO DEL SISTEMA ENOBRA.docx
-(estilos, márgenes, fuentes, tamaños, colores, numeración y encabezados/pies) y reproduce
-el mismo formato en el manual técnico. Su estructura es:
+## Índice de trabajo
 
-- Portada: «MANUAL TÉCNICO DEL SISTEMA» / «“ENOBRA” V 1.0», subtítulo
-  «Sitio web y panel de administración», bloque «Integrantes:» con los mismos nombres y
-  carnés de la portada del manual de usuario (cópialos de allí, en el mismo orden),
-  y al pie «Quetzaltenango, noviembre 2026».
-- «ÍNDICE GENERAL» automático (campo TOC de Word) con niveles 1, 2 y 3.
-- Títulos numerados con los estilos Título 1 (1.), Título 2 (1.1) y Título 3 (1.1.1).
-- Párrafos explicativos cortos seguidos de la figura que ilustran, y viñetas con el estilo
-  «Párrafo de lista». Requerimientos con incisos a), b)…
-- Notas destacadas con el formato «Nota: …».
-- Añade, como corresponde a un manual técnico: «ÍNDICE DE FIGURAS» después del índice
-  general, pie de figura numerado («Figura N. Descripción») y, en tablas,
-  «Tabla N. Descripción». Bloques de código en fuente monoespaciada con fondo gris claro.
-- Encabezado con «Manual Técnico – EnObra» y pie con número de página (la portada sin
-  número).
+1. Portada, control de versiones y responsables aprobados.
+2. Introducción, objetivos, alcance y público técnico.
+3. Requisitos de desarrollo/cliente; versiones resueltas verificadas.
+4. Arquitectura general, capas, registro de interfaces y fábrica de publicaciones.
+5. Estructura del monorepo y responsabilidades de cada módulo.
+6. Base de datos, diagrama entidad-relación y diccionario basado en modelos existentes.
+7. API REST, rutas/métodos, validaciones y formato de errores.
+8. JWT, sesión por actividad, permisos efectivos y protecciones de usuarios.
+9. Sitio público y panel, con límites de cada módulo.
+10. Publicaciones, R2 privado, vistas previas y protección de medios en uso.
+11. Papelera, auditoría y limpieza diaria P-02 en GitHub Actions.
+12. Instalación local, variables por nombre/propósito y pruebas aisladas.
+13. Despliegue Pages/Render, CORS, Gunicorn, diagnóstico y arranque Free.
+14. Pruebas y evidencia: separar SQLite, Supabase y URL desplegada.
+15. Mantenimiento, respaldos, incidencias, pendientes y depuración futura de cuentas.
+16. Glosario, referencias y anexos.
 
-## 2. Contenido requerido
+## Figuras y formato
 
-Usa esta tabla de contenidos (puedes subdividir más, no quitar secciones):
+Preparar diagramas de arquitectura, fábrica, datos, autenticación, entrega de
+imágenes y despliegue a partir de sus fuentes. Las capturas de demostración deben
+identificarse como ficticias; no usarlas como prueba de producción. No capturar
+credenciales, correos personales, DSN, JWT o firmas de vistas previas.
 
-1. Introducción — qué es EnObra (empresa constructora y de bienes raíces de
-   Quetzaltenango), qué resuelve el sistema y relación con el Manual de Usuario.
-2. Objetivo del manual.
-3. Dirigido a — desarrolladores, personal técnico y administradores del sistema.
-4. Conocimientos previos — Python/Django, JavaScript/React, Git, SQL/PostgreSQL, HTTP/REST.
-5. Especificaciones técnicas
-   5.1 Requerimientos de hardware (desarrollo y cliente).
-   5.2 Requerimientos de software (Python 3.12+, Node.js según "engines" de
-       frontend/package.json, navegadores, Git) con versiones tomadas del repo.
-6. Descripción general y arquitectura
-   6.1 Monorepo: backend/ (Django 5.2 + Django REST Framework) y frontend/ (React + Vite +
-       Tailwind CSS), comunicados por HTTP en /api/v1/.
-   6.2 Diagrama de arquitectura general (cliente, frontend, API, PostgreSQL en Supabase,
-       almacenamiento de imágenes en Cloudflare R2, hosting en Render, GitHub Actions).
-   6.3 Arquitectura del backend por capas: interfaces, registro (apps/common/registry.py),
-       acople (config/bindings.py) e implementaciones (persistence/). Basarse en
-       docs/arquitectura.md e incluir sus diagramas Mermaid renderizados como imagen.
-   6.4 Patrones de diseño usados (p. ej. la fábrica de publicaciones / Abstract Factory,
-       repositorios), con un fragmento de código real de ejemplo para cada uno.
-7. Tecnologías y dependencias — tabla con tecnología, versión y uso, a partir de
-   backend/requirements.in, requirements.txt y frontend/package.json.
-8. Estructura del proyecto — árbol de carpetas comentado y descripción de cada app de
-   backend/apps (accounts, audit, common, company, inquiries, media, news, projects,
-   properties, publications, search, services) y de frontend/src (app, components,
-   features, services, styles).
-9. Base de datos
-   9.1 Motor y conexión (PostgreSQL en Supabase, modelos managed=False, dj-database-url).
-   9.2 Diagrama entidad-relación de las tablas reales usadas por los modelos.
-   9.3 Diccionario de datos: tabla por entidad con campo, tipo, restricciones y
-       descripción.
-   9.4 Scripts SQL de docs/sql y su propósito.
-10. API REST
-   10.1 Contrato docs/openapi.yaml y documentación generada con drf-spectacular.
-   10.2 Tabla de endpoints por módulo: método, ruta, descripción, permiso requerido y si
-        es pública o del panel.
-   10.3 Ejemplo de petición y respuesta (JSON) de un endpoint público y uno protegido.
-   10.4 Formato de errores y códigos HTTP (incluido 501 not_implemented).
-   10.5 Colección de Postman de docs/postman, si existe.
-11. Seguridad
-   11.1 Autenticación con JWT (PyJWT): inicio de sesión, duración de la sesión y
-        vencimiento.
-   11.2 Control de acceso basado en roles (RBAC por datos): roles, permisos, matriz de
-        roles (docs/RBAC.md, docs/INT-04-matriz-roles.md, docs/adr/0001-rbac-por-datos.md,
-        docs/politica-roles-fijos.md).
-   11.3 CORS, validación de archivos subidos (tipos, tamaño y cantidad) y protección de
-        imágenes privadas servidas mediante la API.
-12. Módulos del sistema — por cada módulo del Manual de Usuario (Resumen, Bienes raíces,
-    Proyectos, Noticias, Papelera, Mensajes, Usuarios, Roles, Historial y el sitio público:
-    contacto, buscador, etc.) explicar: objetivo, componentes de frontend, endpoints,
-    tablas, permisos y reglas de negocio. Mantener los mismos nombres y numeración
-    temática del Manual de Usuario para que ambos documentos se correspondan.
-13. Almacenamiento de imágenes y medios (Cloudflare R2 privado, django-storages, flujo de
-    subida y entrega; docs/R2-configuracion.md).
-14. Papelera, auditoría y tareas programadas — papelera de 90 días, limpieza diaria con
-    GitHub Actions (.github/workflows/purge-expired-trash.yml), historial de auditoría y
-    exportación CSV (docs/papelera.md, docs/P02-limpieza-activa.md, docs/auditoria.md).
-15. Instalación y configuración en entorno local — paso a paso para Windows (PowerShell)
-    y notas para macOS/Linux, tal como en README.md: entorno virtual, dependencias,
-    .env, `manage.py check`, `runserver`, `npm install`, `npm run dev`.
-16. Variables de entorno — tabla con nombre, aplicación (backend/frontend), obligatoria
-    sí/no y descripción. Solo nombres, nunca valores reales.
-17. Pruebas y control de calidad — cómo ejecutar las pruebas de backend (backend/tests)
-    y de frontend (`npm run test`, `npm run lint`, `npm run build`), y la carpeta docs/qa.
-18. Despliegue en producción — Render (render.yaml, gunicorn.conf.py), workflow
-    backend-production.yml, compilación del frontend, verificación posterior
-    (docs/BE-14-produccion.md, docs/Render-backend.md, docs/infraestructura.md).
-    Las URLs de producción se marcan [PENDIENTE] si aún no están validadas.
-19. Control de versiones y flujo de trabajo — ramas main, develop, backend-dev y
-    frontend-dev; Conventional Commits; hooks de .githooks; reglas de sincronización.
-20. Mantenimiento y solución de problemas — tabla «Problema / Causa probable / Solución»
-    con casos reales (sesión vencida, error de CORS, fallo de conexión a la base de datos,
-    imagen que no carga, 501 en módulos no implementados, etc.).
-21. Glosario de términos técnicos.
-22. Anexos — referencias a los documentos de docs/ usados como fuente.
+Si se pide reproducir el formato del manual de usuario, usar el archivo de
+referencia que facilite el usuario. Portada, integrantes y carnés deben provenir
+de una fuente aprobada; están pendientes. No inventar ni buscarlos en Supabase.
+La futura salida puede ubicarse en docs/manual-tecnico/ con figuras y archivos
+Markdown/DOCX/PDF, cuando se solicite esa elaboración y se disponga de la referencia.
 
-## 3. Figuras
+## Criterios para revisar el manual
 
-- Incluye como mínimo: diagrama de arquitectura general, diagrama de capas del backend,
-  diagrama de la fábrica de publicaciones, diagrama entidad-relación, diagrama de flujo
-  de autenticación, diagrama del flujo de subida de imágenes y diagrama de despliegue.
-- Genera los diagramas en Mermaid y renderízalos a PNG (por ejemplo con
-  @mermaid-js/mermaid-cli mediante npx); si no es posible, déjalos como imagen
-  pendiente con un recuadro «[FIGURA PENDIENTE: …]».
-- Añade capturas reales de: estructura de carpetas en el editor, fragmentos de código
-  clave, terminal ejecutando backend y frontend, documentación de la API en el
-  navegador y, si está disponible, el panel de Supabase/Render SIN datos sensibles
-  (difumina o recorta claves, correos y URLs privadas).
-- Guarda las imágenes en docs/manual-tecnico/figuras/ con nombres numerados
-  (fig-01-arquitectura.png, …).
-
-## 4. Entregables
-
-Guarda todo en docs/manual-tecnico/:
-
-1. MANUAL-TECNICO-ENOBRA.md — fuente completa en Markdown.
-2. MANUAL TÉCNICO DEL SISTEMA ENOBRA.docx — documento final con el formato del manual de
-   referencia (usa python-docx o pandoc con el .docx de referencia como
-   --reference-doc para heredar sus estilos; después ajusta portada, índices,
-   encabezados y pies). El índice debe actualizarse al abrir el archivo en Word.
-3. Opcional: exportación a PDF si hay LibreOffice o Word disponibles.
-4. figuras/ con todas las imágenes.
-
-## 5. Verificación final
-
-Antes de terminar:
-
-- Revisa que cada sección del índice exista y tenga contenido, que todas las figuras y
-  tablas estén numeradas y citadas en el texto, y que los nombres de módulos coincidan
-  con el Manual de Usuario.
-- Comprueba que los comandos documentados existen (scripts de package.json, rutas de
-  archivos, nombres de workflows) y que no aparece ningún secreto (busca «KEY»,
-  «SECRET», «PASSWORD», «TOKEN», «postgres://» en los entregables).
-- Muéstrame un resumen con: archivos generados, número de páginas aproximado, figuras
-  incluidas y la lista completa de elementos [PENDIENTE] para completarlos con el equipo.
-```
+- Las URL del sitio/API ya están verificadas; no marcarlas como inexistentes.
+- El contrato contiene 38 rutas y 55 operaciones; Servicios/búsqueda siguen con 501.
+- Correo, pruebas reales por rol y subida desde el panel conservan sus pendientes.
+- R2 se mantiene privado; no proponer dominio público como requisito de activación.
+- La depuración de cuentas será después de la exposición del 4-nov-2026; correos
+  de las dos cuentas humanas por definir. No afirmar que se ejecutó ni suponer IDs.
+- No ejecutar propuestas SQL, migraciones, seeds o limpiezas para completar el texto.
+- No copiar secretos desde archivos locales. Variables de ejemplo por nombre y
+  propósito; versiones desde lockfiles, no desde rangos de instalación.
+- Validar enlaces, numeración, figuras y correspondencia con el código. Enumerar
+  pendientes concretos y su evidencia faltante; no declarar funcionalidades cerradas
+  solo porque un documento anterior las llamó completas.

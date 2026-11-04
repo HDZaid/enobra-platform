@@ -1,5 +1,9 @@
 # Render y R2 privado: validación del 3-nov-2026
 
+<!-- enobra-documentacion-vigente -->
+> Evidencia fechada; resultados limitados al entorno y revisión indicados. Revisión documental: 3-nov-2026.
+> [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
+<!-- /enobra-documentacion-vigente -->
 Servicio gratuito de validación solicitado por Geovanny. API:
 [enobra-api](https://enobra-api.onrender.com/api/v1/health/).
 Código backend `bea72e1`, integrado en develop `912d91676d72495efd0d5b373db25f00989141c1`.
@@ -96,7 +100,8 @@ POST autenticado desde Render sigue pendiente de la prueba desde el panel.
   usuario autorice una limpieza concreta. No se borró ni reinició la base.
 - Correo: backend dummy en validación; no entrega consultas. Configurar proveedor
   y destinatario antes de dar por validado el envío.
-- Frontend definitivo y dominio propio de API; servicios y búsqueda conservan
-  sus pendientes funcionales anteriores.
+- El frontend quedó conectado a Render en una comprobación posterior descrita
+  en operacion-produccion.md. Dominio propio de API opcional; Servicios y búsqueda
+  conservan sus pendientes funcionales.
 - El servicio Free puede suspenderse por inactividad; este despliegue es de
   validación. La limpieza de papelera sigue en GitHub Actions.

@@ -1,5 +1,9 @@
 # P-02: limpieza diaria activa y gratuita
 
+<!-- enobra-documentacion-vigente -->
+> Guía vigente. Revisión documental: 3-nov-2026.
+> [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
+<!-- /enobra-documentacion-vigente -->
 Estado verificado el 29 de octubre de 2026. Geovanny eligió GitHub Actions para
 evitar el costo de un Cron Job de Render y autorizó guardar la conexión de Supabase
 como secreto cifrado y crear una cuenta técnica limitada. No se creó ningún
@@ -64,6 +68,20 @@ añade almacenamiento de artifacts ni cache. Fuentes oficiales:
 [programación y límites](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows),
 [secretos](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets).
 
-El informe [P02-papelera-90-dias.md](P02-papelera-90-dias.md) conserva evidencia de
-retirada de la función SQL y pruebas. Su propuesta de activación en Render queda
-sustituida por este documento; `render-cleanup.yaml` no debe activarse en paralelo.
+## Retirada del SQL y controles de retención
+
+La función public.limpiar_proyectos_inactivos fue retirada con RESTRICT, sin CASCADE
+ni borrado de publicaciones reales; consulta posterior confirmó su ausencia.
+[Evidencia SQL](qa/P02-funcion-retirada-2026-10-29.json). La copia original en
+sql/archive/p02-original-no-ejecutar.sql se conserva como archivo histórico, no
+como comando a ejecutar. No activar render-cleanup.yaml.
+
+El plazo se cuenta desde trash.trashed_at. Exactamente noventa días se conserva;
+fechas inválidas o sin zona no se purgan. Antes de borrar se bloquea la publicación
+y se vuelve a comprobar estado/fecha. Restaurar cancela la candidatura y reenviar
+reinicia el plazo. Las pruebas de retención usan datos aislados, no publicaciones
+reales borradas para demostrar el comportamiento.
+
+La depuración de cuentas humanas se decidirá después de la exposición. La cuenta
+técnica no inicia sesión y mantiene FK de historial/actor del workflow: no suponer
+que deba eliminarse junto con cuentas de demostración. No se cambió su configuración.
