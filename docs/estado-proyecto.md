@@ -47,6 +47,7 @@ El nuevo prompt del manual técnico aportado por el equipo se conserva en
 | Evidencia | Resultado |
 | --- | --- |
 | Backend de producción `912d916` | 238 pruebas aprobadas en Linux; [ejecución](https://github.com/HDZaid/enobra-platform/actions/runs/41770108190). |
+| Integración `6a53f23` | [Health de Render](https://github.com/HDZaid/enobra-platform/actions/runs/41776192253) y [CI de producción](https://github.com/HDZaid/enobra-platform/actions/runs/41776192150) aprobados. Build de Pages publicado y comprobado en el dominio. |
 | Frontend con ping de Inicio | Lint y build correctos; 191 pruebas, incluidas deduplicación, fallo de red y arranque de 45 segundos. |
 | Render y R2 reales | [Informe de despliegue y persistencia](Render-validacion-2026-11-03.md). |
 | Roles contra Supabase, 28-oct | 70/70 con cuentas ficticias, después desactivadas; API/panel locales. No equivale a validar usuarios reales en la URL desplegada. |

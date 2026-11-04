@@ -79,3 +79,22 @@ Health confirma el proceso HTTP, no la conexión a Supabase ni la versión despl
 No publicar contraseñas, DSN, JWT, claves R2 ni URLs de vista previa con tokens en
 Markdown, commits, capturas o logs. Conservar respaldos privados y separar evidencia
 local de resultados realmente comprobados en las URL desplegadas.
+
+## Evidencia del ping de Inicio
+
+Código integrado en `6a53f23396a45560d0a2d781befe37c342fbd8c0`, publicado en
+backend-dev, frontend-dev y develop. Cloudflare Pages terminó correctamente el
+despliegue `13e14f83-76aa-4e06-8176-f571b7f058b9`. El dominio enobra.com.gt y el
+host enobra-platform.pages.dev entregaron `index-lomXJnnF.js`, con origen Render,
+petición health y timeout de 75 segundos incorporados.
+
+- [Disponibilidad de Render aprobada](https://github.com/HDZaid/enobra-platform/actions/runs/41776192253).
+- [Backend de producción aprobado](https://github.com/HDZaid/enobra-platform/actions/runs/41776192150).
+- Frontend: 191 pruebas, lint y build correctos. El ping no arranca al importar el
+  módulo, se deduplica aun después de terminar y tolera 45 segundos antes del timeout.
+- Verificación local del comando Actions: dos respuestas 503 seguidas de 200;
+  completó en el tercer intento. YAML comprobado sin schedule ni permisos.
+- Los tres árboles se sincronizaron mediante merge; main conserva su SHA anterior.
+
+La comprobación del JavaScript servido acredita publicación y configuración; no
+se forzó una suspensión de Render ni se validó un login real para probar el ping.
