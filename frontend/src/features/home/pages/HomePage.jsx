@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { warmBackend } from '../../../services/backendWarmup.js';
 import { HomeHero } from '../components/HomeHero.jsx';
 import { HomeStory } from '../components/HomeStory.jsx';
 import { BusinessAreas } from '../components/BusinessAreas.jsx';
@@ -6,6 +8,8 @@ import { NewsPreview } from '../components/NewsPreview.jsx';
 import { HomeImpact } from '../components/HomeImpact.jsx';
 import { MotionPage } from '../../../components/ui/MotionPage.jsx';
 export function HomePage() {
+  useEffect(() => { void warmBackend(); }, []);
+
   return (
     <MotionPage title="Inicio">
       <HomeHero />
