@@ -22,13 +22,21 @@ urlpatterns = [path("health/", health)]
 
 
 class ProductionSettingsTests(SimpleTestCase):
-    def startup(self, *, secret):
+    def startup(self, *, secret, database_url="postgresql://test:test@127.0.0.1:1/test"):
         env = {**os.environ, "DJANGO_DEBUG": "false", "DJANGO_SECRET_KEY": secret,
-            "DATABASE_URL": "sqlite:///:memory:", "DJANGO_ALLOWED_HOSTS": "api.example.com",
+            "DATABASE_URL": database_url, "DJANGO_ALLOWED_HOSTS": "api.example.com",
             "CORS_ALLOWED_ORIGINS": "https://www.example.com",
             "FRONTEND_BASE_URL": "https://www.example.com"}
         return subprocess.run([sys.executable, "manage.py", "check", "--deploy", "--settings=config.production"],
             cwd=Path(__file__).resolve().parents[1], env=env, capture_output=True, text=True, timeout=30)
+
+    def test_startup_rejects_missing_or_non_postgresql_database(self):
+        for database_url in ("", "sqlite:///:memory:"):
+            with self.subTest(database_url=database_url):
+                result = self.startup(secret="test-production-distinct-characters-" * 3,
+                                      database_url=database_url)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("Producción requiere DATABASE_URL de PostgreSQL", result.stderr)
 
     def test_startup_rejects_development_key_with_debug_false(self):
         result = self.startup(secret="dev-only-insecure-key")
@@ -50,7 +58,10 @@ class ProductionSettingsTests(SimpleTestCase):
             "DJANGO_TRUST_PROXY_SSL_HEADER": "true", **overrides}
         sys.modules.pop("config.production", None)
         try:
-            with patch.dict(os.environ, env), patch("config.settings.SECRET_KEY", "test-production-key-" * 5):
+            with patch.dict(os.environ, env), \
+                    patch("config.settings.SECRET_KEY", "test-production-key-" * 5), \
+                    patch("config.settings.DATABASE_URL", "postgresql://fake:fake@127.0.0.1:1/unused"), \
+                    patch("config.settings.DATABASES", {"default": {"ENGINE": "django.db.backends.postgresql"}}):
                 return importlib.import_module("config.production")
         finally:
             sys.modules.pop("config.production", None)

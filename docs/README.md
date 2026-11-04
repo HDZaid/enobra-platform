@@ -16,6 +16,8 @@ ramas, cifras de pruebas, pendientes y qué documentos son históricos.
 - [Contrato OpenAPI](openapi.yaml): referencia HTTP para backend y frontend.
 - [Cloudflare R2](R2-configuracion.md): credenciales privadas, diagnóstico de conexión,
   activación por dominio y pendientes de persistencia en producción.
+- [Backend en Render](Render-backend.md): Gunicorn, dependencias reproducibles,
+  variables privadas, proxy HTTPS y comprobaciones previas al despliegue.
 - [Roles y permisos (RBAC)](RBAC.md): los 32 permisos, roles predeterminados, seed, matriz rol × endpoint y cómo agregar un permiso (BE-11).
 - [Arquitectura del backend](arquitectura.md): interfaces, registro, `bindings.py` y la fábrica de publicaciones; cómo agregar un tipo (BE-11).
 - [ADR 0001: roles en la base de datos](adr/0001-rbac-por-datos.md): por qué los roles son datos y la fábrica solo se usa para publicaciones (BE-11).

@@ -8,6 +8,10 @@ from django.core.exceptions import ImproperlyConfigured
 DEBUG = False
 require_production_secret(SECRET_KEY)  # noqa: F405
 
+if (urlsplit(DATABASE_URL).scheme not in ("postgres", "postgresql")  # noqa: F405
+        or DATABASES.get("default", {}).get("ENGINE") != "django.db.backends.postgresql"):  # noqa: F405
+    raise ImproperlyConfigured("Producción requiere DATABASE_URL de PostgreSQL (Supabase).")
+
 ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS")
 if not ALLOWED_HOSTS or any(
         host.startswith(".") or any(char in host for char in ("/", ":", "*", " "))
