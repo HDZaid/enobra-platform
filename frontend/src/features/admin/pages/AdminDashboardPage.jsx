@@ -16,7 +16,6 @@ const steps = [
   { title: 'Noticias', description: 'Crear y editar noticias; en vista previa, los cambios son temporales.', link: routePaths.adminNews, section: 'news' },
   { title: 'Mensajes', description: 'Ver las consultas y su estado de atención.', link: routePaths.adminInbox, section: 'inbox' },
   { title: 'Proyectos', description: 'Accede a la sección de proyectos; las pantallas en construcción indican su responsable.', link: routePaths.adminProjects, section: 'projects' },
-  { title: 'Imágenes', description: 'El editor permite subir imágenes mediante la API de medios. Verificar el proveedor de Storage en el entorno real.', link: null, section: 'news' },
   { title: 'Bienes raíces', description: 'Consulta el listado de propiedades y las acciones disponibles para tu cuenta.', link: routePaths.adminProperties, section: 'properties' },
 ];
 
