@@ -20,4 +20,14 @@ class MediaStorage(ABC):
     def get(self, media_id: str) -> Optional[dict]: ...
 
     @abstractmethod
+    def is_public(self, item: dict) -> bool:
+        """True solo si el medio es utilizado por contenido público publicado."""
+        ...
+
+    @abstractmethod
+    def open(self, item: dict) -> IO[bytes]:
+        """Abre lectura autenticada en el proveedor, sin publicar credenciales."""
+        ...
+
+    @abstractmethod
     def delete(self, media_id: str, *, deleted_by: str | None = None) -> bool: ...

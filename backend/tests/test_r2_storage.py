@@ -21,6 +21,15 @@ R2_ENV = {
 
 
 class R2StorageTests(SimpleTestCase):
+    def test_private_mode_uses_authenticated_s3_without_public_hostname(self):
+        config = media_storage_settings({**R2_ENV, "R2_ACCESS_MODE": "private", "R2_PUBLIC_HOST": ""})
+        options = config["default"]["OPTIONS"]
+        self.assertIsNone(options["custom_domain"])
+        self.assertTrue(options["querystring_auth"])
+        self.assertFalse(options["file_overwrite"])
+        with self.assertRaises(ImproperlyConfigured):
+            media_storage_settings({"R2_ACCESS_MODE": "invalid"})
+
     def test_local_storage_remains_default_without_credentials(self):
         self.assertEqual(media_storage_settings({})["default"]["BACKEND"],
                          "django.core.files.storage.FileSystemStorage")

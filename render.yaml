@@ -36,3 +36,7 @@ services:
         sync: false
       - key: R2_ENABLED
         value: "false"
+      - key: R2_ACCESS_MODE
+        value: private
+      - key: MEDIA_API_ORIGIN
+        sync: false

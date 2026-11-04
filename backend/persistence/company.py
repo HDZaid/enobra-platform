@@ -6,6 +6,7 @@ from apps.company.interfaces import CompanyRepository, InstitutionRepository
 from .models.content import ConfiguracionSitio, RedSocial, ContenidoPagina
 from .support import read_data, write_data, audit
 from .media_references import lock_media_references
+from apps.media.references import canonical_media_reference, display_media_reference
 
 
 class DjangoCompanyRepository(CompanyRepository):
@@ -19,11 +20,12 @@ class DjangoCompanyRepository(CompanyRepository):
         socials = {normalized_name.casefold(): url for normalized_name, url in
             (obj.redes_sociales.filter(visible=True).values_list("nombre", "url") if obj else [])}
         result.update(instagram=socials.get("instagram", ""), facebook=socials.get("facebook", ""),
-                      logo=read_data("admin.company").get("logo", ""))
+                      logo=display_media_reference(read_data("admin.company").get("logo", ""), public=True))
         return result
 
     @transaction.atomic
     def update(self, data, *, updated_by):
+        data = {**data, "logo": canonical_media_reference(data["logo"])}
         lock_media_references({"logo": data["logo"]})
         if len(data["phones"]) > 2:
             raise ValidationError({"phones": "Se admiten dos teléfonos, como en el panel."})

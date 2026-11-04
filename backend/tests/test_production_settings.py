@@ -95,6 +95,15 @@ class ProductionSettingsTests(SimpleTestCase):
         with patch("config.settings.STORAGES", {"default": {"BACKEND": "storages.backends.s3.S3Storage"}}):
             self.assertTrue(self.load_config().MEDIA_UPLOADS_ENABLED)
 
+    def test_private_media_origin_must_be_https_and_belong_to_api(self):
+        with patch("config.settings.R2_ENABLED", True), patch("config.settings.R2_ACCESS_MODE", "private"):
+            for origin in ("", "http://api.example.com", "https://untrusted.example"):
+                with self.subTest(origin=origin), patch("config.settings.MEDIA_API_ORIGIN", origin), \
+                        self.assertRaises(ImproperlyConfigured):
+                    self.load_config()
+            with patch("config.settings.MEDIA_API_ORIGIN", "https://api.example.com"):
+                self.assertEqual(self.load_config().MEDIA_API_ORIGIN, "https://api.example.com")
+
     def test_https_headers_hosts_and_cors(self):
         config = self.load_config()
         options = {key: getattr(config, key) for key in (

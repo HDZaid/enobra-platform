@@ -16,6 +16,9 @@ class MediaReferenceField(serializers.CharField):
 
     def to_internal_value(self, data):
         value = super().to_internal_value(data)
+        # Las vistas previas privadas caducan; persistir solo la referencia de API.
+        from apps.media.references import canonical_media_reference
+        value = canonical_media_reference(value)
         if not (_HTTPS.match(value) or _MEDIA_PATH.match(value)):
             raise serializers.ValidationError("Usa una URL HTTPS o una ruta /media/… devuelta por la API.")
         return value

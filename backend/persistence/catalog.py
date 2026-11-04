@@ -19,6 +19,7 @@ from .models.access import Usuario
 from apps.common.pagination import Page
 from .support import read_data, write_data, audit, page_of, unique_slug, publication_date, normalized
 from .media_references import lock_media_references
+from apps.media.references import canonical_media_reference, display_media_reference
 
 
 class CatalogRepository:
@@ -112,9 +113,10 @@ class CatalogRepository:
         else:
             result.update(operation=obj.tipo_operacion.nombre, type=obj.tipo_propiedad.nombre)
         if self.module == "news":
-            result["image"] = extra.get("image", "")
+            result["image"] = display_media_reference(extra.get("image", ""), public=obj.publicado and not extra.get("trash"))
         else:
-            result.update(images=extra.get("images", []), renders=extra.get("renders", []))
+            result.update({name: [display_media_reference(value, public=obj.publicado and not extra.get("trash"))
+                                 for value in extra.get(name, [])] for name in ("images", "renders")})
             video = next(iter(sorted(obj.videos.all(), key=lambda v: (v.orden, v.pk))), None)
             result["video"] = video.url_youtube if video else ""
         if self.module != "projects":
@@ -139,6 +141,11 @@ class CatalogRepository:
     def _extras(self, obj, data, actor):
         extra = read_data(self._meta_key(obj))
         extra.update({k: data[k] for k in ("demo", "images", "renders", "image") if k in data})
+        for name in ("images", "renders"):
+            if name in extra:
+                extra[name] = [canonical_media_reference(value) for value in extra[name]]
+        if "image" in extra:
+            extra["image"] = canonical_media_reference(extra["image"])
         lock_media_references(extra)
         write_data(self._meta_key(obj), extra, actor)
         if "video" in data and self.video_model:
