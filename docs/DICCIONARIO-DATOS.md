@@ -270,7 +270,7 @@ Restricciones declaradas: `rol_nombre_key`: unicidad de `nombre`.
 
 ## rol_permiso
 
-Modelo `RolPermiso`. Clave primaria declarada: `rol_id, permiso_id`.
+Modelo `RolPermiso`. Clave primaria por columnas: `id_rol, id_permiso`.
 
 | Columna | Atributo ORM | Tipo Django | Admite NULL | Referencia |
 | --- | --- | --- | --- | --- |
@@ -340,7 +340,7 @@ Restricciones declaradas: `usuario_correo_key`: unicidad de `correo`; `chk_usuar
 
 ## usuario_rol
 
-Modelo `UsuarioRol`. Clave primaria declarada: `usuario_id, rol_id`.
+Modelo `UsuarioRol`. Clave primaria por columnas: `id_usuario, id_rol`.
 
 | Columna | Atributo ORM | Tipo Django | Admite NULL | Referencia |
 | --- | --- | --- | --- | --- |

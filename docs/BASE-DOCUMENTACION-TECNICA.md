@@ -70,6 +70,10 @@ versión. No ejecutar migraciones/seeds para recrear las tablas de negocio.
 
 ## Límites que deben aparecer en el manual
 
+- El login del panel usa usuario/usuario_rol y hashes verificados por Django; no
+  confundir estas cuentas con Supabase Auth o los accesos al dashboard del proveedor.
+- El editor administrativo de Empresa/Nosotros sigue pendiente en frontend; la API
+  de empresa/institución existe, pero no acredita que haya una pantalla de edición.
 - Servicios y búsqueda global tienen contrato, pero no repositorios registrados:
   responden 501; no describirlos como módulos backend terminados.
 - R2 privado activo. Una imagen migrada se recuperó tras otro despliegue; faltan

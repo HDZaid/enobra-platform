@@ -69,6 +69,8 @@ Las pruebas aisladas no sustituyen recorridos con titulares reales en producció
   No se autorizó ni ejecutó una limpieza de la base por esta diferencia.
 - Correo y destinatario: backend dummy en validación; no acredita entrega real.
 - Servicios y buscador global conservan endpoints `501`; no darlos por implementados.
+- El editor administrativo de Empresa/Nosotros sigue pendiente en frontend; la API
+  correspondiente ya existe.
 - Depurar las cuentas de Supabase después de la exposición del 4-nov-2026: objetivo
   de dos identidades humanas, Admin e Ingeniero, con correos aún por definir.
   No se han eliminado cuentas; revisar la cuenta técnica de P-02 y sus relaciones
