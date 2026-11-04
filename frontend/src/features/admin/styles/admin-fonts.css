@@ -10,4 +10,9 @@
   html:has(.admin-shell) body {
     scrollbar-color: auto;
   }
+
+  .admin-shell aside > nav {
+    scrollbar-width: thin;
+    scrollbar-color: #98abc5 transparent;
+  }
 }
