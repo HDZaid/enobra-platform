@@ -12,6 +12,7 @@ from rest_framework.exceptions import ValidationError
 from apps.media.interfaces import MediaStorage
 from .models.content import ContenidoPagina
 from .support import read_data, write_data, audit
+from .media_references import media_in_use
 
 
 class DjangoMediaStorage(MediaStorage):
@@ -57,6 +58,8 @@ class DjangoMediaStorage(MediaStorage):
         if not obj:
             return False
         item = self.get(media_id)
+        if media_in_use(item):
+            raise ValidationError("La imagen está en uso. Retírala de las publicaciones o del contenido antes de eliminarla.")
         audit("media", "ELIMINAR", obj, deleted_by or obj.actualizado_por_id)
         obj.delete()
         transaction.on_commit(lambda: default_storage.delete(item["path"]))

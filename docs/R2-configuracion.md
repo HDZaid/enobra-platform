@@ -4,6 +4,19 @@ Fecha: 1 de noviembre de 2026, Guatemala. R2 elegido por Geovanny para imágenes
 
 ## Estado
 
+Actualización 3-nov: dominio `enobra.com.gt` confirmado en la cuenta de Cloudflare.
+Inventario de solo lectura: 5 registros de medios en Supabase y un archivo en esta
+copia de `backend/media`; faltan cuatro originales por localizar. El archivo local
+disponible no aparece referenciado por publicaciones/contenido. No se han borrado
+registros ni archivos para corregir esa diferencia.
+
+La API rechaza con 400 borrar medios referenciados por proyectos, propiedades,
+noticias o contenido institucional, incluidos borradores y papelera. Los guardados
+de imágenes y el borrado bloquean la misma fila de metadatos en PostgreSQL; si el
+medio ya fue eliminado, un guardado posterior de su URL se rechaza. Las imágenes
+externas siguen permitidas. OpenAPI actualizado y 227 pruebas SQLite aprobadas;
+no se ha reproducido concurrencia sobre Supabase real.
+
 Bucket `enobra-media-prod` creado y credencial de objetos limitada al bucket.
 Configuración local privada en `backend/.env.r2`, excluida por `.gitignore`.
 Las claves reales no forman parte del repositorio ni del frontend.

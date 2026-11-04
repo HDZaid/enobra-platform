@@ -5,6 +5,7 @@ from rest_framework.exceptions import ValidationError
 from apps.company.interfaces import CompanyRepository, InstitutionRepository
 from .models.content import ConfiguracionSitio, RedSocial, ContenidoPagina
 from .support import read_data, write_data, audit
+from .media_references import lock_media_references
 
 
 class DjangoCompanyRepository(CompanyRepository):
@@ -23,6 +24,7 @@ class DjangoCompanyRepository(CompanyRepository):
 
     @transaction.atomic
     def update(self, data, *, updated_by):
+        lock_media_references({"logo": data["logo"]})
         if len(data["phones"]) > 2:
             raise ValidationError({"phones": "Se admiten dos teléfonos, como en el panel."})
         if len(data["person"]) > 150 or len(data["email"]) > 150:
