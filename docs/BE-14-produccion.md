@@ -1,9 +1,12 @@
-# BE-14: configuración preparada; despliegue pendiente
+# BE-14: configuración y despliegue de validación
 
 > Actualización del 3-nov: arranque con Gunicorn, dependencias fijadas, Blueprint
 > y prueba HTTP en Linux preparados en [Backend en Render](Render-backend.md).
 > Esa guía sustituye los pasos históricos sobre elegir/instalar el servidor.
-> La verificación del proxy y de las URL desplegadas sigue pendiente.
+> Despliegue de validación activo: [evidencia y pendientes reales](Render-validacion-2026-11-03.md).
+> HTTPS, proxy, CORS y cabeceras comprobados; login y operación por rol pendientes.
+
+## Corte histórico del 29-oct
 
 Fecha: 29 de octubre de 2026, Guatemala. Solicitado por Geovanny. El frontend sigue
 en mejoras y no hay URL pública de frontend/API facilitada para validar. No se ha

@@ -1,10 +1,13 @@
-# Backend en Render: arranque preparado
+# Backend en Render: despliegue de validación activo
 
 3 de noviembre de 2026, Guatemala. Primer despliegue de validación creado en
 `https://enobra-api.onrender.com`, plan Free y despliegues manuales. Salud,
 empresa, proyectos y noticias: HTTP 200; sin token: 401; HTTPS, cabeceras y CORS
 permitido/ajeno comprobados. Supabase usa pooler de sesión 5432 con TLS requerido.
 Los cambios se trabajan en backend-dev y se integran en develop.
+
+R2 privado está activo con la revisión `912d916`; las fotos se sirven mediante
+Django. Véase la [evidencia del despliegue](Render-validacion-2026-11-03.md).
 
 ## Configuración versionada
 
@@ -114,8 +117,9 @@ revisar OpenAPI si cambian Django/DRF/drf-spectacular.
 
 - El Blueprint gratuito es para validación: se suspende por inactividad y no
   conserva archivos locales. Elegir un plan adecuado antes del uso continuo.
-- R2 permanece desactivado. Configurar dominio y variables R2 antes de permitir
-  subidas persistentes; migración y pruebas de imágenes son otro paso.
+- R2 privado está activado en el servicio de validación. Un archivo disponible
+  fue copiado y verificado; faltan cuatro originales de otras computadoras.
+  La subida con un usuario real desde el panel conserva su validación pendiente.
   El perfil de producción devuelve 503 en la subida mientras el proveedor sea
   local, para evitar guardar archivos en el disco efímero del servicio.
   Geovanny eligió R2 privado con fotos entregadas por la API: configurar
