@@ -49,7 +49,7 @@ enobra-platform/
 ├── docs/
 │   ├── README.md             # Índice de documentación
 │   ├── reglas-desarrollo.md  # Equipo, contratos y flujo de colaboración
-│   ├── infraestructura.md    # Propuesta de despliegue, sujeta a cambios
+│   ├── infraestructura.md    # Infraestructura y límites de operación
 │   └── openapi.yaml          # Contrato compartido entre backend y frontend
 ├── .gitignore
 └── README.md
@@ -125,26 +125,22 @@ npm run build
 
 ## Estado actual
 
-La API define contratos e interfaces y contiene repositorios Django para varios módulos;
-requiere configurar PostgreSQL mediante `DATABASE_URL` para probar persistencia real.
-Las interfaces sin implementación responden `501 not_implemented`. Las tablas de negocio
-existentes se mapean sin `makemigrations`/`migrate`.
+- Sitio y panel: [enobra.com.gt](https://enobra.com.gt), Cloudflare Pages desde frontend-dev.
+- API: [Render](https://enobra-api.onrender.com/api/v1/health/), Gunicorn y PostgreSQL Supabase.
+- R2 privado activo; fotos públicas mediante la API y borradores protegidos.
+- Inicio solicita health una vez por carga; Actions reintenta al publicar develop.
+  No hay ping periódico. P-02 mantiene su limpieza diaria independiente.
+- Los módulos del panel están integrados. Servicios y búsqueda siguen con endpoints
+  pendientes (`501`); no ejecutar migraciones para recrear tablas existentes.
 
-En `develop` están integrados Inicio, Nosotros, Servicios, Proyectos, Bienes Raíces,
-Noticias, Contacto y el panel de noticias/mensajes. Las rutas y la UI se validaron con
-respuestas API controladas; la integración real con Django y los formularios
-administrativos todavía ausentes se detallan en el
-[reporte de integración](docs/frontend-integration.md).
-
-Consulta [la documentación del backend](backend/README.md),
-[la del frontend](frontend/README.md) y [el contrato OpenAPI](docs/openapi.yaml).
+Consultar [estado vigente y pendientes](docs/estado-proyecto.md),
+[operación y diagnóstico](docs/operacion-produccion.md) y
+[evidencia del despliegue](docs/Render-validacion-2026-11-03.md).
 
 ## Trabajo en equipo
 
 Somos seis integrantes (tres de backend y tres de frontend), coordinados mediante
 contratos. Consulta las [reglas y responsables](docs/reglas-desarrollo.md) y la
-[propuesta de infraestructura](docs/infraestructura.md): Cloudflare Pages para el
-frontend con dominio `.gt` y Render para Django. Cloudflare R2 fue elegido para
-fotos/renders el 1 de noviembre: conexión de lectura comprobada y configuración
-preparada; dominio público y activación pendientes. Véase [configuración R2](docs/R2-configuracion.md).
+[infraestructura vigente](docs/infraestructura.md): Cloudflare Pages, Render,
+Supabase y R2 privado. Véase [configuración R2](docs/R2-configuracion.md).
 Las asignaciones no restringen las contribuciones y todos los acuerdos están sujetos a cambios.

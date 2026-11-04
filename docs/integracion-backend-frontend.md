@@ -1,5 +1,9 @@
 # Integración parcial de React y Django
 
+> Informe de integración con cortes históricos. Servicios, R2 privado, sesión y
+> despliegues actuales: [estado del proyecto](estado-proyecto.md). No interpretar
+> las limitaciones de un corte anterior como tareas aún pendientes.
+
 > **Documento histórico.** El estado vigente, con cifras de pruebas y pendientes actualizados al 25 de octubre de 2026, está en [estado-proyecto.md](estado-proyecto.md).
 
 Estado: integración validada en desarrollo local y promovida a `develop`.

@@ -1,5 +1,8 @@
 # Reporte de revisión del backend administrativo
 
+> Auditoría de un corte anterior. Sus hallazgos se conservan como evidencia;
+> los estados resueltos y pendientes actuales están en [estado-proyecto.md](estado-proyecto.md).
+
 > **Documento histórico.** El estado vigente, con cifras de pruebas y pendientes actualizados al 25 de octubre de 2026, está en [estado-proyecto.md](estado-proyecto.md).
 
 Fecha: 12 de octubre de 2026. Rama: `develop`.

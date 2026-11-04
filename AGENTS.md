@@ -1,8 +1,9 @@
 # Trabajo del equipo EnObra
 
 > 29-oct: Geovanny descarta transferir el repo a una organización para la entrega.
-> Producción: perfil y pruebas preparados; validación de URLs aplazada hasta el
-> despliegue, mientras continúa el frontend. Véase [docs/BE-14-produccion.md](docs/BE-14-produccion.md).
+> Producción, 3-nov: frontend en Cloudflare Pages, API en Render y R2 privado activos.
+> Estado y límites: [docs/estado-proyecto.md](docs/estado-proyecto.md) y
+> [docs/operacion-produccion.md](docs/operacion-produccion.md).
 
 P-02 y la limpieza diaria están completas: leer [docs/P02-limpieza-activa.md](docs/P02-limpieza-activa.md).
 GitHub Actions sustituye el Cron Job de Render; no duplicar programadores ni reintroducir la función SQL antigua.

@@ -1,5 +1,9 @@
 # Backend del panel administrativo
 
+> Para despliegue, almacenamiento y pendientes actuales, consultar
+> [estado del proyecto](estado-proyecto.md) y [operación](operacion-produccion.md).
+> Las pruebas y estados de la entrega original que siguen tienen alcance histórico.
+
 Implementación sobre `develop`, basada en `MockUp---enObra/admin.js`, los contratos
 HTTP existentes y los modelos de `backend/persistence/models/`. No modifica el
 frontend, la conexión a Supabase, los modelos existentes ni el esquema de sus tablas.

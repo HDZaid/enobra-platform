@@ -7,7 +7,9 @@ actual y los requisitos. Servicios y búsqueda siguen pendientes (`501`).
 
 El equipo se coordina mediante las [reglas de desarrollo](../docs/reglas-desarrollo.md).
 La [infraestructura](../docs/infraestructura.md) fija PostgreSQL en Supabase y contempla
-Render para Django. El proveedor de fotos/renders está pendiente; R2 es solo una propuesta.
+Render para Django y R2 privado para imágenes, ya activos en validación.
+Consultar [operación actual](../docs/operacion-produccion.md) y
+[evidencia del despliegue](../docs/Render-validacion-2026-11-03.md).
 
 Backend en **Django + Django REST Framework** para el sitio de **EnObra** (constructora y bienes raíces,
 Quetzaltenango, Guatemala). Está basado en el mockup `MockUp---enObra` (HTML/CSS/JS puro con datos locales)
@@ -20,7 +22,7 @@ errores e interfaces, con implementaciones ORM del panel administrativo.
 > - ✅ Esquema OpenAPI generado: [`docs/openapi.yaml`](../docs/openapi.yaml), compartido desde la raíz del repositorio.
 > - ✅ Conexión a PostgreSQL en Supabase configurable mediante `DATABASE_URL`.
 > - ✅ Modelos no administrados y repositorios concretos del panel sobre las tablas existentes.
-> - ✅ **Frontend separado**: la base React está en [`../frontend/`](../frontend/README.md) y consume este contrato; sus pantallas todavía son provisionales.
+> - ✅ **Frontend separado**: la base React está en [`../frontend/`](../frontend/README.md) y consume este contrato; sitio y panel están integrados; validar recorridos reales por rol en la URL desplegada.
 >
 > Mientras una interfaz no tenga implementación registrada, su endpoint responde `501 not_implemented`.
 

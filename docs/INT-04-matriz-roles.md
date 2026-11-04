@@ -1,5 +1,9 @@
 # INT-04 — Matriz de pruebas por rol
 
+> Matriz histórica de su revisión y sus roles. Consultar la
+> [política actual](politica-roles-fijos.md) y el [estado vigente](estado-proyecto.md)
+> antes de usar estas cifras para validar una nueva entrega.
+
 > Seguimiento del 28 de octubre de 2026: repetición contra Supabase completada, **70/70 comprobaciones aprobadas**, más controles de permisos y guardado con foto de los tres roles en Chromium. [Informe de la nueva ejecución](INT-04-supabase-2026-10-28.md). El resto de este documento conserva su corte original sobre SQLite; los resultados del despliegue público y almacenamiento persistente siguen pendientes.
 
 **Responsables:** Geo y Leo · **Fecha:** domingo 25 de octubre de 2026 ·

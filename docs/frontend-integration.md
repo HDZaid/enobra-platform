@@ -1,5 +1,8 @@
 # Integración del frontend en frontend-dev
 
+> Informe de integración de origen. Para la funcionalidad actual, ramas,
+> despliegue y pendientes, consultar [estado del proyecto](estado-proyecto.md).
+
 > **Documento histórico.** El estado vigente, con cifras de pruebas y pendientes actualizados al 25 de octubre de 2026, está en [estado-proyecto.md](estado-proyecto.md).
 
 Fecha: 20 de octubre de 2026 (America/Guatemala). Destino exclusivo: `frontend-dev`.

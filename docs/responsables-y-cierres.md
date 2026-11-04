@@ -34,9 +34,9 @@ dependencia técnica concreta. No reabrir BE-00/01/02/03/05/11 ni P-01 por texto
 
 ## Respuestas que faltan y a qué afectan
 
-- Cuentas: nombres de titulares y rol de cada persona, proporcionados por Geovanny
-  por un canal privado; nunca contraseñas ni datos personales en este repo público.
-- Backend: pendiente la URL de la API web y del frontend cuando terminen sus mejoras. La limpieza ya está activa en GitHub Actions; no crear Cron Job de Render. Imágenes y correo requieren su configuración propia.
+- Cuentas: existen asignaciones activas consultadas en Supabase; verificar con cada
+  titular el acceso y rol en la URL desplegada. Nunca publicar contraseñas ni datos personales.
+- Backend y frontend: URL públicas activas; ver [operación](operacion-produccion.md). R2 privado y persistencia de una imagen comprobados; faltan cuatro originales, prueba desde el panel y correo. La limpieza ya está activa en GitHub Actions; no crear Cron Job de Render.
 - Correo: buzón receptor y servicio que enviará las consultas.
 
 No bloquean edición de código, pruebas locales, integración revisada ni documentación.
