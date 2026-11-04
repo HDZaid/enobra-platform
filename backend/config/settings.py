@@ -113,6 +113,9 @@ MEDIA_ROOT = os.getenv("MEDIA_ROOT", str(BASE_DIR / "media"))
 MEDIA_URL = os.getenv("MEDIA_URL", "/media/")
 DATA_UPLOAD_MAX_MEMORY_SIZE = MEDIA_MAX_UPLOAD_BYTES + 1024 * 1024
 STORAGES = media_storage_settings(os.environ)
+R2_ENABLED = os.getenv("R2_ENABLED", "false").strip().lower() == "true"
+R2_ACCESS_MODE = os.getenv("R2_ACCESS_MODE", "public").strip().lower()
+MEDIA_API_ORIGIN = os.getenv("MEDIA_API_ORIGIN", "").rstrip("/")
 
 # --- Notificación de consultas por correo (BE-09) ----------------------------
 # Sin destinatarios en INQUIRY_NOTIFY_EMAILS no se envía nada. La consola imprime
@@ -148,6 +151,8 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
+    # Conservar los operationId existentes al añadir /media fuera de /api.
+    "SCHEMA_PATH_PREFIX": r"/api",
     "TITLE": "EnObra API",
     "DESCRIPTION": (
         "Contrato HTTP del backend de EnObra (constructora y bienes raíces, Quetzaltenango). "

@@ -35,6 +35,11 @@ def https_origin(value):
         return False
 
 
+if R2_ENABLED and R2_ACCESS_MODE == "private":  # noqa: F405
+    if not https_origin(MEDIA_API_ORIGIN) or urlsplit(MEDIA_API_ORIGIN).hostname not in ALLOWED_HOSTS:  # noqa: F405
+        raise ImproperlyConfigured("R2 privado requiere MEDIA_API_ORIGIN HTTPS y su hostname en DJANGO_ALLOWED_HOSTS.")
+
+
 CORS_ALLOWED_ORIGINS = env_list("CORS_ALLOWED_ORIGINS")
 FRONTEND_BASE_URL = os.getenv("FRONTEND_BASE_URL", "").rstrip("/")
 if (not CORS_ALLOWED_ORIGINS or not all(map(https_origin, CORS_ALLOWED_ORIGINS))

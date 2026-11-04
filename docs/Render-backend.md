@@ -1,7 +1,10 @@
 # Backend en Render: arranque preparado
 
-3 de noviembre de 2026, Guatemala. Esta preparación no crea servicios ni acredita
-un despliegue. Los cambios se trabajan en backend-dev y se integran en develop.
+3 de noviembre de 2026, Guatemala. Primer despliegue de validación creado en
+`https://enobra-api.onrender.com`, plan Free y despliegues manuales. Salud,
+empresa, proyectos y noticias: HTTP 200; sin token: 401; HTTPS, cabeceras y CORS
+permitido/ajeno comprobados. Supabase usa pooler de sesión 5432 con TLS requerido.
+Los cambios se trabajan en backend-dev y se integran en develop.
 
 ## Configuración versionada
 
@@ -115,6 +118,9 @@ revisar OpenAPI si cambian Django/DRF/drf-spectacular.
   subidas persistentes; migración y pruebas de imágenes son otro paso.
   El perfil de producción devuelve 503 en la subida mientras el proveedor sea
   local, para evitar guardar archivos en el disco efímero del servicio.
+  Geovanny eligió R2 privado con fotos entregadas por la API: configurar
+  `R2_ACCESS_MODE=private` y `MEDIA_API_ORIGIN` con el origen real de la API;
+  no requiere dominio público del bucket. Véase la guía R2 actualizada.
 - El correo sigue sin configurar. Render gratuito bloquea SMTP 25/465/587;
   valorar un adaptador HTTPS. No usar consola con consultas reales.
 - Servicios y búsqueda siguen pendientes. Este cambio no los implementa.

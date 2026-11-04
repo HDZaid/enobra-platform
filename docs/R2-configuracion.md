@@ -2,6 +2,11 @@
 
 Fecha: 1 de noviembre de 2026, Guatemala. R2 elegido por Geovanny para imágenes.
 
+> Decisión del 3-nov: Geovanny mantiene el bucket privado y autoriza que la API
+> entregue las fotos de contenido público. No conectar `media.enobra.com.gt` ni
+> habilitar `r2.dev`. La propuesta anterior de dominio público es solo alternativa
+> histórica. El modo privado se configura como se indica más abajo.
+
 ## Estado
 
 Actualización 3-nov: dominio `enobra.com.gt` confirmado en la cuenta de Cloudflare.
@@ -60,7 +65,38 @@ archivos ni secretos. No crea, sube, modifica o borra objetos; funciona con
 `R2_ENABLED=false` y sin dominio público. Comprueba lectura autenticada, no
 escritura, autorización de otros buckets ni acceso público por HTTPS.
 
-## Activar cuando esté configurado el dominio
+## Activación del modo privado elegido
+
+En Render, conservar las credenciales como variables privadas y configurar:
+
+```dotenv
+R2_ENABLED=true
+R2_ACCESS_MODE=private
+MEDIA_API_ORIGIN=https://enobra-api.onrender.com
+R2_PUBLIC_HOST=
+```
+
+`MEDIA_API_ORIGIN` debe ser un origen HTTPS de la API, incluido en
+`DJANGO_ALLOWED_HOSTS`. La API abre los objetos con S3 autenticado; no devuelve
+claves ni URLs S3 firmadas. No es necesario configurar CORS del bucket para este
+flujo. El frontend conserva las referencias HTTPS que devuelve Django.
+
+- La base guarda referencias permanentes `/media/r2/<id>/`, sin tokens.
+- Las fotos de publicaciones públicas y el logo se leen a través de la API.
+  Una publicación en borrador o papelera no abre lectura anónima.
+- El panel puede leer con Bearer y obtiene vistas previas firmadas, limitadas a
+  una imagen y 15 minutos. Al guardar una vista previa, Django retira su token y
+  conserva la referencia permanente. Los logs de acceso omiten query strings.
+- Las respuestas privadas usan `private, no-store`; las públicas permiten cinco
+  minutos de caché. Una vista previa ya emitida vale hasta su vencimiento o hasta
+  borrar el medio, aunque se cierre la sesión del panel.
+- El bloqueo de borrado de imágenes en uso también cubre las referencias privadas.
+
+OpenAPI mantiene sus operationId anteriores y añade la lectura de imágenes fuera
+de `/api`. El modo privado está cubierto por pruebas aisladas de publicación,
+borradores, papelera, logo, firma alterada/caducada y errores del proveedor.
+
+## Opción pública anterior (no elegida)
 
 1. Conectar el subdominio elegido al bucket desde R2 > Settings > Custom Domains.
    Los objetos de ese bucket serán accesibles por su URL; destinarlo a imágenes

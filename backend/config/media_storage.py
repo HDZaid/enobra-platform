@@ -46,6 +46,9 @@ def r2_options(environ, *, require_public_host=True):
 
 def media_storage_settings(environ):
     enabled = environ.get("R2_ENABLED", "false").strip().lower()
+    access = environ.get("R2_ACCESS_MODE", "public").strip().lower()
+    if access not in ("public", "private"):
+        raise ImproperlyConfigured("R2_ACCESS_MODE debe ser public o private.")
     if enabled not in ("true", "false"):
         raise ImproperlyConfigured("R2_ENABLED debe ser true o false.")
     storages = {
@@ -53,8 +56,11 @@ def media_storage_settings(environ):
         "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
     }
     if enabled == "true":
+        options = r2_options(environ, require_public_host=access == "public")
+        if access == "private":
+            options.update(custom_domain=None, querystring_auth=True)
         storages["default"] = {
             "BACKEND": "storages.backends.s3.S3Storage",
-            "OPTIONS": r2_options(environ),
+            "OPTIONS": options,
         }
     return storages

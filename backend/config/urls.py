@@ -2,6 +2,7 @@ from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from apps.media.views import MediaContentView
 
 api_v1 = [
     path("", include("apps.common.urls")),
@@ -20,6 +21,7 @@ api_v1 = [
 ]
 
 urlpatterns = [
+    path("media/r2/<str:media_id>/", MediaContentView.as_view(), name="media-content"),
     path("api/v1/", include(api_v1)),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="docs"),

@@ -9,6 +9,7 @@ from django.db.models import Q
 from rest_framework.exceptions import ValidationError
 
 from .models.content import ContenidoPagina
+from apps.media.references import media_reference_id
 
 
 def strings(value):
@@ -29,6 +30,9 @@ def public_host():
 
 def upload_id(value):
     """Reconoce solo uploads propios; las imágenes externas siguen permitidas."""
+    private_id = media_reference_id(value)
+    if private_id:
+        return private_id
     try:
         parsed = urlsplit(value)
         path = unquote(parsed.path)
