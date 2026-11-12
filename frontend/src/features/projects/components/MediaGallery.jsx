@@ -6,7 +6,7 @@ import { parseYoutube } from '../services/catalogMapper.js';
 export function MediaGallery({ item, preview = false }) {
   const [index, setIndex] = useState(0);
   const slides = [
-    ...item.images.map((src) => ({ src, kind: 'Fotografía' })),
+    ...item.images.map((src) => ({ src, kind: 'Imagen' })),
     ...item.renders.map((src) => ({ src, kind: 'Render' })),
   ];
   if (!slides.length)

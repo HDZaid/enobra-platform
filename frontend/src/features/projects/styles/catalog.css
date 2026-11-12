@@ -375,6 +375,10 @@
   width: 100%;
   border-radius: 2px;
 }
+.geo-catalog .geo-gallery-main > img {
+  object-fit: contain;
+  background: var(--light);
+}
 .geo-catalog .geo-gallery-controls {
   position: absolute;
   bottom: 20px;
