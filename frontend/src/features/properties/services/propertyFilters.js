@@ -4,8 +4,9 @@ export const sorts = ['recent', 'price_asc', 'price_desc'];
 
 export function readFilters(params) {
   const read = (key) => params.get(key) || '';
+  const selectedOperations = params.getAll('operation');
   return {
-    operation: operations.includes(read('operation')) ? read('operation') : '',
+    operations: operations.filter((operation) => selectedOperations.includes(operation)),
     type: propertyTypes.includes(read('type')) ? read('type') : '',
     zone: read('zone'),
     q: read('q'),
@@ -38,7 +39,8 @@ export function validateFilters(values) {
 
 export function propertyQuery(values, favorites = []) {
   const result = {};
-  for (const key of ['operation', 'type', 'zone', 'q', 'min_price', 'max_price', 'sort', 'page']) {
+  if (values.operations.length === 1) result.operation = values.operations[0];
+  for (const key of ['type', 'zone', 'q', 'min_price', 'max_price', 'sort', 'page']) {
     if (values[key] !== '' && values[key] !== undefined) result[key] = values[key];
   }
   if (values.favorites) result.ids = favorites.join(',');

@@ -302,6 +302,19 @@ test('filtros restauran URL, manejan favoritos y detectan rangos imposibles', ()
   );
 });
 
+test('venta y alquiler se pueden combinar sin duplicar el filtro de la API', () => {
+  const sale = readFilters(new URLSearchParams('operation=Venta'));
+  assert.deepEqual(sale.operations, ['Venta']);
+  assert.equal(propertyQuery(sale).operation, 'Venta');
+
+  const both = readFilters(
+    new URLSearchParams('operation=Alquiler&operation=Venta&operation=Venta&operation=otro'),
+  );
+  assert.deepEqual(both.operations, ['Venta', 'Alquiler']);
+  assert.equal(propertyQuery(both).operation, undefined);
+  assert.equal(propertyQuery(readFilters(new URLSearchParams())).operation, undefined);
+});
+
 test('visitas validan nombre, teléfono de 8 dígitos y fechas reales presentes o futuras', () => {
   const valid = { name: ' Geo ', phone: '1234-5678', preferred_date: '2026-10-12' };
   assert.deepEqual(validateVisit(valid, '2026-10-12'), {});

@@ -19,7 +19,7 @@ import '../../projects/styles/catalog.css';
 
 const { list, facets: facetsResource } = publicProperties;
 
-function PropertyFilters({ values, zones, onApply, onReset, onShare }) {
+function PropertyFilters({ values, zones, onApply, onReset }) {
   const [draft, setDraft] = useState(values);
   const [errors, setErrors] = useState(validateFilters(values));
   const set = (name, value) => setDraft((previous) => ({ ...previous, [name]: value }));
@@ -106,9 +106,6 @@ function PropertyFilters({ values, zones, onApply, onReset, onShare }) {
           >
             Limpiar filtros
           </button>
-          <button type="button" className="text-link" onClick={onShare}>
-            Copiar enlace de búsqueda ↗
-          </button>
           <button className="button primary" type="submit">
             Buscar propiedades →
           </button>
@@ -131,10 +128,19 @@ export function PropertiesPage() {
     JSON.stringify({ query: propertyQuery(values, favorites.ids), invalid, emptyFavorites }),
     list.read,
   );
-  const [share, setShare] = useState('');
+  const formValues = {
+    q: values.q,
+    type: values.type,
+    zone: values.zone,
+    min_price: values.min_price,
+    max_price: values.max_price,
+    sort: values.sort,
+  };
+
   function update(changes) {
-    const next = { ...values, ...changes };
+    const { operations: selectedOperations, ...next } = { ...values, ...changes };
     const query = new URLSearchParams();
+    selectedOperations.forEach((operation) => query.append('operation', operation));
     Object.entries(next).forEach(([key, value]) => {
       if (
         value !== '' &&
@@ -145,16 +151,15 @@ export function PropertiesPage() {
         query.set(key, String(value));
     });
     setParams(query);
-    setShare('');
   }
-  async function copySearch() {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setShare('Enlace copiado.');
-    } catch {
-      setShare(window.location.href);
-    }
+
+  function toggleOperation(operation, checked) {
+    const selectedOperations = checked
+      ? [...values.operations, operation]
+      : values.operations.filter((value) => value !== operation);
+    update({ operations: selectedOperations, page: 1 });
   }
+
   return (
     <MotionPage title="Bienes raíces">
       <div className="geo-catalog">
@@ -177,36 +182,33 @@ export function PropertiesPage() {
         </section>
         <section className="section container">
           <div className="geo-filter-top">
-            <div className="geo-tabs" role="group" aria-label="Operación">
-              {['', ...operations].map((operation) => (
-                <button
-                  key={operation}
-                  aria-pressed={values.operation === operation}
-                  onClick={() => update({ operation, page: 1 })}
-                >
-                  {operation || 'Todas'}
-                </button>
+            <div className="geo-operation-checks" role="group" aria-label="Operación">
+              {operations.map((operation) => (
+                <label key={operation} className="geo-catalog-check">
+                  <input
+                    type="checkbox"
+                    checked={values.operations.includes(operation)}
+                    onChange={(event) => toggleOperation(operation, event.target.checked)}
+                  />
+                  {operation === 'Venta' ? 'En venta' : 'En alquiler'}
+                </label>
               ))}
             </div>
-            <label className="geo-favorites-check">
+            <label className="geo-catalog-check">
               <input
                 type="checkbox"
                 checked={values.favorites}
                 onChange={(e) => update({ favorites: e.target.checked, page: 1 })}
               />{' '}
-              Solo favoritos <span>{favorites.ids.length}</span>
+              Solo favoritos <span className="geo-favorites-count">{favorites.ids.length}</span>
             </label>
           </div>
           <PropertyFilters
-            key={params.toString()}
-            values={values}
+            key={JSON.stringify(formValues)}
+            values={formValues}
             zones={facets.data?.zones || []}
             onApply={(draft) => update({ ...draft, page: 1 })}
-            onReset={() => {
-              setParams({});
-              setShare('');
-            }}
-            onShare={copySearch}
+            onReset={() => setParams({})}
           />
           {facets.status === 'error' && (
             <p className="small muted">
@@ -216,8 +218,8 @@ export function PropertiesPage() {
               </button>
             </p>
           )}
-          <p className="small geo-share" role="status">
-            {share || favorites.message}
+          <p className="small geo-favorites-status" role="status">
+            {favorites.message}
           </p>
           {invalid ? (
             <div className="geo-status" role="alert">
