@@ -5,9 +5,6 @@
 .geo-catalog .geo-properties-intro .enobra-intro-copy {
   padding-inline-end: clamp(250px, 30vw, 375px);
 }
-.geo-catalog .geo-properties-intro h1 {
-  font-size: clamp(38px, 4.2vw, 60px);
-}
 .geo-catalog .geo-properties-intro .header-drawing--planta {
   inset: 0 0 0 auto;
   width: min(54%, 900px);
@@ -27,27 +24,26 @@
   }
 }
 @media (max-width: 860px) {
-  .geo-catalog .geo-properties-intro {
-    padding-bottom: 0;
+  .geo-catalog .geo-catalog-intro {
+    padding-block: clamp(32px, 6vw, 48px) clamp(36px, 7vw, 56px);
+  }
+  .geo-catalog .geo-catalog-intro h1 {
+    text-wrap: balance;
+  }
+  .geo-catalog .geo-catalog-intro h1 br {
+    display: none;
   }
   .geo-catalog .geo-properties-intro .enobra-intro-copy {
     padding-inline-end: 0;
   }
-  .geo-catalog .geo-properties-intro h1 {
-    font-size: clamp(32px, 7vw, 54px);
-  }
   .geo-catalog .geo-properties-intro .header-drawing--planta {
-    position: relative;
-    inset: auto;
-    width: 100%;
-    height: clamp(176px, 50vw, 280px);
-    margin-top: 12px;
-    opacity: 0.65;
+    width: min(70%, 440px);
+    opacity: 0.28;
   }
   .geo-catalog .geo-properties-intro .header-drawing--planta svg {
-    top: -32px;
-    right: -64px;
-    width: clamp(360px, 100vw, 560px);
+    top: 8%;
+    right: -90px;
+    width: clamp(290px, 54vw, 480px);
   }
 }
 .geo-catalog label {

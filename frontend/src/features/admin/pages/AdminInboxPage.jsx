@@ -113,7 +113,7 @@ export function AdminInboxPage() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-sm text-[#626b79]">Comunicación</p>
-          <h2 className="mt-1 font-['Montserrat',Arial,sans-serif] text-[30px] font-semibold">Solicitudes recibidas</h2>
+          <h2 className="mt-1 font-['Montserrat',Arial,sans-serif] text-[26px] font-semibold sm:text-[30px]">Solicitudes recibidas</h2>
           <p className="mt-2 max-w-[670px] text-sm leading-relaxed text-[#626b79]">Consultas de Contacto y solicitudes de visitas. Revisa los detalles y da seguimiento a cada mensaje.</p>
         </div>
         {!preview && <button type="button" onClick={reload} className="rounded-lg border border-[#dfe5ec] bg-white px-4 py-2.5 text-sm font-semibold hover:bg-[#f3f6fa]">Actualizar bandeja</button>}
@@ -122,13 +122,13 @@ export function AdminInboxPage() {
       {preview && <p role="status" className="mt-5 rounded-lg border border-[#f4cfae] bg-[#fff1e5] p-4 text-sm text-[#88420d]">Datos ficticios para probar el panel. Los cambios de estado son temporales y se perderán al recargar la página. No hay mensajes reales ni comunicación con Django.</p>}
       {notice && <p role="status" aria-live="polite" className="mt-4 rounded-lg border border-[#dfe5ec] bg-white p-4 text-sm">{notice}</p>}
 
-      <div className="mt-6 overflow-hidden rounded-xl bg-white shadow-sm">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#dfe5ec] px-5 py-4">
+      <div className="@container mt-6 overflow-hidden rounded-xl bg-white shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#dfe5ec] px-4 py-4 sm:px-5">
           <div className="flex items-center gap-2"><Mail size={20} className="text-[#304e7d]" aria-hidden="true"/><h3 className="font-semibold">Bandeja ({loading ? '…' : count})</h3></div>
-          <div className="flex flex-wrap items-center gap-2">
-            <label className="relative"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#626b79]" aria-hidden="true"/><span className="sr-only">Buscar solicitudes</span><input type="search" value={search} onChange={(event) => changeFilters(setSearch, event.target.value)} placeholder="Nombre, asunto o correo" className="w-48 rounded-lg border border-[#dfe5ec] py-2 pl-9 pr-3 text-xs sm:w-56"/></label>
-            <label><span className="sr-only">Filtrar por tipo</span><select value={kind} onChange={(event) => changeFilters(setKind, event.target.value)} className="rounded-lg border border-[#dfe5ec] bg-white px-3 py-2 text-xs"><option value="">Todos los tipos</option><option value="contacto">Contacto</option><option value="visita">Visitas</option></select></label>
-            <label><span className="sr-only">Filtrar por estado</span><select value={status} onChange={(event) => changeFilters(setStatus, event.target.value)} className="rounded-lg border border-[#dfe5ec] bg-white px-3 py-2 text-xs"><option value="">Todos los estados</option>{Object.entries(inquiryStatuses).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select></label>
+          <div className="grid w-full grid-cols-1 gap-2 @xs:grid-cols-2 @2xl:w-auto @2xl:grid-cols-[minmax(14rem,1fr)_auto_auto]">
+            <label className="relative @xs:col-span-2 @2xl:col-span-1"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#626b79]" aria-hidden="true"/><span className="sr-only">Buscar solicitudes</span><input type="search" value={search} onChange={(event) => changeFilters(setSearch, event.target.value)} placeholder="Nombre, asunto o correo" className="min-h-11 w-full min-w-0 rounded-lg border border-[#dfe5ec] py-2 pl-9 pr-3 text-base @2xl:text-sm"/></label>
+            <label><span className="sr-only">Filtrar por tipo</span><select value={kind} onChange={(event) => changeFilters(setKind, event.target.value)} className="min-h-11 w-full min-w-0 rounded-lg border border-[#dfe5ec] bg-white px-3 py-2 text-base @2xl:text-sm"><option value="">Todos los tipos</option><option value="contacto">Contacto</option><option value="visita">Visitas</option></select></label>
+            <label><span className="sr-only">Filtrar por estado</span><select value={status} onChange={(event) => changeFilters(setStatus, event.target.value)} className="min-h-11 w-full min-w-0 rounded-lg border border-[#dfe5ec] bg-white px-3 py-2 text-base @2xl:text-sm"><option value="">Todos los estados</option>{Object.entries(inquiryStatuses).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select></label>
           </div>
         </div>
         {!preview && search.trim() && <p className="border-b border-[#dfe5ec] bg-[#f8fafc] px-5 py-3 text-xs text-[#626b79]">La búsqueda se aplica únicamente a la página cargada. Django todavía no ofrece un filtro de búsqueda global para solicitudes.</p>}
@@ -138,21 +138,21 @@ export function AdminInboxPage() {
               : <div className="divide-y divide-[#dfe5ec]">{items.map((item) => {
                 const expanded = expandedId === item.id;
                 const next = nextInquiryStatus(item.status);
-                return <article key={item.id} className="px-5 py-5">
-                  <div className="flex flex-wrap items-start gap-3">
+                return <article key={item.id} className="px-4 py-5 sm:px-5">
+                  <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-3 @2xl:grid-cols-[auto_minmax(0,1fr)_auto]">
                     <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[#f3f6fa] text-[#304e7d]"><MessageSquareText size={19} aria-hidden="true"/></span>
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-0 [overflow-wrap:anywhere]">
                       <div className="flex flex-wrap items-center gap-2"><h4 className="font-semibold">{item.name}</h4><span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${statusClass[item.status]}`}>{inquiryStatuses[item.status]}</span>{preview && <span className="text-[11px] text-[#88420d]">Referencia</span>}</div>
                       <p className="mt-1 text-xs text-[#626b79]">{kinds[item.kind]} · {formatInquiryDate(item.created_at)}</p>
                       <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[#626b79]">{item.subject || item.property_title || item.message || 'Sin asunto'}{item.subject && item.message ? ` · ${item.message}` : ''}</p>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      <button type="button" aria-expanded={expanded} aria-controls={`inquiry-detail-${item.id}`} onClick={() => setExpandedId(expanded ? null : item.id)} className="inline-flex items-center gap-1.5 rounded-lg border border-[#dfe5ec] px-3 py-2 text-xs font-semibold hover:bg-[#f3f6fa]">{expanded ? <ChevronUp size={16}/> : <ChevronDown size={16}/>} {expanded ? 'Ocultar' : 'Ver detalle'}</button>
-                      {manageInquiries && next && <button type="button" disabled={savingId !== null} onClick={() => { void advanceStatus(item); }} className="inline-flex items-center gap-1.5 rounded-lg bg-[#304e7d] px-3 py-2 text-xs font-semibold text-white hover:bg-[#12233f] disabled:opacity-50"><ShieldCheck size={15}/>{savingId === item.id ? 'Guardando…' : next === 'atendido' ? 'Marcar atendido' : 'Archivar'}</button>}
+                    <div className="col-span-2 flex flex-wrap gap-2 @2xl:col-span-1">
+                      <button type="button" aria-expanded={expanded} aria-controls={`inquiry-detail-${item.id}`} onClick={() => setExpandedId(expanded ? null : item.id)} className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-[#dfe5ec] px-3 py-2 text-xs font-semibold hover:bg-[#f3f6fa]">{expanded ? <ChevronUp size={16}/> : <ChevronDown size={16}/>} {expanded ? 'Ocultar' : 'Ver detalle'}</button>
+                      {manageInquiries && next && <button type="button" disabled={savingId !== null} onClick={() => { void advanceStatus(item); }} className="inline-flex min-h-11 items-center gap-1.5 rounded-lg bg-[#304e7d] px-3 py-2 text-xs font-semibold text-white hover:bg-[#12233f] disabled:opacity-50"><ShieldCheck size={15}/>{savingId === item.id ? 'Guardando…' : next === 'atendido' ? 'Marcar atendido' : 'Archivar'}</button>}
                     </div>
                   </div>
-                  {expanded && <div id={`inquiry-detail-${item.id}`} className="mt-4 rounded-lg border border-[#dfe5ec] bg-[#f8fafc] p-4 text-sm">
-                    <div className="grid gap-4 sm:grid-cols-2">
+                  {expanded && <div id={`inquiry-detail-${item.id}`} className="mt-4 rounded-lg border border-[#dfe5ec] bg-[#f8fafc] p-4 text-sm [overflow-wrap:anywhere]">
+                    <div className="grid grid-cols-1 gap-4 @sm:grid-cols-2">
                       <div><p className="text-xs font-semibold text-[#626b79]">Correo</p>{item.email ? <a href={`mailto:${item.email}`} className="break-all text-[#b94308] underline-offset-2 hover:underline">{item.email}</a> : <p>No proporcionado</p>}</div>
                       <div><p className="text-xs font-semibold text-[#626b79]">Teléfono</p><p>{item.phone || 'No proporcionado'}</p></div>
                       {item.subject && <div><p className="text-xs font-semibold text-[#626b79]">Asunto</p><p>{item.subject}</p></div>}

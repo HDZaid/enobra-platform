@@ -26,13 +26,13 @@ export function ProjectsPage() {
   return (
     <MotionPage title="Portafolio de construcción">
       <div className="geo-catalog">
-        <section className="page-intro enobra-intro">
+        <section className="page-intro enobra-intro geo-catalog-intro">
           <div className="container enobra-intro-copy">
             <Link className="breadcrumb" to="/">
               Inicio / Portafolio
             </Link>
             <h1>
-              Obras y proyectos
+              Obras y proyectos{' '}
               <br />
               arquitectónicos.
             </h1>

@@ -163,13 +163,13 @@ export function PropertiesPage() {
   return (
     <MotionPage title="Bienes raíces">
       <div className="geo-catalog">
-        <section className="page-intro enobra-intro geo-properties-intro">
+        <section className="page-intro enobra-intro geo-catalog-intro geo-properties-intro">
           <div className="container enobra-intro-copy">
             <Link className="breadcrumb" to="/">
               Inicio / Bienes raíces
             </Link>
             <h1>
-              Encuentra el espacio ideal
+              Encuentra el espacio ideal{' '}
               <br />
               para tu próximo capítulo.
             </h1>
