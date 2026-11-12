@@ -2,9 +2,13 @@ import { Brand } from './Brand.jsx';
 import { Navbar } from './Navbar.jsx';
 import { AshlarRule } from '../ui/ColonialOrnaments.jsx';
 import { externalUrl } from '../ui/resourceValidation.js';
+import { catalogWhatsAppLink, whatsappLink } from '../../services/whatsapp.js';
 
-export function Footer({ resource }) {
+export function Footer({ resource, catalogContact }) {
   const company = resource.data;
+  const contactUrl = catalogContact
+    ? catalogWhatsAppLink(company.whatsapp, catalogContact.kind, catalogContact.item, window.location.origin)
+    : whatsappLink(company.whatsapp);
   return (
     <div className="leo-chrome">
       <footer>
@@ -23,12 +27,12 @@ export function Footer({ resource }) {
                 ))}
               </p>
               {company.email.trim() && <p><a href={`mailto:${company.email}`}>{company.email}</a></p>}
-              {company.whatsapp && (
+              {contactUrl && (
                 <a
                   className="text-link"
                   target="_blank"
                   rel="noopener noreferrer"
-                  href={`https://wa.me/${company.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent('Hola, quisiera información sobre los servicios de EnObra.')}`}
+                  href={contactUrl}
                 >
                   Escríbenos por WhatsApp ↗
                 </a>

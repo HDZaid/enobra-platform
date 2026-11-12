@@ -7,7 +7,7 @@ import { useCatalogResource } from '../../projects/components/useCatalogResource
 import { publicProperties, formatPrice } from '../services/propertiesService.js';
 import { PropertyFeatures } from '../components/PropertyCard.jsx';
 import { VisitDialog } from '../components/VisitDialog.jsx';
-import { useCompanyContact } from '../components/useCompanyContact.js';
+import { useCompanyContact } from '../../../components/layout/useCompanyContact.js';
 import '../../projects/styles/catalog.css';
 
 export function PropertyDetailPage() {
@@ -18,7 +18,7 @@ export function PropertyDetailPage() {
     publicProperties.detail.read,
   );
   const property = resource.data;
-  const contactUrl = useCompanyContact()(property?.title || 'esta propiedad');
+  const contactUrl = useCompanyContact('properties', property)(property);
   const [visitId, setVisitId] = useState(null);
   return (
     <MotionPage title={property?.title || 'Detalle de propiedad'}>

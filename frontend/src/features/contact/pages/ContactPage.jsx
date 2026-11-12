@@ -5,6 +5,7 @@ import { companyService } from '../../../components/layout/services/companyServi
 import { reference } from '../../../components/layout/data/reference.js';
 import { useReferenceResource } from '../../../components/ui/useReferenceResource.js';
 import { HeaderOrnament } from '../../../components/ui/ColonialOrnaments.jsx';
+import { whatsappLink } from '../../../services/whatsapp.js';
 import { ContactForm } from '../components/ContactForm.jsx';
 import '../styles/contact-fonts.css';
 
@@ -13,6 +14,7 @@ const container = 'mx-auto w-[calc(100%-40px)] max-w-[1240px] md:w-[calc(100%-64
 export function ContactPage() {
   const company = useReferenceResource(companyService.get, reference);
   const details = company.data;
+  const contactUrl = whatsappLink(details.whatsapp);
   useEffect(() => {
     document.title = 'Contacto | EnObra';
   }, []);
@@ -47,8 +49,8 @@ export function ContactPage() {
               </div>
               {details.email.trim() && <p className="text-xs text-[#626b79]"><a href={`mailto:${details.email}`}>{details.email}</a></p>}
 
-              {details.whatsapp && <a className="inline-flex items-center gap-2 font-bold text-[#b94308] hover:underline focus-visible:outline-2 focus-visible:outline-offset-4"
-                href={`https://wa.me/${details.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent('Hola, quisiera información sobre los servicios de EnObra.')}`}
+              {contactUrl && <a className="inline-flex items-center gap-2 font-bold text-[#b94308] hover:underline focus-visible:outline-2 focus-visible:outline-offset-4"
+                href={contactUrl}
                 target="_blank" rel="noopener noreferrer">
                 <MessageCircle size={18} aria-hidden="true" /> Escríbenos por WhatsApp <ArrowUpRight size={16} aria-hidden="true" />
               </a>}

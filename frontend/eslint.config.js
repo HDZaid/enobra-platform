@@ -45,6 +45,13 @@ export default [
   },
 
   {
+    files: ['functions/**/*.js'],
+    languageOptions: {
+      globals: globals.browser,
+    },
+  },
+
+  {
     files: ['tests/**/*.mjs', 'tests/browser/**/*.cjs'],
 
     languageOptions: {

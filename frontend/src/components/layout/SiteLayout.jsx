@@ -8,11 +8,17 @@ import { useReferenceResource } from '../ui/useReferenceResource.js';
 import '../../styles/leo.css';
 import '../../styles/refinamiento.css';
 import { routePaths } from '../../app/routePaths.js';
+import { catalogItemPath } from '../../services/catalogItemPath.js';
 
 export function SiteLayout() {
   const location = useLocation();
   const company = useReferenceResource(companyService.get, reference);
   const [scroll, setScroll] = useState(0);
+  const [catalogContact, setCatalogContact] = useState(null);
+  const footerContact = catalogContact &&
+    catalogItemPath(catalogContact.kind, catalogContact.item.id) === location.pathname.replace(/\/$/, '')
+    ? catalogContact
+    : null;
   const page =
     { '/': 'index', '/nosotros': 'nosotros', '/servicios': 'servicios' }[location.pathname] ||
     'pending';
@@ -46,9 +52,9 @@ export function SiteLayout() {
     <div className="leo-site" data-page={page}>
       <Header company={company.data} scrolled={scroll > 30} locationKey={location.key} />
       <main id="main" className="leo-site-main" tabIndex={-1}>
-        <Outlet />
+        <Outlet context={{ company: company.data, setCatalogContact }} />
       </main>
-      <Footer resource={company} />
+      <Footer resource={company} catalogContact={footerContact} />
       <div className="leo-chrome">
         <button
           id="back-top"

@@ -14,7 +14,7 @@ import {
 } from '../services/propertyFilters.js';
 import { PropertyCard } from '../components/PropertyCard.jsx';
 import { useFavorites } from '../components/useFavorites.js';
-import { useCompanyContact } from '../components/useCompanyContact.js';
+import { useCompanyContact } from '../../../components/layout/useCompanyContact.js';
 import '../../projects/styles/catalog.css';
 
 const { list, facets: facetsResource } = publicProperties;
@@ -119,7 +119,7 @@ export function PropertiesPage() {
   const [params, setParams] = useSearchParams();
   const values = readFilters(params);
   const favorites = useFavorites();
-  const contactUrl = useCompanyContact();
+  const contactUrl = useCompanyContact('properties');
   const facets = useCatalogResource(facetsResource.load, 'facets', facetsResource.read);
   const invalid = Object.keys(validateFilters(values)).length > 0;
   const emptyFavorites = values.favorites && !favorites.ids.length;
@@ -243,7 +243,7 @@ export function PropertiesPage() {
                         <PropertyCard
                           key={property.id}
                           property={property}
-                          contactUrl={contactUrl(property.title)}
+                          contactUrl={contactUrl(property)}
                           favorite={favorites.ids.includes(property.id)}
                           onFavorite={() => favorites.toggle(property.id)}
                         />

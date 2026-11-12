@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
+import { useCompanyContact } from '../../../components/layout/useCompanyContact.js';
 import { CatalogPage as MotionPage } from '../components/CatalogPage.jsx';
 import { publicProjects } from '../services/projectsService.js';
 import { useCatalogResource } from '../components/useCatalogResource.js';
@@ -14,6 +15,7 @@ export function ProjectDetailPage() {
     publicProjects.detail.read,
   );
   const project = resource.data;
+  const contactUrl = useCompanyContact('projects', project)(project);
   return (
     <MotionPage title={project?.title || 'Detalle del proyecto'}>
       <div className="geo-catalog">
@@ -37,9 +39,15 @@ export function ProjectDetailPage() {
                 <h2>Acerca del proyecto</h2>
                 <p className="geo-prose">{project.description}</p>
                 <CatalogVideo src={project.video} title={project.title} />
-                <Link className="button primary" to="/contacto?asunto=Construcci%C3%B3n">
-                  Conversemos sobre tu proyecto →
-                </Link>
+                {contactUrl ? (
+                  <a className="button primary" href={contactUrl} target="_blank" rel="noopener noreferrer">
+                    Consultar por WhatsApp ↗
+                  </a>
+                ) : (
+                  <Link className="button primary" to="/contacto?asunto=Construcci%C3%B3n">
+                    Conversemos sobre tu proyecto →
+                  </Link>
+                )}
               </div>
             </>
           )}
