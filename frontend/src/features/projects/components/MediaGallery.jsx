@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { CatalogImage } from './CatalogImage.jsx';
 import { parseYoutube } from '../services/catalogMapper.js';
 
 export function MediaGallery({ item, previewAction }) {
   const [index, setIndex] = useState(0);
+  const galleryRef = useRef(null);
   const preview = Boolean(previewAction);
   const slides = [
     ...item.images.map((src) => ({ src, kind: 'Imagen' })),
@@ -13,7 +14,25 @@ export function MediaGallery({ item, previewAction }) {
   const count = slides.length;
   const active = count ? index % count : 0;
   const slide = slides[active];
-  const show = (step) => setIndex((current) => (current + step + count) % count);
+  const show = useCallback((step) => {
+    setIndex((current) => (current + step + count) % count);
+  }, [count]);
+
+  useEffect(() => {
+    if (!preview || count < 2) return;
+    const dialog = galleryRef.current?.closest('dialog');
+    if (!dialog) return;
+
+    function navigateImages(event) {
+      if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      event.preventDefault();
+      show(event.key === 'ArrowLeft' ? -1 : 1);
+    }
+
+    dialog.addEventListener('keydown', navigateImages);
+    return () => dialog.removeEventListener('keydown', navigateImages);
+  }, [preview, count, show]);
   const Previous = preview ? ChevronLeft : ArrowLeft;
   const Next = preview ? ChevronRight : ArrowRight;
 
@@ -67,16 +86,7 @@ export function MediaGallery({ item, previewAction }) {
   if (!count && !preview) return <div className="geo-gallery">{image}</div>;
 
   return (
-    <section
-      className="geo-gallery"
-      aria-label={`Galería de ${item.title}`}
-      onKeyDown={preview && count > 1 ? (event) => {
-        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-          event.preventDefault();
-          show(event.key === 'ArrowLeft' ? -1 : 1);
-        }
-      } : undefined}
-    >
+    <section ref={galleryRef} className="geo-gallery" aria-label={`Galería de ${item.title}`}>
       <div className="geo-gallery-main">
         {preview ? (
           <div className="geo-gallery-frame">
