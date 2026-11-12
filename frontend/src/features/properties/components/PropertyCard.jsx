@@ -27,7 +27,7 @@ export function PropertyFeatures({ property }) {
 }
 
 export function PropertyCard({ property, favorite, onFavorite, contactUrl }) {
-  const [preview, setPreview] = useState(false);
+  const [preview, setPreview] = useState(null);
   return (
     <article className="geo-property-card">
       <div className="geo-property-photo">
@@ -36,7 +36,7 @@ export function PropertyCard({ property, favorite, onFavorite, contactUrl }) {
           alt={`${property.title}${property.demo ? ' · imagen de referencia' : ''}`}
           loading="lazy"
         />
-        <button type="button" className="geo-preview-trigger" aria-label={`Ver fotos de ${property.title}`} aria-haspopup="dialog" onClick={() => setPreview(true)}>
+        <button type="button" className="geo-preview-trigger" aria-label={`Ver fotos de ${property.title}`} aria-haspopup="dialog" onClick={(event) => setPreview(event.detail > 0 ? 'pointer' : 'keyboard')}>
           <span>Ver fotos</span>
         </button>
         <span className={`geo-badge ${property.operation === 'Alquiler' ? 'geo-rental' : ''}`}>
@@ -69,7 +69,7 @@ export function PropertyCard({ property, favorite, onFavorite, contactUrl }) {
           </a>
         )}
       </div>
-      {preview && <CatalogPreview item={property} to={`/bienes-raices/${property.id}`} summary={`${formatPrice(property)} · ${property.zone} · ${property.location}`} onClose={() => setPreview(false)} />}
+      {preview && <CatalogPreview item={property} to={`/bienes-raices/${property.id}`} summary={`${formatPrice(property)} · ${property.zone} · ${property.location}`} animateEntry={preview === 'pointer'} onClose={() => setPreview(null)} />}
     </article>
   );
 }

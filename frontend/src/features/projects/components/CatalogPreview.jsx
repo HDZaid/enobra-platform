@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { X, ArrowUpRight } from 'lucide-react';
 import { MediaGallery } from './MediaGallery.jsx';
 
-export function CatalogPreview({ item, to, summary, onClose }) {
+export function CatalogPreview({ item, to, summary, animateEntry, onClose }) {
   const dialogRef = useRef(null);
   const titleId = useId();
 
@@ -21,8 +21,13 @@ export function CatalogPreview({ item, to, summary, onClose }) {
   }, []);
 
   return (
-    <dialog ref={dialogRef} className="geo-preview" aria-labelledby={titleId}
-      onCancel={onClose}>
+    <dialog
+      ref={dialogRef}
+      className="geo-preview"
+      aria-labelledby={titleId}
+      data-animate-entry={animateEntry || undefined}
+      onCancel={onClose}
+    >
       <div className="geo-preview-header">
         <div>
           <h2 id={titleId}>{item.title}</h2>
