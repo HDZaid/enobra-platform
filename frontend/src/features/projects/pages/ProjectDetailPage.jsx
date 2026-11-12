@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 import { CatalogPage as MotionPage } from '../components/CatalogPage.jsx';
-import { projectsService } from '../services/projectsService.js';
+import { publicProjects } from '../services/projectsService.js';
 import { useCatalogResource } from '../components/useCatalogResource.js';
 import { CatalogStatus } from '../components/CatalogStatus.jsx';
 import { MediaGallery, CatalogVideo } from '../components/MediaGallery.jsx';
@@ -8,7 +8,11 @@ import '../styles/catalog.css';
 
 export function ProjectDetailPage() {
   const { slug } = useParams();
-  const resource = useCatalogResource(projectsService.get, slug);
+  const resource = useCatalogResource(
+    publicProjects.detail.load,
+    slug,
+    publicProjects.detail.read,
+  );
   const project = resource.data;
   return (
     <MotionPage title={project?.title || 'Detalle del proyecto'}>

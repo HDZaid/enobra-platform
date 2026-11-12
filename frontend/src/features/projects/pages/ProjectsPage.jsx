@@ -1,22 +1,24 @@
 import { HeaderOrnament } from '../../../components/ui/ColonialOrnaments.jsx';
 import { Link, useSearchParams } from 'react-router-dom';
 import { CatalogPage as MotionPage } from '../components/CatalogPage.jsx';
-import { projectsService } from '../services/projectsService.js';
+import { publicProjects } from '../services/projectsService.js';
 import { useCatalogResource } from '../components/useCatalogResource.js';
 import { CatalogStatus, Pagination } from '../components/CatalogStatus.jsx';
 import { ProjectCard } from '../components/ProjectCard.jsx';
 import '../styles/catalog.css';
 
-const loadProjects = (query, options) =>
-  projectsService.list(Object.fromEntries(new URLSearchParams(query)), options);
-const loadYears = (_key, options) => projectsService.years(options);
+const { list, years: yearsResource } = publicProjects;
 
 export function ProjectsPage() {
   const [params, setParams] = useSearchParams();
   const year = /^\d{4}$/.test(params.get('year') || '') ? params.get('year') : '';
   const page = Math.max(1, Number.parseInt(params.get('page'), 10) || 1);
-  const resource = useCatalogResource(loadProjects, new URLSearchParams({ year, page }).toString());
-  const years = useCatalogResource(loadYears, 'years');
+  const resource = useCatalogResource(
+    list.load,
+    new URLSearchParams({ year, page }).toString(),
+    list.read,
+  );
+  const years = useCatalogResource(yearsResource.load, 'years', yearsResource.read);
   const options = [...new Set([...(years.data || []), ...(year ? [Number(year)] : [])])].sort(
     (a, b) => b - a,
   );
@@ -63,6 +65,9 @@ export function ProjectsPage() {
               <p className="geo-result-count" role="status">
                 {resource.data.count} {resource.data.count === 1 ? 'proyecto' : 'proyectos'}
               </p>
+              {resource.stale && resource.data.partial && (
+                <p className="small muted">Seguimos recuperando el resto del portafolio…</p>
+              )}
               {resource.data.results.length ? (
                 <div className="projects-grid">
                   {resource.data.results.map((project) => (

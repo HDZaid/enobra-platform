@@ -5,6 +5,12 @@ import {
   queryString,
   requireFields,
 } from '../../projects/services/catalogMapper.js';
+import {
+  createOfflineResource,
+  snapshotDetail,
+  snapshotExtra,
+  snapshotList,
+} from '../../projects/services/catalogOffline.js';
 
 export function mapProperty(item) {
   requireFields(
@@ -56,4 +62,50 @@ export const propertiesService = {
       throw new Error('Filtros no disponibles.');
     return data;
   },
+};
+
+const DEFAULT_QUERY_KEYS = new Set(['page', 'sort']);
+
+// Recursos del sitio público con caché local y copia estática (catalogOffline.js).
+// La clave del listado es el JSON que arma PropertiesPage ({ query, invalid, emptyFavorites }).
+export const publicProperties = {
+  list: createOfflineResource({
+    name: 'properties:list',
+    loader: (key, options) => {
+      const { query, invalid, emptyFavorites } = JSON.parse(key);
+      if (invalid || emptyFavorites)
+        return Promise.resolve({ count: 0, page: 1, page_size: 12, results: [] });
+      return propertiesService.list(query, options);
+    },
+    // Solo el listado sin filtros (orden "más recientes") se puede armar desde la copia.
+    fromSnapshot: (snapshot, key) => {
+      const { query = {}, invalid, emptyFavorites } = JSON.parse(key);
+      if (invalid || emptyFavorites) return null;
+      const filtered =
+        Object.keys(query).some((name) => !DEFAULT_QUERY_KEYS.has(name)) ||
+        (query.sort !== undefined && query.sort !== 'recent');
+      return snapshotList('properties', mapProperty)(snapshot, {
+        page: Number(query.page || 1),
+        filtered,
+      });
+    },
+  }),
+  detail: createOfflineResource({
+    name: 'properties:item',
+    loader: (id, options) => propertiesService.get(id, options),
+    fromSnapshot: snapshotDetail('properties', mapProperty),
+  }),
+  facets: createOfflineResource({
+    name: 'properties:facets',
+    loader: (_key, options) => propertiesService.facets(options),
+    fromSnapshot: (snapshot) => {
+      const facets = snapshotExtra(snapshot, 'properties', 'facets');
+      return facets &&
+        ['zones', 'types', 'operations'].every(
+          (name) => Array.isArray(facets[name]) && facets[name].every((v) => typeof v === 'string'),
+        )
+        ? facets
+        : null;
+    },
+  }),
 };

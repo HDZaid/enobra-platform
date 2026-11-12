@@ -1,5 +1,11 @@
 import { apiRequest, ApiError } from '../../../services/apiClient.js';
 import { mapMedia, mapPage, queryString, requireFields } from './catalogMapper.js';
+import {
+  createOfflineResource,
+  snapshotDetail,
+  snapshotExtra,
+  snapshotList,
+} from './catalogOffline.js';
 
 export function mapProject(item) {
   requireFields(item, ['id', 'title', 'category', 'country', 'description'], ['year']);
@@ -26,4 +32,36 @@ export const projectsService = {
       throw new Error('Años no disponibles.');
     return [...new Set(data.years)].sort((a, b) => b - a);
   },
+};
+
+// Recursos del sitio público con caché local y copia estática (catalogOffline.js).
+export const publicProjects = {
+  list: createOfflineResource({
+    name: 'projects:list',
+    loader: (query, options) =>
+      projectsService.list(Object.fromEntries(new URLSearchParams(query)), options),
+    // Solo el listado sin filtro de año se puede armar desde la copia.
+    fromSnapshot: (snapshot, query) => {
+      const params = new URLSearchParams(query);
+      return snapshotList('projects', mapProject)(snapshot, {
+        page: Number(params.get('page') || 1),
+        filtered: Boolean(params.get('year')),
+      });
+    },
+  }),
+  detail: createOfflineResource({
+    name: 'projects:item',
+    loader: (slug, options) => projectsService.get(slug, options),
+    fromSnapshot: snapshotDetail('projects', mapProject),
+  }),
+  years: createOfflineResource({
+    name: 'projects:years',
+    loader: (_key, options) => projectsService.years(options),
+    fromSnapshot: (snapshot) => {
+      const years = snapshotExtra(snapshot, 'projects', 'years');
+      return Array.isArray(years) && years.every(Number.isInteger)
+        ? [...new Set(years)].sort((a, b) => b - a)
+        : null;
+    },
+  }),
 };

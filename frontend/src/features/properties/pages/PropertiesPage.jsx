@@ -4,7 +4,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { CatalogPage as MotionPage } from '../../projects/components/CatalogPage.jsx';
 import { CatalogStatus, Pagination } from '../../projects/components/CatalogStatus.jsx';
 import { useCatalogResource } from '../../projects/components/useCatalogResource.js';
-import { propertiesService } from '../services/propertiesService.js';
+import { publicProperties } from '../services/propertiesService.js';
 import {
   operations,
   propertyTypes,
@@ -17,13 +17,7 @@ import { useFavorites } from '../components/useFavorites.js';
 import { useCompanyContact } from '../components/useCompanyContact.js';
 import '../../projects/styles/catalog.css';
 
-const loadProperties = (key, options) => {
-  const { query, invalid, emptyFavorites } = JSON.parse(key);
-  if (invalid || emptyFavorites)
-    return Promise.resolve({ count: 0, page: 1, page_size: 12, results: [] });
-  return propertiesService.list(query, options);
-};
-const loadFacets = (_key, options) => propertiesService.facets(options);
+const { list, facets: facetsResource } = publicProperties;
 
 function PropertyFilters({ values, zones, onApply, onReset, onShare }) {
   const [draft, setDraft] = useState(values);
@@ -129,12 +123,13 @@ export function PropertiesPage() {
   const values = readFilters(params);
   const favorites = useFavorites();
   const contactUrl = useCompanyContact();
-  const facets = useCatalogResource(loadFacets, 'facets');
+  const facets = useCatalogResource(facetsResource.load, 'facets', facetsResource.read);
   const invalid = Object.keys(validateFilters(values)).length > 0;
   const emptyFavorites = values.favorites && !favorites.ids.length;
   const resource = useCatalogResource(
-    loadProperties,
+    list.load,
     JSON.stringify({ query: propertyQuery(values, favorites.ids), invalid, emptyFavorites }),
+    list.read,
   );
   const [share, setShare] = useState('');
   function update(changes) {
@@ -237,6 +232,9 @@ export function PropertiesPage() {
                   <p className="geo-result-count" role="status">
                     Mostrando {resource.data.results.length} de {resource.data.count} propiedades
                   </p>
+                  {resource.stale && resource.data.partial && (
+                    <p className="small muted">Seguimos recuperando el resto de propiedades…</p>
+                  )}
                   {resource.data.results.length ? (
                     <div className="geo-properties-grid">
                       {resource.data.results.map((property) => (
