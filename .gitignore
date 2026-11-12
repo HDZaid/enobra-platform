@@ -100,3 +100,6 @@ docker-compose.override.yml
 *.zip
 *.bak
 *.tmp
+
+# Copia del catálogo público generada en el build (frontend/scripts/snapshot-catalog.mjs)
+frontend/public/data/
