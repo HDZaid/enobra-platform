@@ -37,13 +37,14 @@ export function CatalogPreview({ item, to, summary, animateEntry, onClose }) {
           <X aria-hidden="true" />
         </button>
       </div>
-      <div className="geo-preview-media">
-        <MediaGallery item={item} preview />
-      </div>
-      <div className="geo-preview-footer">
-        <span>Explora las fotos y consulta la ficha completa.</span>
-        <Link to={to} className="geo-preview-details">Ver información completa <ArrowUpRight aria-hidden="true" /></Link>
-      </div>
+      <MediaGallery
+        item={item}
+        previewAction={
+          <Link to={to} className="geo-preview-details">
+            Ver información completa <ArrowUpRight aria-hidden="true" />
+          </Link>
+        }
+      />
     </dialog>
   );
 }

@@ -1,71 +1,103 @@
 import { useState } from 'react';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { CatalogImage } from './CatalogImage.jsx';
 import { parseYoutube } from '../services/catalogMapper.js';
 
-export function MediaGallery({ item, preview = false }) {
+export function MediaGallery({ item, previewAction }) {
   const [index, setIndex] = useState(0);
+  const preview = Boolean(previewAction);
   const slides = [
     ...item.images.map((src) => ({ src, kind: 'Imagen' })),
     ...item.renders.map((src) => ({ src, kind: 'Render' })),
   ];
-  if (!slides.length)
-    return (
-      <div className="geo-gallery">
-        <CatalogImage alt={item.title} />
-      </div>
-    );
-  const active = index % slides.length;
-  const show = (step) => setIndex((active + step + slides.length) % slides.length);
+  const count = slides.length;
+  const active = count ? index % count : 0;
+  const slide = slides[active];
+  const show = (step) => setIndex((current) => (current + step + count) % count);
+  const Previous = preview ? ChevronLeft : ArrowLeft;
+  const Next = preview ? ChevronRight : ArrowRight;
+
+  const image = (
+    <CatalogImage
+      src={slide?.src}
+      alt={slide
+        ? `${item.title} · ${slide.kind.toLowerCase()} ${active + 1}${item.demo ? ' de referencia' : ''}`
+        : item.title}
+    />
+  );
+  const counter = slide && <span aria-live="polite">{slide.kind} · {active + 1} / {count}</span>;
+  const previous = (
+    <button
+      type="button"
+      className="icon-button geo-gallery-prev"
+      aria-label="Imagen anterior"
+      disabled={count < 2}
+      onClick={() => show(-1)}
+    >
+      <Previous aria-hidden="true" />
+    </button>
+  );
+  const next = (
+    <button
+      type="button"
+      className="icon-button geo-gallery-next"
+      aria-label="Imagen siguiente"
+      disabled={count < 2}
+      onClick={() => show(1)}
+    >
+      <Next aria-hidden="true" />
+    </button>
+  );
+  const thumbnails = (
+    <div className="geo-thumbnails">
+      {slides.map((entry, i) => (
+        <button
+          key={i}
+          type="button"
+          aria-label={`Ver ${entry.kind.toLowerCase()} ${i + 1}`}
+          aria-pressed={active === i}
+          onClick={() => setIndex(i)}
+        >
+          <CatalogImage src={entry.src} alt="" loading="lazy" />
+        </button>
+      ))}
+    </div>
+  );
+
+  if (!count && !preview) return <div className="geo-gallery">{image}</div>;
+
   return (
-    <section className="geo-gallery" aria-label={`Galería de ${item.title}`}
-      onKeyDown={preview ? (event) => {
+    <section
+      className="geo-gallery"
+      aria-label={`Galería de ${item.title}`}
+      onKeyDown={preview && count > 1 ? (event) => {
         if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
           event.preventDefault();
           show(event.key === 'ArrowLeft' ? -1 : 1);
         }
-      } : undefined}>
+      } : undefined}
+    >
       <div className="geo-gallery-main">
-        <CatalogImage
-          src={slides[active].src}
-          alt={`${item.title} · ${slides[active].kind.toLowerCase()} ${active + 1}${item.demo ? ' de referencia' : ''}`}
-        />
-        <div className="geo-gallery-controls">
-          <button
-            className="icon-button"
-            aria-label="Imagen anterior"
-            hidden={preview && slides.length < 2}
-            disabled={slides.length < 2}
-            onClick={() => show(-1)}
-          >
-            <ArrowLeft />
-          </button>
-          <span aria-live="polite">
-            {slides[active].kind} · {active + 1} / {slides.length}
-          </span>
-          <button
-            className="icon-button"
-            aria-label="Imagen siguiente"
-            hidden={preview && slides.length < 2}
-            disabled={slides.length < 2}
-            onClick={() => show(1)}
-          >
-            <ArrowRight />
-          </button>
+        {preview ? (
+          <div className="geo-gallery-frame">
+            {image}
+            {count > 1 && previous}
+            {count > 1 && next}
+          </div>
+        ) : (
+          <>
+            {image}
+            <div className="geo-gallery-controls">{previous}{counter}{next}</div>
+          </>
+        )}
+      </div>
+      {preview ? (
+        <div className="geo-preview-strip">
+          {counter && <div className="geo-preview-counter">{counter}</div>}
+          {count > 1 && thumbnails}
+          {previewAction}
         </div>
-      </div>
-      <div className="geo-thumbnails" hidden={preview && slides.length < 2}>
-        {slides.map((slide, i) => (
-          <button
-            key={i}
-            aria-label={`Ver ${slide.kind.toLowerCase()} ${i + 1}`}
-            aria-pressed={active === i}
-            onClick={() => setIndex(i)}
-          >
-            <CatalogImage src={slide.src} alt="" loading="lazy" />
-          </button>
-        ))}
-      </div>
+      ) : thumbnails}
     </section>
   );
 }
