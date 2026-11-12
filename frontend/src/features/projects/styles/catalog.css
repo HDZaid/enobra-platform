@@ -11,7 +11,7 @@
 .geo-catalog .geo-properties-intro .header-drawing--planta {
   inset: 0 0 0 auto;
   width: min(54%, 900px);
-  mask-image: linear-gradient(90deg, transparent, #000 38%);
+  opacity: 0.85;
 }
 .geo-catalog .geo-properties-intro .header-drawing--planta svg {
   right: clamp(-186px, -9vw, -112px);
@@ -20,15 +20,6 @@
   width: clamp(480px, 51vw, 850px);
   height: auto;
   max-height: none;
-}
-.geo-catalog .header-drawing--planta .o-draw {
-  stroke-opacity: 0.56;
-}
-.geo-catalog .header-drawing--planta .o-detail {
-  stroke-opacity: 0.38;
-}
-.geo-catalog .header-drawing--planta .o-accent {
-  stroke-opacity: 0.85;
 }
 @media (min-width: 861px) {
   .geo-catalog .geo-properties-intro .informative-copy {
@@ -51,8 +42,7 @@
     width: 100%;
     height: clamp(176px, 50vw, 280px);
     margin-top: 12px;
-    mask-image: linear-gradient(90deg, transparent, #000 32%);
-    opacity: 1;
+    opacity: 0.65;
   }
   .geo-catalog .geo-properties-intro .header-drawing--planta svg {
     top: -32px;
