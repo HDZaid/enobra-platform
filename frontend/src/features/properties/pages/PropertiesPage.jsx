@@ -1,4 +1,4 @@
-import { ArchOrnament } from '../../../components/ui/ColonialOrnaments.jsx';
+import { HeaderOrnament } from '../../../components/ui/ColonialOrnaments.jsx';
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { CatalogPage as MotionPage } from '../../projects/components/CatalogPage.jsx';
@@ -158,7 +158,7 @@ export function PropertiesPage() {
   return (
     <MotionPage title="Bienes raíces">
       <div className="geo-catalog">
-        <section className="page-intro enobra-intro">
+        <section className="page-intro enobra-intro geo-properties-intro">
           <div className="container enobra-intro-copy">
             <Link className="breadcrumb" to="/">
               Inicio / Bienes raíces
@@ -173,7 +173,7 @@ export function PropertiesPage() {
               propiedad.
             </p>
           </div>
-          <ArchOrnament />
+          <HeaderOrnament variant="planta" />
         </section>
         <section className="section container">
           <div className="geo-filter-top">
