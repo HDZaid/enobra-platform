@@ -242,21 +242,31 @@
   bottom: 14px;
   transform-origin: bottom right;
 }
-.leo-site .image-lines--arcade {
+.leo-site .image-lines--site {
   z-index: -1;
-  inset: auto 0 0;
-  height: 130px;
-  mask-image: linear-gradient(90deg, transparent 38%, #000 62%);
+  inset: auto 0 0 auto;
+  width: min(54%, 760px);
+  mask-image: linear-gradient(90deg, transparent, #000 35%, #000 92%, transparent);
 }
-.leo-site .image-lines--arcade .il-arcade {
+.leo-site .image-lines--site .il-site {
+  display: block;
   width: 100%;
-  height: 100%;
+  height: auto;
 }
-.leo-site .image-lines--arcade .o-draw {
-  stroke-opacity: 0.35;
+.leo-site .image-lines--site .o-draw {
+  stroke-opacity: 0.6;
 }
-.leo-site .image-lines--arcade .o-detail {
-  stroke-opacity: 0.2;
+.leo-site .image-lines--site .o-detail {
+  stroke-opacity: 0.18;
+}
+.leo-site .image-lines--site .o-accent {
+  stroke-opacity: 0.8;
+}
+@media (max-width: 767px) {
+  .leo-site .image-lines--site {
+    width: min(94%, 540px);
+    opacity: 0.68;
+  }
 }
 .leo-site .institutional .image-lines-host {
   position: relative;
@@ -267,8 +277,7 @@
   }
 }
 
-/* Señalización de fallos: imágenes que no cargan, datos sin respuesta y
-   enlaces rotos se dibujan como obra incompleta, con el mensaje al lado. */
+/* Señalización para imágenes, datos y páginas no disponibles. */
 .leo-site .status-drawing {
   display: block;
   width: 150px;
@@ -396,10 +405,6 @@
 .leo-site .ashlar-rule path {
   vector-effect: non-scaling-stroke;
 }
-.leo-site .ashlar-rule.ashlar-brand {
-  color: var(--orange);
-  stroke-opacity: 0.85;
-}
 .leo-site .principles-rule {
   margin-bottom: 48px;
 }
@@ -414,33 +419,95 @@
   opacity: 0.7;
 }
 
-/* Pie: marca y contacto a la izquierda, lema de la marca a la derecha. */
-.leo-site footer {
+/* Pie: el alzado acompaña al lema sobre el fondo oscuro de la marca. */
+.leo-site .site-footer {
   position: relative;
+  background:
+    radial-gradient(ellipse at 76% 12%, #1d334d 0%, transparent 62%),
+    linear-gradient(120deg, #101f33, #091728);
 }
-.leo-site footer > .ashlar-rule {
+.leo-site .site-footer::before {
+  content: '';
   position: absolute;
   inset: 0 0 auto;
+  height: 1px;
+  background: linear-gradient(90deg, #b2c6e74d, #b2c6e714);
+  pointer-events: none;
 }
-@media (min-width: 1025px) {
-  .leo-site .footer-top {
-    grid-template-columns: 1.2fr 1fr;
-  }
-  .leo-site .footer-motto {
-    justify-self: end;
-    text-align: right;
-  }
-  .leo-site .footer-motto i {
-    margin-right: 0;
-  }
+.leo-site .site-footer .footer-top {
+  position: relative;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+  align-items: center;
+  padding-block: clamp(44px, 5vw, 76px);
 }
-.leo-site .footer-motto {
+.leo-site .site-footer .footer-top::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  inset-inline-start: 0;
+  width: clamp(48px, 8vw, 120px);
+  height: 2px;
+  background: linear-gradient(110deg, var(--orange) calc(100% - 2px), transparent);
+  pointer-events: none;
+}
+.leo-site .footer-architecture {
+  display: grid;
+  justify-items: end;
+  gap: 12px;
+  min-width: 0;
+}
+.leo-site .site-footer .footer-motto {
+  margin: 0;
   font-family: var(--heading);
   font-style: normal;
   font-weight: 700;
   font-size: clamp(22px, 2.2vw, 30px);
   letter-spacing: -0.01em;
-  color: #d4dcea;
+  text-align: right;
+  color: #e4ecf7;
+}
+.leo-site .footer-elevation {
+  display: block;
+  width: min(100%, 640px);
+  height: auto;
+  color: #a6bedb;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.leo-site .footer-elevation path {
+  vector-effect: non-scaling-stroke;
+}
+.leo-site .footer-elevation .o-draw {
+  stroke-opacity: 0.76;
+}
+.leo-site .footer-elevation .o-detail {
+  stroke-opacity: 0.42;
+}
+.leo-site .footer-elevation .footer-elevation-guides path {
+  stroke-opacity: 0.25;
+}
+.leo-site .footer-elevation .o-accent {
+  stroke: var(--orange);
+  stroke-opacity: 0.95;
+  stroke-width: 1.5;
+}
+@media (max-width: 768px) {
+  .leo-site .site-footer .footer-top {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+  .leo-site .footer-architecture {
+    justify-items: start;
+  }
+  .leo-site .site-footer .footer-motto {
+    text-align: left;
+  }
+  .leo-site .site-footer .footer-bottom nav {
+    padding-inline-end: 52px;
+  }
 }
 
 /* Movimiento --------------------------------------------------------- */
@@ -583,13 +650,36 @@
   text-align: center;
   text-wrap: balance;
 }
+.leo-page .service-scope > p {
+  font-weight: 750;
+  letter-spacing: 0.15em;
+}
 .leo-page .service-scope li {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
+  color: #253751;
+  font-weight: 500;
+  border-color: #cdd7e3;
 }
 .leo-page .service-scope li::before { display: none; }
-.leo-page .service-item-icon { flex: 0 0 18px; margin-top: 3px; color: var(--orange-text); }
+.leo-page .service-item-icon {
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  color: var(--orange-text);
+  stroke-width: 2;
+}
+.leo-page .service-feature--dark .service-scope {
+  border-color: #65758d;
+}
+.leo-page .service-feature--dark .service-scope li {
+  color: #f1f5fb;
+  border-color: #52637c;
+}
+.leo-page .service-feature--dark :is(.service-scope > p, .service-item-icon) {
+  color: #ffab79;
+}
 /* La altura mínima del hero no debe convertir el ratio en un ancho mayor al viewport. */
 .leo-site[data-page='index'] .hero { width: 100%; aspect-ratio: 16 / 9; }
 .leo-site[data-page='index'] .home-about-visual .image-frame { aspect-ratio: 3 / 4; }

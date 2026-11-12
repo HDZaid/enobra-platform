@@ -290,25 +290,18 @@ const imageDrawings = {
       </svg>
     </>
   ),
-  arcade: (
-    <svg className="il-arcade" viewBox="0 0 1200 170" preserveAspectRatio="xMidYMax slice" focusable="false">
-      <Detail d="M0 24H1200M0 32H1200" />
-      <Draw
-        d={every(150, 0, 1200)
-          .map((x) => arch(x + 75, 105, 55, 170))
-          .join('')}
-      />
-      <Detail
-        d={every(150, 0, 1200)
-          .map((x) => `${arch(x + 75, 105, 45, 170)}M${x} 170V40`)
-          .join('')}
-      />
-      <Detail
-        d={every(150, 0, 1200)
-          .map((x) => keystone(x + 75, 105, 44, 62, 8))
-          .join('')}
-        accent
-      />
+  site: (
+    <svg className="il-site" viewBox="0 0 680 220" focusable="false">
+      <Detail d="M32 12H648M32 50H648M32 88H648M32 126H648M32 164H648M32 202H648
+                 M92 0V220M168 0V220M244 0V220M320 0V220M396 0V220M472 0V220M548 0V220M624 0V220" />
+      <Draw d="M70 220L112 126L288 39L480 39L584 98L640 220
+               M91 220L128 138L292 57H474L571 109L622 220" />
+      <Draw d="M197 220V159H239V119H358V95H451V126H496V220
+               M211 220V173H253V133H372V109H437V140H482V220" />
+      <Detail d="M253 175H329V133M329 175V220M372 156H437V198H482M256 187H315V220" />
+      <Detail d={dimensionH(288, 480, 20, 4) + dimensionV(516, 126, 206, 4)} />
+      <Draw d="M239 159V119H358V95" accent />
+      <Detail d={circle(239, 159, 3) + circle(358, 95, 3)} accent />
     </svg>
   ),
 };
@@ -348,16 +341,23 @@ const statusDrawings = {
       <Detail d="M96 100V110M96 114V115" accent />
     </>
   ),
-  // Enlace roto: plano desarmado, con una mitad desplazada y la clave suelta.
+  // Enlace roto: una ruta sale del terreno y se detiene fuera del plano.
   notfound: (
     <>
-      <Detail d={circle(100, 90, 64)} dashed delay={300} />
-      <Draw d="M58 150V90A42 42 0 0 1 92.7 48.6" />
-      <Draw d="M150 158V98A42 42 0 0 0 115.3 56.6" delay={150} />
-      <Detail d="M46 90H58M150 98H162M72 150V90A28 28 0 0 1 95.1 62.4" />
-      <Draw d="M88 18L100 10L110 20L98 28Z" accent delay={600} />
-      <Detail d="M99 32V42" dashed accent />
-      <Detail d={`${cross(26, 26)}${cross(176, 36)}${dimensionH(20, 52, 156)}`} />
+      <path
+        d="M12 118H189M12 92H189M12 66H189M12 40H189M36 19V144M62 19V144
+           M88 19V144M114 19V144M140 19V144M166 19V144"
+        strokeOpacity=".18"
+      />
+      <Detail d="M26 28H136V48H154V130H26Z" dashed delay={200} />
+      <Draw d="M43 111V45H104V62H128V112H100M82 112H43" />
+      <Draw d="M48 106V50H99V67H123V106H100M82 106H48
+               M72 50V70M72 85V106M48 85H72M99 85V106M99 67H123" delay={140} />
+      <Detail d="M72 70H87A15 15 0 0 1 72 85M82 106V88A18 18 0 0 1 100 106" />
+      <Detail d={dimensionH(26, 154, 143, 4) + cross(26, 28, 4)} />
+      <Detail d="M91 118V124Q91 135 102 135H157Q174 135 174 118V76" accent dashed delay={420} />
+      <Draw d="M174 75C170 70 164 64 164 58A10 10 0 0 1 184 58C184 64 178 70 174 75Z" accent delay={600} />
+      <Detail d={circle(174, 58, 3)} accent delay={750} />
     </>
   ),
 };
@@ -440,7 +440,39 @@ export function ArchOrnament({ className = '' }) {
   );
 }
 
-export function AshlarRule({ className = '', brand = false }) {
+export function FooterElevation() {
+  return (
+    <svg className="footer-elevation" viewBox="0 0 640 220" aria-hidden="true" focusable="false">
+      <g className="footer-elevation-guides">
+        <Detail d="M16 181H624M32 108H609M73 13V212M320 13V212M563 13V212" dashed />
+        <Detail d={dimensionH(73, 320, 201, 4) + dimensionH(320, 563, 201, 4)} />
+        <Detail d={dimensionV(600, 46, 181, 4) + cross(32, 108, 4) + cross(563, 32, 4)} />
+        <Detail d="M73 181V207M320 181V207M563 181V207M555 46H607M563 181H607" />
+      </g>
+      {/* Colonial facade with a tile roof, a central arch and flanking windows. */}
+      <Draw d="M73 181V98M320 181V98M56 98L186 47L335 98ZM74 91H315
+               M68 102H324M80 174H159M221 174H313M42 181H591" />
+      <Detail d="M89 85H292M108 78H272M126 71H252M146 64H231
+                 M126 92L140 85M173 92L177 85M219 92L216 85M265 92L256 85
+                 M151 78L160 71M189 78V71M226 78L218 71M173 64L180 57M207 64L199 57" />
+      <Draw d={arch(190, 146, 31, 181) + arch(190, 146, 23, 181)} />
+      <Detail d={voussoirs(190, 146, 23, 31) + 'M190 123V181M167 151H213M148 146H159M221 146H232'} />
+      <Draw d="M101 119H134V161H101ZM245 119H278V161H245Z" />
+      <Detail d="M96 165H139M240 165H283M117.5 119V161M261.5 119V161M101 140H134M245 140H278" />
+      {/* Modern facade with overlapping volumes, glazing and a slatted screen. */}
+      <Draw d="M320 181V122H357V46H555V109H578V181
+               M347 46H568V54H357M357 70H555M342 109H578V117H342Z
+               M344 181V130H469V181M487 181V130H557V181" />
+      <Detail d="M373 70V109M407 70V109M440 70V109M473 70V109M506 70V109M539 70V109
+                 M386 130V181M427 130V181M344 139H469M487 139H557
+                 M497 139V181M507 139V181M517 139V181M527 139V181M537 139V181M547 139V181" />
+      <Draw d="M357 109V46H402" accent />
+      <Detail d={circle(357, 46, 3)} accent />
+    </svg>
+  );
+}
+
+export function AshlarRule({ className = '' }) {
   const id = useId().replace(/:/g, '');
   return (
     <svg className={`ashlar-rule ${className}`} height="14" aria-hidden="true" focusable="false">
@@ -448,24 +480,8 @@ export function AshlarRule({ className = '', brand = false }) {
         <pattern id={`${id}-course`} width="96" height="14" patternUnits="userSpaceOnUse">
           <path d="M0 .5H96M0 7H96M0 13.5H96M.5 0V7M48 7V14" />
         </pattern>
-        {brand && (
-          <linearGradient id={`${id}-fade`}>
-            <stop offset="0" stopColor="#fff" />
-            <stop offset="1" stopColor="#fff" stopOpacity="0" />
-          </linearGradient>
-        )}
-        {brand && (
-          <mask id={`${id}-mask`}>
-            <rect width="100%" height="14" fill={`url(#${id}-fade)`} />
-          </mask>
-        )}
       </defs>
-      <rect
-        width="100%"
-        height="14"
-        fill={`url(#${id}-course)`}
-        mask={brand ? `url(#${id}-mask)` : undefined}
-      />
+      <rect width="100%" height="14" fill={`url(#${id}-course)`} />
     </svg>
   );
 }

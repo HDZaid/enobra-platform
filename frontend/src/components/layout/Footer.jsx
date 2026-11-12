@@ -1,6 +1,6 @@
 import { Brand } from './Brand.jsx';
 import { Navbar } from './Navbar.jsx';
-import { AshlarRule } from '../ui/ColonialOrnaments.jsx';
+import { FooterElevation } from '../ui/ColonialOrnaments.jsx';
 import { externalUrl } from '../ui/resourceValidation.js';
 import { catalogWhatsAppLink, whatsappLink } from '../../services/whatsapp.js';
 
@@ -11,8 +11,7 @@ export function Footer({ resource, catalogContact }) {
     : whatsappLink(company.whatsapp);
   return (
     <div className="leo-chrome">
-      <footer>
-        <AshlarRule className="ashlar-brand" brand />
+      <footer className="site-footer">
         <div className="container footer-top">
           <div>
             <Brand company={company} footer />
@@ -49,9 +48,9 @@ export function Footer({ resource, catalogContact }) {
             </div>
 
           </div>
-          <div className="footer-motto">
-            Ad maiorem Dei gloriam
-            <i />
+          <div className="footer-architecture">
+            <p className="footer-motto">Ad maiorem Dei gloriam</p>
+            <FooterElevation />
           </div>
         </div>
         <div className="container footer-bottom">

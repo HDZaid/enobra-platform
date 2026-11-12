@@ -15,7 +15,7 @@ export function HomeImpact() {
         height="1200"
       />
       <div className="impact-overlay"></div>
-      <ImageLines variant="arcade" />
+      <ImageLines variant="site" />
       <div className="container impact-content">
         <p className="eyebrow">PROFESIONALISMO · CALIDAD · FUNCIONALIDAD</p>
         <h2>
