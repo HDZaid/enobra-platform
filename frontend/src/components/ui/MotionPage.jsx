@@ -36,7 +36,7 @@ export function MotionPage({ title, children }) {
     );
     ref.current
       .querySelectorAll(
-        '.home-about-copy,.home-about-visual,.section-heading,.business-card,.project-card,.news-card,.service-feature,.principles-grid article,.impact-content > *',
+        '.home-about-copy,.home-about-visual,.section-heading,.business-card,.project-card:not(.geo-project-grid > *),.news-card,.service-feature,.principles-grid article,.impact-content > *',
       )
       .forEach((node) => observer.observe(node));
     return () => {

@@ -8,14 +8,14 @@ export function ProjectPreviewCard({ project }) {
   return (
     <Link className="project-card" to={`/proyectos/${encodeURIComponent(project.id)}`}>
       <div className="project-image">
-        <SafeImage src={project.images[0]} alt={`${project.title} · imagen de referencia`} loading="lazy" />
+        <SafeImage src={project.images[0]} alt="" loading="lazy" />
         <ImageLines variant="card" />
         <span>Ver proyecto ↗</span>
       </div>
-      <h3>{project.title}</h3>
-      <p>
-        {project.category} · {project.year} · Referencia
-      </p>
+      <div className="home-project-copy">
+        <h3>{project.title}</h3>
+        <p>{project.category} · {project.year}{project.demo && ' · Referencia'}</p>
+      </div>
     </Link>
   );
 }
@@ -29,7 +29,7 @@ export function NewsPreviewCard({ news }) {
       <div>
         <p className="eyebrow">{news.category}{news.demo && ' · REFERENCIA'}</p>
         <h3>{news.title}</h3>
-        <p>{news.description.slice(0, 115)}…</p>
+        <p>{news.description.length > 115 ? `${news.description.slice(0, 115)}…` : news.description}</p>
         <span className="text-link">Leer más →</span>
       </div>
     </Link>

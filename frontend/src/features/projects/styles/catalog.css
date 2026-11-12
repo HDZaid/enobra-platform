@@ -103,6 +103,7 @@
   flex: 0 0 16px;
   width: 16px;
   height: 16px;
+  margin: 0;
   padding: 0;
   accent-color: var(--navy);
   cursor: inherit;
@@ -695,3 +696,7 @@
 
 .geo-catalog .geo-preview img { transform: none; transition: none; }
 .geo-catalog .geo-preview-header p { border: 0; padding: 0; }
+
+.geo-catalog .geo-portfolio-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+}

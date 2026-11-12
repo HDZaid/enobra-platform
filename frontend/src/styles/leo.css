@@ -1799,28 +1799,58 @@
   content: '↗';
   font-size: 19px;
 }
-:where(.leo-page, .leo-chrome) #home-projects .project-card h3,
-:where(.leo-page, .leo-chrome) #home-projects .project-card p {
+:where(.leo-page, .leo-chrome) #home-projects .home-project-copy {
   position: absolute;
   z-index: 2;
-  left: 30px;
-  right: 82px;
+  inset: auto 82px 26px 30px;
+  display: grid;
+  gap: 8px;
   color: white;
-  margin: 0;
 }
 :where(.leo-page, .leo-chrome) #home-projects .project-card h3 {
-  bottom: 56px;
+  margin: 0;
   font-size: clamp(22px, 2.2vw, 34px);
   line-height: 1.08;
+  overflow-wrap: anywhere;
 }
 :where(.leo-page, .leo-chrome) #home-projects .project-card p {
-  bottom: 26px;
+  margin: 0;
   border: 0;
   padding: 0;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.78);
   font-size: 10px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+:where(.leo-page, .leo-chrome) #home-projects .home-portfolio-link {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  min-height: 180px;
+  padding: clamp(22px, 2.5vw, 36px);
+  background: var(--light);
+  border-top: 3px solid var(--orange);
+  color: var(--navy);
+  font-family: var(--heading);
+  font-size: clamp(22px, 2.2vw, 34px);
+  font-weight: 700;
+  line-height: 1.15;
+}
+:where(.leo-page, .leo-chrome) #home-projects .home-portfolio-link svg {
+  flex-shrink: 0;
+}
+:where(.leo-page, .leo-chrome) #home-projects .home-portfolio-link:hover {
+  color: var(--blue);
+}
+@media (min-width: 769px) {
+  :where(.leo-page, .leo-chrome) #home-projects.home-projects--single {
+    grid-template-rows: minmax(0, 1fr);
+    height: 400px;
+  }
+  :where(.leo-page, .leo-chrome) #home-projects.home-projects--single .project-card:first-child {
+    grid-row: auto;
+  }
 }
 :where(.leo-page, .leo-chrome) #home-projects .project-card:hover .project-image img {
   transform: scale(1.045);
@@ -1835,6 +1865,7 @@
   background: #f6f5f2;
 }
 :where(.leo-page, .leo-chrome) .home-news-section .news-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   gap: 42px;
 }
 :where(.leo-page, .leo-chrome) .home-news-section .news-card {
@@ -2248,16 +2279,11 @@
   :where(.leo-page, .leo-chrome) #home-projects .project-card:not(:first-child) {
     height: 300px;
   }
-  :where(.leo-page, .leo-chrome) #home-projects .project-card h3 {
-    left: 22px;
-    bottom: 54px;
-    right: 72px;
-    font-size: 24px;
+  :where(.leo-page, .leo-chrome) #home-projects .home-project-copy {
+    inset: auto 72px 22px 22px;
   }
-  :where(.leo-page, .leo-chrome) #home-projects .project-card p {
-    left: 22px;
-    bottom: 22px;
-    right: 72px;
+  :where(.leo-page, .leo-chrome) #home-projects .project-card h3 {
+    font-size: 24px;
   }
   :where(.leo-page, .leo-chrome) #home-projects .project-image span {
     right: 20px;
@@ -2523,27 +2549,6 @@
 }
 .leo-site[data-page='servicios'] .page-intro {
   background: #edf5f9;
-}
-@media (min-width: 769px) and (hover: hover) {
-  :where(.leo-page, .leo-chrome) #home-projects {
-    transition:
-      grid-template-columns 0.55s var(--ease),
-      grid-template-rows 0.55s var(--ease);
-  }
-  :where(.leo-page, .leo-chrome)
-    #home-projects:has(.project-card:first-child:is(:hover, :focus-visible)) {
-    grid-template-columns: minmax(0, 1.52fr) minmax(280px, 0.48fr);
-  }
-  :where(.leo-page, .leo-chrome)
-    #home-projects:has(.project-card:nth-child(2):is(:hover, :focus-visible)) {
-    grid-template-columns: minmax(0, 1.07fr) minmax(280px, 0.93fr);
-    grid-template-rows: minmax(260px, 1.3fr) minmax(260px, 0.7fr);
-  }
-  :where(.leo-page, .leo-chrome)
-    #home-projects:has(.project-card:nth-child(3):is(:hover, :focus-visible)) {
-    grid-template-columns: minmax(0, 1.07fr) minmax(280px, 0.93fr);
-    grid-template-rows: minmax(260px, 0.7fr) minmax(260px, 1.3fr);
-  }
 }
 .leo-site[data-page='index'] .leo-chrome header.scrolled,
 .leo-site:not([data-page='index']) .leo-chrome header.scrolled {

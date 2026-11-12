@@ -5,6 +5,7 @@ import { publicProjects } from '../services/projectsService.js';
 import { useCatalogResource } from '../components/useCatalogResource.js';
 import { CatalogStatus, Pagination } from '../components/CatalogStatus.jsx';
 import { ProjectCard } from '../components/ProjectCard.jsx';
+import { ProjectGrid } from '../components/ProjectGrid.jsx';
 import '../styles/catalog.css';
 
 const { list, years: yearsResource } = publicProjects;
@@ -69,11 +70,11 @@ export function ProjectsPage() {
                 <p className="small muted">Seguimos recuperando el resto del portafolio…</p>
               )}
               {resource.data.results.length ? (
-                <div className="projects-grid">
+                <ProjectGrid className="geo-portfolio-grid">
                   {resource.data.results.map((project) => (
                     <ProjectCard key={project.id} project={project} />
                   ))}
-                </div>
+                </ProjectGrid>
               ) : (
                 <div className="geo-status">
                   <h2>No hay proyectos disponibles</h2>

@@ -1,15 +1,15 @@
 import { Link } from 'react-router-dom';
-import { reference } from '../data/reference.js';
-import { useReferenceResource } from '../../../components/ui/useReferenceResource.js';
-import { newsService } from '../../news/services/newsService.js';
-import { readNewsPage } from '../../news/services/newsMapper.js';
+import { useCatalogResource } from '../../projects/components/useCatalogResource.js';
+import { loadNewsPage } from '../../news/services/publicNewsSource.js';
 import { NewsPreviewCard } from './PreviewCards.jsx';
 
-const loadLatestNews = async (options) =>
-  readNewsPage(await newsService.list({ page: 1, page_size: 3 }, options)).items;
+const loadLatestNews = async (_key, { signal }) => {
+  const page = await loadNewsPage({ pageSize: 3, signal });
+  return page.items.filter((news) => news.published);
+};
 
 export function NewsPreview() {
-  const news = useReferenceResource(loadLatestNews, reference.news);
+  const news = useCatalogResource(loadLatestNews, 'latest');
   return (
     <section className="section tinted home-news-section">
       <div className="container">
@@ -23,12 +23,19 @@ export function NewsPreview() {
           </Link>
         </div>
 
-        {news.status === 'ready' && news.data.length === 0 && <p>No hay noticias publicadas por el momento.</p>}
-        <div id="home-news" className="news-grid">
-          {news.data.map((news) => (
-            <NewsPreviewCard key={news.id} news={news} />
-          ))}
-        </div>
+        {news.data?.length ? (
+          <div id="home-news" className="news-grid">
+            {news.data.map((item) => <NewsPreviewCard key={item.id} news={item} />)}
+          </div>
+        ) : (
+          <p className="small muted" role="status">
+            {news.status === 'loading'
+              ? 'Cargando noticias…'
+              : news.status === 'error'
+                ? 'No pudimos cargar las noticias.'
+                : 'No hay noticias publicadas por el momento.'}
+          </p>
+        )}
       </div>
     </section>
   );
