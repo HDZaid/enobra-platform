@@ -3,7 +3,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { CatalogImage } from './CatalogImage.jsx';
 import { parseYoutube } from '../services/catalogMapper.js';
 
-export function MediaGallery({ item }) {
+export function MediaGallery({ item, preview = false }) {
   const [index, setIndex] = useState(0);
   const slides = [
     ...item.images.map((src) => ({ src, kind: 'Fotografía' })),
@@ -18,7 +18,13 @@ export function MediaGallery({ item }) {
   const active = index % slides.length;
   const show = (step) => setIndex((active + step + slides.length) % slides.length);
   return (
-    <section className="geo-gallery" aria-label={`Galería de ${item.title}`}>
+    <section className="geo-gallery" aria-label={`Galería de ${item.title}`}
+      onKeyDown={preview ? (event) => {
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+          event.preventDefault();
+          show(event.key === 'ArrowLeft' ? -1 : 1);
+        }
+      } : undefined}>
       <div className="geo-gallery-main">
         <CatalogImage
           src={slides[active].src}
@@ -28,6 +34,7 @@ export function MediaGallery({ item }) {
           <button
             className="icon-button"
             aria-label="Imagen anterior"
+            hidden={preview && slides.length < 2}
             disabled={slides.length < 2}
             onClick={() => show(-1)}
           >
@@ -39,6 +46,7 @@ export function MediaGallery({ item }) {
           <button
             className="icon-button"
             aria-label="Imagen siguiente"
+            hidden={preview && slides.length < 2}
             disabled={slides.length < 2}
             onClick={() => show(1)}
           >
@@ -46,7 +54,7 @@ export function MediaGallery({ item }) {
           </button>
         </div>
       </div>
-      <div className="geo-thumbnails">
+      <div className="geo-thumbnails" hidden={preview && slides.length < 2}>
         {slides.map((slide, i) => (
           <button
             key={i}

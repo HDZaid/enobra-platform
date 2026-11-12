@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { CatalogPreview } from '../../projects/components/CatalogPreview.jsx';
 import { Link } from 'react-router-dom';
 import { Bath, BedDouble, CarFront, Heart, MapPin, Ruler } from 'lucide-react';
 import { CatalogImage } from '../../projects/components/CatalogImage.jsx';
@@ -25,6 +27,7 @@ export function PropertyFeatures({ property }) {
 }
 
 export function PropertyCard({ property, favorite, onFavorite, contactUrl }) {
+  const [preview, setPreview] = useState(false);
   return (
     <article className="geo-property-card">
       <div className="geo-property-photo">
@@ -33,6 +36,9 @@ export function PropertyCard({ property, favorite, onFavorite, contactUrl }) {
           alt={`${property.title}${property.demo ? ' · imagen de referencia' : ''}`}
           loading="lazy"
         />
+        <button type="button" className="geo-preview-trigger" aria-label={`Ver fotos de ${property.title}`} aria-haspopup="dialog" onClick={() => setPreview(true)}>
+          <span>Ver fotos</span>
+        </button>
         <span className={`geo-badge ${property.operation === 'Alquiler' ? 'geo-rental' : ''}`}>
           En {property.operation.toLowerCase()}
         </span>
@@ -47,7 +53,7 @@ export function PropertyCard({ property, favorite, onFavorite, contactUrl }) {
       </div>
       <div className="geo-property-body">
         <p className="geo-price">{formatPrice(property)}</p>
-        <h3>{property.title}</h3>
+        <h3><Link to={`/bienes-raices/${property.id}`}>{property.title}</Link></h3>
         <p className="geo-location">
           <MapPin aria-hidden="true" />
           {property.zone} · {property.location}
@@ -63,6 +69,7 @@ export function PropertyCard({ property, favorite, onFavorite, contactUrl }) {
           </a>
         )}
       </div>
+      {preview && <CatalogPreview item={property} to={`/bienes-raices/${property.id}`} summary={`${formatPrice(property)} · ${property.zone} · ${property.location}`} onClose={() => setPreview(false)} />}
     </article>
   );
 }
