@@ -3,6 +3,7 @@ import { Link, useOutletContext } from 'react-router-dom';
 import { ArrowRight, FileText, Mail, Newspaper, Building2 } from 'lucide-react';
 import { routePaths } from '../../../app/routePaths.js';
 import { loadDashboardCounts } from '../utils/dashboard.js';
+import { checkLanding, landingMessage } from '../utils/landingStatus.js';
 import { adminRoleProfile, canAccessAdminSection, displayAdminCount } from '../utils/adminData.js';
 
 const stats = [
@@ -23,10 +24,27 @@ export function AdminDashboardPage() {
   const { session, preview, previewNews, previewInquiries } = useOutletContext();
   const [counts, setCounts] = useState({ news: null, messages: null });
   const [warning, setWarning] = useState('');
+  const [landing, setLanding] = useState(null);
   const user = session?.user;
   const can = (section) => preview || canAccessAdminSection(user, section);
   const canNews = can('news');
   const canInbox = can('inbox');
+  const canCatalog = can('projects') || can('properties');
+
+  // Advierte si el sitio público (copia estática del despliegue) no refleja lo publicado.
+  useEffect(() => {
+    if (preview || !canCatalog) return undefined;
+    const controller = new AbortController();
+    checkLanding({ signal: controller.signal }).then(
+      (result) => {
+        if (controller.signal.aborted) return;
+        if (result.state === 'missing' && !import.meta.env.PROD) return;
+        setLanding(result.state === 'ok' ? null : result);
+      },
+      () => undefined,
+    );
+    return () => controller.abort();
+  }, [preview, canCatalog]);
 
   useEffect(() => {
     document.title = 'Resumen administrativo | EnObra';
@@ -59,6 +77,7 @@ export function AdminDashboardPage() {
           {canInbox && <Link to={routePaths.adminInbox} className="inline-flex items-center gap-2 rounded-lg border border-white/25 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10"><Mail size={17}/> Revisar mensajes</Link>}
         </div>}
       </section>
+      {landing && <p role={landing.state === 'updating' ? 'status' : 'alert'} className={`mt-5 rounded-lg border px-4 py-3 text-sm ${landing.state === 'updating' ? 'border-[#cfd9e6] bg-[#eef3f9] text-[#304e7d]' : 'border-[#f4cfae] bg-[#fff1e5] text-[#88420d]'}`}>{landingMessage(landing)}</p>}
       {warning && <p role="status" className="mt-5 rounded-lg border border-[#f4cfae] bg-[#fff1e5] px-4 py-3 text-sm text-[#88420d]">{warning}</p>}
       <section aria-label="Indicadores" className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
         {visibleStats.map(({ key, label, icon: Icon, link }, index) => {
