@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight, Eye, EyeOff, Newspaper, Pencil, Plus, Search, Trash2 } from 'lucide-react';
-import { Link, useOutletContext } from 'react-router-dom';
+import { Link, useOutletContext, useSearchParams } from 'react-router-dom';
 import { routePaths } from '../../../app/routePaths.js';
 import { newsService } from '../../news/services/newsService.js';
 import { normalizeNews } from '../../news/services/newsMapper.js';
@@ -12,14 +12,16 @@ import { filterNewsByPublication, formatNewsDate } from '../utils/newsWorkflow.j
 
 const PAGE_SIZE = 12;
 const messageForError = (error, action) => error?.status === 501
-  ? `Django todavía no tiene disponible la operación para ${action}.`
+  ? `La operación aún no está disponible para ${action}.`
   : error?.status === 401 || error?.status === 403
     ? 'La sesión no tiene permisos para administrar noticias.'
-    : `No se pudo ${action}. Intenta de nuevo cuando el backend esté disponible.`;
+    : `No se pudo ${action}. Intenta de nuevo en unos momentos.`;
 
 export function AdminNewsPage() {
   const { session, preview, previewNews, setPreviewNews } = useOutletContext();
   const actions = adminActions(session?.user, preview);
+  const [params, setParams] = useSearchParams();
+  const creating = actions.createNews && params.get('crear') === '1';
   const [page, setPage] = useState(1);
   const [category, setCategory] = useState('');
   const [search, setSearch] = useState('');
@@ -62,6 +64,15 @@ export function AdminNewsPage() {
   const visibleItems = preview ? items.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE) : items;
   const loading = !preview && (state.loading || state.page !== page || state.category !== category);
 
+  function closeEditor() {
+    setEditing(undefined);
+    if (creating) {
+      const next = new URLSearchParams(params);
+      next.delete('crear');
+      setParams(next, { replace: true });
+    }
+  }
+
   function reload() {
     setState((previous) => ({ ...previous, loading: true }));
     setRefreshIndex((current) => current + 1);
@@ -73,8 +84,8 @@ export function AdminNewsPage() {
     payload = newsPayloadForPermissions(payload, { existing: Boolean(item), canPublish: actions.publishNews });
     if (item) await newsService.update(item.id, payload, session.access);
     else await newsService.create(payload, session.access);
-    setEditing(undefined);
-    setNotice(item ? 'Noticia actualizada en Django.' : 'Noticia creada en Django.');
+    closeEditor();
+    setNotice(item ? 'Noticia actualizada.' : 'Noticia creada.');
     if (page !== 1) setPage(1);
     else reload();
   }
@@ -82,7 +93,7 @@ export function AdminNewsPage() {
   function savePreview(item) {
     if (!preview) return;
     setPreviewNews((current) => upsertPreviewNews(current, item));
-    setEditing(undefined);
+    closeEditor();
     setNotice('Cambio aplicado solo en la vista previa. Se perderá al recargar la página.');
     setPage(1);
   }
@@ -94,7 +105,7 @@ export function AdminNewsPage() {
     try {
       if (preview) {
         setPreviewNews((current) => togglePreviewNewsPublished(current, item.id));
-        setNotice('Estado cambiado solo en la demostración. No se ha publicado nada en Django.');
+        setNotice('Estado cambiado solo en la demostración. El sitio público no cambió.');
       } else {
         // PATCH parcial: no reenvía ni reemplaza el resto de la noticia.
         await newsService.update(item.id, { published: !item.published }, session.access);
@@ -119,7 +130,7 @@ export function AdminNewsPage() {
         setPage(1);
       } else {
         await newsService.remove(deleting.id, session.access);
-        setNotice('Noticia eliminada en Django.');
+        setNotice('Noticia eliminada.');
         if (page > 1 && state.items.length === 1) setPage((current) => current - 1);
         else reload();
       }
@@ -139,7 +150,7 @@ export function AdminNewsPage() {
       </div>
       {preview && <p role="status" className="mt-5 rounded-lg border border-[#f4cfae] bg-[#fff1e5] p-4 text-sm text-[#88420d]">Modo de prueba: puedes crear, editar y eliminar noticias ficticias en memoria. No se publicarán en el sitio y los cambios desaparecerán al recargar.</p>}
       {notice && <p role="status" aria-live="polite" className="mt-5 rounded-lg border border-[#dfe5ec] bg-white p-4 text-sm">{notice}</p>}
-      {!preview && (search.trim() || publication !== 'all') && <p className="mt-5 rounded-lg border border-[#dfe5ec] bg-[#f8fafc] px-4 py-3 text-xs text-[#626b79]">La búsqueda textual y el filtro de publicación se aplican solo a la página cargada. El total y la paginación siguen correspondiendo a la categoría completa que devuelve Django.</p>}
+      {!preview && (search.trim() || publication !== 'all') && <p className="mt-5 rounded-lg border border-[#dfe5ec] bg-[#f8fafc] px-4 py-3 text-xs text-[#626b79]">La búsqueda textual y el filtro de publicación se aplican solo a la página cargada. El total y la paginación siguen correspondiendo a la categoría completa.</p>}
       <div className="mt-6 rounded-xl bg-white shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#dfe5ec] px-5 py-4"><div className="flex items-center gap-2"><Newspaper size={20} className="text-[#304e7d]"/><h3 className="font-semibold">Publicaciones ({loading ? '…' : count})</h3></div><div className="flex flex-wrap items-center gap-2"><label className="relative"><Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#626b79]"/><span className="sr-only">Buscar noticias</span><input type="search" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} placeholder="Buscar noticia" className="w-44 rounded-lg border border-[#dfe5ec] py-2 pl-9 pr-3 text-xs sm:w-56"/></label><label><span className="sr-only">Filtrar por categoría</span><select value={category} onChange={(e) => { setCategory(e.target.value); setPage(1); if (!preview) setState((s) => ({ ...s, loading: true })); }} className="rounded-lg border border-[#dfe5ec] bg-white px-3 py-2 text-xs"><option value="">Todas las categorías</option>{newsCategories.map((value) => <option key={value}>{value}</option>)}</select></label><label><span className="sr-only">Filtrar por estado de publicación</span><select value={publication} onChange={(event) => { setPublication(event.target.value); setPage(1); }} className="rounded-lg border border-[#dfe5ec] bg-white px-3 py-2 text-xs"><option value="all">Todos los estados</option><option value="published">Publicadas</option><option value="draft">Borradores</option></select></label></div></div>
         {loading ? <p role="status" className="p-6 text-sm text-[#626b79]">Cargando noticias…</p>
@@ -151,8 +162,8 @@ export function AdminNewsPage() {
               })}</tbody></table></div>}
       </div>
       {!loading && !state.error && totalPages > 1 && <nav aria-label="Paginación" className="mt-5 flex items-center justify-end gap-3"><button type="button" disabled={page <= 1} onClick={() => { if (!preview) setState((s) => ({ ...s, loading: true })); setPage((p) => p - 1); }} className="rounded-lg border border-[#dfe5ec] p-2 disabled:opacity-40" aria-label="Página anterior"><ChevronLeft size={18}/></button><span className="text-sm">{page} / {totalPages}</span><button type="button" disabled={page >= totalPages} onClick={() => { if (!preview) setState((s) => ({ ...s, loading: true })); setPage((p) => p + 1); }} className="rounded-lg border border-[#dfe5ec] p-2 disabled:opacity-40" aria-label="Página siguiente"><ChevronRight size={18}/></button></nav>}
-      {editing !== undefined && (editing ? actions.editNews : actions.createNews) && <AdminNewsEditor canPublish={actions.publishNews} key={editing?.id || 'new'} item={editing} preview={preview} token={session?.access} onClose={() => setEditing(undefined)} onSaved={savePreview} onSaveRemote={saveRemote}/>}
-      {actions.deleteNews && deleting && <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#09172b]/70 px-4"><section role="alertdialog" aria-modal="true" aria-labelledby="delete-news-title" className="w-full max-w-[430px] rounded-2xl bg-white p-6 shadow-xl"><h3 id="delete-news-title" className="text-xl font-semibold">¿Eliminar noticia?</h3><p className="mt-3 text-sm text-[#626b79]">«{deleting.title}» {preview ? 'se quitará únicamente de esta vista previa.' : 'se eliminará del sitio si Django confirma la operación.'}</p><div className="mt-6 flex justify-end gap-3"><button type="button" disabled={deletingBusy} onClick={() => setDeleting(null)} className="rounded-lg border border-[#dfe5ec] px-4 py-2 text-sm">Cancelar</button><button type="button" disabled={deletingBusy} onClick={() => { void confirmDelete(); }} className="rounded-lg bg-[#b64242] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{deletingBusy ? 'Eliminando…' : 'Sí, eliminar'}</button></div></section></div>}
+      {(creating || (editing !== undefined && (editing ? actions.editNews : actions.createNews))) && <AdminNewsEditor canPublish={actions.publishNews} key={editing?.id || 'new'} item={editing} preview={preview} token={session?.access} onClose={closeEditor} onSaved={savePreview} onSaveRemote={saveRemote}/>}
+      {actions.deleteNews && deleting && <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#09172b]/70 px-4"><section role="alertdialog" aria-modal="true" aria-labelledby="delete-news-title" className="w-full max-w-[430px] rounded-2xl bg-white p-6 shadow-xl"><h3 id="delete-news-title" className="text-xl font-semibold">¿Eliminar noticia?</h3><p className="mt-3 text-sm text-[#626b79]">«{deleting.title}» {preview ? 'se quitará únicamente de esta vista previa.' : 'se eliminará del sitio.'}</p><div className="mt-6 flex justify-end gap-3"><button type="button" disabled={deletingBusy} onClick={() => setDeleting(null)} className="rounded-lg border border-[#dfe5ec] px-4 py-2 text-sm">Cancelar</button><button type="button" disabled={deletingBusy} onClick={() => { void confirmDelete(); }} className="rounded-lg bg-[#b64242] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{deletingBusy ? 'Eliminando…' : 'Sí, eliminar'}</button></div></section></div>}
     </section>
   );
 }

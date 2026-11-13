@@ -1,5 +1,6 @@
 import { apiRequest } from '../../../services/apiClient.js';
 import { readManagedUser } from '../utils/users.js';
+import { readAdminCollection } from '../utils/adminData.js';
 
 const userPath = (id) => `admin/users/${encodeURIComponent(id)}/`;
 
@@ -14,6 +15,26 @@ export const usersService = {
   update: (id, data, token) => apiRequest(userPath(id), { method: 'PATCH', body: data, token }),
   replaceRole: (id, role_id, token) => apiRequest(`${userPath(id)}role/`, { method: 'PUT', body: { role_id }, token }),
 };
+
+// El servidor pagina la búsqueda, pero no admite filtrar por estado.
+export async function listTeamUsers({ q, active }, token, signal) {
+  const pageSize = 100;
+  const members = [];
+  let remaining;
+  let page = 1;
+  do {
+    const { items, count } = readAdminCollection(await usersService.list({ q, page, page_size: pageSize }, token, signal));
+    for (const item of items) {
+      const user = readManagedUser(item);
+      const email = user.email.toLowerCase();
+      const internal = email.endsWith('.invalid') || email === 'admin@enobra.local';
+      if (!internal && user.active === active) members.push(user);
+    }
+    remaining = count - page * pageSize;
+    page += 1;
+  } while (remaining > 0);
+  return members;
+}
 
 // Los endpoints son transacciones independientes: conservar el resultado confirmado
 // para que un reintento no repita los datos ya guardados si falla el cambio de rol.

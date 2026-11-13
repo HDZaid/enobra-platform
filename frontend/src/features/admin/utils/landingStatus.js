@@ -39,13 +39,13 @@ export function landingMessage(result) {
     : '';
   switch (result.state) {
     case 'failed':
-      return `El sitio público no se está actualizando: el último despliegue (${date}) no pudo leer el backend. Los visitantes nuevos esperarán a que el servidor despierte.`;
+      return `El sitio público no se está actualizando: la actualización del ${date} no se completó. Algunos visitantes podrían tardar más en ver el catálogo.`;
     case 'stale':
-      return `El sitio público no se está actualizando: muestra la copia del ${date}. Los cambios recientes en ${result.kinds.join(' y ')} tardarán en verse para los visitantes nuevos hasta el próximo despliegue.`;
+      return `El sitio público no se está actualizando: muestra la copia del ${date}. Los cambios recientes en ${result.kinds.join(' y ')} tardarán en verse para los visitantes nuevos hasta la próxima actualización del sitio.`;
     case 'updating':
       return `Actualizando el sitio público con los cambios en ${result.kinds.join(' y ')}. Puede tardar unos minutos.`;
     case 'missing':
-      return 'El sitio público no tiene copia del catálogo: los visitantes nuevos esperarán a que el servidor despierte.';
+      return 'El catálogo puede tardar en cargar al abrir el sitio público.';
     default:
       return '';
   }
