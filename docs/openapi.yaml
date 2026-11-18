@@ -2144,6 +2144,15 @@ paths:
         schema:
           type: string
         required: true
+      - in: query
+        name: w
+        schema:
+          type: integer
+          enum:
+          - 1920
+          - 800
+        description: Versión WebP reducida con ese lado mayor. Sin el parámetro, o
+          si la imagen no tiene esa versión, se entrega el original.
       tags:
       - Medios
       security:

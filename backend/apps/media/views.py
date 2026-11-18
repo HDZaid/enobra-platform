@@ -1,4 +1,4 @@
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from django.conf import settings
 from rest_framework import status
 from rest_framework.exceptions import APIException, NotFound
@@ -17,6 +17,7 @@ from apps.common.registry import resolve
 from apps.common.serializers import ErrorSerializer
 
 from .interfaces import MediaStorage
+from .variants import VARIANT_SIZES, variant_path
 from .serializers import MediaSerializer, MediaUploadSerializer
 
 TAG = ["Medios (admin)"]
@@ -75,10 +76,15 @@ class MediaDetailView(APIView):
 class MediaContentView(APIView):
     permission_classes = [AllowAny]
 
-    @extend_schema(responses={(200, content_type): OpenApiTypes.BINARY for content_type in
-                             ("image/jpeg", "image/png", "image/webp", "image/gif")} | {
-                             404: ErrorSerializer, 503: ErrorSerializer},
-                   tags=["Medios"], summary="Imagen desde R2 privado; pública solo si está publicada")
+    @extend_schema(
+        parameters=[OpenApiParameter(
+            "w", int, enum=list(VARIANT_SIZES), required=False,
+            description="Versión WebP reducida con ese lado mayor. Sin el parámetro, o si la imagen no "
+                        "tiene esa versión, se entrega el original.")],
+        responses={(200, content_type): OpenApiTypes.BINARY for content_type in
+                   ("image/jpeg", "image/png", "image/webp", "image/gif")} | {
+                   404: ErrorSerializer, 503: ErrorSerializer},
+        tags=["Medios"], summary="Imagen desde R2 privado; pública solo si está publicada")
     def get(self, request, media_id):
         if not private_r2_enabled():
             raise NotFound("Imagen no encontrada.")
@@ -90,9 +96,11 @@ class MediaContentView(APIView):
         if not (public or has_permission(request.user, "media.upload")
                 or valid_preview(request.query_params.get("preview"), media_id)):
             raise NotFound("Imagen no encontrada.")
+        side = request.query_params.get("w")
+        side = int(side) if side in {str(size) for size in VARIANT_SIZES} and variant_path(item, side) else None
         try:
-            file = storage.open(item)
-            response = FileResponse(file, content_type=item["content_type"])
+            file = storage.open(item, side)
+            response = FileResponse(file, content_type="image/webp" if side else item["content_type"])
         except FileNotFoundError:
             raise NotFound("Imagen no encontrada.") from None
         except (BotoCoreError, ClientError, OSError):

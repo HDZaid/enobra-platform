@@ -25,8 +25,12 @@ class MediaStorage(ABC):
         ...
 
     @abstractmethod
-    def open(self, item: dict) -> IO[bytes]:
-        """Abre lectura autenticada en el proveedor, sin publicar credenciales."""
+    def open(self, item: dict, side: int | None = None) -> IO[bytes]:
+        """Abre lectura autenticada en el proveedor, sin publicar credenciales.
+
+        `side` pide la versión WebP reducida con ese lado mayor; sin ella, o si la
+        imagen no la tiene, se abre el original.
+        """
         ...
 
     @abstractmethod
