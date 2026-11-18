@@ -19,6 +19,7 @@
 - [Roles y permisos](RBAC.md), [política fija](politica-roles-fijos.md), [visibilidad](visibilidad-panel.md).
 - [Usuarios API](usuarios-api.md), [Usuarios frontend](usuarios-frontend.md), [sesión por actividad](FE-08-renovacion-por-actividad.md).
 - [Auditoría](auditoria.md), [papelera](papelera.md), [R2 privado](R2-configuracion.md).
+- [Guía para subir renders](guia-renders-arquitecto.md), para el equipo de arquitectura.
 
 ## Configuración, trabajo y pruebas
 

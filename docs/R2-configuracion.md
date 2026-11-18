@@ -32,14 +32,21 @@ conserva almacenamiento local. Prioridad: entorno del proceso, .env.r2 y .env.
 ## Flujo y autorización
 
 1. El panel envía POST admin/media/ con archivo y kind; necesita media.upload.
-2. Django valida contenido real JPEG/PNG/WebP/GIF y límite de 10 MiB, guarda en R2
-   con nombre UUID y metadatos en contenido_pagina.
+2. Django valida contenido real JPEG/PNG/WebP/GIF, hasta 15 MiB (`MEDIA_MAX_UPLOAD_BYTES`)
+   y 40 megapíxeles (`MEDIA_MAX_IMAGE_PIXELS`). Guarda en R2 con nombre UUID y
+   metadatos en contenido_pagina. Si la imagen es mayor, guarda además versiones
+   WebP con lado mayor de 1920 y 800 px; un fallo al reducir no impide la subida.
 3. La base conserva `/media/r2/<id>/`, proveedor r2-private y clave del objeto.
 4. Las fotos vinculadas a publicaciones públicas y el logo pueden leerse por API.
    Borradores/papelera no habilitan lectura anónima.
 5. La API permite lectura privada con sesión autorizada o capacidad de vista
    previa firmada para una imagen, válida quince minutos. No devuelve claves ni
    URLs S3 firmadas al navegador. Al guardar retira el token de la referencia.
+
+`/media/r2/<id>/?w=1920` o `?w=800` entrega la versión reducida; sin el parámetro,
+o en imágenes subidas antes del 17-nov, el original. El sitio usa 800 en tarjetas
+y miniaturas, y 1920 en galerías. Borrar la imagen elimina sus versiones. Las
+imágenes se procesan de una en una para caber en la RAM de Render Free.
 
 Lecturas privadas: private, no-store; públicas: caché de cinco minutos. No se
 requiere CORS del bucket en este flujo; sí los orígenes CORS explícitos de Django.

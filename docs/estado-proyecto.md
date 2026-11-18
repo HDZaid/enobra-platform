@@ -58,6 +58,9 @@ Cloudflare Pages toma su frontend de `frontend-dev` y Render toma su API de
 - Con datos guardados, la etiqueta de cada tarjeta y ficha (Venta/Alquiler en
   Bienes raíces; categoría y año en Proyectos) muestra un indicador de carga hasta
   que la API confirma. Si la API falla, indica «Sin confirmar» y permite reintentar.
+- Las imágenes admiten hasta 15 MB y 40 megapíxeles. El backend guarda versiones
+  WebP de 1920 y 800 px y el sitio pide la adecuada a cada vista; la copia de
+  Pages usa la de 1920. [Guía para subir renders](guia-renders-arquitecto.md).
 - Inicio muestra proyectos publicados y consulta noticias publicadas. Los
   catálogos incorporan álbumes y selección de Venta/Alquiler en Bienes raíces.
 - Las fichas generan mensajes de WhatsApp con el enlace a la publicación.
@@ -74,6 +77,7 @@ Cloudflare Pages toma su frontend de `frontend-dev` y Render toma su API de
 | Copia estática, 17-nov | `/data/catalog-snapshot.json` devolvió HTTP 200 y `status: ok` en el dominio y en Pages. Fue generada el 12-nov a las 19:47 (Guatemala) y contenía cero proyectos, propiedades e imágenes. |
 | API de Render, 17-nov | Health, Empresa, Proyectos y Bienes raíces devolvieron HTTP 200. Ambos listados tuvieron `count: 0`. Servicios y búsqueda devolvieron HTTP 501. |
 | Frontend local `aa96acd`, 17-nov | 203 pruebas aprobadas y lint correcto. |
+| Versiones reducidas de imágenes, 17-nov | Backend: 244 pruebas y `check` correctos; OpenAPI regenerado con validación (solo añade `w`). Frontend: 211 pruebas, lint y build. Requiere desplegar Render para que `?w=` tenga efecto; sin él se sirve el original. |
 | Etiquetas pendientes de confirmar, 17-nov | 208 pruebas, lint y build correctos. En navegador local, con caché sembrada y una API simulada lenta y fallida, se vieron los estados de carga y «Sin confirmar» en listado, ficha e Inicio. |
 | Backend de producción `912d916`, 3-nov | [238 pruebas aprobadas en CI](https://github.com/HDZaid/enobra-platform/actions/runs/41770108190). [Despliegue y persistencia de una imagen en R2](Render-validacion-2026-11-03.md). |
 | Panel con Supabase, 28-oct | 70/70 comprobaciones de roles, imágenes y publicación con API local y cuentas ficticias. [Informe de QA](INT-04-supabase-2026-10-28.md). |

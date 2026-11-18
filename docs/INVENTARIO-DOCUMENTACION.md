@@ -31,6 +31,7 @@ para los resultados de esta revisión y el alcance de las evidencias históricas
 | [docs/auditoria.md](auditoria.md) | Guía o referencia técnica vigente. |
 | [docs/dependencias-juan.md](dependencias-juan.md) | Guía o referencia técnica vigente. |
 | [docs/estado-proyecto.md](estado-proyecto.md) | Guía o referencia técnica vigente. |
+| [docs/guia-renders-arquitecto.md](guia-renders-arquitecto.md) | Guía de uso para publicar renders desde el panel. |
 | [docs/infraestructura.md](infraestructura.md) | Guía o referencia técnica vigente. |
 | [docs/operacion-produccion.md](operacion-produccion.md) | Guía o referencia técnica vigente. |
 | [docs/papelera.md](papelera.md) | Guía o referencia técnica vigente. |
@@ -89,7 +90,7 @@ Git, sin necesidad de un archivo duplicado de cada documento.
 | `frontend/NEWS-IMPLEMENTACION.md` | [frontend/README.md](../frontend/README.md) |
 | `frontend/NEWS-STORAGE.md` | [frontend/README.md](../frontend/README.md) |
 
-Resultado: 35 Markdown vigentes/preparados; 34 documentos sustituidos retirados.
+Resultado: 36 Markdown vigentes/preparados; 34 documentos sustituidos retirados.
 El 17-nov se retiraron el guion de la exposición del 4-nov, ya realizado su
 objetivo, y el informe de P-01, cuyo pendiente quedó cumplido.
 
