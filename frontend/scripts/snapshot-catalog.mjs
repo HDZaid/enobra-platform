@@ -15,6 +15,7 @@ import {
   SNAPSHOT_MEDIA_DIR,
   SNAPSHOT_VERSION,
 } from '../src/services/catalogSnapshot.js';
+import { MEDIA_SIZES, sizedMediaUrl } from '../src/services/mediaVariants.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const outDir = join(root, 'public', 'data');
@@ -75,7 +76,10 @@ async function copyMedia(urls) {
   let used = 0;
   for (const url of urls) {
     try {
-      const response = await fetch(url, { signal: AbortSignal.timeout(REQUEST_TIMEOUT) });
+      // La versión de 1920 px cabe en el límite por archivo; sin versiones llega el original.
+      const response = await fetch(sizedMediaUrl(url, MEDIA_SIZES.full), {
+        signal: AbortSignal.timeout(REQUEST_TIMEOUT),
+      });
       const type = (response.headers.get('content-type') || '').split(';')[0].trim();
       if (!response.ok || !IMAGE_TYPES[type]) continue;
       const bytes = Buffer.from(await response.arrayBuffer());

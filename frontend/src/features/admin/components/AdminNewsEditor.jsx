@@ -148,7 +148,7 @@ export function AdminNewsEditor({ item, preview, token, canPublish = false, onCl
             <div className="mt-3 grid gap-4 sm:grid-cols-[150px_1fr]">
               <div className="flex h-32 items-center justify-center overflow-hidden rounded-lg bg-[#f3f6fa]">{imageSrc ? <img src={imageSrc} alt="Vista previa de portada" className="h-full w-full object-cover"/> : <ImagePlus size={35} className="text-[#8895a7]"/>}</div>
               <div>
-                <label className={labelClass} htmlFor="news-image-file">Subir imagen (JPG, PNG, WebP, GIF; máximo 10 MB)</label>
+                <label className={labelClass} htmlFor="news-image-file">Subir imagen (JPG, PNG, WebP, GIF; máximo 15 MB)</label>
                 <input id="news-image-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="mt-2 block w-full text-xs file:mr-3 file:rounded-md file:border-0 file:bg-[#304e7d] file:px-3 file:py-2 file:text-white" onChange={(e) => { setFile(e.target.files?.[0] || null); setErrors((current) => ({ ...current, image: undefined })); }}/>
                 <p className="mt-3 text-xs text-[#626b79]">{preview ? 'En demostración se aceptan /assets/ y HTTPS.' : 'Django acepta HTTPS o /media/.'} También puedes escribir una referencia.</p>
                 <input aria-label="Referencia de imagen" className={inputClass} value={draft.image.startsWith('data:') ? '' : draft.image} onChange={(e) => { update('image', e.target.value); setFile(null); setFilePreview(''); }} placeholder={preview ? '/assets/estructura.jpg' : 'https://... o /media/...'} aria-invalid={Boolean(errors.image)} aria-describedby={errors.image ? 'news-image-error' : undefined}/>

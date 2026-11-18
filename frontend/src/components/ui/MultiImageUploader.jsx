@@ -4,6 +4,7 @@ import { uploadMedia } from '../../services/uploadClient.js';
 import { describeApiError } from './apiErrors.js';
 import { createImageUploadQueue, imageSlots, IMAGE_TYPES, moveImage, validateImageFile, validUploadedImageUrl } from './imageUpload.js';
 import { LoadingButton } from './LoadingButton.jsx';
+import { MEDIA_SIZES, sizedMediaUrl } from '../../services/mediaVariants.js';
 
 export function MultiImageUploader({ value = [], onChange, max = 40, kind = 'photo', token, onBusyChange, label = 'Fotografías' }) {
   const id = useId();
@@ -56,7 +57,7 @@ export function MultiImageUploader({ value = [], onChange, max = 40, kind = 'pho
     <div onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); select(event.dataTransfer.files); }}
       className="rounded-xl border-2 border-dashed border-[#dfe5ec] bg-[#f3f6fa] p-5">
       <label htmlFor={`${id}-files`} className="block text-sm font-semibold">Seleccionar imágenes o arrastrarlas aquí</label>
-      <p id={`${id}-help`} className="my-2 text-xs text-[#626b79]">JPEG, PNG, WebP o GIF, hasta 10 MB por archivo. Máximo {max}. La primera imagen es la portada.</p>
+      <p id={`${id}-help`} className="my-2 text-xs text-[#626b79]">JPEG, PNG, WebP o GIF, hasta 15 MB por archivo. Máximo {max}. La primera imagen es la portada.</p>
       <input id={`${id}-files`} type="file" multiple accept={IMAGE_TYPES.join(',')} aria-describedby={`${id}-help`}
         disabled={!imageSlots(max, value.length, jobs.length)}
         className="block w-full text-sm file:mr-3 file:rounded file:border-0 file:bg-[#304e7d] file:p-2 file:text-white"
@@ -66,7 +67,7 @@ export function MultiImageUploader({ value = [], onChange, max = 40, kind = 'pho
     <p role="status" className="text-sm text-[#626b79]">{value.length} imágenes listas · {jobs.filter((job) => ['queued', 'uploading'].includes(job.status)).length} pendientes</p>
     <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {value.map((url, index) => <li key={`${index}:${url}`} className="space-y-3 rounded-lg border border-[#dfe5ec] p-3">
-        {validUploadedImageUrl(url) && <img src={url} alt={`${label} ${index + 1}${index === 0 ? ', portada' : ''}`} className="aspect-video w-full rounded object-cover" />}
+        {validUploadedImageUrl(url) && <img src={sizedMediaUrl(url, MEDIA_SIZES.card)} alt={`${label} ${index + 1}${index === 0 ? ', portada' : ''}`} className="aspect-video w-full rounded object-cover" />}
         <p className="text-sm font-semibold">{index === 0 ? 'Portada' : `Imagen ${index + 1}`}</p>
         <div className="flex flex-wrap gap-2">
           <LoadingButton variant="outline" disabled={index === 0} aria-label={`Mover imagen ${index + 1} antes`} onClick={() => change(moveImage(current.current.value, index, index - 1))}>Antes</LoadingButton>

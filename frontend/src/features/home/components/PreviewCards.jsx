@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { newsImageUrl } from '../../news/services/newsMapper.js';
 import { ImageLines } from '../../../components/ui/ColonialOrnaments.jsx';
+import { MEDIA_SIZES, sizedMediaUrl } from '../../../services/mediaVariants.js';
 import { SafeImage } from '../../../components/ui/SafeImage.jsx';
 import { NewsImage } from '../../news/components/NewsImage.jsx';
 import { FreshLabel } from '../../projects/components/FreshLabel.jsx';
@@ -9,7 +10,7 @@ export function ProjectPreviewCard({ project, freshness = 'fresh' }) {
   return (
     <Link className="project-card" to={`/proyectos/${encodeURIComponent(project.id)}`}>
       <div className="project-image">
-        <SafeImage src={project.images[0]} alt="" loading="lazy" />
+        <SafeImage src={sizedMediaUrl(project.images[0], MEDIA_SIZES.card)} alt="" loading="lazy" />
         <ImageLines variant="card" />
         <span>Ver proyecto ↗</span>
       </div>

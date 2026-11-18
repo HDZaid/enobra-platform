@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight, Eye, EyeOff, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import { Link, useOutletContext } from 'react-router-dom';
+import { MEDIA_SIZES, sizedMediaUrl } from '../../../services/mediaVariants.js';
 import { routePaths } from '../../../app/routePaths.js';
 import { PropertyEmpty, PropertyError, PropertyTableSkeleton } from '../components/PropertyListStates.jsx';
 import { TrashPropertyDialog } from '../components/TrashPropertyDialog.jsx';
@@ -148,7 +149,7 @@ export function AdminPropertiesPage() {
                         return (
                           <tr key={item.id} className="border-t border-[#dfe5ec]">
                             <td className="px-5 py-4"><div className="flex items-center gap-3">
-                              {item.images[0] ? <img src={item.images[0]} alt="" loading="lazy" className="size-16 shrink-0 rounded-lg bg-[#e6ebf2] object-cover" /> : <div className="size-16 shrink-0 rounded-lg bg-[#e6ebf2]" aria-hidden="true" />}
+                              {item.images[0] ? <img src={sizedMediaUrl(item.images[0], MEDIA_SIZES.card)} alt="" loading="lazy" className="size-16 shrink-0 rounded-lg bg-[#e6ebf2] object-cover" /> : <div className="size-16 shrink-0 rounded-lg bg-[#e6ebf2]" aria-hidden="true" />}
                               <div className="min-w-0"><p className="max-w-[260px] font-semibold">{item.title}</p><p className="text-xs text-[#626b79]">{item.type} · {item.location}</p></div>
                             </div></td>
                             <td className="px-5 py-4">{item.operation}</td>

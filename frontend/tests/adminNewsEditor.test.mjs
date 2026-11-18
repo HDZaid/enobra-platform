@@ -35,7 +35,8 @@ test('exige imagen y valida tipos y tamaños de archivo', () => {
   assert.ok(validateNewsDraft({ ...valid, image: '' }).image);
   assert.equal(validateNewsFile({ type: 'image/webp', size: 300_000 }), '');
   assert.ok(validateNewsFile({ type: 'application/pdf', size: 500 }).length > 0);
-  assert.ok(validateNewsFile({ type: 'image/png', size: 11 * 1024 * 1024 }).length > 0);
+  assert.equal(validateNewsFile({ type: 'image/png', size: 15 * 1024 * 1024 }), '');
+  assert.ok(validateNewsFile({ type: 'image/png', size: 15 * 1024 * 1024 + 1 }).length > 0);
 });
 
 test('construye el JSON de noticias sin propiedades ajenas al contrato', () => {

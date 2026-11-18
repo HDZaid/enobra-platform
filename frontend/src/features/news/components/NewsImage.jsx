@@ -1,16 +1,17 @@
 import { useState } from 'react';
 import { ImageFallback } from '../../../components/ui/SafeImage.jsx';
+import { MEDIA_SIZES, sizedMediaUrl } from '../../../services/mediaVariants.js';
 
 // Receives a resolved image URL, independent of the Storage provider.
 // The parent supplies key={url || item.id} so a changed image can be retried.
-export function NewsImage({ src, alt, className = '', children }) {
+export function NewsImage({ src, alt, className = '', width = MEDIA_SIZES.card, children }) {
   const [failed, setFailed] = useState(false);
 
   return (
     <div className={`relative overflow-hidden bg-[#f3f6fa] ${className}`}>
       {src && !failed ? (
         <img
-          src={src}
+          src={sizedMediaUrl(src, width)}
           alt={alt}
           loading="lazy"
           decoding="async"

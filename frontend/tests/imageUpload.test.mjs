@@ -7,7 +7,7 @@ import { describeApiError } from '../src/components/ui/apiErrors.js';
 const file = (type = 'image/jpeg', size = 10) => ({ name: 'foto.jpg', type, size });
 const tick = () => new Promise((resolve) => setImmediate(resolve));
 
-test('valida los cuatro formatos y el límite inclusivo de 10 MB', () => {
+test('valida los cuatro formatos y el límite inclusivo de 15 MB', () => {
   for (const type of ['image/jpeg', 'image/png', 'image/webp', 'image/gif']) assert.equal(validateImageFile(file(type, MAX_IMAGE_BYTES)), null);
   for (const value of [null, file('image/svg+xml'), file('text/plain'), file('', 10), file('image/png', 0), file('image/png', NaN), file('image/png', MAX_IMAGE_BYTES + 1)]) assert.equal(typeof validateImageFile(value), 'string');
 });

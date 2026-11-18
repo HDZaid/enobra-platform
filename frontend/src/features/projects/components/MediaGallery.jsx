@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { MEDIA_SIZES } from '../../../services/mediaVariants.js';
 import { CatalogImage } from './CatalogImage.jsx';
 import { parseYoutube } from '../services/catalogMapper.js';
 
@@ -39,6 +40,7 @@ export function MediaGallery({ item, previewAction }) {
   const image = (
     <CatalogImage
       src={slide?.src}
+      width={MEDIA_SIZES.full}
       alt={slide
         ? `${item.title} · ${slide.kind.toLowerCase()} ${active + 1}${item.demo ? ' de referencia' : ''}`
         : item.title}

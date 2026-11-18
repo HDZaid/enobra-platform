@@ -1,6 +1,6 @@
 // Utilidades puras del editor. Los datos de vista previa nunca se envían a Django.
 export const newsCategories = Object.freeze(['Anuncios', 'Eventos', 'Proyectos']);
-export const MAX_NEWS_IMAGE_BYTES = 10 * 1024 * 1024;
+export const MAX_NEWS_IMAGE_BYTES = 15 * 1024 * 1024;
 export const ALLOWED_NEWS_IMAGE_TYPES = Object.freeze(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
 
 export function validNewsImageReference(value, { preview = false } = {}) {
@@ -23,7 +23,7 @@ export function validateNewsFile(file) {
   if (!file) return '';
   if (!ALLOWED_NEWS_IMAGE_TYPES.includes(file.type)) return 'La imagen debe ser JPG, PNG, WebP o GIF.';
   if (!Number.isFinite(file.size) || file.size <= 0 || file.size > MAX_NEWS_IMAGE_BYTES) {
-    return 'Selecciona una imagen de hasta 10 MB.';
+    return 'Selecciona una imagen de hasta 15 MB.';
   }
   return '';
 }

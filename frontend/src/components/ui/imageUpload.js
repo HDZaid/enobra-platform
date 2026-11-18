@@ -1,9 +1,9 @@
-export const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+export const MAX_IMAGE_BYTES = 15 * 1024 * 1024;
 export const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
 export function validateImageFile(file) {
   if (!file || !IMAGE_TYPES.includes(file.type)) return 'Selecciona una imagen JPEG, PNG, WebP o GIF.';
-  if (!Number.isFinite(file.size) || file.size <= 0 || file.size > MAX_IMAGE_BYTES) return 'La imagen debe pesar más de 0 bytes y hasta 10 MB.';
+  if (!Number.isFinite(file.size) || file.size <= 0 || file.size > MAX_IMAGE_BYTES) return 'La imagen debe pesar más de 0 bytes y hasta 15 MB.';
   return null;
 }
 

@@ -5,6 +5,7 @@ import { loadNewsDetail } from '../services/publicNewsSource.js';
 import { newsImageUrl } from '../services/newsMapper.js';
 import { StatusDrawing } from '../../../components/ui/ColonialOrnaments.jsx';
 import { NewsImage } from '../components/NewsImage.jsx';
+import { MEDIA_SIZES } from '../../../services/mediaVariants.js';
 import { formatNewsDate } from '../utils/newsDate.js';
 import '../styles/news-fonts.css';
 
@@ -63,6 +64,7 @@ export function NewsDetailPage() {
               {state.item.title}
             </h1>
             <NewsImage
+              width={MEDIA_SIZES.full}
               key={image || state.item.id}
               src={image}
               alt={state.item.title}
