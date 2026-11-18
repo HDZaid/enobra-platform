@@ -3,6 +3,7 @@ import { CatalogPreview } from '../../projects/components/CatalogPreview.jsx';
 import { Link } from 'react-router-dom';
 import { Bath, BedDouble, CarFront, Heart, MapPin, Ruler } from 'lucide-react';
 import { CatalogImage } from '../../projects/components/CatalogImage.jsx';
+import { FreshLabel } from '../../projects/components/FreshLabel.jsx';
 import { formatPrice } from '../services/propertiesService.js';
 
 export function PropertyFeatures({ property }) {
@@ -26,7 +27,7 @@ export function PropertyFeatures({ property }) {
   );
 }
 
-export function PropertyCard({ property, favorite, onFavorite, contactUrl }) {
+export function PropertyCard({ property, favorite, onFavorite, contactUrl, freshness = 'fresh' }) {
   const [preview, setPreview] = useState(null);
   return (
     <article className="geo-property-card">
@@ -39,8 +40,16 @@ export function PropertyCard({ property, favorite, onFavorite, contactUrl }) {
         <button type="button" className="geo-preview-trigger" aria-label={`Ver fotos de ${property.title}`} aria-haspopup="dialog" onClick={(event) => setPreview(event.detail > 0 ? 'pointer' : 'keyboard')}>
           <span>Ver fotos</span>
         </button>
-        <span className={`geo-badge ${property.operation === 'Alquiler' ? 'geo-rental' : ''}`}>
-          En {property.operation.toLowerCase()}
+        <span
+          className={`geo-badge ${
+            freshness !== 'fresh'
+              ? 'geo-badge--pending'
+              : property.operation === 'Alquiler'
+                ? 'geo-rental'
+                : ''
+          }`}
+        >
+          <FreshLabel freshness={freshness}>En {property.operation.toLowerCase()}</FreshLabel>
         </span>
         <button
           className="icon-button geo-favorite"

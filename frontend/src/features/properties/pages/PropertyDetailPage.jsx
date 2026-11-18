@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { CatalogPage as MotionPage } from '../../projects/components/CatalogPage.jsx';
 import { CatalogStatus } from '../../projects/components/CatalogStatus.jsx';
+import { FreshLabel, FreshNotice } from '../../projects/components/FreshLabel.jsx';
+import { catalogFreshness, freshnessMessages } from '../../projects/utils/catalogFreshness.js';
 import { MediaGallery, CatalogVideo } from '../../projects/components/MediaGallery.jsx';
 import { useCatalogResource } from '../../projects/components/useCatalogResource.js';
 import { publicProperties, formatPrice } from '../services/propertiesService.js';
@@ -31,9 +33,15 @@ export function PropertyDetailPage() {
           {property && (
             <>
               <p className="eyebrow">
-                {property.operation} · {property.type}
+                <FreshLabel freshness={catalogFreshness(resource)}>{property.operation}</FreshLabel> ·{' '}
+                {property.type}
                 {property.demo && ' · REFERENCIA'}
               </p>
+              <FreshNotice
+                freshness={catalogFreshness(resource)}
+                message={freshnessMessages[catalogFreshness(resource)]}
+                onRetry={resource.retry}
+              />
               <h1>{property.title}</h1>
               <p>
                 {property.zone} · {property.location}

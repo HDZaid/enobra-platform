@@ -5,6 +5,8 @@ import { publicProjects } from '../services/projectsService.js';
 import { useCatalogResource } from '../components/useCatalogResource.js';
 import { CatalogStatus, Pagination } from '../components/CatalogStatus.jsx';
 import { ProjectCard } from '../components/ProjectCard.jsx';
+import { FreshNotice } from '../components/FreshLabel.jsx';
+import { catalogFreshness, freshnessMessages } from '../utils/catalogFreshness.js';
 import { ProjectGrid } from '../components/ProjectGrid.jsx';
 import '../styles/catalog.css';
 
@@ -69,10 +71,19 @@ export function ProjectsPage() {
               {resource.stale && resource.data.partial && (
                 <p className="small muted">Seguimos recuperando el resto del portafolio…</p>
               )}
+              <FreshNotice
+                freshness={catalogFreshness(resource)}
+                message={freshnessMessages[catalogFreshness(resource)]}
+                onRetry={resource.retry}
+              />
               {resource.data.results.length ? (
                 <ProjectGrid className="geo-portfolio-grid">
                   {resource.data.results.map((project) => (
-                    <ProjectCard key={project.id} project={project} />
+                    <ProjectCard
+                      key={project.id}
+                      project={project}
+                      freshness={catalogFreshness(resource)}
+                    />
                   ))}
                 </ProjectGrid>
               ) : (

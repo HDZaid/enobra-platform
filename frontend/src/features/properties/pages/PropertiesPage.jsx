@@ -13,6 +13,8 @@ import {
   validateFilters,
 } from '../services/propertyFilters.js';
 import { PropertyCard } from '../components/PropertyCard.jsx';
+import { FreshNotice } from '../../projects/components/FreshLabel.jsx';
+import { catalogFreshness, freshnessMessages } from '../../projects/utils/catalogFreshness.js';
 import { useFavorites } from '../components/useFavorites.js';
 import { useCompanyContact } from '../../../components/layout/useCompanyContact.js';
 import '../../projects/styles/catalog.css';
@@ -237,6 +239,11 @@ export function PropertiesPage() {
                   {resource.stale && resource.data.partial && (
                     <p className="small muted">Seguimos recuperando el resto de propiedades…</p>
                   )}
+                  <FreshNotice
+                    freshness={catalogFreshness(resource)}
+                    message={freshnessMessages[catalogFreshness(resource)]}
+                    onRetry={resource.retry}
+                  />
                   {resource.data.results.length ? (
                     <div className="geo-properties-grid">
                       {resource.data.results.map((property) => (
@@ -244,6 +251,7 @@ export function PropertiesPage() {
                           key={property.id}
                           property={property}
                           contactUrl={contactUrl(property)}
+                          freshness={catalogFreshness(resource)}
                           favorite={favorites.ids.includes(property.id)}
                           onFavorite={() => favorites.toggle(property.id)}
                         />

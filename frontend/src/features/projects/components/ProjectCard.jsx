@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CatalogImage } from './CatalogImage.jsx';
 import { CatalogPreview } from './CatalogPreview.jsx';
+import { FreshLabel } from './FreshLabel.jsx';
 
-export function ProjectCard({ project }) {
+export function ProjectCard({ project, freshness = 'fresh' }) {
   const [preview, setPreview] = useState(null);
   const to = `/proyectos/${encodeURIComponent(project.id)}`;
   return (
@@ -19,7 +20,12 @@ export function ProjectCard({ project }) {
         </button>
       </div>
       <h3><Link to={to}>{project.title}</Link></h3>
-      <p>{project.category} · {project.year}{project.demo && ' · Referencia'}</p>
+      <p>
+        <FreshLabel freshness={freshness}>
+          {project.category} · {project.year}
+          {project.demo && ' · Referencia'}
+        </FreshLabel>
+      </p>
       {preview && <CatalogPreview item={project} to={to} summary={`${project.category} · ${project.year}`} animateEntry={preview === 'pointer'} onClose={() => setPreview(null)} />}
     </article>
   );

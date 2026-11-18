@@ -3,8 +3,9 @@ import { newsImageUrl } from '../../news/services/newsMapper.js';
 import { ImageLines } from '../../../components/ui/ColonialOrnaments.jsx';
 import { SafeImage } from '../../../components/ui/SafeImage.jsx';
 import { NewsImage } from '../../news/components/NewsImage.jsx';
+import { FreshLabel } from '../../projects/components/FreshLabel.jsx';
 
-export function ProjectPreviewCard({ project }) {
+export function ProjectPreviewCard({ project, freshness = 'fresh' }) {
   return (
     <Link className="project-card" to={`/proyectos/${encodeURIComponent(project.id)}`}>
       <div className="project-image">
@@ -14,7 +15,12 @@ export function ProjectPreviewCard({ project }) {
       </div>
       <div className="home-project-copy">
         <h3>{project.title}</h3>
-        <p>{project.category} · {project.year}{project.demo && ' · Referencia'}</p>
+        <p>
+          <FreshLabel freshness={freshness}>
+            {project.category} · {project.year}
+            {project.demo && ' · Referencia'}
+          </FreshLabel>
+        </p>
       </div>
     </Link>
   );

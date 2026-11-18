@@ -4,6 +4,7 @@ import { ProjectGrid } from '../../projects/components/ProjectGrid.jsx';
 import { useCatalogResource } from '../../projects/components/useCatalogResource.js';
 import { publicProjects } from '../../projects/services/projectsService.js';
 import { ProjectPreviewCard } from './PreviewCards.jsx';
+import { catalogFreshness } from '../../projects/utils/catalogFreshness.js';
 
 const { list } = publicProjects;
 
@@ -25,7 +26,11 @@ export function PortfolioPreview() {
       {projects.length ? (
         <ProjectGrid id="home-projects" className={projects.length === 1 ? 'home-projects--single' : ''}>
           {projects.map((project) => (
-            <ProjectPreviewCard key={project.id} project={project} />
+            <ProjectPreviewCard
+              key={project.id}
+              project={project}
+              freshness={catalogFreshness(resource)}
+            />
           ))}
           {projects.length < 3 && (
             <Link className="home-portfolio-link" to="/proyectos">

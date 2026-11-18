@@ -4,6 +4,8 @@ import { CatalogPage as MotionPage } from '../components/CatalogPage.jsx';
 import { publicProjects } from '../services/projectsService.js';
 import { useCatalogResource } from '../components/useCatalogResource.js';
 import { CatalogStatus } from '../components/CatalogStatus.jsx';
+import { FreshLabel, FreshNotice } from '../components/FreshLabel.jsx';
+import { catalogFreshness, freshnessMessages } from '../utils/catalogFreshness.js';
 import { MediaGallery, CatalogVideo } from '../components/MediaGallery.jsx';
 import '../styles/catalog.css';
 
@@ -27,8 +29,15 @@ export function ProjectDetailPage() {
           {project && (
             <>
               <p className="eyebrow">
-                {project.year} · {project.category}
+                <FreshLabel freshness={catalogFreshness(resource)}>
+                  {project.year} · {project.category}
+                </FreshLabel>
               </p>
+              <FreshNotice
+                freshness={catalogFreshness(resource)}
+                message={freshnessMessages[catalogFreshness(resource)]}
+                onRetry={resource.retry}
+              />
               <h1>{project.title}</h1>
               <p>
                 {project.country}

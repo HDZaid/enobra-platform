@@ -695,3 +695,39 @@
   }
   .leo-page .service-index-nav a.service-index-administration { white-space: normal; }
 }
+
+/* Etiquetas del catálogo con datos guardados: la disponibilidad solo se muestra
+   cuando la API la confirma (ver catalogFreshness). */
+.leo-site .geo-fresh-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  vertical-align: middle;
+}
+.leo-site .geo-fresh-label svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  stroke-width: 2;
+}
+.leo-site .geo-fresh-spin {
+  animation: enobra-spin 0.9s linear infinite;
+}
+@keyframes enobra-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.leo-site .geo-badge.geo-badge--pending {
+  background: #fff;
+  color: var(--navy);
+  box-shadow: 0 0 0 1px var(--line);
+}
+.leo-site .geo-fresh-notice {
+  margin: 0 0 16px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .leo-site .geo-fresh-spin {
+    animation: none;
+  }
+}
