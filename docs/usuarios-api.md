@@ -1,7 +1,7 @@
 # Administración de usuarios: contrato vigente
 
 <!-- enobra-documentacion-vigente -->
-> Guía vigente. Revisión documental: 3-nov-2026.
+> Guía vigente. Revisión documental: 17-nov-2026.
 > [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
 <!-- /enobra-documentacion-vigente -->
 Código: apps/accounts/user_views.py, user_serializers.py y persistence/users.py.
@@ -53,13 +53,12 @@ PATCH y PUT son operaciones separadas: si editar datos funciona y reasignar fall
 conservar la edición confirmada y reintentar solo el rol pendiente. La interfaz no
 anuncia un éxito total ni revierte datos del servidor por su cuenta.
 
-## Configuración de cuentas después de la exposición
+## Cuentas definitivas
 
-El usuario aplazó la depuración de Supabase hasta después del 4-nov-2026. Se pretende
-conservar una cuenta Admin y otra del Ingeniero; correos/titulares quedan pendientes
-de definición. Ingeniero es actualmente alias de Administrador. No se eliminaron
-cuentas, no se cambiaron contraseñas y no se publican identidades personales.
-Revisar actor técnico de P-02, auditoría y claves foráneas antes de preparar esa tarea.
+El usuario comunicará los correos de Admin e Ingeniero. Ingeniero es alias de
+Administrador. El filtro de cuentas de frontend solo cambia la presentación del
+listado. Antes de depurar, revisar el actor técnico de P-02 y las relaciones de
+auditoría y claves foráneas.
 
 ## Pruebas
 

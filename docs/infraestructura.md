@@ -1,15 +1,15 @@
 # Infraestructura vigente
 
 <!-- enobra-documentacion-vigente -->
-> Guía vigente. Revisión documental: 3-nov-2026.
+> Guía vigente. Revisión documental: 17-nov-2026.
 > [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
 <!-- /enobra-documentacion-vigente -->
-Actualizado el 3-nov-2026. Esta página sustituye la propuesta inicial del 12-oct.
+Actualizado el 17-nov-2026 con evidencia pública de Pages y Render.
 Ver [estado del proyecto](estado-proyecto.md) y [operación](operacion-produccion.md).
 
 | Componente | Proveedor y estado |
 | --- | --- |
-| Frontend | Cloudflare Pages; dominio enobra.com.gt, producción frontend-dev. |
+| Frontend | Cloudflare Pages. Dominio enobra.com.gt, producción desde frontend-dev, copia estática del catálogo. |
 | Backend | Render Free; API HTTPS con Gunicorn y config.production; despliegue manual de develop. |
 | Base de datos | PostgreSQL en Supabase; tablas existentes con modelos managed=False. |
 | Fotos y renders | Cloudflare R2 privado; Django escribe y entrega bytes mediante la API. |
@@ -39,14 +39,14 @@ No llevar DSN, claves de R2 ni contraseñas a variables públicas VITE, docs o c
 ## Imágenes privadas
 
 Bucket `enobra-media-prod`, sin dominio público ni r2.dev, por decisión de Geovanny.
-No conectar media.enobra.com.gt. El navegador consulta la API, no el endpoint S3.
-Las publicaciones públicas habilitan lectura de sus fotos; borradores y papelera
-conservan protección. Las vistas previas firmadas vencen a los quince minutos.
+Django controla la lectura de imágenes en R2. Las vistas previas firmadas vencen
+a los quince minutos. Pages puede servir copias de fotos que eran públicas al
+compilar. Su refresco se describe en [operación](operacion-produccion.md#copia-pública-del-catálogo-en-pages).
 
 El backend valida archivo, tamaño y permiso, conserva metadatos en PostgreSQL y
 protege el borrado de imágenes compartidas. Una imagen original migrada y leída
-tras otro despliegue; cuatro originales de otras PC pendientes. No se borraron
-registros para resolver esa diferencia. Ver [R2](R2-configuracion.md) y
+tras otro despliegue. La recuperación de cuatro originales de otras PC quedó
+aplazada en el inventario del 3-nov. Ver [R2](R2-configuracion.md) y
 [evidencia real](Render-validacion-2026-11-03.md).
 
 ## Operación y pendientes
@@ -55,18 +55,18 @@ registros para resolver esa diferencia. Ver [R2](R2-configuracion.md) y
   Actions reintenta health al publicar develop; no mantiene la API activa periódicamente.
 - P-02 continúa en GitHub Actions; no duplicar Cron Job de Render ni restaurar la
   función SQL de limpieza retirada. [Evidencia P-02](P02-limpieza-activa.md).
-- Configurar correo, verificar cuentas y recorridos reales por rol, recuperar
-  originales, revisar límites/costos y probar restauración de Supabase.
-- El dominio propio de API es opcional y sigue sin conectarse.
+- El proveedor de correo y el recorrido autenticado en el panel siguen sin
+  evidencia de validación en producción. Ver [estado](estado-proyecto.md).
+- Existe una [restauración aislada del esquema `public` de octubre](https://github.com/HDZaid/enobra-platform/issues/15#issuecomment-6430043884).
+  Falta comprobar un respaldo vigente con alcance de recuperación definido.
+- El dominio propio de la API queda como opción operativa.
 
 Referencias: [Render Free](https://render.com/docs/free),
 [Render monorepos](https://render.com/docs/monorepo-support),
 [R2 privado y acceso público](https://developers.cloudflare.com/r2/buckets/public-buckets/).
 
-## Datos de demostración y cuentas
+## Cuentas definitivas
 
-Conservar el entorno para la exposición del 4-nov-2026. La depuración de cuentas
-queda pospuesta; dos identidades humanas previstas, Admin e Ingeniero, cuyos
-correos se definirán después. No se han eliminado usuarios. La cuenta técnica de
-P-02 y el historial requieren revisión separada. El diccionario de modelos no
-sustituye esa revisión de filas y relaciones reales.
+El usuario definirá los correos de Admin e Ingeniero. Revisar las relaciones
+del historial y conservar el actor técnico de P-02 al planificar la depuración.
+El filtro de cuentas internas del panel solo cambia la presentación.

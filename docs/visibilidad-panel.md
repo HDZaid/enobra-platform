@@ -1,7 +1,7 @@
 # Visibilidad y autorización del panel
 
 <!-- enobra-documentacion-vigente -->
-> Guía vigente. Revisión documental: 3-nov-2026.
+> Guía vigente. Revisión documental: 17-nov-2026.
 > [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
 <!-- /enobra-documentacion-vigente -->
 El frontend usa permisos devueltos por Django para filtrar menú, rutas y acciones.
@@ -17,13 +17,13 @@ La validación definitiva ocurre en el servidor. Consultar [RBAC](RBAC.md),
 - PROJECT_TRASH_ENABLED está habilitado; las acciones exigen permisos de papelera.
 - Una ruta sin autorización redirige al Resumen sin montar ni consultar la vista.
   Los formularios de alta/edición comprueban también la acción correspondiente.
-- Los botones se ocultan si falta permiso; estados de carga pueden deshabilitar
-  operaciones autorizadas. Esta presentación no concede permisos adicionales.
+- Los botones y los accesos rápidos de Resumen aparecen según los permisos.
+  Los estados de carga pueden deshabilitar temporalmente operaciones autorizadas.
 
 Sesión en memoria y renovación por actividad: [FE-08](FE-08-renovacion-por-actividad.md).
 Entrar a Inicio dispara un health adicional por carga; entrar directamente a otras
 rutas no dispara ese ping. Las consultas propias de cada pantalla se conservan.
 
 Pruebas de permisos, navegación y sesión están en frontend/tests y el runner de
-integración aislado. La evidencia general es 191 pruebas frontend, lint/build y
-238 backend. No equivale a certificar los recorridos de cada titular en Render.
+integración aislado. El 17-nov pasaron 203 pruebas frontend y lint en `aa96acd`.
+El [recorrido autenticado en producción](estado-proyecto.md) se sigue por separado.

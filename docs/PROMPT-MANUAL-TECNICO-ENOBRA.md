@@ -1,7 +1,7 @@
 # Plantilla para elaborar el Manual Técnico de EnObra
 
 <!-- enobra-documentacion-vigente -->
-> Plantilla para una próxima tarea; no ejecutada en esta revisión. Revisión documental: 3-nov-2026.
+> Plantilla para una próxima tarea; no ejecutada en esta revisión. Revisión documental: 17-nov-2026.
 > [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
 <!-- /enobra-documentacion-vigente -->
 Esta plantilla prepara una próxima tarea de redacción. Leerla como fuente no
@@ -43,7 +43,7 @@ personalización de roles. Ingeniero es alias de Administrador.
 10. Publicaciones, R2 privado, vistas previas y protección de medios en uso.
 11. Papelera, auditoría y limpieza diaria P-02 en GitHub Actions.
 12. Instalación local, variables por nombre/propósito y pruebas aisladas.
-13. Despliegue Pages/Render, CORS, Gunicorn, diagnóstico y arranque Free.
+13. Despliegue Pages/Render, CORS, Gunicorn, arranque Free y copia del catálogo.
 14. Pruebas y evidencia: separar SQLite, Supabase y URL desplegada.
 15. Mantenimiento, respaldos, incidencias, pendientes y depuración futura de cuentas.
 16. Glosario, referencias y anexos.
@@ -65,10 +65,11 @@ Markdown/DOCX/PDF, cuando se solicite esa elaboración y se disponga de la refer
 
 - Las URL del sitio/API ya están verificadas; no marcarlas como inexistentes.
 - El contrato contiene 38 rutas y 55 operaciones; Servicios/búsqueda siguen con 501.
-- Correo, pruebas reales por rol y subida desde el panel conservan sus pendientes.
-- R2 se mantiene privado; no proponer dominio público como requisito de activación.
-- La depuración de cuentas será después de la exposición del 4-nov-2026; correos
-  de las dos cuentas humanas por definir. No afirmar que se ejecutó ni suponer IDs.
+- Usar el [estado del 17-nov](estado-proyecto.md) para acreditar disponibilidad,
+  alcance del correo, pruebas por rol, medios y restauración histórica de `public`.
+- Documentar R2 privado, entrega por API y copias de fotos públicas en Pages.
+- Los correos de Admin e Ingeniero quedan por definir. Mantener en privado
+  identidades y credenciales.
 - No ejecutar propuestas SQL, migraciones, seeds o limpiezas para completar el texto.
 - No copiar secretos desde archivos locales. Variables de ejemplo por nombre y
   propósito; versiones desde lockfiles, no desde rangos de instalación.

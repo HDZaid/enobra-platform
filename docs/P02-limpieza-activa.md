@@ -1,7 +1,7 @@
 # P-02: limpieza diaria activa y gratuita
 
 <!-- enobra-documentacion-vigente -->
-> Guía vigente. Revisión documental: 3-nov-2026.
+> Guía vigente. Revisión documental: 17-nov-2026.
 > [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
 <!-- /enobra-documentacion-vigente -->
 Estado verificado el 29 de octubre de 2026. Geovanny eligió GitHub Actions para
@@ -82,6 +82,6 @@ y se vuelve a comprobar estado/fecha. Restaurar cancela la candidatura y reenvia
 reinicia el plazo. Las pruebas de retención usan datos aislados, no publicaciones
 reales borradas para demostrar el comportamiento.
 
-La depuración de cuentas humanas se decidirá después de la exposición. La cuenta
-técnica no inicia sesión y mantiene FK de historial/actor del workflow: no suponer
-que deba eliminarse junto con cuentas de demostración. No se cambió su configuración.
+El usuario aún debe definir los correos de las cuentas humanas definitivas. La
+cuenta técnica conserva relaciones de historial y actúa en el workflow. Preservar
+ese actor al depurar cuentas de demostración.

@@ -1,7 +1,7 @@
 # Backend del panel administrativo
 
 <!-- enobra-documentacion-vigente -->
-> Guía vigente. Revisión documental: 3-nov-2026.
+> Guía vigente. Revisión documental: 17-nov-2026.
 > [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
 <!-- /enobra-documentacion-vigente -->
 Los adaptadores ORM están registrados en config/bindings.py sobre tablas
@@ -48,7 +48,8 @@ Noticias mantiene eliminación directa. [Papelera](papelera.md).
 
 Los estados HTTP de consultas son nuevo, atendido y archivado; el repositorio los
 adapta a las restricciones existentes y sus metadatos. Recibir/guardar una consulta
-no prueba entrega de correo: en validación se utiliza backend dummy.
+acredita almacenamiento. La última configuración documentada del correo usó
+`dummy` y sigue sin evidencia de entrega efectiva.
 
 El logo y las fotos públicas se entregan por API desde R2 privado; borradores
 requieren autorización o vista previa. No se permiten nuevas subidas en producción
@@ -60,8 +61,9 @@ con disco local. Se bloquea borrar una imagen referenciada. [Medios](R2-configur
   archivos, referencias, papelera, auditoría y producción.
 - Supabase: evidencia fechada en BE-10 e INT-04; no confundir con pruebas de Render.
 - Render: lecturas, HTTPS/CORS y persistencia de un objeto comprobadas.
-- Pendiente: login/recorrido por rol y subida/publicación desde el panel desplegado,
-  correo y respaldo/restauración. [Estado actual](estado-proyecto.md).
+- La prueba aislada de restauración del respaldo del 24-oct cubrió el esquema
+  [`public`](https://github.com/HDZaid/enobra-platform/issues/15#issuecomment-6430043884). El alcance de un respaldo actual, el correo y el QA
+  autenticado de producción se siguen en [estado](estado-proyecto.md).
 
 No ejecutar migraciones, seeds, pruebas de borrado o scripts que creen usuarios
 sobre la base compartida por seguir una guía de desarrollo. Ver

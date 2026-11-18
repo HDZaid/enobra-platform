@@ -1,12 +1,14 @@
 # Base para la documentación técnica de EnObra
 
 <!-- enobra-documentacion-vigente -->
-> Guía vigente. Revisión documental: 3-nov-2026.
+> Guía vigente. Revisión documental: 17-nov-2026.
 > [Base y límites técnicos](estado-proyecto.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
 <!-- /enobra-documentacion-vigente -->
-Corte funcional: `7d0dd21`, 3-nov-2026, America/Guatemala. Esta base prepara la
-redacción del manual técnico; no es todavía el documento Word final. Los cambios
-actuales son documentales y no alteran código, infraestructura ni datos.
+Corte del 17-nov-2026 (Guatemala). Referencias verificadas: frontend
+`aa96acd` en `frontend-dev` y backend/contrato `eb80cea` en `develop`
+y `backend-dev`. Esta base reúne el material para redactar el manual técnico.
+Consultar [estado y evidencia](estado-proyecto.md) antes de citar un resultado
+de producción.
 
 ## Fuentes y criterio de verdad
 
@@ -28,16 +30,17 @@ fechadas y señala los documentos retirados. El historial Git conserva sus versi
 | Frontend | Cloudflare Pages, enobra.com.gt; rama frontend-dev, raíz frontend, npm run build, dist. |
 | API | Render Free, enobra-api.onrender.com; develop, raíz backend, config.production y Gunicorn. |
 | Base | PostgreSQL de Supabase, veinte tablas existentes, modelos managed=False. |
-| Imágenes | R2 privado; Django guarda y entrega archivos por API según visibilidad/autorización. |
+| Imágenes | R2 privado. Django entrega imágenes autorizadas por API y Pages copia algunas fotos públicas en cada build. |
 | Sesión | JWT Bearer; access 15 minutos, refresh revocable 7 días; tokens del panel en memoria. |
 | Autorización | Tres roles fijos calculados en código; IDs/asignaciones en BD. Ingeniero es alias de Administrador. |
 | Limpieza | GitHub Actions diario de P-02, 03:00 Guatemala; backend fijado a SHA revisado. |
-| Arranque Free | Inicio solicita health una vez por carga; Actions reintenta al publicar develop. Sin health periódico. |
+| Arranque Free | Inicio solicita health una vez por carga. Actions reintenta al publicar develop. Pages sirve una copia estática del catálogo y React conserva datos públicos hasta siete días. |
 
 ```mermaid
 flowchart LR
     U[Visitante o personal] --> F[React en Cloudflare Pages]
     F -->|HTTPS /api/v1 y /media/r2| A[Django y Gunicorn en Render]
+    F -->|JSON e imágenes copiadas| C[Copia pública de Pages]
     A --> D[(PostgreSQL Supabase)]
     A --> R[(R2 privado)]
     G[GitHub Actions] -->|health al publicar develop| A
@@ -72,34 +75,36 @@ versión. No ejecutar migraciones/seeds para recrear las tablas de negocio.
 
 - El login del panel usa usuario/usuario_rol y hashes verificados por Django; no
   confundir estas cuentas con Supabase Auth o los accesos al dashboard del proveedor.
-- El editor administrativo de Empresa/Nosotros sigue pendiente en frontend; la API
-  de empresa/institución existe, pero no acredita que haya una pantalla de edición.
-- Servicios y búsqueda global tienen contrato, pero no repositorios registrados:
-  responden 501; no describirlos como módulos backend terminados.
-- R2 privado activo. Una imagen migrada se recuperó tras otro despliegue; faltan
-  cuatro originales. La subida/publicación desde el panel desplegado sigue pendiente.
-- Correo usa backend dummy en validación; falta proveedor/remitente/destinatario y
-  prueba de entrega. Registrar una consulta no acredita notificación recibida.
-- Cuentas activas consultadas; falta recorrido real de login/permisos con titulares.
-  No publicar correos personales, contraseñas ni hashes en el manual.
+- El sitio usa datos públicos de Empresa/Nosotros y las fichas preparan consultas
+  de WhatsApp con el contacto de la empresa. El editor administrativo carece de pantalla.
+- La página pública de Servicios tiene contenido de referencia. Sus endpoints y
+  el buscador global respondieron 501 en la revisión del 17-nov.
+- La copia de Proyectos y Bienes raíces y la caché de navegador sirven datos
+  publicados mientras responde la API. Resumen avisa si la copia difiere de la
+  API. Las noticias de Inicio se consultan por separado. [Operación](operacion-produccion.md).
+- R2 privado activo. Una imagen migrada se recuperó tras otro despliegue. El
+  inventario histórico dejó cuatro originales aplazados. La prueba completa
+  de subida y publicación desde el panel desplegado sigue sin evidencia disponible.
+- El notificador de consultas está implementado. Falta evidencia de entrega
+  real por correo. La última configuración documentada usó `dummy`.
+- El login por rol se probó con API local y Supabase. El entorno publicado
+  respondió al cargar el login. Falta evidencia del recorrido autenticado allí.
+- Existe una [restauración aislada de `public`](https://github.com/HDZaid/enobra-platform/issues/15#issuecomment-6430043884) del respaldo de
+  octubre. El alcance de recuperación vigente se sigue en [estado](estado-proyecto.md).
 - Las propuestas SQL conservadas en docs/sql no acreditan tablas o migraciones
   aplicadas. El diccionario describe modelos existentes, no diseños propuestos.
 - El código de limpieza programada está fijado a otra revisión probada; no asumir
   que cada cambio de develop actualiza automáticamente ese comando en main.
 - Render se despliega manualmente; sincronizar ramas no equivale a desplegar backend.
 
-## Exposición y cuentas definitivas
+## Cuentas definitivas
 
-La exposición está prevista para el **4 de noviembre de 2026**. La depuración de
-cuentas de Supabase se aplaza hasta después de esa exposición. El objetivo indicado
-es conservar una cuenta Admin y otra del Ingeniero; titulares/correos se definirán
-más adelante por el usuario. No se han eliminado cuentas ni se documentan IDs o
-correos supuestos. La política actual trata Ingeniero como Administrador.
-
-Esta decisión no cambia la cuenta técnica no interactiva de P-02: revisar sus
-relaciones y el actor del workflow antes de preparar cualquier depuración futura.
-La lista concreta de cuentas, respaldo, relaciones/auditoría y tratamiento de esa
-cuenta técnica deberán resolverse antes de ejecutar la eliminación.
+El usuario aplazó la depuración hasta después de la fecha prevista para la
+exposición, 4 de noviembre de 2026. La definición de titulares y correos sigue
+pendiente. La decisión vigente es conservar dos cuentas humanas, Admin e
+Ingeniero. La política actual trata Ingeniero como Administrador. La lista de
+cuentas se acuerda en privado e incluye una revisión de las relaciones de
+auditoría y del actor técnico de P-02.
 
 ## Preparación del documento final
 
@@ -110,7 +115,7 @@ repositorio o de la base. Preparar diagramas a partir de código; no presentar m
 como capturas reales. El documento final debe distinguir implementación, despliegue
 y comprobación funcional. Esta actualización no genera todavía DOCX/PDF.
 
-## Versiones resueltas del corte
+## Versiones resueltas de los lockfiles
 
 | Tecnología | Versión | Fuente |
 | --- | --- | --- |

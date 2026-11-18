@@ -1,13 +1,12 @@
 # Pruebas HTTP con Postman
 
 <!-- enobra-documentacion-vigente -->
-> Guía vigente. Revisión documental: 3-nov-2026.
+> Guía vigente. Revisión documental: 17-nov-2026.
 > [Base y límites técnicos](../BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
 <!-- /enobra-documentacion-vigente -->
 La fuente vigente es [openapi.yaml](../openapi.yaml): 38 rutas y 55 operaciones,
-con roles fijos y R2 privado. Las colecciones JSON conservadas se generaron en
-cortes anteriores; no se actualizaron sus scripts/aserciones en esta tarea documental.
-No presentarlas como una matriz completa validada del contrato actual.
+con roles fijos y R2 privado. La revisión del 17-nov confirmó que la colección
+RBAC aún incluye rutas retiradas de administración de roles y permisos.
 
 ## Archivos conservados
 
@@ -27,8 +26,8 @@ pruebas reales. Las variables de un ejemplo no crean cuentas en la base.
 - Ingeniero equivale a Administrador; Arquitecta a Arquitecto. Empleado puede
   editar/publicar contenido ajeno y no tiene papelera. Usar [política vigente](../politica-roles-fijos.md).
 - Selector actual: GET admin/users/roles/, con IDs existentes. No inventar role_id.
-- Servicios y búsqueda siguen devolviendo 501; una aserción antigua que espera
-  datos implementados no describe el estado real.
+- Servicios y búsqueda devolvieron 501 en Render el 17-nov. Alinear sus
+  aserciones con el comportamiento del contrato y de la revisión probada.
 - La imagen de producción se entrega por API desde R2 privado; no asumir URL S3
   pública ni /media/uploads local para todas las configuraciones.
 

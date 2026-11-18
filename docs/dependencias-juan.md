@@ -1,28 +1,23 @@
 # Coordinación de backend, despliegue y datos
 
 <!-- enobra-documentacion-vigente -->
-> Guía vigente. Revisión documental: 3-nov-2026.
+> Guía vigente. Revisión documental: 17-nov-2026.
 > [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
 <!-- /enobra-documentacion-vigente -->
-Estado consolidado del 3-nov-2026. Responsables/respaldo según
+Estado consolidado del 17-nov-2026. Responsables/respaldo según
 [acuerdo vigente](responsables-y-cierres.md); las asignaciones no exigen aprobación
 personal de Henry ni cambian autorizaciones de datos.
 
 | Trabajo | Estado | Próximo paso |
 | --- | --- | --- |
-| API y frontend | Render y Pages activos y conectados. | Probar login/operación por rol con titulares en las URL publicadas. |
-| R2 privado | Una imagen migrada y recuperada tras otro despliegue. | Subida/publicación desde el panel; cuatro originales aplazados. |
-| Medios compartidos | Borrado protegido y probado aisladamente. | Incluir el rechazo en QA sobre objetos de prueba autorizados. |
-| Correo | Backend dummy en validación. | Definir proveedor/remitente/destinatario y comprobar entrega/fallos. |
-| Servicios y búsqueda | Contratos sin repositorios, responden 501. | Implementar/registrar, probar filtros y exclusión de borradores/papelera. |
-| P-01/P-02 | Limpieza por backend y programación diaria verificadas. | Mantener actor/secretos y SHA revisado; no crear otro cron ni reactivar SQL. |
-| Cuentas de Supabase | Activas consultadas, sin modificar. | Después de exposición, definir las dos identidades humanas y preparar depuración. |
-| Respaldos | Evidencia previa de exportación no prueba recuperación integral. | Validar respaldo actual y restauración en entorno adecuado. |
-
-La exposición está prevista el 4-nov-2026. Correos de Admin e Ingeniero quedan por
-definir; no publicarlos en Markdown. La política actual equipara Ingeniero a
-Administrador. La cuenta técnica no interactiva de P-02 y sus relaciones deben
-revisarse por separado; no se ha autorizado aquí una lista concreta de borrado.
+| API y frontend | Render y Pages respondieron el 17-nov. La copia del catálogo está publicada. | Registrar recorrido autenticado por rol con titulares. |
+| R2 privado | Una imagen migrada y recuperada tras otro despliegue. | Registrar subida y publicación desde el panel. La recuperación de cuatro originales quedó aplazada. |
+| Medios compartidos | Borrado protegido y probado en la suite aislada. | Conservar la cobertura y las referencias al publicar. |
+| Correo | Notificador implementado. Configuración documentada con `dummy`. | Confirmar proveedor, remitente y destinatario y acreditar entrega. |
+| Servicios y búsqueda | La API devolvió 501 el 17-nov. | Registrar repositorios y verificar resultados públicos. |
+| P-01/P-02 | Limpieza por backend y programación diaria verificadas. | Mantener el actor, los secretos y el SHA revisado. |
+| Cuentas de Supabase | El panel separa activas de inactivas y filtra cuentas internas. | El usuario definirá Admin e Ingeniero. Revisar historial, relaciones y actor técnico antes de depurar. |
+| Respaldos | [Restauración aislada de `public` del 24-oct](https://github.com/HDZaid/enobra-platform/issues/15#issuecomment-6430043884). | Comprobar un respaldo vigente y el alcance de recuperación, incluidos los objetos de R2. |
 
 Fuentes: [estado](estado-proyecto.md), [operación](operacion-produccion.md),
 [Render/R2 verificados](Render-validacion-2026-11-03.md), [P-02](P02-limpieza-activa.md).

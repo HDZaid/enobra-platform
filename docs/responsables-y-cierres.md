@@ -1,10 +1,10 @@
 # Responsables y condiciones de cierre
 
 <!-- enobra-documentacion-vigente -->
-> Guía vigente. Revisión documental: 3-nov-2026.
+> Guía vigente. Revisión documental: 17-nov-2026.
 > [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
 <!-- /enobra-documentacion-vigente -->
-> Estado final del 29-oct: [limpieza diaria activa](P02-limpieza-activa.md) en GitHub Actions, gratuita para este repo público. Simulación y ejecución real aprobadas (0 publicaciones vencidas). P-02 y su automatización están completas. El pendiente de activar un Cron Job en Render que aparezca abajo es histórico y queda sustituido; no crear un servicio duplicado. Mantenimiento: Pablo, respaldo Juan.
+> Estado final del 29-oct: [limpieza diaria activa](P02-limpieza-activa.md) en GitHub Actions, gratuita para este repo público. Simulación y ejecución real aprobadas (0 publicaciones vencidas). P-02 y su automatización están completas. La tarea programada se mantiene en GitHub Actions. Mantenimiento: Pablo, respaldo Juan.
 
 Acuerdo solicitado por Geovanny el 29 de octubre de 2026. Sustituye las restricciones
 de responsable único de los planes anteriores; conserva autoría histórica, ramas
@@ -27,7 +27,7 @@ acceso, registrar servicio, permiso y quién puede concederlo; no escribir solam
 | Despliegue, imágenes persistentes y correo | Juan | Pablo | Geovanny confirma destino/proveedor y acceso; registrar URL, versión, imagen recuperable tras reinicio/despliegue y prueba de correo. Cerrar cada comprobación por separado. |
 | Pruebas en URL desplegada | Geovanny y Leo | Jenny para interfaz; Juan para API | Resultado por rol y versión. Las 70/70 pruebas previas usaron API local y Supabase real: no acreditan despliegue ni participación de Leo. |
 | Actualizar estado e issues | Autor de cada tarea o su agente | Geovanny | Fecha, commit/URL, resultado y límites; no requiere esperar a Henry. |
-| Preparación de producción BE-14 | Pablo y Juan | Henry | Perfil y pruebas locales listos; validar las URL reales al desplegar. Ver [informe](Render-backend.md). |
+| Preparación de producción BE-14 | Pablo y Juan | Henry | Perfil, despliegue y lecturas HTTPS comprobados. El recorrido autenticado se registra por separado. Ver [informe](Render-validacion-2026-11-03.md). |
 
 `config/*`, `access_policy.py` y `docs/openapi.yaml` dejan de ser exclusivos de Henry.
 Los cambios funcionales respetan RBAC; delegar trabajo no concede privilegios a
@@ -36,15 +36,14 @@ usuarios de la aplicación. OpenAPI se genera una vez por cambio de contrato con
 develop; main conserva versiones estables. No esperar tareas vecinas sin una
 dependencia técnica concreta. No reabrir BE-00/01/02/03/05/11 ni P-01 por textos históricos.
 
-## Respuestas que faltan y a qué afectan
+## Verificaciones pendientes de evidencia
 
-- Cuentas: existen asignaciones activas consultadas en Supabase; verificar con cada
-  titular el acceso y rol en la URL desplegada. Nunca publicar contraseñas ni datos personales.
-- Backend y frontend: URL públicas activas; ver [operación](operacion-produccion.md). R2 privado y persistencia de una imagen comprobados; faltan cuatro originales, prueba desde el panel y correo. La limpieza ya está activa en GitHub Actions; no crear Cron Job de Render.
-- Correo: buzón receptor y servicio que enviará las consultas.
-
-No bloquean edición de código, pruebas locales, integración revisada ni documentación.
-Una aprobación para P-02 no autoriza borrar otros datos reales o desactivar cuentas.
+- Panel: registrar el recorrido autenticado por rol y la subida/publicación
+  desde las URL desplegadas. El sitio y la API respondieron el 17-nov.
+- Imágenes: R2 privado y persistencia de una imagen comprobados. La recuperación
+  de cuatro originales quedó aplazada.
+- Correo: confirmar remitente, proveedor y buzón y acreditar recepción de una
+  consulta. Ver [estado](estado-proyecto.md).
 
 ## Transferencia a una organización: descartada para la entrega
 
@@ -53,11 +52,9 @@ los accesos existentes. No pedir una organización ni nuevos Admin para trabajar
 integrar o completar producción. Esto sustituye las instrucciones anteriores de
 transferencia. No hubo cambios de propietario ni permisos en esta sesión.
 
-## Preparación de la documentación y exposición
+## Cuentas definitivas y manual técnico
 
-La base técnica y el inventario vigente sustituyen las listas de planes/etapas
-retiradas. La exposición está prevista el 4-nov-2026. El usuario definirá después
-los correos de las dos cuentas humanas a conservar, Admin e Ingeniero; no se han
-eliminado cuentas. No inferir que el rol del Ingeniero deba ser distinto: actualmente
-es alias de Administrador. Cualquier depuración futura debe revisar historial/FK
-y la cuenta técnica no interactiva de P-02. Correos y credenciales no van al repo.
+El usuario definirá los correos de Admin e Ingeniero. La política vigente trata
+Ingeniero como alias de Administrador. Revisar las relaciones del historial y
+el actor técnico de P-02 antes de una depuración. La base y el inventario
+vigentes reúnen las fuentes para redactar el manual.

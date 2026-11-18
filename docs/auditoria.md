@@ -1,10 +1,11 @@
 # Auditoría administrativa (BE-12)
 
 <!-- enobra-documentacion-vigente -->
-> Guía vigente. Revisión documental: 3-nov-2026.
+> Guía vigente. Revisión documental: 17-nov-2026.
 > [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
 <!-- /enobra-documentacion-vigente -->
 Estado documental: 3-nov-2026, contrastado con apps.audit y persistence.audit.
+Revisado el 17-nov: sin cambios de backend posteriores.
 [Contrato HTTP](openapi.yaml), [RBAC vigente](RBAC.md) y [base técnica](BASE-DOCUMENTACION-TECNICA.md).
 
 ## Implementación e integración

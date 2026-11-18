@@ -1,7 +1,7 @@
 # EnObra — Frontend
 
 <!-- enobra-documentacion-vigente -->
-> Guía vigente, revisión documental del 3-nov-2026.
+> Guía vigente, revisión documental del 17-nov-2026.
 > [Base técnica](../docs/BASE-DOCUMENTACION-TECNICA.md), [inventario](../docs/INVENTARIO-DOCUMENTACION.md) y [estado](../docs/estado-proyecto.md).
 <!-- /enobra-documentacion-vigente -->
 
@@ -49,24 +49,39 @@ remontajes de React y regresar a Inicio no duplican el ping en esa carga de la
 aplicación. Abrir otra ruta no dispara este ping adicional. No hay intervalos.
 Las consultas normales de cada página siguen llamando a sus propios endpoints.
 
-La primera operación todavía puede esperar el arranque de Render Free. El ping
-no garantiza disponibilidad continua ni reemplaza la gestión de errores del panel.
+Las vistas de Proyectos y Bienes raíces intentan mostrar datos públicos guardados
+mientras Render despierta. El build de Pages copia hasta 20 publicaciones de
+cada catálogo y un subconjunto de sus medios. El navegador guarda respuestas
+públicas hasta siete días. La respuesta de la API refresca los datos y un 404 de
+detalle prevalece sobre la copia. Ver [operación](../docs/operacion-produccion.md#copia-pública-del-catálogo-en-pages).
+Mientras los datos no están confirmados, la etiqueta de disponibilidad muestra
+un indicador de carga (`catalogFreshness`, `FreshLabel`). Si la API falla, se
+marca «Sin confirmar» y se ofrece reintentar, sin presentar como vigente lo guardado.
+
+Inicio muestra proyectos publicados con ese mismo origen y solicita las noticias
+publicadas por separado. Las tarjetas abren un álbum. Bienes raíces permite
+seleccionar Venta y Alquiler. Las fichas preparan consultas de WhatsApp con su
+enlace y Pages Functions añade metadatos para compartirlo.
 
 ## Funcionalidad y contratos
 
 Sitio: Inicio, Nosotros, Servicios, Proyectos, Bienes raíces, Noticias y Contacto.
 Panel: sesión, Resumen, Proyectos, Bienes raíces, Noticias, Mensajes, Usuarios,
-Papelera e Historial, según permisos. La política vigente está en
+Papelera e Historial, según permisos. Resumen muestra accesos rápidos y avisos
+sobre la publicación del catálogo. Usuarios separa cuentas activas e inactivas.
+La política vigente está en
 [roles fijos](../docs/politica-roles-fijos.md); el backend aplica la autorización.
 
 El [contrato OpenAPI](../docs/openapi.yaml) define listados, errores y permisos.
-Servicios y búsqueda conservan endpoints pendientes (`501`). El editor
-administrativo de Empresa/Nosotros no está implementado en las rutas del panel. Los modos demo y
+La página pública de Servicios tiene contenido de referencia. Los endpoints de
+Servicios y búsqueda responden `501`. El sitio muestra información de Empresa,
+cuya API está disponible. Falta su editor en el panel. Los modos demo y
 `VITE_NEWS_PREVIEW` son de desarrollo y no prueban persistencia real.
 
 Las fotos se entregan por la API desde R2 privado. Las referencias de borradores
-usan vistas previas temporales; las publicaciones públicas reciben URLs estables.
-No se necesitan credenciales R2 en React.
+usan vistas previas temporales y las publicaciones públicas reciben URLs estables.
+Las imágenes públicas copiadas durante el build se sirven desde Pages cuando
+están disponibles. Las credenciales de R2 quedan en el backend.
 
 ## Equipo y referencias
 
@@ -77,16 +92,10 @@ comunes. Las etapas ADMIN/NEWS y notas de implementación sustituidas se retirar
 árbol actual; sus versiones se pueden recuperar en Git. Para producción consultar [operación actual](../docs/operacion-produccion.md) y la
 [evidencia de Render y R2](../docs/Render-validacion-2026-11-03.md).
 
-## Preparación del manual y exposición
+## Validación y documentación
 
-La base técnica incluye versiones resueltas, API de 38 rutas/55 operaciones y el
-diccionario de veinte modelos de backend. El manual debe separar las pantallas
-integradas de Servicios/búsqueda aún pendientes y de las verificaciones reales
-por rol que no se han completado en el despliegue.
-
-Validación funcional de referencia: 191 pruebas frontend, lint y build correctos;
-esta revisión solo modifica Markdown y no representa una nueva prueba de navegador.
-Las cuentas de Supabase se conservarán para la exposición del 4-nov-2026. La
-posterior depuración pretende dos identidades humanas (Admin e Ingeniero), con
-correos por definir. No se eliminaron cuentas y el manual no incluye credenciales.
-La política actual equipara Ingeniero a Administrador.
+La revisión local de `aa96acd` del 17-nov pasó 203 pruebas y lint.
+En producción se comprobaron las páginas públicas de Inicio y login y la copia
+estática de Pages. El recorrido autenticado por titular y la publicación con
+imagen se registran por separado. Consultar [estado del proyecto](../docs/estado-proyecto.md)
+y [base del manual técnico](../docs/BASE-DOCUMENTACION-TECNICA.md).

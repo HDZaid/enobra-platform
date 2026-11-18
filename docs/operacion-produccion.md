@@ -1,11 +1,12 @@
 # Operación de EnObra
 
 <!-- enobra-documentacion-vigente -->
-> Guía vigente. Revisión documental: 3-nov-2026.
+> Guía vigente. Revisión documental: 17-nov-2026.
 > [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
 <!-- /enobra-documentacion-vigente -->
-Corte del 3-nov-2026. Estado y pendientes globales en
-[estado-proyecto.md](estado-proyecto.md).
+Revisión del 17-nov-2026. Las pruebas de despliegue del 3-nov se conservan en
+su [informe fechado](Render-validacion-2026-11-03.md). Los resultados de esta
+revisión están en [estado del proyecto](estado-proyecto.md).
 
 ## Destinos y despliegue
 
@@ -51,6 +52,36 @@ Render Free duerme tras 15 minutos sin tráfico y puede tardar cerca de un minut
 al recibir otra petición. El primer visitante todavía puede esperar. Véase la
 [documentación de Render](https://render.com/docs/free).
 
+## Copia pública del catálogo en Pages
+
+- El `prebuild` de `npm run build` se ejecuta con `CF_PAGES=1` o
+  `CATALOG_SNAPSHOT=1` y requiere `VITE_API_BASE_URL` HTTPS. Consulta health
+  antes de leer la API pública. Guarda la copia en `/data/catalog-snapshot.json`.
+- Incluye hasta 20 proyectos y 20 propiedades publicados, años y facetas.
+  Copia imágenes admitidas en `/data/media/`, con 4 MiB por archivo y 15 MiB
+  totales. Si la API falla, registra `status: failed` y continúa el build.
+- Las pantallas de catálogo leen primero la caché local, válida hasta siete días,
+  o la copia estática para vistas cubiertas. La API actualiza los datos al
+  responder y un 404 real muestra que la ficha ya no está disponible.
+- Hasta esa respuesta, las etiquetas de Venta/Alquiler y de categoría muestran
+  un indicador de carga. Si la API falla quedan como «Sin confirmar», con un
+  aviso y la opción de reintentar. Un cliente no ve como confirmada una
+  disponibilidad que Render todavía no respondió.
+- Resumen compara la cantidad de publicaciones y la última actualización de las
+  respuestas consultadas con la huella del build. Avisa si la copia falta, falló
+  o quedó atrasada. El aviso permite diagnosticar la copia desde el panel.
+- Para actualizar los archivos estáticos, reconstruir Pages y comprobar
+  `status`, `generatedAt` y el contenido servido. Una foto copiada cuando era
+  pública puede seguir disponible en el artefacto anterior después de retirar
+  la publicación, aunque la API ya controle su acceso en R2.
+- Las Pages Functions de las fichas de Proyectos y Bienes raíces preparan
+  metadatos Open Graph desde la copia o la API pública. El enlace de WhatsApp
+  abre una consulta prellenada con la ficha.
+
+El 17-nov se leyó una copia `ok` en el dominio y en Pages. Su generación
+figura el 12-nov a las 19:47 de Guatemala. Estaba vacía y ambos listados de
+la API reportaron cero publicados al consultarlos.
+
 ## GitHub Actions: reintentos acotados
 
 `.github/workflows/render-health.yml` se ejecuta con cada push a `develop`:
@@ -77,7 +108,8 @@ Health confirma el proceso HTTP, no la conexión a Supabase ni la versión despl
 | Foto antigua no carga | Cuatro originales no estaban en este equipo; recuperar la copia correcta. No borrar metadatos como solución automática. |
 | Foto de borrador da 404 | Usar sesión autorizada o vista previa vigente; el bucket sigue privado. |
 | Una subida devuelve 503 | Revisar proveedor y variables R2. Producción bloquea almacenamiento local efímero. |
-| Consulta no envía correo | Validación usa backend dummy; falta configurar proveedor y destinatario. |
+| Consulta no envía correo | El notificador existe. La última configuración documentada usó `dummy`. Comprobar el proveedor y acreditar entrega antes de dar el envío por operativo. |
+| Resumen avisa que el catálogo está atrasado | Verificar la copia del build de Pages y reconstruir si no refleja la API publicada. |
 | Servicios/búsqueda devuelve 501 | Endpoints aún pendientes; no es fallo del despliegue. |
 
 No publicar contraseñas, DSN, JWT, claves R2 ni URLs de vista previa con tokens en
@@ -103,10 +135,9 @@ petición health y timeout de 75 segundos incorporados.
 La comprobación del JavaScript servido acredita publicación y configuración; no
 se forzó una suspensión de Render ni se validó un login real para probar el ping.
 
-## Cuentas después de la exposición
+## Cuentas definitivas
 
-La exposición está prevista el 4-nov-2026. El usuario pospuso la depuración de
-Supabase hasta después; se determinarán más adelante los correos de una cuenta
-Admin y otra del Ingeniero. No se eliminan cuentas ni se publican sus correos aquí.
-Ingeniero es un alias de Administrador en la política actual. Revisar las relaciones
-de auditoría y la cuenta técnica/actor de P-02 antes de preparar el borrado futuro.
+El usuario comunicará los titulares de Admin e Ingeniero cuando estén
+definidos. El filtro de cuentas del panel cambia qué filas se muestran.
+Cualquier depuración en Supabase se coordina por separado con sus relaciones de
+auditoría y el actor técnico de P-02. Ingeniero es alias de Administrador.

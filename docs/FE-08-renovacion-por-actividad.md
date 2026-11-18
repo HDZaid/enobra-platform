@@ -1,7 +1,7 @@
 # Renovación de sesión por actividad y notificación de vencimiento
 
 <!-- enobra-documentacion-vigente -->
-> Guía vigente. Revisión documental: 3-nov-2026.
+> Guía vigente. Revisión documental: 17-nov-2026.
 > [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
 <!-- /enobra-documentacion-vigente -->
 Implementado el 29-oct-2026 por solicitud de Geovanny. Sustituye el aviso permanente

@@ -1,13 +1,13 @@
 # Estado del proyecto EnObra
 
 <!-- enobra-documentacion-vigente -->
-> Guía vigente. Revisión documental: 3-nov-2026.
+> Guía vigente. Revisión documental: 17-nov-2026.
 > [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
 <!-- /enobra-documentacion-vigente -->
-Actualizado el 3 de noviembre de 2026, Guatemala. Este documento resume el estado
-actual; los informes fechados conservan su evidencia y sus límites. Los documentos sustituidos se retiran del árbol actual y siguen recuperables en
-Git. La [base técnica](BASE-DOCUMENTACION-TECNICA.md) e
-[inventario](INVENTARIO-DOCUMENTACION.md) preparan el manual técnico.
+Revisado el 17 de noviembre de 2026 (Guatemala). Las guías del 3 de noviembre
+se contrastaron con GitHub, el código y las URL públicas. El
+[inventario](INVENTARIO-DOCUMENTACION.md) y la
+[base técnica](BASE-DOCUMENTACION-TECNICA.md) reúnen las fuentes para el manual.
 
 ## Servicios y ramas
 
@@ -19,12 +19,14 @@ Git. La [base técnica](BASE-DOCUMENTACION-TECNICA.md) e
 | Imágenes | R2 privado; fotos públicas mediante la API, borradores protegidos y vistas previas temporales. |
 | Limpieza | P-02 completo: GitHub Actions diario; no crear Cron Job adicional en Render. |
 
-`backend-dev` y `frontend-dev` son las ramas compartidas de trabajo. `develop`
-integra ambas y sus documentos mediante merge. `main` conserva la versión estable
-y la automatización de limpieza existente. Los SHA de despliegue se registran en
-la evidencia correspondiente; sincronizar ramas no despliega la API automáticamente.
-El nuevo prompt del manual técnico aportado por el equipo se conserva en
-[PROMPT-MANUAL-TECNICO-ENOBRA.md](PROMPT-MANUAL-TECNICO-ENOBRA.md).
+| Rama | Revisión comprobada en GitHub al 17-nov |
+| --- | --- |
+| `frontend-dev` | `aa96acd`, [18 commits por delante de `develop`](https://github.com/HDZaid/enobra-platform/compare/eb80cea...aa96acd). Los cambios funcionales son de frontend. |
+| `develop` y `backend-dev` | Ambas en `eb80cea`. Comparten backend y contrato. |
+| `main` | `f41e968`, rama estable y fuente del workflow diario de limpieza. |
+
+Cloudflare Pages toma su frontend de `frontend-dev` y Render toma su API de
+`develop` mediante despliegue manual.
 
 ## Cambios completados
 
@@ -47,40 +49,61 @@ El nuevo prompt del manual técnico aportado por el equipo se conserva en
   personalizables. La autorización efectiva la aplica el backend:
   [política vigente](politica-roles-fijos.md).
 
+## Avances de frontend desde el 3 de noviembre
+
+- Pages genera una copia del catálogo de Proyectos y Bienes raíces durante el
+  build. Las vistas usan caché local de hasta siete días o la copia estática
+  mientras responde Render. El [runbook](operacion-produccion.md#copia-pública-del-catálogo-en-pages)
+  explica el refresco y las imágenes que pueden seguir en un build anterior.
+- Con datos guardados, la etiqueta de cada tarjeta y ficha (Venta/Alquiler en
+  Bienes raíces; categoría y año en Proyectos) muestra un indicador de carga hasta
+  que la API confirma. Si la API falla, indica «Sin confirmar» y permite reintentar.
+- Inicio muestra proyectos publicados y consulta noticias publicadas. Los
+  catálogos incorporan álbumes y selección de Venta/Alquiler en Bienes raíces.
+- Las fichas generan mensajes de WhatsApp con el enlace a la publicación.
+  Pages Functions prepara metadatos de vista previa para los enlaces compartidos.
+- Resumen muestra accesos rápidos según permisos y avisa si falta la copia del
+  catálogo, falló su generación o difiere de la API. Usuarios distingue cuentas
+  activas e inactivas y oculta las de prueba o internas en el listado.
+
 ## Validación y alcance
 
 | Evidencia | Resultado |
 | --- | --- |
-| Backend de producción `912d916` | 238 pruebas aprobadas en Linux; [ejecución](https://github.com/HDZaid/enobra-platform/actions/runs/41770108190). |
-| Integración `6a53f23` | [Health de Render](https://github.com/HDZaid/enobra-platform/actions/runs/41776192253) y [CI de producción](https://github.com/HDZaid/enobra-platform/actions/runs/41776192150) aprobados. Build de Pages publicado y comprobado en el dominio. |
-| Frontend con ping de Inicio | Lint y build correctos; 191 pruebas, incluidas deduplicación, fallo de red y arranque de 45 segundos. |
-| Render y R2 reales | [Informe de despliegue y persistencia](Render-validacion-2026-11-03.md). |
-| Roles contra Supabase, 28-oct | 70/70 con cuentas ficticias, después desactivadas; API/panel locales. No equivale a validar usuarios reales en la URL desplegada. |
+| Sitio público, 17-nov | Inicio y `/admin/login` devolvieron HTTP 200 y sirvieron el mismo bundle de Pages. El preflight CORS del login devolvió HTTP 200 para el origen público. |
+| Copia estática, 17-nov | `/data/catalog-snapshot.json` devolvió HTTP 200 y `status: ok` en el dominio y en Pages. Fue generada el 12-nov a las 19:47 (Guatemala) y contenía cero proyectos, propiedades e imágenes. |
+| API de Render, 17-nov | Health, Empresa, Proyectos y Bienes raíces devolvieron HTTP 200. Ambos listados tuvieron `count: 0`. Servicios y búsqueda devolvieron HTTP 501. |
+| Frontend local `aa96acd`, 17-nov | 203 pruebas aprobadas y lint correcto. |
+| Etiquetas pendientes de confirmar, 17-nov | 208 pruebas, lint y build correctos. En navegador local, con caché sembrada y una API simulada lenta y fallida, se vieron los estados de carga y «Sin confirmar» en listado, ficha e Inicio. |
+| Backend de producción `912d916`, 3-nov | [238 pruebas aprobadas en CI](https://github.com/HDZaid/enobra-platform/actions/runs/41770108190). [Despliegue y persistencia de una imagen en R2](Render-validacion-2026-11-03.md). |
+| Panel con Supabase, 28-oct | 70/70 comprobaciones de roles, imágenes y publicación con API local y cuentas ficticias. [Informe de QA](INT-04-supabase-2026-10-28.md). |
+| Restauración aislada | PostgreSQL 17.11 restauró el esquema `public` del respaldo del 24-oct con 22 tablas y 76 registros. [Evidencia de Juan](https://github.com/HDZaid/enobra-platform/issues/15#issuecomment-6430043884). |
 
-El aviso de bundle frontend superior a 500 kB sigue siendo no bloqueante.
-Las pruebas aisladas no sustituyen recorridos con titulares reales en producción.
+## Pendientes y verificaciones abiertas
 
-## Pendientes reales
-
-- Login y recorrido autorizado por rol desde el frontend desplegado; subida y
-  publicación desde el panel usando la API de Render. Cuentas activas/asignaciones
-  consultadas en Supabase, sin recuperar contraseñas ni modificar usuarios.
-- Cuatro originales de imágenes en otras computadoras, aplazados por el usuario.
-  No se autorizó ni ejecutó una limpieza de la base por esta diferencia.
-- Correo y destinatario: backend dummy en validación; no acredita entrega real.
-- Servicios y buscador global conservan endpoints `501`; no darlos por implementados.
-- El editor administrativo de Empresa/Nosotros sigue pendiente en frontend; la API
-  correspondiente ya existe.
-- Depurar las cuentas de Supabase después de la exposición del 4-nov-2026: objetivo
-  de dos identidades humanas, Admin e Ingeniero, con correos aún por definir.
-  No se han eliminado cuentas; revisar la cuenta técnica de P-02 y sus relaciones
-  antes de preparar ese trabajo. Ingeniero equivale actualmente a Administrador.
-- Revisar colecciones Postman frente a OpenAPI/política fija antes de usarlas como
-  una matriz vigente; esta actualización documental no cambia sus JSON.
-- Datos y contenido definitivo, respaldos y restauración de Supabase, dominio
-  propio de API si se decide usarlo, y revisión de límites del plan gratuito.
-- Render puede dormir por inactividad. El ping de Inicio adelanta el arranque;
-  no garantiza disponibilidad continua ni elimina toda espera del primer visitante.
+- **Implementación.** Servicios y búsqueda global de la API siguen sin
+  repositorios registrados. La página pública de Servicios tiene contenido de
+  referencia. Empresa responde por API y alimenta el sitio público. Su edición
+  desde el panel sigue sin pantalla.
+- **Validación en producción.** Falta evidencia de un recorrido autenticado por
+  rol y de subir y publicar una imagen desde el panel desplegado. Está acreditada
+  la prueba local contra Supabase y la recuperación por Render de una imagen
+  migrada a R2. Los catálogos públicos vacíos no permiten comprobar hoy un
+  álbum con imágenes reales.
+- **Correo.** El notificador existe. La última configuración documentada usó
+  `dummy` y no hay evidencia de entrega en producción. El enlace de WhatsApp
+  prepara otro canal de contacto.
+- **Datos.** La recuperación de cuatro originales del inventario del 3-nov quedó
+  aplazada. La depuración de cuentas espera los correos que el usuario indique
+  para Admin e Ingeniero. El filtro de Usuarios es visual. Preservar el actor
+  técnico de P-02 y revisar sus relaciones de auditoría. Ingeniero es alias de
+  Administrador en la política vigente.
+- **Respaldos.** La restauración histórica de `public` está comprobada. Falta
+  evidencia de recuperación aislada de un respaldo vigente con el alcance
+  completo de producción, incluidos los objetos de R2.
+- **Documentación.** El repositorio contiene la base, el diccionario y la
+  plantilla del manual técnico. La entrega final no figura en Git. La colección
+  RBAC de Postman conserva rutas retiradas y requiere alinearse con OpenAPI.
 
 ## Documentación de referencia
 

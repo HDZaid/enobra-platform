@@ -1,7 +1,7 @@
 # Administración de Proyectos
 
 <!-- enobra-documentacion-vigente -->
-> Guía vigente, revisión documental del 3-nov-2026.
+> Guía vigente, revisión documental del 17-nov-2026.
 > [Base técnica](../../../../docs/BASE-DOCUMENTACION-TECNICA.md) y [estado](../../../../docs/estado-proyecto.md).
 <!-- /enobra-documentacion-vigente -->
 

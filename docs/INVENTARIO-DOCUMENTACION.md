@@ -1,8 +1,9 @@
 # Inventario de la documentación
 
-Revisión documental del 3-nov-2026. Código funcional de referencia: 7d0dd21.
-Los documentos vigentes sirven al manual técnico; una evidencia fechada no
-certifica nuevamente producción. Esta revisión modifica únicamente Markdown.
+Revisión documental del 17-nov-2026. Referencias de código: `aa96acd` para
+frontend, más las etiquetas pendientes de confirmar añadidas ese día, y `eb80cea`
+para backend y contrato. Consultar [estado](estado-proyecto.md)
+para los resultados de esta revisión y el alcance de las evidencias históricas.
 
 ## Documentos conservados y preparados
 
@@ -28,11 +29,9 @@ certifica nuevamente producción. Esta revisión modifica únicamente Markdown.
 | [docs/admin-backend.md](admin-backend.md) | Guía o referencia técnica vigente. |
 | [docs/arquitectura.md](arquitectura.md) | Guía o referencia técnica vigente. |
 | [docs/auditoria.md](auditoria.md) | Guía o referencia técnica vigente. |
-| [docs/demo/recorrido-jennifer.md](demo/recorrido-jennifer.md) | Guía o referencia técnica vigente. |
 | [docs/dependencias-juan.md](dependencias-juan.md) | Guía o referencia técnica vigente. |
 | [docs/estado-proyecto.md](estado-proyecto.md) | Guía o referencia técnica vigente. |
 | [docs/infraestructura.md](infraestructura.md) | Guía o referencia técnica vigente. |
-| [docs/integracion-p01-roles-2026-10-28.md](integracion-p01-roles-2026-10-28.md) | Evidencia fechada; interpretar con su alcance original. |
 | [docs/operacion-produccion.md](operacion-produccion.md) | Guía o referencia técnica vigente. |
 | [docs/papelera.md](papelera.md) | Guía o referencia técnica vigente. |
 | [docs/politica-roles-fijos.md](politica-roles-fijos.md) | Guía o referencia técnica vigente. |
@@ -64,11 +63,13 @@ Git, sin necesidad de un archivo duplicado de cada documento.
 | `docs/PENDIENTES-JENNIFER.md` | [docs/estado-proyecto.md](estado-proyecto.md) |
 | `docs/adr/0001-rbac-por-datos.md` | [docs/politica-roles-fijos.md](politica-roles-fijos.md) |
 | `docs/ajustes-visuales-inicio-servicios-nosotros.md` | [frontend/README.md](../frontend/README.md) |
+| `docs/demo/recorrido-jennifer.md` | [docs/probar-admin.md](probar-admin.md) |
 | `docs/comentario-issue-17-jennifer.md` | [docs/estado-proyecto.md](estado-proyecto.md) |
 | `docs/decisiones-jennifer-issue-17.md` | [docs/FE-08-renovacion-por-actividad.md](FE-08-renovacion-por-actividad.md) |
 | `docs/decisiones-pablo-issue-16.md` | [docs/politica-roles-fijos.md](politica-roles-fijos.md) |
 | `docs/estado-proyecto-2026-10-25.md` | [docs/estado-proyecto.md](estado-proyecto.md) |
 | `docs/estado-ramas.md` | [docs/TRABAJO-EN-EQUIPO.md](TRABAJO-EN-EQUIPO.md) |
+| `docs/integracion-p01-roles-2026-10-28.md` | [docs/politica-roles-fijos.md](politica-roles-fijos.md) |
 | `docs/frontend-integration.md` | [frontend/README.md](../frontend/README.md) |
 | `docs/geo-frontend.md` | [frontend/README.md](../frontend/README.md) |
 | `docs/integracion-backend-frontend.md` | [docs/operacion-produccion.md](operacion-produccion.md) |
@@ -88,7 +89,9 @@ Git, sin necesidad de un archivo duplicado de cada documento.
 | `frontend/NEWS-IMPLEMENTACION.md` | [frontend/README.md](../frontend/README.md) |
 | `frontend/NEWS-STORAGE.md` | [frontend/README.md](../frontend/README.md) |
 
-Resultado: 37 Markdown vigentes/preparados; 32 documentos sustituidos retirados.
+Resultado: 35 Markdown vigentes/preparados; 34 documentos sustituidos retirados.
+El 17-nov se retiraron el guion de la exposición del 4-nov, ya realizado su
+objetivo, y el informe de P-01, cuyo pendiente quedó cumplido.
 
 ## Pendientes para redactar el manual final
 
@@ -96,7 +99,7 @@ Resultado: 37 Markdown vigentes/preparados; 32 documentos sustituidos retirados.
   desea reproducir su formato; esta revisión no genera DOCX/PDF.
 - Verificar con titulares el QA desplegado y configurar correo; implementar
   Servicios/búsqueda y alinear colecciones Postman antes de llamarlos validados.
-- Cuentas definitivas: después de la exposición del 4-nov-2026. Correos por definir;
-  no se eliminaron cuentas. Revisar por separado la cuenta técnica de P-02.
+- El usuario comunicará los correos de Admin e Ingeniero. Revisar por separado
+  la cuenta técnica de P-02 antes de depurar cuentas.
 - No inferir una migración aplicada desde los SQL propuestos conservados fuera
   de esta depuración de Markdown. Usar código, diccionario y evidencia de esquema.

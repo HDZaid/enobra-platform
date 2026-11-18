@@ -1,7 +1,7 @@
 # Reglas de desarrollo
 
 <!-- enobra-documentacion-vigente -->
-> Guía vigente. Revisión documental: 3-nov-2026.
+> Guía vigente. Revisión documental: 17-nov-2026.
 > [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
 <!-- /enobra-documentacion-vigente -->
 Estado: acuerdos de ramas y equipo actualizados el 21 de octubre de 2026.
@@ -151,7 +151,7 @@ autenticación o despliegues completos si solamente existe el contrato o una dem
 
 Todo está sujeto a cambios. Proponer el ajuste en un issue o PR, explicar motivo e impacto,
 coordinar con las personas afectadas y actualizar estos documentos junto con el cambio.
-Los titulares de las dos cuentas humanas definitivas se decidirán después de la
-exposición del 4-nov-2026. No modificar cuentas por interpretar un plan antiguo.
+El usuario comunicará los titulares de las dos cuentas humanas definitivas.
+La revisión de historial y claves foráneas precede a cualquier depuración.
 La [infraestructura vigente](infraestructura.md) distingue servicios ya desplegados
 de pendientes funcionales y de validación.

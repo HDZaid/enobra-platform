@@ -1,7 +1,7 @@
 # EnObra Platform
 
 <!-- enobra-documentacion-vigente -->
-> Guía vigente. Revisión documental: 3-nov-2026.
+> Guía vigente. Revisión documental: 17-nov-2026.
 > [Base y límites técnicos](docs/BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
 <!-- /enobra-documentacion-vigente -->
 Monorepo con dos aplicaciones independientes: **Django + Django REST Framework** en
@@ -138,11 +138,13 @@ npm run build
 
 - Sitio y panel: [enobra.com.gt](https://enobra.com.gt), Cloudflare Pages desde frontend-dev.
 - API: [Render](https://enobra-api.onrender.com/api/v1/health/), Gunicorn y PostgreSQL Supabase.
-- R2 privado activo; fotos públicas mediante la API y borradores protegidos.
+- R2 privado activo. Django entrega las fotos autorizadas. Pages puede servir una
+  copia de imágenes públicas y del catálogo mientras responde Render.
 - Inicio solicita health una vez por carga; Actions reintenta al publicar develop.
   No hay ping periódico. P-02 mantiene su limpieza diaria independiente.
-- Los módulos del panel están integrados. Servicios y búsqueda siguen con endpoints
-  pendientes (`501`); no ejecutar migraciones para recrear tablas existentes.
+- `frontend-dev` incorpora los álbumes de catálogo, WhatsApp y accesos rápidos
+  según permisos. Los endpoints de Servicios y búsqueda devolvieron `501` el 17-nov.
+  La base de Supabase usa las tablas existentes.
 
 Consultar [estado vigente y pendientes](docs/estado-proyecto.md),
 [operación y diagnóstico](docs/operacion-produccion.md) y

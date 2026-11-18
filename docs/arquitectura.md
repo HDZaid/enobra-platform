@@ -1,10 +1,11 @@
 # Arquitectura del backend (BE-11)
 
 <!-- enobra-documentacion-vigente -->
-> Guía vigente. Revisión documental: 3-nov-2026.
+> Guía vigente. Revisión documental: 17-nov-2026.
 > [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
 <!-- /enobra-documentacion-vigente -->
 Estado documental del 3-nov-2026, sobre el código integrado del corte 7d0dd21.
+Contrastado el 17-nov: el backend no cambió después de `bea72e1` (R2 privado, 3-nov).
 Referencias: [RBAC](RBAC.md), [política fija](politica-roles-fijos.md),
 [papelera](papelera.md), [auditoría](auditoria.md) y
 [backend del administrador](admin-backend.md).

@@ -1,7 +1,7 @@
 # Usuarios en el panel administrativo
 
 <!-- enobra-documentacion-vigente -->
-> Guía vigente. Revisión documental: 3-nov-2026.
+> Guía vigente. Revisión documental: 17-nov-2026.
 > [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
 <!-- /enobra-documentacion-vigente -->
 Ruta /admin/usuarios. La interfaz reutiliza AdminShell, sesión en memoria,
@@ -22,10 +22,12 @@ confirmación no se envía; el backend recibe name/email/password/role_id/active
 El selector consulta admin/users/roles/ y conserva IDs reales. No inventar roles
 faltantes ni mostrar edición de permisos. La respuesta nunca expone hashes.
 
-El listado es paginado y permite q por nombre/correo. Editar datos usa PATCH y
-reasignar usa PUT; son operaciones independientes. Si una termina y la otra falla,
-conservar el éxito parcial confirmado y reintentar únicamente lo pendiente.
-Las validaciones por campo no cierran el formulario ni presentan un falso éxito.
+En `frontend-dev` se muestra el equipo en vistas de cuentas activas e inactivas.
+Django pagina la búsqueda por nombre o correo. React reúne las páginas, filtra
+cuentas internas o de prueba y pagina lo visible. Las filas ocultas siguen
+existiendo en Supabase. Editar datos usa PATCH y reasignar usa PUT. Si solo
+una escritura termina, la interfaz conserva ese resultado y permite reintentar
+la otra.
 
 La contraseña se descarta al cerrar. Los ejemplos de desarrollo no crean usuarios
 reales. React llama a Django, que accede a Supabase; no hay conexión directa de
@@ -34,16 +36,15 @@ usuarios desde el navegador ni credenciales de base en VITE_*.
 ## Sesión y datos definitivos
 
 La sesión en memoria se renueva por actividad con límite de inactividad; ver FE-08.
-La depuración de Supabase queda para después de la exposición del 4-nov-2026.
-Se pretenden dos cuentas humanas permanentes, Admin e Ingeniero, con correos por
-definir. No se eliminan ni modifican cuentas al actualizar estas guías. El nombre
-Ingeniero es actualmente alias de Administrador; no implica un cuarto rol.
+El usuario indicará los correos de Admin e Ingeniero cuando estén definidos.
+La política vigente trata Ingeniero como alias de Administrador. Los titulares y
+la depuración se acuerdan por separado del filtrado visual del listado.
 
 ## Verificación y capturas
 
 Pruebas en frontend/tests/users.test.mjs y runners de integración con datos aislados.
-Las evidencias generales registran 191 pruebas frontend y 238 backend. Falta el
-recorrido con titulares autorizados desde el panel desplegado.
+El 17-nov pasaron las 203 pruebas de frontend en `aa96acd`. El recorrido con
+titulares autorizados en producción se sigue en [estado](estado-proyecto.md).
 
 Capturas existentes con datos ficticios, anteriores a la política visual actual;
 son apoyo histórico y no una comprobación del entorno publicado:

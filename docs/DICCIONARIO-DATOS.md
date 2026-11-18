@@ -1,7 +1,7 @@
 # Diccionario de datos de los modelos existentes
 
 <!-- enobra-documentacion-vigente -->
-> Guía vigente. Revisión documental: 3-nov-2026.
+> Guía vigente. Revisión documental: 17-nov-2026.
 > [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
 <!-- /enobra-documentacion-vigente -->
 Fuente: backend/persistence/models del corte funcional 7d0dd21. Se documentan
@@ -355,4 +355,4 @@ y sesiones revocables. No asumir que exista una tabla nueva por cada clave JSON.
 Los bytes de imágenes se guardan en R2, no en la base. Las tablas de imágenes que
 aparezcan en propuestas de docs/sql no están acreditadas por estos modelos.
 El historial conserva actor/referencias; borrar usuarios requiere revisar sus FK
-antes de la depuración posterior a la exposición. No se ejecutó esa depuración.
+al preparar la depuración de cuentas.

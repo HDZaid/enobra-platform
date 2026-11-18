@@ -1,7 +1,7 @@
 # Documentación de EnObra
 
 <!-- enobra-documentacion-vigente -->
-> Índice vigente, revisado el 3-nov-2026. Las guías describen código/operación;
+> Índice vigente, revisado el 17-nov-2026. Las guías describen código/operación;
 > los informes fechados conservan únicamente su evidencia original.
 <!-- /enobra-documentacion-vigente -->
 
@@ -24,13 +24,12 @@
 
 - [Infraestructura](infraestructura.md), [Render](Render-backend.md), [operación](operacion-produccion.md).
 - [P-02 y su programación existente](P02-limpieza-activa.md).
-- [Pruebas aisladas y recorrido](probar-admin.md), [Postman y compatibilidad](postman/README.md), [exposición](demo/recorrido-jennifer.md).
+- [Pruebas aisladas y recorrido del panel](probar-admin.md), [Postman y compatibilidad](postman/README.md).
 - [Trabajo compartido](TRABAJO-EN-EQUIPO.md), [reglas](reglas-desarrollo.md), [responsables](responsables-y-cierres.md), [coordinación](dependencias-juan.md).
 
 ## Evidencia fechada conservada
 
 - [Validación de esquema Supabase, BE-10](BE-10-validacion-supabase.md).
-- [P-01 y roles, 28-oct](integracion-p01-roles-2026-10-28.md).
 - [Matriz Supabase, 28-oct](INT-04-supabase-2026-10-28.md).
 - [Render y R2, 3-nov](Render-validacion-2026-11-03.md).
 

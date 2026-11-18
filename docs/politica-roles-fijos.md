@@ -1,11 +1,14 @@
 # Política fija de roles en código
 
 <!-- enobra-documentacion-vigente -->
-> Guía vigente. Revisión documental: 3-nov-2026.
+> Guía vigente. Revisión documental: 17-nov-2026.
 > [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
 <!-- /enobra-documentacion-vigente -->
 Esta política sustituye la administración de roles por datos descrita en informes
 anteriores. No requiere migraciones, SQL, seeds ni cambios de registros reales.
+Los roles Ingeniero, Arquitecta y Empleado existen en Supabase desde el 28-oct,
+cuando se ejecutó `seed_access_control` con autorización; la base conserva además
+permisos antiguos que la política fija no utiliza.
 
 | Rol mostrado | Nombres almacenados compatibles | Facultades |
 | --- | --- | --- |
@@ -89,10 +92,10 @@ SQL, migraciones, seeds ni sincronizaciones contra la base del proyecto. Las sui
 históricas conservan sus fixtures/seed únicamente dentro de bases SQLite de prueba;
 las pruebas nuevas de política y el runner de navegador no ejecutan seeds.
 
-## Cuentas previstas después de la exposición
+## Cuentas definitivas
 
-El usuario definirá más adelante los correos de una cuenta Admin y otra del
-Ingeniero, después de la exposición del 4-nov-2026. Son dos identidades humanas;
+El usuario indicará los correos de Admin e Ingeniero cuando estén definidos. Son
+dos identidades humanas y
 la política actual considera Ingeniero equivalente a Administrador. No se ha
 solicitado una implementación de permisos distintos ni se modifican cuentas aquí.
 Revisar por separado la cuenta técnica no interactiva y sus relaciones antes de

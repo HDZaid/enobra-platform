@@ -1,7 +1,7 @@
 # Cloudflare R2 privado y entrega de imágenes
 
 <!-- enobra-documentacion-vigente -->
-> Guía vigente. Revisión documental: 3-nov-2026.
+> Guía vigente. Revisión documental: 17-nov-2026.
 > [Base y límites técnicos](BASE-DOCUMENTACION-TECNICA.md). Las evidencias no se reinterpretan como nuevas ejecuciones.
 <!-- /enobra-documentacion-vigente -->
 Estado: R2 privado activo en Render. Decisión del 3-nov-2026: los objetos no se
@@ -46,6 +46,14 @@ requiere CORS del bucket en este flujo; sí los orígenes CORS explícitos de Dj
 La firma emitida puede valer hasta vencer o borrar el medio aunque se cierre sesión.
 No incluir URLs de vista previa con tokens en capturas, docs o logs.
 
+## Copia de fotos públicas en Pages
+
+En el build de `frontend-dev`, Pages solicita fotos de publicaciones públicas por
+la API y sirve las que copia desde `/data/media/`. El bucket R2 permanece privado.
+Retirar una publicación cambia la autorización en Django. Para retirar sus
+archivos de la copia pública de Pages hay que regenerar y verificar el despliegue.
+Consultar [operación](operacion-produccion.md#copia-pública-del-catálogo-en-pages).
+
 ## Borrado y persistencia
 
 Se rechaza con 400 borrar una imagen referenciada por proyectos, propiedades,
@@ -54,11 +62,11 @@ referencia y borrar el medio bloquean su fila para evitar referencias a un uploa
 eliminado. Esta protección no implica limpieza de archivos huérfanos automática.
 Producción devuelve 503 al intentar subir usando disco local efímero.
 
-Inventario del despliegue: cinco registros, un original disponible. Se copió ese
-original conservando clave/ID; el hash coincidió y la API lo recuperó tras otro
-despliegue. Los cuatro originales de otras PC siguen aplazados. No se borraron
-sus registros ni se recreó la base. Falta probar la subida/publicación completa
-desde el panel desplegado con un usuario real.
+El [inventario del 3-nov](Render-validacion-2026-11-03.md) registró cinco medios.
+Se migró el original disponible conservando clave e ID. La API lo recuperó
+tras otro despliegue y coincidió su hash. Se aplazó la recuperación de los
+otros cuatro originales. El 17-nov ambos catálogos públicos estaban vacíos.
+Sigue sin evidencia una subida y publicación desde el panel desplegado.
 
 ## Diagnóstico y fuentes
 
